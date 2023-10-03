@@ -1,9 +1,10 @@
-import React from 'react';
-import {View} from 'react-native';
+import React, { useState } from 'react';
+import { View, Button, Platform } from 'react-native';
 import PropTypes from 'prop-types';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 
-export const checkImageURL = (url) => {
+const checkImageURL = (url) => {
     if (!url) return false
     else {
         const pattern = new RegExp('^https?:\\/\\/.+\\.(png|jpg|jpeg|bmp|gif|webp)$', 'i');
@@ -11,7 +12,7 @@ export const checkImageURL = (url) => {
     }
 };
 
-export const Spacer = ({horizontal, size}) => {
+const Spacer = ({horizontal, size}) => {
     const defaultValue = 'auto';
   
     return (
@@ -37,3 +38,27 @@ export const Spacer = ({horizontal, size}) => {
   Spacer.defaultProps = {
     horizontal: false,
   };
+
+const MyDateTimePicker = ({mode, date, onChange }) => {
+    
+    const onChangeDate = (event, selectedDate) => {
+      if (selectedDate) {
+        onChange(selectedDate);
+      }
+    };
+  
+    return (
+      <View>
+        <DateTimePicker
+            value={date}
+            mode={mode} // or "date" or "time"
+            is24Hour={true}
+            display="default"
+            onChange={onChangeDate}
+            //maximumDate={new Date()}
+          />
+      </View>
+    );
+  };
+
+  export { checkImageURL, Spacer, MyDateTimePicker };

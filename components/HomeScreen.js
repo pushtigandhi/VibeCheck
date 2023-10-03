@@ -6,7 +6,7 @@ import { COLORS, FONT, SIZES } from "../constants";
 //     HomeNavigation, ScreenHeaderBtn, Welcome
 // } from '../components/index';
 
-import { Spacer } from '../utils/Index';
+import { Spacer } from '../utils';
 import HomeNavigation from "./HomeNavigation";
 
 export default function HomeScreen () {
