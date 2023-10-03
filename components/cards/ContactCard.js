@@ -1,18 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image,
-        StyleSheet, Animated } from 'react-native';
+        StyleSheet, Animated, FlatList } from 'react-native';
 
 //import styles from './popularjobcard.style';
 import { COLORS, SHADOWS, FONT, SIZES } from "../../constants";
-import { MyDateTimePicker } from '../../utils';
+import { MyDateTimePicker, PhoneNumberInput } from '../../utils';
 
 
 const ExpandableView = ({ expanded = false }) => {
     const [height] = useState(new Animated.Value(0));
     const [date, setDate] = useState(new Date());
+    const options = { month: 'short', day: 'numeric', year: 'numeric' };
+    const formattedDate = date.toLocaleDateString('en-US', options);
 
-    const handleDateChange = (date) => {
-        setDate(date);
+    const [show, setShowDatePicker] = useState(false);
+
+    const showDatePicker = () => {
+        setShowDatePicker(true);
+      };
+
+    const handlePhoneNumberChange = (number) => {
+        console.log('Phone Number Changed:', number);
+      };
+
+    const handleDateChange = (selectedDate) => {
+        setShowDatePicker(false);
+        if (selectedDate)
+        {
+            const year = selectedDate.getFullYear() || new Date().getFullYear();
+            const newDate = new Date(year, selectedDate.getMonth(), selectedDate.getDate());
+            setDate(newDate);
+        }
       };
 
     useEffect(() => {
@@ -30,26 +48,58 @@ const ExpandableView = ({ expanded = false }) => {
         style={{ height }}
       >
        <View style={styles.infoContainer}>
+       <View style={styles.column}>
             <Text style={styles.label}>
             Phone:
             </Text>
-            <TextInput style={styles.detail}></TextInput>
+            <View style={styles.container}>
+                <PhoneNumberInput onNumberChange={handlePhoneNumberChange} />
+            </View>
+        </View>
+        <View style={styles.column}>
             <Text style={styles.label}>
             Birthday:
             </Text>
-            <MyDateTimePicker
-                mode="date"
+            <TouchableOpacity onPress={showDatePicker}>
+            
+            {show && (
+                <MyDateTimePicker
                 date={date}
+                mode="date"
+                //is24Hour={true}
+                //display="spinner"
                 onChange={handleDateChange}
-            />
+                //textColor="#000000" // Customize text color
+                />
+            )}
+            {!show && ( 
+                <Text>{formattedDate.toString()}</Text>)}
+        </TouchableOpacity>
+        </View>
+        <View style={styles.column}>
             <Text style={styles.label}>
             Check-In:
             </Text>
+            <TouchableOpacity onPress={showDatePicker}>
+            
+            {show && (
+                <MyDateTimePicker
+                date={date}
+                mode="date"
+                //is24Hour={true}
+                //display="spinner"
+                onChange={handleDateChange}
+                //textColor="#000000" // Customize text color
+                />
+            )}
+            {!show && ( 
+                <Text>{formattedDate.toString()}</Text>)}
+            </TouchableOpacity>
+        </View>
             <Text style={styles.label}>
             Last Update:
             </Text>
-            <TextInput style={styles.detail}></TextInput>
-
+            <TextInput style={styles.notes}></TextInput>
         </View>
       </Animated.View>
     );
@@ -65,6 +115,7 @@ const ContactCard = () => {
         }}
     >
     <View style={styles.container}>
+    <View style={styles.column}>
       <TouchableOpacity style={styles.photoContainer}>
         <Image 
           source={{ uri: 'https://t4.ftcdn.net/jpg/05/05/61/73/360_F_505617309_NN1CW7diNmGXJfMicpY9eXHKV4sqzO5H.jpg'}}
@@ -76,6 +127,7 @@ const ContactCard = () => {
       <View style={styles.textContainer}>
         <Text style={styles.contactName} numberOfLines={1}> Name </Text>
         <Text style={styles.jobType}>Company</Text>
+      </View>
       </View>
     </View>
     <ExpandableView expanded={isExpanded} />
@@ -128,11 +180,6 @@ const styles = StyleSheet.create({
     fontFamily: "DMBold",
     color: COLORS.primary,
   },
-  location: {
-    fontSize: SIZES.medium - 2,
-    fontFamily: FONT.regular,
-    color: "#B3AEC6",
-  },
   label:{
     fontSize: SIZES.medium,
     fontFamily: FONT.regular,
@@ -142,9 +189,19 @@ const styles = StyleSheet.create({
   detail: {
     lineHeight: 20,
     padding: 10,
-    fontSize: 20,
+    fontSize: SIZES.medium,
     color: "#B3AEC6",
     backgroundColor: COLORS.white,
+  },
+  notes: {
+    padding: 10,
+    fontSize: SIZES.Small,
+    backgroundColor: COLORS.white,
+    width: "100%",
+    height: 100,
+    marginTop: 5,
+    borderRadius: 10,
+    textAlign: "left"
   },
   textContainer: {
     flex: 1,
@@ -156,6 +213,11 @@ const styles = StyleSheet.create({
     color: COLORS.gray,
     marginTop: 3,
     textTransform: "capitalize",
+  },
+  column: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    //alignItems: "baseline",
   },
 });
 

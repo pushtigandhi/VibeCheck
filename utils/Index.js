@@ -1,8 +1,44 @@
 import React, { useState } from 'react';
-import { View, Button, Platform } from 'react-native';
+import { View, Button, Platform, StyleSheet, TextInput } from 'react-native';
 import PropTypes from 'prop-types';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import PhoneInput from 'react-native-phone-input';
+import { COLORS, SHADOWS, FONT, SIZES } from "../constants";
 
+
+const PhoneNumberInput = ({ onNumberChange }) => {
+  const [phoneNumber, setPhoneNumber] = useState('');
+
+  const handleNumberChange = (number) => {
+    setPhoneNumber(number);
+    onNumberChange(number);
+  };
+
+  return (
+    <View style={styles.phoneNumberContainer}>
+      {/* Use react-native-phone-input for better phone number input handling */}
+      <PhoneInput
+        style={styles.phoneInput}
+        ref={(ref) => {
+          this.phone = ref;
+        }}
+        initialCountry="ca"
+        onChangePhoneNumber={handleNumberChange}
+      />
+
+      {/* Alternatively, you can use a simple TextInput */}
+      {/* <TextInput
+        style={styles.phoneInput}
+        placeholder="Phone Number"
+        keyboardType="phone-pad"
+        value={phoneNumber}
+        onChangeText={handleNumberChange}
+      /> */}
+
+      <Button title="Submit" onPress={() => console.log('Submitted:', phoneNumber)} />
+    </View>
+  );
+};
 
 const checkImageURL = (url) => {
     if (!url) return false
@@ -53,7 +89,7 @@ const MyDateTimePicker = ({mode, date, onChange }) => {
             value={date}
             mode={mode} // or "date" or "time"
             is24Hour={true}
-            display="default"
+            display="spinner"
             onChange={onChangeDate}
             //maximumDate={new Date()}
           />
@@ -61,4 +97,20 @@ const MyDateTimePicker = ({mode, date, onChange }) => {
     );
   };
 
-  export { checkImageURL, Spacer, MyDateTimePicker };
+  const styles = StyleSheet.create({
+    phoneNumberContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    phoneInput: {
+      fontSize: SIZES.medium,
+      //fontFamily: FONT.regular,
+      backgroundColor: COLORS.lightWhite,
+      marginTop: SIZES.small / 1.5,
+      width: 200,
+      height: 40,
+    },
+  });
+
+  export { checkImageURL, Spacer, MyDateTimePicker, PhoneNumberInput };
