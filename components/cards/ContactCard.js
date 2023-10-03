@@ -160,20 +160,9 @@ const styles = StyleSheet.create({
     width: "70%",
     height: "70%",
   },
-  companyName: {
-    fontSize: SIZES.medium,
-    fontFamily: FONT.regular,
-    color: "#B3AEC6",
-    marginTop: SIZES.small / 1.5,
-  },
   infoContainer: {
     padding: SIZES.medium,
-        borderRadius: SIZES.xLarge,
-        backgroundColor: "#FFF",
-        ...SHADOWS.medium,
-        shadowColor: COLORS.white,
-    //flex: 1,
-    //marginTop: SIZES.large,
+    backgroundColor: COLORS.lightWhite,
   },
   contactName: {
     fontSize: SIZES.medium,
