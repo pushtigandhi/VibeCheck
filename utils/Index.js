@@ -1,10 +1,32 @@
-import React, { useState } from 'react';
-import { View, Button, Platform, StyleSheet, TextInput } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Button, Animated, Platform, StyleSheet, TextInput } from 'react-native';
 import PropTypes from 'prop-types';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import PhoneInput from 'react-native-phone-input';
 import { COLORS, SHADOWS, FONT, SIZES } from "../constants";
 
+const ExpandableView = ({ expanded = false, view, vh = 200 }) => {
+  const [height] = useState(new Animated.Value(0));
+
+  useEffect(() => {
+    Animated.timing(height, {
+      toValue: expanded ? vh : 0,
+      duration: 250,
+      useNativeDriver: false
+    }).start();
+  }, [expanded, height]);
+
+  return (
+    <Animated.View
+      style={{ height }}
+    >
+    <View style={styles.infoContainer}>
+     {view()}
+    </View>
+    </Animated.View>
+  );
+
+};
 
 const PhoneNumberInput = ({ onNumberChange }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -113,4 +135,4 @@ const MyDateTimePicker = ({mode, date, onChange }) => {
     },
   });
 
-  export { checkImageURL, Spacer, MyDateTimePicker, PhoneNumberInput };
+  export { checkImageURL, Spacer, MyDateTimePicker, PhoneNumberInput, ExpandableView };

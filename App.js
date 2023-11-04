@@ -21,7 +21,7 @@ export default function App() {
       //<Stack.Screen name="Profile" component={ProfileScreen} initialParams={{ isOwnProfile: false }} />
       //<Stack.Screen name="Drafts" component={DraftsScreen}/>
       }
-      <Stack.Screen name="Post" component={NewItem}/>
+      <Stack.Screen name="New" component={NewItem}/>
       <Stack.Screen name="Directory" component={Directory}/>
       <Stack.Screen name="VibeCheck" component={VibeCheck}/>
     </Stack.Navigator>

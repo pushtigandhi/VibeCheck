@@ -21,14 +21,15 @@ const ExpandableView = ({ expanded = false }) => {
         style={{ height }}
       >
       <View style={styles.infoContainer}>
-       <FlatList 
+       {/* <FlatList 
           data={[1,2,3,4,5]}
           renderItem={({item}) => (
           <Text>{item}</Text>
           )}
           keyExtractor={() => {}}
           contentContainerStyle={{ columnGap: SIZES.medium }}
-        /></View>
+        /> */}
+        </View>
       </Animated.View>
     );
 

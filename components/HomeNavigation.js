@@ -23,7 +23,7 @@ export default function HomeNavigation({ size }) {
       <TouchableOpacity onPress={() => navigation.navigate({name: "Profile", params: {isOwnProfile: true}})} style={styles.iconRoot}>
         <Ionicons name={"person-circle"} size={size} color={"#80adad"} style={styles.group}/>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate("Post")} style={styles.iconRoot} >
+      <TouchableOpacity onPress={() => navigation.navigate("New")} style={styles.iconRoot} >
         <Ionicons name={"add-circle"} size={size} color={"#80adad"} style={styles.group}/>
       </TouchableOpacity>
     </View>

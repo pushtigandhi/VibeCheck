@@ -5,7 +5,7 @@ import { View, Text, TextInput, TouchableOpacity, Image,
 //import styles from './popularjobcard.style';
 import { COLORS, SHADOWS, FONT, SIZES } from "../../constants";
 import { MyDateTimePicker, PhoneNumberInput } from '../../utils';
-
+//import Layout from "../../_layout";
 
 const ExpandableView = ({ expanded = false }) => {
     const [height] = useState(new Animated.Value(0));
