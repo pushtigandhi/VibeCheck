@@ -5,33 +5,36 @@ import { View, Text, TextInput, TouchableOpacity, Image,
 import { COLORS, SHADOWS, FONT, SIZES } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 
-const ExpandableView = ({ expanded = false }) => {
-    const [height] = useState(new Animated.Value(0));
+const ExpandableView = ({ item, expanded = false }) => {
+  console.log(item);
+  // const {title} = item;
+  const [height] = useState(new Animated.Value(0));
 
-    useEffect(() => {
-      Animated.timing(height, {
-        toValue: expanded ? 200 : 0,
-        duration: 250,
-        useNativeDriver: false
-      }).start();
-    }, [expanded, height]);
-  
-    return (
-      <Animated.View
-        style={{ height }}
-      >
-      <View style={styles.infoContainer}>
-       {/* <FlatList 
-          data={[1,2,3,4,5]}
-          renderItem={({item}) => (
-          <Text>{item}</Text>
-          )}
-          keyExtractor={() => {}}
-          contentContainerStyle={{ columnGap: SIZES.medium }}
-        /> */}
-        </View>
-      </Animated.View>
-    );
+  useEffect(() => {
+    Animated.timing(height, {
+      toValue: expanded ? 200 : 0,
+      duration: 250,
+      useNativeDriver: false
+    }).start();
+  }, [expanded, height]);
+
+  return (
+    <Animated.View
+      style={{ height }}
+    >
+    <View style={styles.infoContainer}>
+    <Text>{"NA"}</Text>
+      {/* <FlatList 
+        data={[1,2,3,4,5]}
+        renderItem={({item}) => (
+        <Text>{item}</Text>
+        )}
+        keyExtractor={() => {}}
+        contentContainerStyle={{ columnGap: SIZES.medium }}
+      /> */}
+      </View>
+    </Animated.View>
+  );
 
 };
 const DirectoryCard = () => {

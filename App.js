@@ -7,10 +7,17 @@ import ProfileScreen from './components/ProfileScreen';
 import NewItem from './components/NewItem';
 import Directory from './components/Directory';
 import VibeCheck from './components/VibeCheck';
+import { useFonts } from 'expo-font';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+    const [fontsLoaded] = useFonts({
+      DMBold: require("./assets/fonts/DMSans-Bold.ttf"),
+      DMMedium: require("./assets/fonts/DMSans-Medium.ttf"),
+      DMRegular: require("./assets/fonts/DMSans-Regular.ttf"),
+    });
+    
   return (
     <NavigationContainer>
     <Stack.Navigator>
