@@ -7,7 +7,7 @@ export const SolidBars = ({ color = "black", className }) => {
     <Svg
       //className={`icon-font-awesome-free-solid-b-bars-2 ${className}`}
       fill="none"
-      height="17"
+      height="16"
       viewBox="0 0 16 17"
       width="16"
     >

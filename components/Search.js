@@ -17,6 +17,7 @@ export const Search = ({
     property1: property1 || "default",
   });
 
+
   const placeholderText =
     state.property1 === 'enter-search'
       ? 'Enter Search'

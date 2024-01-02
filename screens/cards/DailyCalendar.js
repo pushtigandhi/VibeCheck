@@ -14,7 +14,7 @@ export const Frame = () => {
         //className={styles.toolBarInstance}
         mobile={true}
         override={<PlusCircle color="white" />}
-        property1="week"
+        property1="day"
         searchIconColor="white"
         //searchPropertyDefaultClassName="tool-bar-2"
         sidebarToggleButtonIcon={<SolidBars color="#229FD0" />}

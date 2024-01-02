@@ -7,9 +7,9 @@ export const SolidSearch = ({ color = "#6A778B" }) => {
     <Svg
       //className={`icon-font-awesome-free-solid-s-search-4 ${className}`}
       fill="none"
-      height="24"
+      height="16"
       viewBox="0 0 24 24"
-      width="24"
+      width="16"
     >
       <Path
         className="path"

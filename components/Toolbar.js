@@ -8,6 +8,7 @@ import { CalendarButtons } from "./CalendarButtons";
 import { Search } from "./Search";
 import { SidebarToggle } from "./SidebarToggle";
 import { Typography } from "./Typography";
+import { SolidSearch } from "../assets/icons/SolidSearch";
 import { View, TouchableOpacity, StyleSheet, Text, TextInput } from 'react-native';
 //import "./style.css";
 
@@ -20,23 +21,25 @@ export const ToolBar = ({
   calendarButtonsIcon = <CalendarWeek color="#0C41FF" />,
   //searchPropertyDefaultClassName,
   searchIconColor = "#6A778B",
-  override = <PlusCircle color="white" />,
+  addButtonIcon = <PlusCircle color="#229FD0" />,
   //calendarButtonsClass,
 }) => {
   return (
     <View 
         style={[
                 styles.toolBar,
-                mobile ? styles.mobileTrueLeftContent : styles.mobileFalseLeftContent,
-                styles.toolBarInstance,
+                styles.row,
+                //mobile ? styles.mobileTrueLeftContent : styles.mobileFalseLeftContent,
+                //styles.toolBarInstance,
             ]}
         >
-      <View style={styles.toolBar.leftContent}>
+
+      <View style={[styles.row, styles.leftContent]}>
         <SidebarToggle active={false} buttonIcon={sidebarToggleButtonIcon} style={styles.instanceNode2} />
         {["day", "month", "week"].includes(property1) && (
-          <View style={styles.toolBar.divWrapper}>
-            <View style={styles.toolBar.typography2}>
-            <Text style={styles.span}>
+          <View style={[styles.row, styles.toolBar.divWrapper]}>
+            {/* <View style={styles.toolBar.typography2}> */}
+            <Text style={[styles.span, {fontWeight:'500'}]}>
                 {!mobile && property1 === 'day' && <>01 January </>}
                 {mobile && property1 === 'day' && <>01 Jan </>}
                 {!mobile && property1 === 'week' && <>01-07 January </>}
@@ -44,8 +47,8 @@ export const ToolBar = ({
                 {property1 === 'month' && !mobile && <>January </>}
                 {property1 === 'month' && mobile && <>Jan </>}
             </Text>
-            <Text style={styles.textWrapper2}>2022</Text>
-            </View>
+            <Text style={styles.span}>2024</Text>
+            {/* </View> */}
           </View>
         )}
 
@@ -82,22 +85,23 @@ export const ToolBar = ({
           }
         />
       </View>
-      <View style={styles.rightContent}>
+      <View style={[styles.row, styles.rightContent]}>
         <Search
           //className={searchPropertyDefaultClassName}
-          searchButtonColor={searchIconColor}
+          //searchButtonColor={searchIconColor}
           property1="default"
         />
         <CalendarButtons
           //className={calendarButtonsClass}
+
           disabled={false}
           focused={false}
           hover={false}
           icon={true}
           icon1={
-            !mobile ? <PlusCircle style={styles.iconFontAwesome2} color="white" /> : undefined
+            !mobile ? <PlusCircle style={styles.iconFontAwesome2} color="#aad6e7" /> : undefined
           }
-          override={override}
+          override={addButtonIcon}
           property1="primary"
           text={mobile ? false : true}
           typographyText={!mobile ? "Add event" : undefined}
@@ -110,29 +114,36 @@ export const ToolBar = ({
 ToolBar.propTypes = {
   property1: PropTypes.oneOf(["month", "year", "day", "week"]),
   mobile: PropTypes.bool,
-  searchIconFontAwesomeFreeSolidSSearch4Color: PropTypes.string,
+  searchIconColor: PropTypes.string,
 };
 
 const styles = StyleSheet.create({
+    row: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        //alignItems: "baseline",
+    },
     toolBar: {
-      alignItems: 'center',
+      //alignItems: 'space-between',
       backgroundColor: '#ffffff',
       borderBottomWidth: 1,
-      borderBottomColor: 'var(--stroke)',
+      borderBottomColor: "#aad6e7",
       display: 'flex',
       flex: 'row',
       justifyContent: 'space-between',
-      position: 'relative',
-      
+      //position: 'relative',
+      width:"100%",
+      height: 30,
     },
     toolBarInstance: {
         borderColor: '#aad6e7',
-        width: 300,
+        width: 100,
     },
     leftContent: {
-      //alignItems: 'center',
-      //display: 'flex',
-      //flex: 0,
+      alignItems: 'center',
+      display: 'flex',
+      flex: 0,
+      width: 100,
     },
     instanceNode2: {
       flex: 0,
@@ -153,7 +164,8 @@ const styles = StyleSheet.create({
       width: 'fit-content',
     },
     span: {
-      fontWeight: '500',
+      //fontWeight: '500',
+      fontSize: 16,
     },
     textWrapper2: {
       //fontFamily: 'Inter, Helvetica',
@@ -184,7 +196,7 @@ const styles = StyleSheet.create({
       gap: 16,
     },
     mobileTrueLeftContent: {
-      //gap: 8,
+      gap: 8,
     },
     mobileFalseTypography2: {
       fontSize: 30,

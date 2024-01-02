@@ -30,13 +30,7 @@ export default function HomeScreen () {
                 </View>
             </View>
             <Spacer size={20} />
-
-            <View 
-                style={[
-                        styles.row,
-                        styles.overlapGroup,
-                    ]}
-            >
+            <View style={styles.calendarContainer}>
                 <Frame />
             </View>
             <Spacer size={20} />
@@ -56,12 +50,12 @@ const styles = StyleSheet.create({
         shadowColor: COLORS.white,
         marginBottom: SIZES.xSmall,
     },
-    overlapGroup: {
+    calendarContainer: {
         borderWidth: 1,
         borderColor: '#aad6e7',
         borderRadius: 6,
-        height: 100,
-        width: 450,
+        height: "auto",
+        width: "auto",
     },
     elementPopupUser: {
       height: 34,
