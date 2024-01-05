@@ -1,35 +1,37 @@
 import PropTypes from "prop-types";
 import React from "react";
-//import "./style.css";
-import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Text, TextInput } from 'react-native';
 
-
-export const Typography = ({ type, bold, divClassName, text = "Typography" }) => {
-    console.log(divClassName);
+export const TypeButtonBoldWrapper = ({ type, bold, className, divClassName, text = "Typography" }) => {
   return (
-    <View style={styles.typography}>
-      <View 
+    <View
       style={[
+        styles.typeButtonBoldWrapper
+      ]} 
+        //className={`type-button-bold-wrapper ${className}`}
+    >
+      <View 
+        style={[
             styles.div,
-            styles[`type${type}`],
-            bold ? styles.boldTrue : styles.boldFalse,
-            styles[divClassName],
+            bold ? styles.bold0True : styles.bold0True,
+            styles.typeH4
         ]}
+      //className={`div type-${type} bold-0-${bold} ${divClassName}`}
       >
-        <Text>{text}</Text>
+      <Text>{text}</Text>
       </View>
     </View>
   );
 };
 
-Typography.propTypes = {
+TypeButtonBoldWrapper.propTypes = {
   type: PropTypes.oneOf(["h-5", "caption", "body", "button", "h1", "h-4", "small", "h3", "h2"]),
   bold: PropTypes.bool,
   text: PropTypes.string,
 };
 
 const styles = StyleSheet.create({
-    typography: {
+    typeButtonBoldWrapper: {
       alignItems: 'flex-start',
       display: 'flex',
       flexDirection: 'row',
@@ -37,13 +39,13 @@ const styles = StyleSheet.create({
       position: 'relative',
     },
     div: {
-      color: 'var(--text)',
-      fontFamily: 'Poppins, Helvetica',
+      color: '#333333',
+      //fontFamily: 'Poppins, Helvetica',
       letterSpacing: 0,
       lineHeight: 'normal',
       marginTop: -1,
       position: 'relative',
-      width: 'fit-content',
+      width: 'auto',
     },
     typeH5: {
       fontSize: 16,
@@ -51,7 +53,7 @@ const styles = StyleSheet.create({
     typeH4: {
       fontSize: 18,
     },
-    boldTrue: {
+    bold0True: {
       fontWeight: '600',
     },
     typeSmall: {
@@ -72,7 +74,7 @@ const styles = StyleSheet.create({
     typeBody: {
       fontSize: 14,
     },
-    boldFalse: {
+    bold0False: {
       fontWeight: '500',
     },
     typeButton: {

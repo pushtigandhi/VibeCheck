@@ -166,6 +166,7 @@ const styles = StyleSheet.create({
     span: {
       //fontWeight: '500',
       fontSize: 16,
+      color: "#229FD0",
     },
     textWrapper2: {
       //fontFamily: 'Inter, Helvetica',

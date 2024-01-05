@@ -8,7 +8,10 @@ import { COLORS, FONT, SIZES, SHADOWS } from "../constants";
 
 import { Spacer } from '../utils';
 import { SixteenPopupUser } from "../assets/icons/SixteenPopupUser"
-import { Frame } from "./cards/DailyCalendar";
+import { DailyCalendar } from "./DailyCalendar";
+import { WeeklyCalendar } from "./WeeklyCalendar";
+import { MonthlyCalendar } from "./MonthlyCalendar";
+import Calendar from "./Calendar";
 
 export default function HomeScreen () {
     const active = "class";
@@ -31,8 +34,9 @@ export default function HomeScreen () {
             </View>
             <Spacer size={20} />
             <View style={styles.calendarContainer}>
-                <Frame />
+                <MonthlyCalendar month={0} startDay={0}/>
             </View>
+
             <Spacer size={20} />
         </View>
     );
@@ -54,8 +58,9 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#aad6e7',
         borderRadius: 6,
-        height: "auto",
+        height: "75%",
         width: "auto",
+        overflow:"hidden",
     },
     elementPopupUser: {
       height: 34,
