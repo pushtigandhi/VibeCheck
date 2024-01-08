@@ -7,9 +7,9 @@ export const PlusCircle = ({ color = "white" }) => {
     <Svg
       //className={`icon-font-awesome-free-solid-p-plus-circle-8 ${className}`}
       fill="none"
-      height="16"
+      height="24"
       viewBox="0 0 16 16"
-      width="16"
+      width="24"
       xmlns="http://www.w3.org/2000/svg"
     >
       <Path

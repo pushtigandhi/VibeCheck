@@ -6,7 +6,8 @@ import { useReducer } from "react";
 import { View, TouchableOpacity, StyleSheet, Text, TextInput } from 'react-native';
 import { SolidClose } from "../assets/icons/SolidClose";
 import { SolidSearch } from "../assets/icons/SolidSearch";
-
+import { COLORS } from "../constants";
+import { Ionicons } from "@expo/vector-icons";
 
 export const Search = ({
   property1,
@@ -26,14 +27,17 @@ export const Search = ({
       : undefined;
 
   return (
-    <View
+    <TouchableOpacity
       //style={`search ${state.property1} ${className}`}
       onClick={() => {
         dispatch("click");
       }}
+
       onMouseLeave={() => {
         dispatch("mouse_leave");
       }}
+      
+      style={styles.root}
     >
       {["enter-search", "string"].includes(state.property1) && (
         <TextInput
@@ -42,16 +46,18 @@ export const Search = ({
           keyboardType={inputType}
         />
       )}
-
-      {["default", "enter-search"].includes(state.property1) && (
-        <SolidSearch
+      
+      {/* <SolidSearch
           //className="instance-node"
           color={state.property1 === "default" ? searchButtonColor : "#6A778B"}
-        />
+        /> */}
+
+      {["default", "enter-search"].includes(state.property1) && (
+        <Ionicons name={"search-outline"} size={20} style={styles.icon} />
       )}
 
       {state.property1 === "string" && <SolidClose />}
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -96,3 +102,19 @@ Search.propTypes = {
   iconFontAwesomeFreeSolidSSearch4Color: PropTypes.string,
   inputType: PropTypes.string,
 };
+
+const styles = StyleSheet.create({
+  root: {
+    backgroundColor: COLORS({opacity:1}).tertiary,
+    height: 30,
+    weight: 30,
+    borderRadius: '100%',
+    alignContent: 'center',
+    justifyContent: 'center',
+  },
+  icon: {
+    color: COLORS({opacity:1}).white,
+    margin: 5,
+    fontWeight: '500',
+  },
+});

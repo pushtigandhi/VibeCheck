@@ -1,33 +1,36 @@
 import React from "react";
-import { ToolBar } from "../components/Toolbar";
-import { SolidBars } from "../assets/icons/SolidBars";
-import { CalendarWeek } from "../assets/icons/CalendarWeek";
-import { PlusCircle } from "../assets/icons/PlusCircle";
+import { ToolBar } from "../../components/Toolbar";
+import { SolidBars } from "../../assets/icons/SolidBars";
+import { CalendarWeek } from "../../assets/icons/CalendarWeek";
+import { PlusCircle } from "../../assets/icons/PlusCircle";
 //import { CalendarDaySmall } from "../../components/CalendarDaySmall";
-import { Spacer } from "../utils/index";
-import { SmallCalendar } from "../components/SmallCalendar";
+import { Spacer } from "../../utils/index";
+import { SmallCalendar } from "../../components/SmallCalendar";
 import {Calendar, LocaleConfig} from 'react-native-calendars';
-import { SIZES } from "../constants";
-import { Sidebar } from "./cards/Sidebar";
+import { SIZES } from "../../constants";
+import { Sidebar } from "../cards/Sidebar";
+import { TaskCard } from "../cards/items/TaskCard";
 
 import { View, StyleSheet, Text, ScrollView } from 'react-native';
 
-export const WeeklyCalendar = () => {
+export const DailyCalendar = () => {
 
   // const [items, setItems] = useState([]);
   // const [title, setTitle] = useState("");
 
-  const days = ["Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun"];
+  const hours = ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00"]
+  //, "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00",
+    //        "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"];
   
   return (
-    <View style={styles.container}>
+    <View>
         <ToolBar
         calendarButtonsIcon={<CalendarWeek color="#229FD0" />}
         //calendarButtonsClass="tool-bar-3"
         //className={styles.toolBarInstance}
         mobile={true}
         override={<PlusCircle color="white" />}
-        property1="week"
+        property1="day"
         searchIconColor="white"
         //searchPropertyDefaultClassName="tool-bar-2"
         sidebarToggleButtonIcon={<SolidBars color="#229FD0" />}
@@ -40,15 +43,15 @@ export const WeeklyCalendar = () => {
           style={styles.calendarView}
           scrollEnabled={true}
         >
-          {days.map((day) => (
+          {hours.map((hour) => (
             <View style={styles.cardsContainer}>
               <View style={styles.row}>
                 <View style={styles.label}>
-                  <Text style={styles.span}>{day}</Text>
+                  <Text>{hour}</Text>
                 </View>
-                <ScrollView horizontal={true} style={styles.content}>
+                <View>
                   <Text>Item</Text>
-                </ScrollView>
+                </View>
               </View>
             </View>
           ))}
@@ -59,9 +62,6 @@ export const WeeklyCalendar = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   toolBarInstance: {
     borderColor: '#aad6e7',
     width: 'unset',
@@ -81,36 +81,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#229fd0',
   },
   cardsContainer: {
-    //marginTop: SIZES.medium,
+    marginTop: SIZES.medium,
   },
   calendarView: {
-    //padding: 10,
+    padding: 10,
     width: 500,
   },
   row: {
     flexDirection: "row",
     //justifyContent: "space-between",
     //alignItems: "baseline",
-    borderTopWidth: 0.5,
-    borderBottomWidth: 0.5,
-    borderColor: "#aad6e7",
   },
   label: {
-    //paddingLeft: 10,
-    width: 50,
-    height: 100,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRightWidth: 0.5,
-    borderColor: "#aad6e7",
-  },
-  content: {
-    //justifyContent: "center",
-    padding: 10,
-  },
-  span: {
-    fontWeight: '500',
-    //fontSize: 16,
-    color: "#229FD0",
-  },
+    width: "10%",
+  }
 });

@@ -7,9 +7,9 @@ export const SixteenPopupUser = ({ color = "black"}) => {
   return (
     <Svg
       fill="none"
-      height="35"
+      height="30"
       viewBox="0 0 34 35"
-      width="34"
+      width="30"
       xmlns="http://www.w3.org/2000/svg"
     >
       <G className="g" clipPath="url(#clip0_4_43)">

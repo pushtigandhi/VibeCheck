@@ -1,9 +1,9 @@
 import React from "react";
-import { Button, Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function HomeNavigation({ size }) {
+export default function HomeNavigation({ size, iconColor }) {
   const navigation = useNavigation();
 
   return (
@@ -12,19 +12,22 @@ export default function HomeNavigation({ size }) {
     >
       {/* Placeholders */}
       <TouchableOpacity onPress={() => navigation.navigate("Directory")} style={styles.iconRoot} >
-        <Ionicons name={"list-circle"} size={size} color={"#80adad"} style={styles.group}/>
+        <Ionicons name={"list-outline"} size={size} color={iconColor} style={styles.icon}/>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate("ContactList")} style={styles.iconRoot} >
-        <Ionicons name={"people-circle"} size={size} color={"#80adad"} style={styles.group}/>
+        <Ionicons name={"people-outline"} size={size} color={iconColor} style={styles.icon}/>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate("VibeCheck")} style={styles.iconRoot} >
-        <Ionicons name={"fitness-outline"} size={size} color={"#80adad"} style={styles.group}/>
+      {/* <TouchableOpacity onPress={() => navigation.navigate("VibeCheck")} style={styles.iconRoot} >
+        <Ionicons name={"fitness-outline"} size={size} color={iconColor} style={styles.icon}/>
+      </TouchableOpacity> */}
+      <TouchableOpacity onPress={() => navigation.navigate("Home")} style={styles.iconRoot} >
+        <Ionicons name={"home-outline"} size={size} color={iconColor} style={styles.icon}/>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate({name: "Profile", params: {isOwnProfile: true}})} style={styles.iconRoot}>
-        <Ionicons name={"person-circle"} size={size} color={"#80adad"} style={styles.group}/>
+        <Ionicons name={"folder-open-outline"} size={size} color={iconColor} style={styles.icon}/>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate("New")} style={styles.iconRoot} >
-        <Ionicons name={"add-circle"} size={size} color={"#80adad"} style={styles.group}/>
+        <Ionicons name={"add-outline"} size={size} color={iconColor} style={styles.icon}/>
       </TouchableOpacity>
     </View>
   );
@@ -34,10 +37,18 @@ const styles = StyleSheet.create({
   root: {
     flexDirection: "row",
     justifyContent: "space-around",
+    width: '100%',
+    height: 90,
+    position: 'absolute',
+    bottom: 0,
+    paddingTop: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
   },
   iconRoot: {
     alignItems: "center",
-    justifyContent: "center",
     display: "flex",
+  },
+  icon: {
+
   }
 });

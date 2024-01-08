@@ -10,6 +10,8 @@ import { SidebarToggle } from "./SidebarToggle";
 import { Typography } from "./Typography";
 import { SolidSearch } from "../assets/icons/SolidSearch";
 import { View, TouchableOpacity, StyleSheet, Text, TextInput } from 'react-native';
+import { Ionicons } from "@expo/vector-icons";
+import { COLORS } from "../constants";
 //import "./style.css";
 
 export const ToolBar = ({
@@ -35,7 +37,11 @@ export const ToolBar = ({
         >
 
       <View style={[styles.row, styles.leftContent]}>
-        <SidebarToggle active={false} buttonIcon={sidebarToggleButtonIcon} style={styles.instanceNode2} />
+        <TouchableOpacity>
+          <Ionicons name={"reorder-three-outline"} size={30} style={styles.icon} />
+
+          {/* <SidebarToggle active={false} buttonIcon={sidebarToggleButtonIcon} style={styles.instanceNode2} /> */}
+        </TouchableOpacity>
         {["day", "month", "week"].includes(property1) && (
           <View style={[styles.row, styles.toolBar.divWrapper]}>
             {/* <View style={styles.toolBar.typography2}> */}
@@ -62,7 +68,7 @@ export const ToolBar = ({
           />
         )}
 
-        <CalendarButtons
+        {/* <CalendarButtons
           //className={`${!mobile && "instance-node-2"}`}
           property1={mobile ? "tertiary" : "secondary"}
           hover={false}
@@ -83,7 +89,10 @@ export const ToolBar = ({
               ? "Year"
               : undefined
           }
-        />
+        /> */}
+
+        <Ionicons name={"calendar-outline"} size={20} style={styles.icon} />
+
       </View>
       <View style={[styles.row, styles.rightContent]}>
         <Search
@@ -91,7 +100,7 @@ export const ToolBar = ({
           //searchButtonColor={searchIconColor}
           property1="default"
         />
-        <CalendarButtons
+        {/* <CalendarButtons
           //className={calendarButtonsClass}
 
           disabled={false}
@@ -105,7 +114,10 @@ export const ToolBar = ({
           property1="primary"
           text={mobile ? false : true}
           typographyText={!mobile ? "Add event" : undefined}
-        />
+        /> */}
+        <TouchableOpacity style={styles.addButtonIcon} >
+          <Ionicons name={"add-circle"} size={20} style={styles.iconInverted} />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -133,7 +145,7 @@ const styles = StyleSheet.create({
       justifyContent: 'space-between',
       //position: 'relative',
       width:"100%",
-      height: 30,
+      height: 60,
     },
     toolBarInstance: {
         borderColor: '#aad6e7',
@@ -204,5 +216,23 @@ const styles = StyleSheet.create({
     },
     mobileTrueTypography2: {
       fontSize: 16,
+    },
+    addButtonIcon: {
+      height: 30,
+      width: 30,
+      borderRadius: '5%',
+      backgroundColor: COLORS({opacity:1}).primary,
+      margin: 5,
+      alignContent: 'center',
+      justifyContent: 'center',
+      left:-10,
+    },
+    icon: {
+      color: COLORS({opacity:1}).primary,
+      margin: 5,
+    },
+    iconInverted: {
+      color: COLORS({opacity:1}).white,
+      margin: 5,
     },
   });

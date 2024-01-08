@@ -1,14 +1,14 @@
 import React from "react";
-import { ToolBar } from "../components/Toolbar";
-import { SolidBars } from "../assets/icons/SolidBars";
-import { CalendarWeek } from "../assets/icons/CalendarWeek";
-import { PlusCircle } from "../assets/icons/PlusCircle";
+import { ToolBar } from "../../components/Toolbar";
+import { SolidBars } from "../../assets/icons/SolidBars";
+import { CalendarWeek } from "../../assets/icons/CalendarWeek";
+import { PlusCircle } from "../../assets/icons/PlusCircle";
 //import { CalendarDaySmall } from "../../components/CalendarDaySmall";
-import { Spacer } from "../utils/index";
-import { SmallCalendar } from "../components/SmallCalendar";
+import { Spacer } from "../../utils/index";
+import { SmallCalendar } from "../../components/SmallCalendar";
 import {Calendar, LocaleConfig} from 'react-native-calendars';
-import { SIZES } from "../constants";
-import { Sidebar } from "./cards/Sidebar";
+import { COLORS, SIZES } from "../../constants";
+import { Sidebar } from "../cards/Sidebar";
 
 import { View, StyleSheet, Text, ScrollView } from 'react-native';
 
@@ -50,7 +50,7 @@ export const MonthlyCalendar = ({month, startDay}) => {
         //className={styles.toolBarInstance}
         mobile={true}
         override={<PlusCircle color="white" />}
-        property1="week"
+        property1="month"
         searchIconColor="white"
         //searchPropertyDefaultClassName="tool-bar-2"
         sidebarToggleButtonIcon={<SolidBars color="#229FD0" />}
@@ -130,12 +130,13 @@ const styles = StyleSheet.create({
   label: {
     paddingLeft: 10,
     width: 100,
-    height: 25,
+    height: 30,
     alignItems: "center",
     justifyContent: "center",
     borderRightWidth: 0.5,
-    borderColor: "#aad6e7",
+    borderColor: COLORS({ opacity: 1 }).white,
     borderBottomWidth: 0.5,
+    backgroundColor: COLORS({ opacity: 0.6 }).primary,
   },
   content: {
     alignContent: "center",
@@ -145,7 +146,7 @@ const styles = StyleSheet.create({
   span: {
     fontWeight: '500',
     //fontSize: 16,
-    color: "#229FD0",
+    color: COLORS({ opacity: 1 }).lightWhite,
   },
   slot: {
     height: 110,
