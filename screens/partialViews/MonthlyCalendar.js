@@ -76,6 +76,9 @@ export const MonthlyCalendar = ({month, startDay}) => {
                 {daysOfMonth.map(day => (
                 <View key={day} style={styles.slot}>
                     <Text style={{color: "#229FD0"}}>{day}</Text>
+                    <View style={styles.dayCardContainer}>
+                      <Text style={styles.title}>title</Text>
+                    </View> 
                 </View>
                 
                 ))}
@@ -157,5 +160,23 @@ const styles = StyleSheet.create({
     borderRightWidth: 0.5,
     borderColor: "#aad6e7",
     borderBottomWidth: 0.5,
+  },
+  dayCardContainer: {
+    height: 25,
+    width: 50,
+    padding: 2,
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: COLORS({opacity: 1}).tertiary,
+    borderRadius: SIZES.xSmall,
+    //...SHADOWS.medium,
+    shadowColor: COLORS({opacity:1}).indigo,
+  },
+  time: {
+      color: COLORS({opacity: 1}).primary,
+  },
+  title: {
+      fontSize: SIZES.xSmall,
+      color: COLORS({opacity: 1}).primary,
   },
 });

@@ -7,7 +7,7 @@ import { PlusCircle } from "../../assets/icons/PlusCircle";
 import { Spacer } from "../../utils/index";
 import { SmallCalendar } from "../../components/SmallCalendar";
 import {Calendar, LocaleConfig} from 'react-native-calendars';
-import { SIZES } from "../../constants";
+import { SIZES, COLORS } from "../../constants";
 import { Sidebar } from "../cards/Sidebar";
 import { TaskCard } from "../cards/items/TaskCard";
 
@@ -47,11 +47,11 @@ export const DailyCalendar = () => {
             <View style={styles.cardsContainer}>
               <View style={styles.row}>
                 <View style={styles.label}>
-                  <Text>{hour}</Text>
+                  <Text style={styles.time}>{hour}</Text>
                 </View>
-                <View>
-                  <Text>Item</Text>
-                </View>
+                <View style={styles.dayCardContainer}>
+                    <Text style={styles.title}>title</Text>
+                </View> 
               </View>
             </View>
           ))}
@@ -90,9 +90,27 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     //justifyContent: "space-between",
-    //alignItems: "baseline",
+    alignItems: "center",
   },
   label: {
     width: "10%",
-  }
+  },
+  dayCardContainer: {
+    height: 50,
+    width: 150,
+    padding: 10,
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: COLORS({opacity: 1}).tertiary,
+    borderRadius: SIZES.medium,
+    //...SHADOWS.medium,
+    shadowColor: COLORS({opacity:1}).indigo,
+  },
+  time: {
+      color: COLORS({opacity: 1}).primary,
+  },
+  title: {
+      fontSize: SIZES.medium,
+      color: COLORS({opacity: 1}).primary,
+  },
 });

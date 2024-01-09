@@ -8,7 +8,7 @@ const COLORS = ({ opacity = 1 }) => ({
 
     lavendar: `rgba(164, 176, 245, ${opacity})`,
     yellow: `rgba(241, 200, 131, ${opacity})`,
-    jade: `rgba(139, 190, 178, ${opacity})`,
+    lightGreen: `rgba(139, 190, 178, ${opacity})`,
     lightRed: `rgba(236, 134, 134, ${opacity})`,
     
     gray: `rgba(131, 130, 154, ${opacity})`,

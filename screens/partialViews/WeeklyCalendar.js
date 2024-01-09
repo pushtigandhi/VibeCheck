@@ -7,7 +7,7 @@ import { PlusCircle } from "../../assets/icons/PlusCircle";
 import { Spacer } from "../../utils/index";
 import { SmallCalendar } from "../../components/SmallCalendar";
 import {Calendar, LocaleConfig} from 'react-native-calendars';
-import { SIZES } from "../../constants";
+import { SIZES, COLORS } from "../../constants";
 import { Sidebar } from "../cards/Sidebar";
 
 import { View, StyleSheet, Text, ScrollView } from 'react-native';
@@ -47,7 +47,9 @@ export const WeeklyCalendar = () => {
                   <Text style={styles.span}>{day}</Text>
                 </View>
                 <ScrollView horizontal={true} style={styles.content}>
-                  <Text>Item</Text>
+                  <View style={styles.dayCardContainer}>
+                      <Text style={styles.title}>title</Text>
+                  </View> 
                 </ScrollView>
               </View>
             </View>
@@ -112,5 +114,23 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     //fontSize: 16,
     color: "#229FD0",
+  },
+  dayCardContainer: {
+    height: 50,
+    width: 150,
+    padding: 10,
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: COLORS({opacity: 1}).tertiary,
+    borderRadius: SIZES.medium,
+    //...SHADOWS.medium,
+    shadowColor: COLORS({opacity:1}).indigo,
+  },
+  time: {
+      color: COLORS({opacity: 1}).primary,
+  },
+  title: {
+      fontSize: SIZES.medium,
+      color: COLORS({opacity: 1}).primary,
   },
 });
