@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     },
     div: {
       color: 'var(--text)',
-      fontFamily: 'Poppins, Helvetica',
+      //fontFamily: 'Poppins, Helvetica',
       letterSpacing: 0,
       lineHeight: 'normal',
       marginTop: -1,

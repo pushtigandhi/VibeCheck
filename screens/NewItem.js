@@ -6,6 +6,7 @@ import TaskCard from "./cards/items/TaskCard";
 import { ExpandableView } from "../utils";
 import { Ionicons } from "@expo/vector-icons";
 import Layout from "../_layout";
+import { GETitems, POSTcreateItem, BASE_URL } from "../API";
 
 const TitleView = ({  onPress, isExpanded }) => {
     <TouchableOpacity onPress={onPress}>
@@ -40,7 +41,29 @@ const generateData = (length) => {
 const NewItem = () => {
     //const [data, setData] = useState(generateData(1)); // Adjust the parameter as needed
     const [isExpanded, setIsExpanded] = useState(false);
+    const [items, setItems] = useState([]);
+    const [title, setTitle] = useState("");
     //console.log(data);
+    
+    function createPost() {
+      const item = {
+        title: title,
+      };
+  
+      (async () => {
+        POSTcreateItem({
+          ...item,
+          _id: null
+        }).then((newItem) => {
+          if (!!newItem) {
+            alert("Success!");
+            goHome();
+          } else {
+            alert("Failed.");
+          }
+        });
+      })()
+    }
 
     const handlePress = (itemId) => {
         console.log("handle press " + itemId);

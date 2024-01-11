@@ -1,15 +1,8 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { SolidBars } from "../assets/icons/SolidBars";
-import { CalendarWeek } from "../assets/icons/CalendarWeek";
-import { ChevronDown } from "../assets/icons/ChevronDown";
-import { PlusCircle } from "../assets/icons/PlusCircle";
-import { CalendarButtons } from "./CalendarButtons";
 import { Search } from "./Search";
-import { SidebarToggle } from "./SidebarToggle";
 import { Typography } from "./Typography";
-import { SolidSearch } from "../assets/icons/SolidSearch";
-import { View, TouchableOpacity, StyleSheet, Text, TextInput } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Text, TextInput, RefreshControl } from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "../constants";
 //import "./style.css";
@@ -17,14 +10,8 @@ import { COLORS } from "../constants";
 export const ToolBar = ({
   property1,
   mobile,
-  //className,
-  sidebarToggleButtonIcon = <SolidBars color="#333333" />,
-  //typographyClassName,
-  calendarButtonsIcon = <CalendarWeek color="#0C41FF" />,
-  //searchPropertyDefaultClassName,
-  searchIconColor = "#6A778B",
-  addButtonIcon = <PlusCircle color="#229FD0" />,
-  //calendarButtonsClass,
+  onRefresh,
+  showSidebar = false,
 }) => {
   return (
     <View 
@@ -37,10 +24,16 @@ export const ToolBar = ({
         >
 
       <View style={[styles.row, styles.leftContent]}>
-        <TouchableOpacity>
-          <Ionicons name={"reorder-three-outline"} size={30} style={styles.icon} />
-
-          {/* <SidebarToggle active={false} buttonIcon={sidebarToggleButtonIcon} style={styles.instanceNode2} /> */}
+        <TouchableOpacity 
+          onPress={() => {
+            onRefresh();
+          }}
+        >
+          {showSidebar ? 
+            <Ionicons name={"close-circle-sharp"} size={30} style={styles.icon} />
+            :
+            <Ionicons name={"reorder-three-outline"} size={30} style={styles.icon} /> 
+          }
         </TouchableOpacity>
         {["day", "month", "week"].includes(property1) && (
           <View style={[styles.row, styles.toolBar.divWrapper]}>
@@ -68,53 +61,17 @@ export const ToolBar = ({
           />
         )}
 
-        {/* <CalendarButtons
-          //className={`${!mobile && "instance-node-2"}`}
-          property1={mobile ? "tertiary" : "secondary"}
-          hover={false}
-          disabled={false}
-          text={mobile ? false : true}
-          //focused={false}
-          icon={true}
-          icon1={!mobile ? <ChevronDown style={styles.iconFontAwesome2} /> : undefined}
-          override={calendarButtonsIcon}
-          typographyText={
-            !mobile && property1 === "day"
-              ? "Day"
-              : !mobile && property1 === "week"
-              ? "Week"
-              : property1 === "month" && !mobile
-              ? "Month"
-              : !mobile && property1 === "year"
-              ? "Year"
-              : undefined
-          }
-        /> */}
-
         <Ionicons name={"calendar-outline"} size={20} style={styles.icon} />
 
       </View>
       <View style={[styles.row, styles.rightContent]}>
-        <Search
-          //className={searchPropertyDefaultClassName}
-          //searchButtonColor={searchIconColor}
-          property1="default"
-        />
-        {/* <CalendarButtons
-          //className={calendarButtonsClass}
-
-          disabled={false}
-          focused={false}
-          hover={false}
-          icon={true}
-          icon1={
-            !mobile ? <PlusCircle style={styles.iconFontAwesome2} color="#aad6e7" /> : undefined
-          }
-          override={addButtonIcon}
-          property1="primary"
-          text={mobile ? false : true}
-          typographyText={!mobile ? "Add event" : undefined}
-        /> */}
+        <TouchableOpacity>
+          <Search
+            //className={searchPropertyDefaultClassName}
+            //searchButtonColor={searchIconColor}
+            property1="default"
+          />
+        </TouchableOpacity>
         <TouchableOpacity style={styles.addButtonIcon} >
           <Ionicons name={"add-circle"} size={20} style={styles.iconInverted} />
         </TouchableOpacity>
@@ -168,7 +125,7 @@ const styles = StyleSheet.create({
     },
     typography2: {
       color: '#333333',
-      fontFamily: 'Poppins, Helvetica',
+      //fontFamily: 'Poppins, Helvetica',
       fontWeight: '400',
       letterSpacing: 0,
       lineHeight: 'normal',

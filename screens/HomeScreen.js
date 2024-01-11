@@ -1,18 +1,22 @@
 import React from "react";
-import { View, TouchableOpacity, Text, TextInput, RefreshControl } from 'react-native';
+import { View, TouchableOpacity, Text, TextInput, RefreshControl, SafeAreaView } from 'react-native';
 import { StyleSheet } from "react-native";
 import { COLORS, FONT, SIZES, SHADOWS } from "../constants";
 import HomeNavigation from "./HomeNavigation";
 
 import { Spacer } from '../utils';
 import { SixteenPopupUser } from "../assets/icons/SixteenPopupUser"
+import { CalendarWeek } from "../assets/icons/CalendarWeek";
+import { PlusCircle } from "../assets/icons/PlusCircle";
+import { SolidBars } from "../assets/icons/SolidBars";
+
 import { DailyCalendar } from "./partialViews/DailyCalendar";
 import { WeeklyCalendar } from "./partialViews/WeeklyCalendar";
 import { MonthlyCalendar } from "./partialViews/MonthlyCalendar";
 import { useNavigation } from "@react-navigation/native";
+import { ToolBar } from "../components/Toolbar";
 
 import { Ionicons } from "@expo/vector-icons";
-import { CalendarView } from "./partialViews/CalendarView";
 import { useState, useEffect } from "react";
 
 export default function HomeScreen () {
@@ -20,24 +24,31 @@ export default function HomeScreen () {
     const mobile = true;
     const navigation = useNavigation();
 
-    const colors = COLORS({opacity: 1});
-
-    const isDayView = true;
-    const isWeekView = false;
-    const isMonthView = false;
-
     const [state, setState] = useState("day");
 
     const [refreshing, setRefreshing] = useState(false);
+    const [showSidebar, toggleShowSidebar] = useState(false);
+
 
     const onRefresh = React.useCallback(() => {
         //setRefreshing(false);
     });
 
+    const toggleSidebar = React.useCallback(() => {
+        setRefreshing(true);
+        if (!showSidebar) { 
+            toggleShowSidebar(true);
+            setRefreshing(false);
+        }
+        else { 
+            toggleShowSidebar(false);
+            setRefreshing(false);
+        }
+    });
+
     return (
-        <View style={styles.screen}>
+        <SafeAreaView style={styles.screen}>
             <View style={styles.container}>
-                <Spacer size={40} />
                 <View style={styles.row}>
                     <View >
                     <TouchableOpacity style={styles.profileButton}>
@@ -54,14 +65,20 @@ export default function HomeScreen () {
                         onRefresh={onRefresh}
                     />
                 }>
+                    <ToolBar
+                        mobile={true}
+                        property1={state}
+                        onRefresh={toggleSidebar}
+                        showSidebar={showSidebar}
+                    />
                     {state === 'day' && (
-                        <DailyCalendar />
+                        <DailyCalendar showSidebar={showSidebar} />
                     )}
                     {state === 'week' && (
-                        <WeeklyCalendar />
+                        <WeeklyCalendar showSidebar={showSidebar} />
                     )}
                     {state === 'month' && (
-                        <MonthlyCalendar month={0} startDay={0}/>
+                        <MonthlyCalendar month={0} startDay={0} showSidebar={showSidebar} />
                     )}
                 </View>
                 <View style={styles.iconRoot}>
@@ -91,9 +108,9 @@ export default function HomeScreen () {
                     </TouchableOpacity>
                 </View>
             </View>
-            <HomeNavigation size={30} iconColor={"#229FD0"}/>
+            <HomeNavigation size={30} iconColor={COLORS({opacity:1}).darkBlue}/>
 
-        </View>
+        </SafeAreaView>
     );
 };
 
@@ -117,7 +134,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#aad6e7',
         borderRadius: 6,
-        height: "75%",
+        height: "80%",
         width: "auto",
         overflow:"hidden",
     },
@@ -146,7 +163,6 @@ const styles = StyleSheet.create({
         width: 250,
         fontSize: 20,
         color: 'white',
-        backgroundColor: COLORS({opacity:1}).lightWhite,
     },
     row: {
         flexDirection: "row",

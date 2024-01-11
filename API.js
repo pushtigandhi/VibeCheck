@@ -82,3 +82,18 @@ export async function POSTcreateItem(post) {
         return null;
     }
 }
+
+// export async function DELETEcreateItem(post) {
+//     const response = await fetchWithAuthJSON(`${BASE_URL}/items`, {
+//         method: 'DELETE',
+//         body: JSON.stringify(post),
+//     });
+
+//     if (response.status === 201) {
+//         // good
+//         const body = await response.json();
+//         return body.item;
+//     } else {
+//         return null;
+//     }
+// }

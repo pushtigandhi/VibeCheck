@@ -5,14 +5,13 @@ import { CalendarWeek } from "../../assets/icons/CalendarWeek";
 import { PlusCircle } from "../../assets/icons/PlusCircle";
 //import { CalendarDaySmall } from "../../components/CalendarDaySmall";
 import { Spacer } from "../../utils/index";
-import { SmallCalendar } from "../../components/SmallCalendar";
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import { SIZES, COLORS } from "../../constants";
-import { Sidebar } from "../cards/Sidebar";
+import { Sidebar } from "../../components/Sidebar";
 
 import { View, StyleSheet, Text, ScrollView } from 'react-native';
 
-export const WeeklyCalendar = () => {
+export const WeeklyCalendar = ({showSidebar = false}) => {
 
   // const [items, setItems] = useState([]);
   // const [title, setTitle] = useState("");
@@ -21,20 +20,10 @@ export const WeeklyCalendar = () => {
   
   return (
     <View style={styles.container}>
-        <ToolBar
-        calendarButtonsIcon={<CalendarWeek color="#229FD0" />}
-        //calendarButtonsClass="tool-bar-3"
-        //className={styles.toolBarInstance}
-        mobile={true}
-        override={<PlusCircle color="white" />}
-        property1="week"
-        searchIconColor="white"
-        //searchPropertyDefaultClassName="tool-bar-2"
-        sidebarToggleButtonIcon={<SolidBars color="#229FD0" />}
-        //typographyClassName="design-component-instance-node"
-        />
 
-        {/* <Sidebar /> */}
+        {showSidebar && (
+          <Sidebar />
+        )}
 
         <ScrollView 
           style={styles.calendarView}
