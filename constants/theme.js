@@ -4,7 +4,7 @@ const COLORS = ({ opacity = 1 }) => ({
     tertiary: `rgba(170, 214, 231, ${opacity})`,
 
     navy: `rgba(43, 96, 197, ${opacity})`,
-    darkBlue: `rgba(56, 78, 119, ${opacity})`,
+    darkBlue: `rgba(35, 73, 146, ${opacity})`,
     indigo: `rgba(13, 6, 48, ${opacity})`,
 
     lavendar: `rgba(164, 176, 245, ${opacity})`,

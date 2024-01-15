@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     title:{
         fontSize: SIZES.xLarge,
         //fontFamily: FONT.regular,
-        color: COLORS({opacity:0.9}).navy,
+        color: COLORS({opacity:0.9}).darkBlue,
         padding: SIZES.medium,
         margin: SIZES.medium,
         borderWidth: 1,
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     description:{
         fontSize: SIZES.medium,
         //fontFamily: FONT.regular,
-        color: COLORS({opacity:0.9}).navy,
+        color: COLORS({opacity:0.9}).darkBlue,
         padding: SIZES.medium,
         marginHorizontal: SIZES.medium,
         borderWidth: 1,

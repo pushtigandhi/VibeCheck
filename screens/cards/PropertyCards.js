@@ -40,7 +40,7 @@ export const PropertyCard = () => {
         <Text style={styles.label}>Properties</Text>
         <Ionicons name={"information-circle-outline"} size={size} style={styles.icon}/> 
       </View>
-
+      <ScrollView style={styles.propertiesContainer}>
       <SingleSelectDropdown data={data} placeholder="Folder" icon={<Ionicons name={"folder-open-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
 
       {hasSections && (
@@ -178,7 +178,7 @@ export const PropertyCard = () => {
           <Text style={[styles.property, repeat === 'MONTHLY' ? styles.selectedText:styles.unselectedText]}>Monthly</Text>
         </TouchableOpacity>
       </View>
-
+    </ScrollView>
     </SafeAreaView>
   )
 };
@@ -190,6 +190,9 @@ const styles = StyleSheet.create({
     borderRadius: SIZES.medium/2,
     borderWidth: 1,
     borderColor: COLORS({opacity:1}).navy,
+  },
+  propertiesContainer: {
+    height: '70%',
   },
   row: {
     flexDirection: "row",

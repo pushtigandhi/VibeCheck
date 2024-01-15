@@ -3,14 +3,12 @@ import { Platform } from 'react-native';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
 
-export const BASE_URL = 'http://172.27.72.214:3000/api/v0';
+export const BASE_URL = 'http://172.27.192.128:3000/api/v0';
 
 const headers = {
     'Content-Type': 'application/json',
-  };
+};
   
-
-
 export async function fetchWithAuth(url, options = {}) {
     // Get JWT from storage
     try {
@@ -43,7 +41,7 @@ export async function fetchWithAuth(url, options = {}) {
 
 export async function GETitems() {
 
-    const ITEMS_URL = `${BASE_URL}/items`;
+    const ITEMS_URL = `${BASE_URL}/items/?itemType=item`;
     console.log(ITEMS_URL);
     const response = await fetch(ITEMS_URL, {
         method: 'GET',

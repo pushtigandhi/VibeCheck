@@ -6,9 +6,11 @@ import ContactList from './screens/ContactList';
 import ProfileScreen from './screens/ProfileScreen';
 import NewItem from './screens/NewItem';
 import Directory from './screens/Directory';
+import DirectoryCard from './screens/cards/DirectoryCard';
 import VibeCheck from './screens/VibeCheck';
 import { EmptyItemCard } from './screens/cards/EmptyItemCard';
 import { useFonts } from 'expo-font';
+import DirectoryList from './screens/DirectoryList';
 
 const Stack = createNativeStackNavigator();
 

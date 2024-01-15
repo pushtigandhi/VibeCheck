@@ -108,7 +108,7 @@ export default function HomeScreen () {
                     </TouchableOpacity>
                 </View>
             </View>
-            <HomeNavigation size={30} iconColor={COLORS({opacity:1}).darkBlue}/>
+            <HomeNavigation size={30} iconColor={COLORS({opacity:1}).primary}/>
 
         </SafeAreaView>
     );

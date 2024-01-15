@@ -5,7 +5,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import PhoneInput from 'react-native-phone-input';
 import { COLORS, SHADOWS, FONT, SIZES } from "../constants";
 
-const ExpandableView = ({ expanded = false, view, vh = 200 }) => {
+const ExpandableView = ({ expanded = false, view, params = {}, vh = 200 }) => {
   const [height] = useState(new Animated.Value(0));
 
   useEffect(() => {
@@ -20,8 +20,8 @@ const ExpandableView = ({ expanded = false, view, vh = 200 }) => {
     <Animated.View
       style={{ height }}
     >
-    <View style={styles.infoContainer}>
-     {view()}
+    <View>
+     {view(params)}
     </View>
     </Animated.View>
   );

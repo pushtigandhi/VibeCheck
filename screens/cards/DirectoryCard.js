@@ -1,107 +1,110 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image,
-        StyleSheet, Animated, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity,
+        StyleSheet, Animated, FlatList, ScrollView } from 'react-native';
 
 import { COLORS, SHADOWS, FONT, SIZES } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
+import { Spacer } from "../../utils";
+import { ExpandableView } from "../../utils";
 
-const ExpandableView = ({ item, expanded = false }) => {
-  console.log(item);
-  // const {title} = item;
+const expandFolder = ({data}) => {
   const [height] = useState(new Animated.Value(0));
 
   useEffect(() => {
     Animated.timing(height, {
-      toValue: expanded ? 200 : 0,
+      toValue: 200,
       duration: 250,
       useNativeDriver: false
     }).start();
-  }, [expanded, height]);
+  }, [height]);
 
   return (
     <Animated.View
-      style={{ height }}
-    >
-    <View style={styles.infoContainer}>
-    <Text>{"NA"}</Text>
-      {/* <FlatList 
-        data={[1,2,3,4,5]}
-        renderItem={({item}) => (
-        <Text>{item}</Text>
-        )}
-        keyExtractor={() => {}}
-        contentContainerStyle={{ columnGap: SIZES.medium }}
-      /> */}
-      </View>
+    style={{ height }}
+  >
+   <ScrollView style={styles.expandedContainer}>
+      {data.map(item => (
+        <TouchableOpacity style={styles.sectionContainer} key={item._id + "root"}>
+            <Text style={styles.section} numberOfLines={1}>{item}</Text>
+          </TouchableOpacity>
+      ))}
+    </ScrollView>
     </Animated.View>
   );
-
 };
-const DirectoryCard = () => {
+
+const DirectoryCard = ({item, data}) => {
     const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <TouchableOpacity
-       onPress={() => {
-          setIsExpanded(!isExpanded);
-        }}
-    >
-    <View style={styles.container}>
-    <View style={styles.column}>
-      <TouchableOpacity style={styles.photoContainer}>
-      <Ionicons name={"list-circle"} size={40} color={"#80adad"} style={styles.group}/>
+    <View style={styles.cardContainer}>
+      <TouchableOpacity
+        onPress={() => {
+            setIsExpanded(!isExpanded);
+          }}
+          style={styles.titleContainer}
+      >
+        <View style={styles.row}> 
+          <Ionicons name={"list-circle"} size={30} style={styles.icon}/>
+          <Text style={styles.title} numberOfLines={1}>{item}</Text>
+        </View>
       </TouchableOpacity>
-      
-      <View style={styles.textContainer}>
-         <Text style={styles.title} numberOfLines={1}> Name </Text>
-      </View>
-      </View>
-    <ExpandableView expanded={isExpanded} />
-
+      {isExpanded && (
+        <ExpandableView expanded={true} view={expandFolder} params={{ data: data }} />
+      )}
     </View>
-        
-    </TouchableOpacity>
   )
-}
+};
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: "space-between",
-        //alignItems: "center",
-        padding: SIZES.medium,
-        borderRadius: SIZES.xLarge,
-        backgroundColor: "#FFF",
-        ...SHADOWS.medium,
-        shadowColor: COLORS.white,
-        marginBottom: SIZES.xSmall,
-      },
-    photoContainer: {
-        width: 50,
-        height: 50,
-        backgroundColor: COLORS.white,
-        borderRadius: SIZES.medium,
-        justifyContent: "center",
-        alignItems: "center",
+  cardContainer: {
+    width: '90%',
+    margin: SIZES.xSmall,
+    backgroundColor: "#FFF",
+    borderRadius: SIZES.xLarge,
+    ...SHADOWS.medium,
+    shadowColor: COLORS({opacity:1}).indigo,
+  },
+  titleContainer: {
+    width: '100%',
+    padding: SIZES.medium,
+    borderColor: COLORS({opacity:0.5}).darkBlue,
+    borderBottomWidth: 1,
+    borderBottomLeftRadius: SIZES.xLarge,
+    borderBottomRightRadius: SIZES.xLarge,
+  },
+  sectionContainer: {
+    margin: SIZES.xSmall,
+    padding: SIZES.xSmall,
+    backgroundColor: COLORS({opacity:0.5}).darkBlue,
+    borderRadius: SIZES.small,
+    ...SHADOWS.medium,
+    shadowColor: COLORS({opacity:1}).indigo,
   },
   title: {
+    fontSize: SIZES.large,
+    fontFamily: FONT.regular,
+    color: COLORS({opacity:1}).darkBlue,
+  },
+  section: {
     fontSize: SIZES.medium,
     fontFamily: FONT.regular,
-    color:COLORS.primary,
-    marginTop: SIZES.small / 1.5,
+    color: COLORS({opacity:1}).darkBlue,
   },
-  infoContainer: {
-    padding: SIZES.large,
-  },
-  textContainer: {
+  expandedContainer: {
+    paddingBottom: SIZES.medium,
+    paddingHorizontal: SIZES.medium,
     flex: 1,
-    marginHorizontal: SIZES.medium,
-    justifyContent: "center",
+    overflow: 'scroll',
   },
-  column: {
+  row: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    //alignItems: "baseline",
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
+  icon: {
+    marginRight: SIZES.xxSmall,
+    color: COLORS({opacity:0.8}).darkBlue,
   },
 });
 

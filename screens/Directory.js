@@ -1,19 +1,20 @@
-import { View, FlatList, StyleSheet, ScrollView} from "react-native";
+import { SafeAreaView, View, FlatList, StyleSheet } from "react-native";
 import DirectoryCard from "./cards/DirectoryCard";
 import { COLORS, FONT, SIZES } from "../constants";
 import { GETitems, POSTcreateItem, BASE_URL } from "../API";
 import { Ionicons } from "@expo/vector-icons";
 import { useState, useEffect } from "react";
+import HomeNavigation from "./HomeNavigation";
 
 
 export default function Directory ({scrollEnabled = true}) {
   const [items, setItems] = useState([]);
   const [title, setTitle] = useState("");
+  const data = ["hello","world","i","have","arrived"];
 
-
-  function goHome() {
-    navigation.navigate('Home', { refresh: Math.random() });
-  }
+  // function goHome() {
+  //   navigation.navigate('Home', { refresh: Math.random() });
+  // }
 
   function createPost() {
     const item = {
@@ -52,48 +53,37 @@ export default function Directory ({scrollEnabled = true}) {
         alert(err.message)
     })
     
-}, []) // only run once on load
+  }, []) // only run once on load
 
+
+  const renderItem = ({ item }) => (
+    <View key={item._id + "root"} >
+        <DirectoryCard item={item} key={item._id} data={data} />
+    </View>
+  );
 
   return (
-  <View>
-
-  <ScrollView
-        style={styles.container}
+    <SafeAreaView style={styles.screen}>
+      <FlatList
         scrollEnabled={scrollEnabled}
-    >
-    {items.map((item) => (
-        <View style={styles.cardsContainer} key={item._id + "root"} >
-            <DirectoryCard item={item} key={item._id} />
-        </View>
-    ))}
-    <View style={{ height: 20 }} /> 
-    {/* for bottom padding */}
-  </ScrollView>
-  </View>
-
-  //    <View style={styles.container}>
-
-  // <View style={styles.cardsContainer}>
-  // <FlatList 
-  //       data={[1,2,3,4,5, 6, 7, 8]}
-  //       renderItem={() => (
-  //         <DirectoryCard />
-  //         )
-  //       }
-  //       keyExtractor={() => {}}
-  //       contentContainerStyle={{ columnGap: SIZES.medium }}
-        
-  //     />
-  // </View>
-  // </View> 
+        data={items}
+        renderItem={renderItem}
+      />
+      <HomeNavigation size={30} iconColor={COLORS({opacity:1}).primary}/>
+    </SafeAreaView>
   );
 };
+
 const styles = StyleSheet.create({
-    container: {
-        width: "100%",
-      },
-    cardsContainer: {
-        marginTop: SIZES.medium,
-      },
+  screen: {
+    height: '100%',
+    width: '100%',
+    backgroundColor: COLORS({opacity:1}).lightWhite,
+  },
+  container: {
+    width: "100%",
+  },
+  cardsContainer: {
+    marginTop: SIZES.medium,
+  },
 });
