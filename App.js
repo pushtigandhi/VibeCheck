@@ -2,7 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import HomeScreen from './screens/HomeScreen';
-import ContactList from './screens/ContactList';
+import Contacts from './screens/Contacts';
 import ProfileScreen from './screens/ProfileScreen';
 import NewItem from './screens/NewItem';
 import Directory from './screens/Directory';
@@ -10,7 +10,6 @@ import DirectoryCard from './screens/cards/DirectoryCard';
 import VibeCheck from './screens/VibeCheck';
 import { EmptyItemCard } from './screens/cards/EmptyItemCard';
 import { useFonts } from 'expo-font';
-import DirectoryList from './screens/DirectoryList';
 
 const Stack = createNativeStackNavigator();
 
@@ -25,7 +24,7 @@ export default function App() {
     <NavigationContainer>
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home" component={HomeScreen}/>
-      <Stack.Screen name="ContactList" component={ContactList}/>
+      <Stack.Screen name="Contacts" component={Contacts}/>
       <Stack.Screen name="Profile" component={ProfileScreen} />
       {
       //<Stack.Screen name="Profile" component={ProfileScreen} initialParams={{ isOwnProfile: false }} />

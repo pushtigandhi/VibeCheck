@@ -29,6 +29,7 @@ const COLORS = ({ opacity = 1 }) => ({
     xxSmall: 5,
     xSmall: 10,
     small: 12,
+    smedium: 14,
     medium: 16,
     large: 20,
     xLarge: 24,

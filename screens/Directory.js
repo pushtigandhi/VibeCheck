@@ -42,6 +42,8 @@ export default function Directory ({scrollEnabled = true}) {
           return items_;
       } catch (error) {
         console.log("error fetching items");
+        console.log(error);
+
           return [];
       }
   }

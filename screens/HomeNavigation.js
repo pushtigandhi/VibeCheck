@@ -14,7 +14,7 @@ export default function HomeNavigation({ size, iconColor }) {
       <TouchableOpacity onPress={() => navigation.navigate("Directory")} style={styles.iconRoot} >
         <Ionicons name={"list-outline"} size={size} color={iconColor} style={styles.icon}/>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate("ContactList")} style={styles.iconRoot} >
+      <TouchableOpacity onPress={() => navigation.navigate("Contacts")} style={styles.iconRoot} >
         <Ionicons name={"people-outline"} size={size} color={iconColor} style={styles.icon}/>
       </TouchableOpacity>
       {/* <TouchableOpacity onPress={() => navigation.navigate("VibeCheck")} style={styles.iconRoot} >

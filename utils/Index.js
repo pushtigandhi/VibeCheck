@@ -18,11 +18,9 @@ const ExpandableView = ({ expanded = false, view, params = {}, vh = 200 }) => {
 
   return (
     <Animated.View
-      style={{ height }}
+      style={{ height, overflow: 'hidden'}}
     >
-    <View>
      {view(params)}
-    </View>
     </Animated.View>
   );
 

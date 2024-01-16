@@ -95,3 +95,75 @@ export async function POSTcreateItem(post) {
 //         return null;
 //     }
 // }
+
+export async function GETcontacts() {
+
+    const CONTACTS_URL = `${BASE_URL}/contacts/`;
+
+    // const response = await fetch(CONTACTS_URL, {
+    //     method: 'GET',
+    // });
+    // try {
+    //     console.log(response.status);
+    //     if (response.status == 201) {
+    //         // good, return 
+    //         const body = await response.json();
+            const body = {
+                "contacts": [
+                    {
+                        "_id": "65a5ed99580cf7b9d816a691",
+                        "name": "test 1",
+                        "createdAt": "2024-01-16T02:44:41.662Z",
+                        "updatedAt": "2024-01-16T02:44:41.662Z",
+                        "__v": 0
+                    },
+                    {
+                        "_id": "65a5edd3580cf7b9d816a693",
+                        "name": "test 2",
+                        "createdAt": "2024-01-16T02:45:39.773Z",
+                        "updatedAt": "2024-01-16T02:45:39.773Z",
+                        "__v": 0
+                    },
+                    {
+                        "_id": "65a5fa6a2e7f19ab15d12f8a",
+                        "name": "test 3",
+                        "company": "friend",
+                        "createdAt": "2024-01-16T03:39:22.437Z",
+                        "updatedAt": "2024-01-16T03:39:22.437Z",
+                        "__v": 0
+                    },
+                    {
+                        "_id": "65a5fa8e2e7f19ab15d12f8c",
+                        "name": "test 4",
+                        "company": "family",
+                        "phoneNumber": 6575554444,
+                        "createdAt": "2024-01-16T03:39:58.960Z",
+                        "updatedAt": "2024-01-16T03:39:58.960Z",
+                        "__v": 0
+                    },
+                    {
+                        "_id": "65a5faac2e7f19ab15d12f8e",
+                        "name": "test 5",
+                        "company": "work",
+                        "phoneNumber": 6575554444,
+                        "notes": "final test",
+                        "createdAt": "2024-01-16T03:40:28.585Z",
+                        "updatedAt": "2024-01-16T03:40:28.585Z",
+                        "__v": 0
+                    }
+                ]
+            }
+            let contacts = body.contacts;
+            return contacts.map((contact) => {
+                return {
+                    ...contact,
+                }
+            });
+    //     } else {
+    //         return []
+    //     }
+    // } catch (err) {
+    //     alert(err.message);
+    //     return []
+    // }
+}
