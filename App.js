@@ -8,6 +8,7 @@ import NewItem from './screens/NewItem';
 import Directory from './screens/Directory';
 import DirectoryCard from './screens/cards/DirectoryCard';
 import VibeCheck from './screens/VibeCheck';
+import Backlog from './screens/Backlog';
 import { EmptyItemCard } from './screens/cards/EmptyItemCard';
 import { useFonts } from 'expo-font';
 
@@ -33,6 +34,7 @@ export default function App() {
       <Stack.Screen name="New" component={EmptyItemCard}/>
       <Stack.Screen name="Directory" component={Directory}/>
       <Stack.Screen name="VibeCheck" component={VibeCheck}/>
+      <Stack.Screen name="Backlog" component={Backlog}/>
     </Stack.Navigator>
   </NavigationContainer>
   );

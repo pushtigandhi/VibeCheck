@@ -23,7 +23,10 @@ export default function HomeNavigation({ size, iconColor }) {
       <TouchableOpacity onPress={() => navigation.navigate("Home")} style={styles.iconRoot} >
         <Ionicons name={"home-outline"} size={size} color={iconColor} style={styles.icon}/>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate({name: "Profile", params: {isOwnProfile: true}})} style={styles.iconRoot}>
+      {/* <TouchableOpacity onPress={() => navigation.navigate({name: "Profile", params: {isOwnProfile: true}})} style={styles.iconRoot}>
+        <Ionicons name={"folder-open-outline"} size={size} color={iconColor} style={styles.icon}/>
+      </TouchableOpacity> */}
+      <TouchableOpacity onPress={() => navigation.navigate("Backlog")} style={styles.iconRoot}>
         <Ionicons name={"folder-open-outline"} size={size} color={iconColor} style={styles.icon}/>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate("New")} style={styles.iconRoot} >

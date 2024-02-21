@@ -82,10 +82,4 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: COLORS({opacity:1}).lightWhite,
   },
-  container: {
-    width: "100%",
-  },
-  cardsContainer: {
-    marginTop: SIZES.medium,
-  },
 });

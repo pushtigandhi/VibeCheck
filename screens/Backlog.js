@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, View, FlatList } from "react-native";
 import { StyleSheet } from "react-native";
-import ContactCard from "./cards/ContactCard";
 import { COLORS, FONT, SIZES } from "../constants";
 import HomeNavigation from "./HomeNavigation";
-import { GETcontacts } from "../API";
+import { GETitems } from "../API";
 
-export default function Contacts ({scrollEnabled = true}) {
-  const [contacts, setContacts] = useState([]);
+export default function Backlog ({scrollEnabled = true}) {
+  const [items, setItems] = useState([]);
 
-  async function getContactsFromAPI() {
+  async function getItemsFromAPI() {
     try {
-        let contacts_ = await GETcontacts();
-        return contacts_;
+      let items_ = await GETitems();
+      return items_;
     } catch (error) {
       console.log("error fetching items");
       console.log(error);
@@ -21,10 +20,10 @@ export default function Contacts ({scrollEnabled = true}) {
   }
 
   useEffect(() => {
-    getContactsFromAPI().then((contacts_) => {
-      setContacts(contacts_);
+    getItemsFromAPI().then((items_) => {
+      setItems(items_);
     }).catch((err) => {
-        alert(err.message)
+      alert(err.message)
     })
   }, []) // only run once on load
 
@@ -38,7 +37,7 @@ export default function Contacts ({scrollEnabled = true}) {
     <SafeAreaView style={styles.screen}>
       <FlatList
         scrollEnabled={scrollEnabled}
-        data={contacts}
+        data={items}
         renderItem={renderItem}
       />
       <HomeNavigation size={30} iconColor={COLORS({opacity:1}).primary}/>
