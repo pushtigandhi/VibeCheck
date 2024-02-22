@@ -1,21 +1,40 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
-import axios from 'axios';
-import NetInfo from '@react-native-community/netinfo';
 
-export const BASE_URL = 'http://172.27.192.128:3000/api/v0';
+export const BASE_URL = 'http://172.27.72.214:3000/api/v0';
 
+export const ItemType = {
+    Item: 'ITEM',
+    Task: 'TASK',
+    Event: 'EVENT',
+    Page: 'PAGE',
+    Recipe: 'RECIPE'
+};
+
+const USERS_BASE_URL = `${BASE_URL}/users`;
+const PROFILE_BASE_URL = `${PROFILE_BASE_URL}`;
+const AUTH_BASE_URL = `${BASE_URL}/auth`;
+const CONTACTS_BASE_URL = `${BASE_URL}/contacts`;
+const DIRECTORY_BASE_URL = `${BASE_URL}/directory`;
+const TAGS_BASE_URL = `${BASE_URL}/tags`;
+const ITEMS_BASE_URL = `${BASE_URL}/items`;
+const ITEMS_EXT = `?itemType=item`;
+const TASKS_EXT = `?itemType=task`;
+const EVENTS_EXT = `$?itemType=even`;
+const PAGES_EXT = `?itemType=page`;
+const RECIPE_EXT = `?itemType=recipe`;
+
+//#region AUTHORIZATION & AUTHENTICATION
 const headers = {
     'Content-Type': 'application/json',
 };
-  
+
 export async function fetchWithAuth(url, options = {}) {
     // Get JWT from storage
     try {
         const JWT = await AsyncStorage.getItem('JWT');
         // Set JWT in headers
         if (JWT) {
-            console.log("got jwt");
             options.headers = {
                 ...options.headers,
                 "authorization": JWT,
@@ -29,7 +48,7 @@ export async function fetchWithAuth(url, options = {}) {
     // Fetch
     let response;
     try {
-        response = await fetch(url);
+        response = await fetch(url, options);
 
     } catch (error) {
         console.log("fetchwithAuth response error");
@@ -39,11 +58,484 @@ export async function fetchWithAuth(url, options = {}) {
     return response;
 }
 
-export async function GETitems() {
+export async function fetchWithAuthJSON(url, options = {}) {
+    // Set content type to JSON
+    options.headers = {
+        ...options.headers,
+        "content-type": "application/json",
+    };
 
-    const ITEMS_URL = `${BASE_URL}/items/?itemType=item`;
-    console.log(ITEMS_URL);
-    const response = await fetch(ITEMS_URL, {
+    // Fetch
+    const response = await fetchWithAuth(url, options);
+
+    return response;
+}
+
+export async function saveAuth(response) {
+    // get JWT from response
+    const JWT = response.headers.get('authorization');
+
+    // save JWT to storage
+    await AsyncStorage.setItem('JWT', JWT);
+}
+
+export async function removeAuth() {
+    // remove JWT from storage
+    await AsyncStorage.removeItem('JWT');
+}
+
+export async function doLogout() {
+    await removeAuth();
+}
+
+export async function doLogin(email, password) {
+    /**
+     * Make request to login endpoint, save JWT if successful
+     * return boolean indicating success
+     */
+    // POST to login endpoint
+    try{
+    const response = await fetch(`${AUTH_BASE_URL}/login`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            email,
+            password,
+        }),
+    });
+
+    if (response.status === 200) {
+        // success - save JWT
+        await saveAuth(response);
+        return { status: response.status, message: "Login successful" };
+    }
+    
+    const body = await response.json();
+    return { status: response.status, message: body.message };
+    }
+    catch(error){
+        console.log(error);
+        return false;
+    }
+
+}
+
+export async function doSignup(email, password, handle, firstName, lastName) {
+    /**
+     * Make request to signup endpoint
+     * return boolean indicating success
+     */
+    // POST to signup endpoint
+    const response = await fetch(AUTH_BASE_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            email,
+            password: password,
+            handle: handle,
+            firstName: firstName,
+            lastName: lastName
+        }),
+    });
+
+    if (response.status === 201) {
+        // success - signed up
+        return response.status;
+    } else {
+        return response.status;
+    }
+}
+
+export async function removeAuth() {
+    // remove JWT from storage
+    await AsyncStorage.removeItem('JWT');
+}
+
+export async function doLogout() {
+    await removeAuth();
+}
+
+//#endregion
+
+//#region USERS
+
+// export async function GETusers() {
+//     const response = await fetchWithAuth(USERS_BASE_URL, {
+//         method: 'GET',
+//     });
+
+//     if (response.status == 201) {
+//         const body = await response.json();
+//         let users = body.users;
+//         return users.map((user) => {
+//             return {
+//                 ...user,
+//             }
+//         });
+//     } else {
+//         return []
+//     }
+// }
+
+// export async function GETme() {
+//     const response = await fetchWithAuth(USERS_BASE_URL, {
+//         method: 'GET',
+//     });
+
+//     if (response.status === 200) {
+//         const body = await response.json();
+//         return body.user;
+//     } else {
+//        return null;
+//     }
+// }
+
+export async function GETuserByHandle() {
+    const response = await fetchWithAuth(`${USERS_BASE_URL}/handle`, {
+        method: 'GET',
+    });
+
+    if (response.status === 200) {
+        const body = await response.json();
+        return body.user;
+    } else {
+       return null;
+    }
+}
+
+//#endregion
+
+//#region PROFILE
+export async function GETme() {
+    const response = await fetchWithAuth(PROFILE_BASE_URL, {
+        method: 'GET',
+    });
+
+    if (response.status === 200) {
+        const body = await response.json();
+        return body.profile;
+    } else {
+       return null;
+    }
+}
+
+export async function GETprofileDetails(profileID) {
+    const response = await fetchWithAuth(`${PROFILE_BASE_URL}/${profileID}`, {
+        method: 'GET',
+    });
+
+    if (response.status === 200) {
+        const body = await response.json();
+        return body.profile;
+    } else {
+       return null;
+    }
+}
+
+export async function PATCHupdateProfile(data) {
+    const response = await fetchWithAuthJSON(PROFILE_BASE_URL, {
+        method: "PATCH",
+        body: JSON.stringify(data),
+    });
+
+    if (response.status === 200) {
+        const body = await response.json();
+        return body.profile;
+    } else {
+        throw new Error("Error updating profile");
+    }
+}
+
+//#endregion
+
+//#region CONTACTS
+export async function GETcontacts() {
+
+    const response = await fetchWithAuth(CONTACTS_BASE_URL, {
+        method: 'GET',
+    });
+    try {
+        console.log(response.status);
+        if (response.status == 201) {
+            // good, return 
+            const body = await response.json();
+            let contacts = body.contacts;
+            return contacts.map((contact) => {
+                return {
+                    ...contact,
+                }
+            });
+        } else {
+            return []
+        }
+    } catch (err) {
+        alert(err.message);
+        return []
+    }
+}
+
+export async function GETcontactBy(contactID) {
+    const response = await fetchWithAuth(`${CONTACTS_BASE_URL}/${contactID}`, {
+        method: 'GET',
+    });
+
+    if (response.status === 200) {
+        const body = await response.json();
+        return body.contact;
+    } else {
+       return null;
+    }
+}
+
+export async function POSTaddContact(contact) {
+    const response = await fetchWithAuthJSON(CONTACTS_BASE_URL, {
+        method: 'POST',
+        body: JSON.stringify(contact),
+    });
+
+    if (response.status === 201) {
+        // good
+        const body = await response.json();
+        return body.contact;
+    } else {
+        return null;
+    }
+}
+
+export async function PATCHcontact(newContact, contactID) {
+    delete newContact._id;
+    delete newContact.id;
+
+    const response = await fetchWithAuthJSON(`${CONTACTS_BASE_URL}/${contactID}`, {
+        method: "PATCH",
+        body: JSON.stringify(newItem),
+    });
+
+    if (response.status === 200) {
+        const editResponse = await response.json();
+        return editResponse.contact;
+    } else {
+        throw new Error("Error updating post");
+    }
+}
+
+export async function DELETEcontact(contactID) {
+    const response = await fetchWithAuth(`${CONTACTS_BASE_URL}/${contactID}`, {
+        method: "DELETE",
+    });
+
+    if (response.status === 200) {
+        return true;
+    } else {
+        throw new Error("Error deleting contact");
+    }
+}
+//#endregion
+
+//#region DIRECTORY
+export async function GETdirectory(profileID) {
+    const response = await fetchWithAuth(`${DIRECTORY_BASE_URL}/${profileID}`, {
+        method: 'GET',
+    });
+    try {
+        if (response.status == 201) {
+            // good, return 
+            const body = await response.json();
+            let directory = body.directory;
+            return directory.map((category) => {
+                return {
+                    ...category,
+                }
+            });
+        } else {
+            return []
+        }
+    } catch (err) {
+        alert(err.message);
+        return []
+    }
+}
+
+export async function POSTaddCategory(profileID, category) {
+    const response = await fetchWithAuthJSON(`${DIRECTORY_BASE_URL}/${profileID}`, {
+        method: 'POST',
+        body: JSON.stringify(category),
+    });
+
+    try {
+        if (response.status == 201) {
+            // good, return 
+            const body = await response.json();
+            let directory = body.directory;
+            return directory.map((category) => {
+                return {
+                    ...category,
+                }
+            });
+        } else {
+            return []
+        }
+    } catch (err) {
+        alert(err.message);
+        return []
+    }
+}
+
+export async function PATCHcategory(newCategory, categoryID) {
+    delete newCategory._id;
+    delete newCategory.id;
+
+    const response = await fetchWithAuthJSON(`${DIRECTORY_BASE_URL}/${categoryID}`, {
+        method: "PATCH",
+        body: JSON.stringify(newCategory),
+    });
+
+    try {
+        if (response.status == 201) {
+            // good, return 
+            const body = await response.json();
+            let directory = body.directory;
+            return directory.map((category) => {
+                return {
+                    ...category,
+                }
+            });
+        } else {
+            return []
+        }
+    } catch (err) {
+        alert(err.message);
+        return []
+    }
+}
+
+export async function DELETEcategory(categoryID) {
+    const response = await fetchWithAuth(`${DIRECTORY_BASE_URL}/${categoryID}`, {
+        method: "DELETE",
+    });
+
+    try {
+        if (response.status == 201) {
+            // good, return 
+            const body = await response.json();
+            let directory = body.directory;
+            return directory.map((category) => {
+                return {
+                    ...category,
+                }
+            });
+        } else {
+            return []
+        }
+    } catch (err) {
+        alert(err.message);
+        return []
+    }
+}
+//#endregion
+
+//#region TAGS
+export async function GETtags() {
+    const response = await fetchWithAuth(TAGS_BASE_URL, {
+        method: 'GET',
+    });
+    try {
+        if (response.status == 201) {
+            // good, return 
+            const body = await response.json();
+            let tags = body.tags;
+            return tags.map((tag) => {
+                return {
+                    ...tag,
+                }
+            });
+        } else {
+            return []
+        }
+    } catch (err) {
+        alert(err.message);
+        return []
+    }
+}
+
+export async function POSTaddTag(tag) {
+    const response = await fetchWithAuthJSON(TAGS_BASE_URL, {
+        method: 'POST',
+        body: JSON.stringify(tag),
+    });
+
+    if (response.status === 201) {
+        // good
+        const body = await response.json();
+        return body.tag;
+    } else {
+        return null;
+    }
+}
+
+export async function PATCHtag(newTag, tagID) {
+    delete newTag._id;
+    delete newTag.id;
+
+    const response = await fetchWithAuthJSON(`${TAGS_BASE_URL}/${tagID}`, {
+        method: "PATCH",
+        body: JSON.stringify(newTag),
+    });
+
+    if (response.status === 201) {
+        // good
+        const body = await response.json();
+        return body.tag;
+    } else {
+        return null;
+    }
+}
+
+export async function DELETEtag(tagID) {
+    const response = await fetchWithAuth(`${TAGS_BASE_URL}/${tagID}`, {
+        method: "DELETE",
+    });
+
+    if (response.status === 201) {
+        // good
+        const body = await response.json();
+        return body.tag;
+    } else {
+        return null;
+    }
+}
+//#endregion
+
+//#region ITEMS
+const getURL= ({ itemType }) => {
+    let ext;
+    switch(itemType) {
+        case ItemType.Task:
+            ext = TASKS_EXT;
+            break;
+        case ItemType.Event:
+            ext = EVENTS_EXT;
+            break;
+        case ItemType.Page:
+            ext = PAGES_EXT;
+            break;
+        case ItemType.Recipe:
+            ext = RECIPE_EXT;
+            break;
+        default:
+            url = ITEMS_EXT;
+            break;
+    }
+} 
+
+export async function GETitems(itemType, filter={}) {
+    const ext = getURL(itemType);
+
+    const response = await fetch(`${ITEMS_BASE_URL}/${ext}` + new URLSearchParams(filter), {
         method: 'GET',
     });
     try {
@@ -66,10 +558,12 @@ export async function GETitems() {
     }
 }
 
-export async function POSTcreateItem(post) {
-    const response = await fetchWithAuthJSON(`${BASE_URL}/items`, {
+export async function POSTcreateItem(itemType, item) {
+    const ext = getURL(itemType);
+
+    const response = await fetchWithAuthJSON(`${ITEMS_BASE_URL}/${itemID}${ext}`, {
         method: 'POST',
-        body: JSON.stringify(post),
+        body: JSON.stringify(item),
     });
 
     if (response.status === 201) {
@@ -81,96 +575,419 @@ export async function POSTcreateItem(post) {
     }
 }
 
-// export async function DELETEcreateItem(post) {
-//     const response = await fetchWithAuthJSON(`${BASE_URL}/items`, {
-//         method: 'DELETE',
-//         body: JSON.stringify(post),
-//     });
+export async function PATCHitem(itemType, newItem, itemID) {
+    const ext = getURL(itemType);
 
-//     if (response.status === 201) {
-//         // good
-//         const body = await response.json();
-//         return body.item;
-//     } else {
-//         return null;
-//     }
-// }
+    delete newItem._id; // remove _id from newPost
+    delete newItem.id;
 
-export async function GETcontacts() {
+    const response = await fetchWithAuthJSON(`${ITEMS_BASE_URL}/${itemID}${ext}`, {
+        method: "PATCH",
+        body: JSON.stringify(newItem),
+    });
 
-    const CONTACTS_URL = `${BASE_URL}/contacts/`;
-
-    // const response = await fetch(CONTACTS_URL, {
-    //     method: 'GET',
-    // });
-    // try {
-    //     console.log(response.status);
-    //     if (response.status == 201) {
-    //         // good, return 
-    //         const body = await response.json();
-            const body = {
-                "contacts": [
-                    {
-                        "_id": "65a5ed99580cf7b9d816a691",
-                        "name": "test 1",
-                        "createdAt": "2024-01-16T02:44:41.662Z",
-                        "updatedAt": "2024-01-16T02:44:41.662Z",
-                        "__v": 0
-                    },
-                    {
-                        "_id": "65a5edd3580cf7b9d816a693",
-                        "name": "test 2",
-                        "createdAt": "2024-01-16T02:45:39.773Z",
-                        "updatedAt": "2024-01-16T02:45:39.773Z",
-                        "__v": 0
-                    },
-                    {
-                        "_id": "65a5fa6a2e7f19ab15d12f8a",
-                        "name": "test 3",
-                        "company": "friend",
-                        "createdAt": "2024-01-16T03:39:22.437Z",
-                        "updatedAt": "2024-01-16T03:39:22.437Z",
-                        "__v": 0
-                    },
-                    {
-                        "_id": "65a5fa8e2e7f19ab15d12f8c",
-                        "name": "test 4",
-                        "company": "family",
-                        "phoneNumber": 6575554444,
-                        "createdAt": "2024-01-16T03:39:58.960Z",
-                        "updatedAt": "2024-01-16T03:39:58.960Z",
-                        "__v": 0
-                    },
-                    {
-                        "_id": "65a5faac2e7f19ab15d12f8e",
-                        "name": "test 5",
-                        "company": "work",
-                        "phoneNumber": 6575554444,
-                        "notes": "final test",
-                        "createdAt": "2024-01-16T03:40:28.585Z",
-                        "updatedAt": "2024-01-16T03:40:28.585Z",
-                        "__v": 0
-                    }
-                ]
-            }
-            let contacts = body.contacts;
-            return contacts.map((contact) => {
-                return {
-                    ...contact,
-                }
-            });
-    //     } else {
-    //         return []
-    //     }
-    // } catch (err) {
-    //     alert(err.message);
-    //     return []
-    // }
+    if (response.status === 200) {
+        const editResponse = await response.json();
+        return editResponse.item;
+    } else {
+        throw new Error("Error updating item");
+    }
 }
 
-// export async function GETbacklog() {
-//     //const items = GETitems();
+export async function DELETEitem(itemID) {
+    const ext = getURL(itemType);
+    
+    const response = await fetchWithAuth(`${ITEMS_BASE_URL}/${itemID}${ext}`, {
+        method: "DELETE",
+    });
 
-//     const backlog = items.
+    if (response.status === 200) {
+        return true;
+    } else {
+        throw new Error("Error deleting item");
+    }
+}
 
-// }
+//#endregion
+
+//#region  TODELETE - TESTS
+
+//#region AUTHORIZATION & AUTHENTICATION
+
+export async function fetchWithAuthTEST(url, options = {}) {
+    // Get JWT from storage
+    try {
+        const JWT = await AsyncStorage.getItem('JWT');
+        // Set JWT in headers
+        if (JWT) {
+            options.headers = {
+                ...options.headers,
+                "authorization": JWT,
+            };
+        }
+    } catch (err) {
+        console.log("JWT err");
+        console.log(err);
+    }
+    
+    response = await fetch(url, options);
+    return response;
+}
+
+export async function doLoginTEST(email, password) {
+    
+    const response = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            email,
+            password,
+        })
+    }
+
+    console.log(`${AUTH_BASE_URL}/login` + " " + response);
+
+    // await saveAuth(response);
+    // return { status: response.status, message: "Login successful" };
+
+}
+
+export async function doSignupTEST(email, password, handle, firstName, lastName) {
+    /**
+     * Make request to signup endpoint
+     * return boolean indicating success
+     */
+    // POST to signup endpoint
+    const response = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            email,
+            password: password,
+            handle: handle,
+            firstName: firstName,
+            lastName: lastName
+        }),
+    };
+
+    console.log(AUTH_BASE_URL + " " + response);
+
+    // return response.status;
+}
+
+//#endregion
+
+//#region USERS
+
+export async function GETuserByHandleTEST() {
+    const response = await fetchWithAuth(`${USERS_BASE_URL}/handle`, {
+        method: 'GET',
+    });
+
+    console.log(response);
+
+    const body = {};
+    return body.user;
+}
+
+//#endregion
+
+//#region PROFILE
+export async function GETmeTEST() {
+    const response = await fetchWithAuthTEST(PROFILE_BASE_URL, {
+        method: 'GET',
+    });
+
+    console.log(response);
+
+    const profile = {"profile": {}};
+    return profile.profile;
+}
+
+export async function GETprofileDetailsTEST(profileID) {
+    const response = await fetchWithAuth(`${PROFILE_BASE_URL}/${profileID}`, {
+        method: 'GET',
+    });
+
+    console.log(response);
+
+    const profile = {"profile": {}};
+    return profile.profile;
+}
+
+export async function PATCHupdateProfileTEST(data) {
+    const response = await fetchWithAuthJSON(PROFILE_BASE_URL, {
+        method: "PATCH",
+        body: JSON.stringify(data),
+    });
+
+    console.log(response);
+
+    const profile = {"profile": {}};
+    return profile.profile;
+}
+
+//#endregion
+
+//#region CONTACTS
+export async function GETcontactsTEST() {
+
+    const response = await fetchWithAuth(CONTACTS_BASE_URL, {
+        method: 'GET',
+    });
+
+    console.log(response);
+
+    const body = {"contacts": []};
+    let contacts = body.contacts;
+    return contacts.map((contact) => {
+        return {
+            ...contact,
+        }
+    });
+}
+
+export async function GETcontactByTEST(contactID) {
+    const response = await fetchWithAuth(`${CONTACTS_BASE_URL}/${contactID}`, {
+        method: 'GET',
+    });
+
+    console.log(response);
+
+    const body = {"contacts": {}};
+    return body.contacts;
+}
+
+export async function POSTaddContactTEST(contact) {
+    const response = await fetchWithAuthJSON(CONTACTS_BASE_URL, {
+        method: 'POST',
+        body: JSON.stringify(contact),
+    });
+
+    console.log(response);
+
+    const body = {"contacts": {}};
+    return body.contacts;
+}
+
+export async function PATCHcontactTEST(newContact, contactID) {
+    delete newContact._id;
+    delete newContact.id;
+
+    const response = await fetchWithAuthJSON(`${CONTACTS_BASE_URL}/${contactID}`, {
+        method: "PATCH",
+        body: JSON.stringify(newItem),
+    });
+
+    console.log(response);
+
+    const editResponse = {"contacts": {}};
+    return editResponse.contacts;
+}
+
+export async function DELETEcontactTEST(contactID) {
+    const response = await fetchWithAuth(`${CONTACTS_BASE_URL}/${contactID}`, {
+        method: "DELETE",
+    });
+
+    console.log(response);
+}
+//#endregion
+
+//#region DIRECTORY
+export async function GETdirectoryTEST(profileID) {
+    const response = await fetchWithAuth(`${DIRECTORY_BASE_URL}/${profileID}`, {
+        method: 'GET',
+    });
+
+    console.log(response);
+
+    const body = {"directory": []};
+    let directory = body.directory;
+    return directory.map((category) => {
+        return {
+            ...category,
+        }
+    });
+}
+
+export async function POSTaddCategoryTEST(profileID, category) {
+    const response = await fetchWithAuthJSON(`${DIRECTORY_BASE_URL}/${profileID}`, {
+        method: 'POST',
+        body: JSON.stringify(category),
+    });
+
+    console.log(response);
+
+    const body = {"directory": []};
+    let directory = body.directory;
+    return directory.map((category) => {
+        return {
+            ...category,
+        }
+    });
+}
+
+export async function PATCHcategoryTEST(newCategory, categoryID) {
+    delete newCategory._id;
+    delete newCategory.id;
+
+    const response = await fetchWithAuthJSON(`${DIRECTORY_BASE_URL}/${categoryID}`, {
+        method: "PATCH",
+        body: JSON.stringify(newCategory),
+    });
+
+    console.log(response);
+
+    const body = {"directory": []};
+    let directory = body.directory;
+    return directory.map((category) => {
+        return {
+            ...category,
+        }
+    });
+}
+
+export async function DELETEcategoryTEST(categoryID) {
+    const response = await fetchWithAuth(`${DIRECTORY_BASE_URL}/${categoryID}`, {
+        method: "DELETE",
+    });
+
+    console.log(response);
+
+    const body = {"directory": []};
+    let directory = body.directory;
+    return directory.map((category) => {
+        return {
+            ...category,
+        }
+    });
+}
+//#endregion
+
+//#region TAGS
+export async function GETtagsTEST() {
+    const response = await fetchWithAuth(TAGS_BASE_URL, {
+        method: 'GET',
+    });
+
+    console.log(response);
+
+    const body = {"tags": []};
+    let tags = body.tags;
+    return tags.map((tag) => {
+        return {
+            ...tag,
+        }
+    });
+}
+
+export async function POSTaddTagTEST(tag) {
+    const response = await fetchWithAuthJSON(TAGS_BASE_URL, {
+        method: 'POST',
+        body: JSON.stringify(tag),
+    });
+
+    console.log(response);
+
+    const body = {"tag": {}};
+    return body.tag;
+}
+
+export async function PATCHtagTEST(newTag, tagID) {
+    delete newTag._id;
+    delete newTag.id;
+
+    const response = await fetchWithAuthJSON(`${TAGS_BASE_URL}/${tagID}`, {
+        method: "PATCH",
+        body: JSON.stringify(newTag),
+    });
+
+    iconsole.log(response);
+
+    const body = {"tag": {}};
+    return body.tag;
+}
+
+export async function DELETEtagTEST(tagID) {
+    const response = await fetchWithAuth(`${TAGS_BASE_URL}/${tagID}`, {
+        method: "DELETE",
+    });
+
+    console.log(response);
+
+    const body = {"tag": {}};
+    return body.tag;
+}
+//#endregion
+
+//#region ITEMS
+export async function GETitemsTEST(itemType, filter={}) {
+    const ext = getURL(itemType);
+
+    const response = await fetch(`${ITEMS_BASE_URL}/${ext}` + new URLSearchParams(filter), {
+        method: 'GET',
+    });
+
+    console.log(response);
+
+    const body = {"items": []};
+    let items = body.items;
+    return items.map((item) => {
+        return {
+            ...item,
+        }
+    });
+}
+
+export async function POSTcreateItemTEST(itemType, item) {
+    const ext = getURL(itemType);
+
+    const response = await fetchWithAuthJSON(`${ITEMS_BASE_URL}/${itemID}${ext}`, {
+        method: 'POST',
+        body: JSON.stringify(item),
+    });
+
+    console.log(response);
+
+    const body = {"item": {}};
+    return body.item;
+}
+
+export async function PATCHitemTEST(itemType, newItem, itemID) {
+    const ext = getURL(itemType);
+
+    delete newItem._id; // remove _id from newPost
+    delete newItem.id;
+
+    const response = await fetchWithAuthJSON(`${ITEMS_BASE_URL}/${itemID}${ext}`, {
+        method: "PATCH",
+        body: JSON.stringify(newItem),
+    });
+
+    console.log(response);
+
+    const body = {"item": {}};
+    return body.item;
+}
+
+export async function DELETEitemTEST(itemID) {
+    const ext = getURL(itemType);
+    
+    const response = await fetchWithAuth(`${ITEMS_BASE_URL}/${itemID}${ext}`, {
+        method: "DELETE",
+    });
+
+    console.log(response);
+
+    const body = {"item": {}};
+    return body.item;
+}
+
+//#endregion
+
+//#endregion
