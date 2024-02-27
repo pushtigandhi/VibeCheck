@@ -9,8 +9,11 @@ import Directory from './screens/Directory';
 import DirectoryCard from './screens/cards/DirectoryCard';
 import VibeCheck from './screens/VibeCheck';
 import Backlog from './screens/Backlog';
+import Login from './screens/LoginScreen';
+
 import { EmptyItemCard } from './screens/cards/EmptyItemCard';
 import { useFonts } from 'expo-font';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -24,6 +27,7 @@ export default function App() {
   return (
     <NavigationContainer>
     <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Login" component={Login}/>
       <Stack.Screen name="Home" component={HomeScreen}/>
       <Stack.Screen name="Contacts" component={Contacts}/>
       <Stack.Screen name="Profile" component={ProfileScreen} />

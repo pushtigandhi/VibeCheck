@@ -5,7 +5,7 @@ import { COLORS, SIZES } from '../constants';
 import { Ionicons } from "@expo/vector-icons";
 
 
-const SingleSelectDropdown = ({ data, placeholder="Select item", defaultValue="", icon }) => {
+const SingleSelectDropdown = ({ options, placeholder="Select item", defaultValue="", icon, setFn }) => {
     const [value, setValue] = useState(defaultValue);
 
     const renderItem = item => {
@@ -27,7 +27,7 @@ const SingleSelectDropdown = ({ data, placeholder="Select item", defaultValue=""
         inputSearchStyle={styles.inputSearchStyle}
         iconStyle={styles.iconStyle}
         containerStyle={styles.containerStyle}
-        data={data}
+        data={options}
         search
         maxHeight={300}
         labelField="label"
@@ -37,6 +37,7 @@ const SingleSelectDropdown = ({ data, placeholder="Select item", defaultValue=""
         value={value}
         onChange={item => {
             setValue(item.value);
+            setFn(item.value);
         }}
         renderLeftIcon={() => (
             <>{icon}</>

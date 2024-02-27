@@ -8,25 +8,24 @@ import { taskProperties } from "../PropertyCards";
 import Layout from "../../../_layout";
 import { Ionicons } from "@expo/vector-icons";
 
-const TaskCard = () => {
+const TaskCard = ({task, expanded=false}) => {
 
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(expanded);
 
   return (
-    
     <View style={styles.infoContainer}>
-     
       <TouchableOpacity
         onPress={() => {
             setIsExpanded(!isExpanded);
           }}
+          style={styles.titleContainer}
       >
-      <View>
-        <Text style={styles.label}>
-          <Ionicons name={"information-circle-outline"} size={25} color={"#80adad"}/> Properties
-        </Text>
-        <ExpandableView expanded={isExpanded} view={taskProperties} vh={300}/>
+      <View style={styles.row}>
+        <Text style={styles.label}>Properties</Text>
+        <Ionicons name={"information-circle-outline"} size={size} style={styles.icon}/> 
       </View>
+      <ExpandableView expanded={isExpanded} view={expandedCard} params={{task}} vh={300} />
+
       </TouchableOpacity>
       
       <Spacer size={20} />

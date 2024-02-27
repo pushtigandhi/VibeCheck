@@ -150,15 +150,6 @@ export async function doSignup(email, password, handle, firstName, lastName) {
     }
 }
 
-export async function removeAuth() {
-    // remove JWT from storage
-    await AsyncStorage.removeItem('JWT');
-}
-
-export async function doLogout() {
-    await removeAuth();
-}
-
 //#endregion
 
 //#region USERS
@@ -647,10 +638,10 @@ export async function doLoginTEST(email, password) {
         })
     }
 
-    console.log(`${AUTH_BASE_URL}/login` + " " + response);
+    console.log(`${AUTH_BASE_URL}/login` + " " + response.body);
 
-    // await saveAuth(response);
-    // return { status: response.status, message: "Login successful" };
+    //await saveAuth(response);
+    return { status: 200, message: "Login successful" };
 
 }
 
@@ -676,7 +667,7 @@ export async function doSignupTEST(email, password, handle, firstName, lastName)
 
     console.log(AUTH_BASE_URL + " " + response);
 
-    // return response.status;
+    return 201;
 }
 
 //#endregion

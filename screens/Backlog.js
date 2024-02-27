@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, FlatList } from "react-native";
-import { StyleSheet } from "react-native";
+import { SafeAreaView, View, FlatList, StyleSheet } from "react-native";
 import { COLORS, FONT, SIZES } from "../constants";
 import HomeNavigation from "./HomeNavigation";
-import { GETitems } from "../API";
+import { GETitems, GETitemsTEST } from "../API";
+import ContactCard from "./cards/ContactCard";
 
 export default function Backlog ({scrollEnabled = true}) {
   const [items, setItems] = useState([]);
 
   async function getItemsFromAPI() {
     try {
-      let items_ = await GETitems();
+      let items_ = await GETitemsTEST({ category: "Backlog"});
       return items_;
     } catch (error) {
       console.log("error fetching items");

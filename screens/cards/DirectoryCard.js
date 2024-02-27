@@ -7,33 +7,19 @@ import { Ionicons } from "@expo/vector-icons";
 import { Spacer } from "../../utils";
 import { ExpandableView } from "../../utils";
 
-const expandFolder = ({data}) => {
-  const [height] = useState(new Animated.Value(0));
-
-  useEffect(() => {
-    Animated.timing(height, {
-      toValue: 200,
-      duration: 250,
-      useNativeDriver: false
-    }).start();
-  }, [height]);
-
+const expandedCard = ({sections}) => {
   return (
-    <Animated.View
-    style={{ height }}
-  >
-   <ScrollView style={styles.expandedContainer}>
-      {data.map(item => (
-        <TouchableOpacity style={styles.sectionContainer} key={item._id + "root"}>
-            <Text style={styles.section} numberOfLines={1}>{item}</Text>
-          </TouchableOpacity>
+    <ScrollView style={styles.expandedContainer}>
+      {sections.map(section => (
+        <TouchableOpacity style={styles.sectionContainer} key={section + "_root"}>
+            <Text style={styles.section} numberOfLines={1}>{section}</Text>
+        </TouchableOpacity>
       ))}
     </ScrollView>
-    </Animated.View>
-  );
+  )
 };
 
-const DirectoryCard = ({item, data}) => {
+const DirectoryCard = ({category, sections}) => {
     const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -44,14 +30,14 @@ const DirectoryCard = ({item, data}) => {
           }}
           style={styles.titleContainer}
       >
-        <View style={styles.row}> 
-          <Ionicons name={"list-circle"} size={30} style={styles.icon}/>
-          <Text style={styles.title} numberOfLines={1}>{item}</Text>
+        <View style={styles.row}>
+          <View>
+            <Ionicons name={"list-circle"} size={30} style={styles.icon}/>
+            <Text style={styles.title} numberOfLines={1}>{category.title}</Text>
+          </View>
         </View>
       </TouchableOpacity>
-      {isExpanded && (
-        <ExpandableView expanded={true} view={expandFolder} params={{ data: data }} />
-      )}
+      <ExpandableView expanded={isExpanded} view={expandedCard} params={{sections}} vh={300} />
     </View>
   )
 };

@@ -28,9 +28,9 @@ export default function Contacts ({scrollEnabled = true}) {
     })
   }, []) // only run once on load
 
-  const renderItem = ({ item }) => (
+  const renderContact = ({ contact }) => (
     <View key={item._id + "root"} >
-        <ContactCard key={item._id} contact={item} />
+        <ContactCard key={contact._id} contact={contact} />
     </View>
   );
 
@@ -39,7 +39,7 @@ export default function Contacts ({scrollEnabled = true}) {
       <FlatList
         scrollEnabled={scrollEnabled}
         data={contacts}
-        renderItem={renderItem}
+        renderItem={renderContact}
       />
       <HomeNavigation size={30} iconColor={COLORS({opacity:1}).primary}/>
     </SafeAreaView>

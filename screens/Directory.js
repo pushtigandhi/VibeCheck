@@ -8,7 +8,7 @@ import HomeNavigation from "./HomeNavigation";
 
 
 export default function Directory ({scrollEnabled = true}) {
-  const [items, setItems] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [title, setTitle] = useState("");
   const data = ["hello","world","i","have","arrived"];
 
@@ -16,19 +16,18 @@ export default function Directory ({scrollEnabled = true}) {
   //   navigation.navigate('Home', { refresh: Math.random() });
   // }
 
-  function createPost() {
-    const item = {
+  function createCategory() {
+    const category = {
       title: title,
     };
 
     (async () => {
-      POSTcreateItem({
-        ...item,
+      POSTaddCategory({
+        ...category,
         _id: null
-      }).then((newItem) => {
-        if (!!newItem) {
+      }).then((newCategory) => {
+        if (!!newCategory) {
           alert("Success!");
-          goHome();
         } else {
           alert("Failed.");
         }
@@ -36,12 +35,12 @@ export default function Directory ({scrollEnabled = true}) {
     })()
   }
 
-  async function getItemsFromAPI() {
+  async function getDirectoryFromAPI() {
       try {
-          let items_ = await GETitems();
-          return items_;
+          let categories_ = await GETdirectory();
+          return categories_;
       } catch (error) {
-        console.log("error fetching items");
+        console.log("error fetching directory");
         console.log(error);
 
           return [];
@@ -49,8 +48,8 @@ export default function Directory ({scrollEnabled = true}) {
   }
 
   useEffect(() => {
-    getItemsFromAPI().then((items_) => {
-      setItems(items_);
+    getDirectoryFromAPI().then((categories_) => {
+      setCategories(categories_);
     }).catch((err) => {
         alert(err.message)
     })
@@ -58,9 +57,9 @@ export default function Directory ({scrollEnabled = true}) {
   }, []) // only run once on load
 
 
-  const renderItem = ({ item }) => (
+  const renderCategory = ({ category }) => (
     <View key={item._id + "root"} >
-        <DirectoryCard item={item} key={item._id} data={data} />
+        <DirectoryCard category={category} key={category._id} sections={category.sections} />
     </View>
   );
 
@@ -68,8 +67,8 @@ export default function Directory ({scrollEnabled = true}) {
     <SafeAreaView style={styles.screen}>
       <FlatList
         scrollEnabled={scrollEnabled}
-        data={items}
-        renderItem={renderItem}
+        data={categories}
+        renderItem={renderCategory}
       />
       <HomeNavigation size={30} iconColor={COLORS({opacity:1}).primary}/>
     </SafeAreaView>

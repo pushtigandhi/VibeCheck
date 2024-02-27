@@ -4,7 +4,7 @@ import { MultiSelect } from 'react-native-element-dropdown';
 import { COLORS, SIZES } from '../constants';
 import { Ionicons } from "@expo/vector-icons";
 
-const MultiSelectDropdown = ({ data, placeholder="Select items", defaultValue=[], icon }) => {
+const MultiSelectDropdown = ({ options, placeholder="Select items", defaultValue=[], icon, setFn }) => {
   const [selected, setSelected] = useState(defaultValue);
 
   const renderItem = item => {
@@ -25,7 +25,7 @@ const MultiSelectDropdown = ({ data, placeholder="Select items", defaultValue=[]
         selectedTextStyle={styles.selectedTextStyle}
         inputSearchStyle={styles.inputSearchStyle}
         iconStyle={styles.iconStyle}
-        data={data}
+        data={options}
         labelField="label"
         valueField="value"
         placeholder={placeholder}
@@ -34,6 +34,7 @@ const MultiSelectDropdown = ({ data, placeholder="Select items", defaultValue=[]
         searchPlaceholder="Search..."
         onChange={item => {
           setSelected(item);
+          setFn(item);
         }}
         renderLeftIcon={() => (
             <>{icon}</>
