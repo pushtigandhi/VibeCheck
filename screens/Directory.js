@@ -1,11 +1,11 @@
 import { SafeAreaView, View, FlatList, StyleSheet } from "react-native";
-import DirectoryCard from "./cards/DirectoryCard";
 import { COLORS, FONT, SIZES } from "../constants";
 import { GETitems, POSTcreateItem, BASE_URL } from "../API";
 import { Ionicons } from "@expo/vector-icons";
 import { useState, useEffect } from "react";
 import HomeNavigation from "./HomeNavigation";
-
+import { GETdirectoryTEST } from "../API";
+import DirectoryCard from "./cards/DirectoryCard"
 
 export default function Directory ({scrollEnabled = true}) {
   const [categories, setCategories] = useState([]);
@@ -37,7 +37,8 @@ export default function Directory ({scrollEnabled = true}) {
 
   async function getDirectoryFromAPI() {
       try {
-          let categories_ = await GETdirectory();
+          let categories_ = await GETdirectoryTEST();
+          console.log(categories_);
           return categories_;
       } catch (error) {
         console.log("error fetching directory");
@@ -57,9 +58,9 @@ export default function Directory ({scrollEnabled = true}) {
   }, []) // only run once on load
 
 
-  const renderCategory = ({ category }) => (
-    <View key={item._id + "root"} >
-        <DirectoryCard category={category} key={category._id} sections={category.sections} />
+  const renderCategory = ({ item }) => (
+    <View key={item["_id"] + "root"} >
+        <DirectoryCard category={item} key={item["_id"]} sections={item.sections} />
     </View>
   );
 

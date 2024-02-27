@@ -791,13 +791,19 @@ export async function DELETEcontactTEST(contactID) {
 
 //#region DIRECTORY
 export async function GETdirectoryTEST(profileID) {
-    const response = await fetchWithAuth(`${DIRECTORY_BASE_URL}/${profileID}`, {
-        method: 'GET',
-    });
+    // const response = await fetchWithAuthTEST(`${DIRECTORY_BASE_URL}/${profileID}`, {
+    //     method: 'GET',
+    // });
 
-    console.log(response);
+    // console.log(response);
 
-    const body = {"directory": []};
+    const body = {"directory": [
+        {
+            "sections": ["All"],
+            "_id": "65c5bd250ecbb74370648816",
+            "title": "Backlog"
+        }
+    ]};
     let directory = body.directory;
     return directory.map((category) => {
         return {

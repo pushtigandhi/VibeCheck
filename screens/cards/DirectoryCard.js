@@ -31,13 +31,11 @@ const DirectoryCard = ({category, sections}) => {
           style={styles.titleContainer}
       >
         <View style={styles.row}>
-          <View>
             <Ionicons name={"list-circle"} size={30} style={styles.icon}/>
             <Text style={styles.title} numberOfLines={1}>{category.title}</Text>
-          </View>
         </View>
       </TouchableOpacity>
-      <ExpandableView expanded={isExpanded} view={expandedCard} params={{sections}} vh={300} />
+      <ExpandableView expanded={isExpanded} view={expandedCard} params={{sections}} vh={150} />
     </View>
   )
 };
@@ -75,7 +73,7 @@ const styles = StyleSheet.create({
   section: {
     fontSize: SIZES.medium,
     fontFamily: FONT.regular,
-    color: COLORS({opacity:1}).darkBlue,
+    color: COLORS({opacity:1}).white,
   },
   expandedContainer: {
     paddingBottom: SIZES.medium,

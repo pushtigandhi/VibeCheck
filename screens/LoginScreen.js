@@ -1,5 +1,6 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Image, TextInput, Button, KeyboardAvoidingView, Pressable, Alert } from "react-native";
+import { StyleSheet, Text, View, Image, TextInput,
+   SafeAreaView, KeyboardAvoidingView, Pressable, Alert } from "react-native";
 import { doLoginTEST as doLogin_, doSignupTEST as doSignup_ } from "../API";
 import { useState } from "react";
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -132,7 +133,7 @@ export default function Login({ navigation }) {
   };
   
   return (
-    <View 
+    <SafeAreaView 
       style={styles.loginRoot}
       >
       <KeyboardAvoidingView 
@@ -266,7 +267,7 @@ export default function Login({ navigation }) {
       
 
       <StatusBar style="auto" />
-    </View>
+    </SafeAreaView>
   );
 };
 
