@@ -1,127 +1,116 @@
 import { useState } from "react";
-import { View, FlatList, TouchableOpacity, Image, Text } from "react-native";
-import { StyleSheet } from "react-native";
-import { COLORS, FONT, SIZES, SHADOWS } from "../constants";
-import TaskCard from "./cards/items/TaskCard";
-import { ExpandableView } from "../utils";
-import { Ionicons } from "@expo/vector-icons";
+import { View, Text, TextInput, TouchableOpacity, Image,
+        StyleSheet, Animated, FlatList, SafeAreaView } from 'react-native';
+
+import { COLORS, SHADOWS, FONT, SIZES } from "../constants";
+import { ExpandableView, Spacer } from '../utils';
 import Layout from "../_layout";
-import { GETitems, POSTcreateItem, BASE_URL } from "../API";
+import { Ionicons } from "@expo/vector-icons";
+import { PropertyCard } from "./cards/PropertyCards";
 
-const TitleView = ({  onPress, isExpanded }) => {
-    <TouchableOpacity onPress={onPress}>
+export default function ItemPage({item}) {
+
+  const [isExpanded, setIsExpanded] = useState(true);
+
+  //TODO:
+  /*
+    - CHECK ITEM TYPE
+    - ADD DIFFERENT FIELDS BASED ON ITEM TYPE
+    - ADD FUNCTIONALITY FOR SAVING/UPDATING THE FIELDS
+  */
+
+  return (
+    <SafeAreaView style={styles.infoContainer}>
+      <TouchableOpacity
+        onPress={() => {
+            setIsExpanded(!isExpanded);
+          }}
+          style={styles.titleContainer}
+      >
+      <View style={styles.row}>
+        <Text style={styles.label}>Properties</Text>
+        <Ionicons name={"information-circle-outline"} size={SIZES.xLarge} style={styles.icon}/> 
+      </View>
+      </TouchableOpacity>
+      <ExpandableView expanded={isExpanded} view={PropertyCard} params={{item}} vh={500} />
+
       
-      <View style={styles.column}>
-        <TouchableOpacity style={styles.photoContainer}>
-            <Image 
-                source={{ uri: 'https://t4.ftcdn.net/jpg/05/05/61/73/360_F_505617309_NN1CW7diNmGXJfMicpY9eXHKV4sqzO5H.jpg'}}
-                resizeMode='contain'
-                style={styles.contactImage}
-            />
-        </TouchableOpacity>
-                            
-        <View style={styles.textContainer}>
-            <Text style={styles.contactName} numberOfLines={1}> Title </Text>
-            <Text style={styles.jobType}> Progress: </Text>
-        </View>
-        </View>
-        {isExpanded && (
-            <ExpandableView expanded={isExpanded} view={TaskCard} vh={600}/>
-        )}
-  </TouchableOpacity>
-};
-const generateData = (length) => {
-    return Array.from({ length }, (_, index) => ({
-      id: `${index + 1}`,
-      text: `Item ${index + 1}`,
-      isExpanded: false,
-    }));
-  };
+      {/*<Spacer size={20} />
 
-const NewItem = () => {
-    //const [data, setData] = useState(generateData(1)); // Adjust the parameter as needed
-    const [isExpanded, setIsExpanded] = useState(false);
-    const [items, setItems] = useState([]);
-    const [title, setTitle] = useState("");
-    //console.log(data);
+      <View style={styles.infoContainer}>
+        <Text style={styles.label}>
+          <Ionicons name={"square-outline"} size={20} color={"#80adad"}/> Checklist:
+        </Text>
+        <FlatList 
+          data={[1,2,3,4,5]}
+          renderItem={({item}) => (
+          <Text>{item}</Text>
+          )}
+          keyExtractor={() => {}}
+          contentContainerStyle={{ columnGap: SIZES.medium }}
+        /> 
+      </View>*/}
     
-    function createPost() {
-      const item = {
-        title: title,
-      };
-  
-      (async () => {
-        POSTcreateItem({
-          ...item,
-          _id: null
-        }).then((newItem) => {
-          if (!!newItem) {
-            alert("Success!");
-            goHome();
-          } else {
-            alert("Failed.");
-          }
-        });
-      })()
-    }
-
-    const handlePress = (itemId) => {
-        console.log("handle press " + itemId);
-        console.log("item.id" + item.id);
-        setData((prevData) =>
-        prevData.map((item) =>
-            item.id === itemId ? { ...item, isExpanded: !item.isExpanded } : item
-        ),
-        console.log(data),
-        );
-    };
-
-    return (
-        <View style={styles.container}>
-               <TaskCard />
-        </View>
-    );
+     </SafeAreaView>
+  )
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: "space-between",
-        //alignItems: "center",
-        padding: SIZES.medium,
-        borderRadius: SIZES.xLarge,
-        backgroundColor: "#FFF",
-        ...SHADOWS.medium,
-        shadowColor: COLORS.white,
-        marginBottom: SIZES.xSmall,
-      },
-    photoContainer: {
-        width: 50,
-        height: 50,
-        backgroundColor: COLORS.white,
-        borderRadius: SIZES.medium,
-        justifyContent: "center",
-        alignItems: "center",
+  cardContainer: {
+    width: '90%',
+    margin: SIZES.xSmall,
+    backgroundColor: "#FFF",
+    borderRadius: SIZES.xLarge,
+    ...SHADOWS.medium,
+    shadowColor: COLORS({opacity:1}).indigo,
+  },
+  titleContainer: {
+    width: '100%',
+    padding: SIZES.medium,
+    borderColor: COLORS({opacity:0.5}).darkBlue,
+    borderBottomWidth: 1,
+    borderBottomLeftRadius: SIZES.xLarge,
+    borderBottomRightRadius: SIZES.xLarge,
+  },
+  sectionContainer: {
+    margin: SIZES.xSmall,
+    padding: SIZES.xSmall,
+    backgroundColor: COLORS({opacity:0.5}).darkBlue,
+    borderRadius: SIZES.small,
+    ...SHADOWS.medium,
+    shadowColor: COLORS({opacity:1}).indigo,
   },
   title: {
+    fontSize: SIZES.large,
+    fontFamily: FONT.regular,
+    color: COLORS({opacity:1}).darkBlue,
+  },
+  section: {
     fontSize: SIZES.medium,
     fontFamily: FONT.regular,
-    color:COLORS.primary,
-    marginTop: SIZES.small / 1.5,
+    color: COLORS({opacity:1}).white,
   },
-  infoContainer: {
-    padding: SIZES.large,
-  },
-  textContainer: {
+  expandedContainer: {
+    paddingBottom: SIZES.medium,
+    paddingHorizontal: SIZES.medium,
     flex: 1,
-    marginHorizontal: SIZES.medium,
-    justifyContent: "center",
+    overflow: 'scroll',
   },
-  column: {
+  row: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    //alignItems: "baseline",
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
+  icon: {
+    marginRight: SIZES.xxSmall,
+    color: COLORS({opacity:0.8}).darkBlue,
+  },
+  label:{
+    fontSize: SIZES.large,
+    fontFamily: FONT.regular,
+    color: COLORS({opacity:1}).navy,
+    margin: SIZES.xSmall,
   },
 });
 
-export default NewItem
+//export default TaskCard

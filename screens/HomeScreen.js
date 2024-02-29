@@ -19,10 +19,9 @@ import { ToolBar } from "../components/Toolbar";
 import { Ionicons } from "@expo/vector-icons";
 import { useState, useEffect } from "react";
 
-export default function HomeScreen () {
+export default function HomeScreen ({ navigation, route }) {
     const active = "class";
     const mobile = true;
-    const navigation = useNavigation();
 
     const [state, setState] = useState("day");
 

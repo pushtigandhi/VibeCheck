@@ -2,15 +2,16 @@ import React, { useEffect, useState } from "react";
 import { SafeAreaView, View, FlatList, StyleSheet } from "react-native";
 import { COLORS, FONT, SIZES } from "../constants";
 import HomeNavigation from "./HomeNavigation";
-import { GETitems, GETitemsTEST } from "../API";
+import { GETitems, GETitemsTEST, ItemType } from "../API";
 import ContactCard from "./cards/ContactCard";
+import BacklogCard from "./cards/BacklogCard";
 
-export default function Backlog ({scrollEnabled = true}) {
+export default function Backlog ({navigation, scrollEnabled = true}) {
   const [items, setItems] = useState([]);
 
   async function getItemsFromAPI() {
     try {
-      let items_ = await GETitemsTEST({ category: "Backlog"});
+      let items_ = await GETitemsTEST(ItemType.Item, { category: "Backlog"});
       return items_;
     } catch (error) {
       console.log("error fetching items");
@@ -28,8 +29,8 @@ export default function Backlog ({scrollEnabled = true}) {
   }, []) // only run once on load
 
   const renderItem = ({ item }) => (
-    <View key={item._id + "root"} >
-        <ContactCard key={item._id} contact={item} />
+    <View style={styles.cardContainer} key={item["_id"] + "root"}>
+      <BacklogCard navigation={navigation} item={item} />
     </View>
   );
 

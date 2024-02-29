@@ -138,10 +138,10 @@ export const PropertyCard = ({ item = null }) => {
   return (
     <SafeAreaView style={styles.infoContainer}>
 
-      <View style={styles.row}>
+      {/* <View style={styles.row}>
         <Text style={styles.label}>Properties</Text>
         <Ionicons name={"information-circle-outline"} size={size} style={styles.icon}/> 
-      </View>
+      </View> */}
       <ScrollView style={styles.propertiesContainer}>
       <SingleSelectDropdown options={directory.map(cat => cat.title)} placeholder="Category" defaultValue={category} setFn={setCategory}
         icon={<Ionicons name={"folder-open-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />

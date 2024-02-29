@@ -4,11 +4,11 @@ import { Platform } from 'react-native';
 export const BASE_URL = 'http://172.27.72.214:3000/api/v0';
 
 export const ItemType = {
-    Item: 'ITEM',
-    Task: 'TASK',
-    Event: 'EVENT',
-    Page: 'PAGE',
-    Recipe: 'RECIPE'
+    Item: 'Item',
+    Task: 'Task',
+    Event: 'Event',
+    Page: 'Page',
+    Recipe: 'Recipe'
 };
 
 const USERS_BASE_URL = `${BASE_URL}/users`;
@@ -521,6 +521,7 @@ const getURL= ({ itemType }) => {
             url = ITEMS_EXT;
             break;
     }
+    return url;
 } 
 
 export async function GETitems(itemType, filter={}) {
@@ -812,6 +813,8 @@ export async function GETdirectoryTEST(profileID) {
     });
 }
 
+
+
 export async function POSTaddCategoryTEST(profileID, category) {
     const response = await fetchWithAuthJSON(`${DIRECTORY_BASE_URL}/${profileID}`, {
         method: 'POST',
@@ -926,13 +929,44 @@ export async function DELETEtagTEST(tagID) {
 export async function GETitemsTEST(itemType, filter={}) {
     const ext = getURL(itemType);
 
-    const response = await fetch(`${ITEMS_BASE_URL}/${ext}` + new URLSearchParams(filter), {
-        method: 'GET',
-    });
+    const response = `${ITEMS_BASE_URL}/${ext}` + new URLSearchParams(filter);
 
-    console.log(response);
-
-    const body = {"items": []};
+    const body = {
+        "items": [
+            {
+                "_id": "65dffbe64102392ebb5783b0",
+                "title": "test item 0",
+                "category": "Backlog",
+                "section": "All",
+                "icon": "📍",
+                "tags": [
+                    "new"
+                ],
+                "notes": [],
+                "owner": "65dffad64102392ebb57839b",
+                "createdAt": "2024-02-29T03:37:10.111Z",
+                "updatedAt": "2024-02-29T03:37:10.111Z",
+                "__v": 0
+            },
+            {
+                "_id": "65dffccb4102392ebb5783b9",
+                "title": "test task 0",
+                "category": "Backlog",
+                "section": "All",
+                "icon": "📍",
+                "tags": [
+                    "new"
+                ],
+                "notes": [],
+                "owner": "65dffad64102392ebb57839b",
+                "itemType": "Task",
+                "subtasks": [],
+                "createdAt": "2024-02-29T03:40:59.685Z",
+                "updatedAt": "2024-02-29T03:40:59.685Z",
+                "__v": 0
+            }
+        ]
+    };
     let items = body.items;
     return items.map((item) => {
         return {

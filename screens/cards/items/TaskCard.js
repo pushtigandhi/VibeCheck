@@ -8,7 +8,19 @@ import { taskProperties } from "../PropertyCards";
 import Layout from "../../../_layout";
 import { Ionicons } from "@expo/vector-icons";
 
-const TaskCard = ({task, expanded=false}) => {
+export const expandedTaskCard = ({itemType}) => {
+  return (
+    <ScrollView style={styles.expandedContainer}>
+      {sections.map(section => (
+        <TouchableOpacity style={styles.sectionContainer} key={section + "_root"}>
+            <Text style={styles.section} numberOfLines={1}>{section}</Text>
+        </TouchableOpacity>
+      ))}
+    </ScrollView>
+  )
+};
+
+export const TaskCard = ({task, expanded=false}) => {
 
   const [isExpanded, setIsExpanded] = useState(expanded);
 
@@ -28,21 +40,21 @@ const TaskCard = ({task, expanded=false}) => {
 
       </TouchableOpacity>
       
-      <Spacer size={20} />
+      {/*<Spacer size={20} />
 
       <View style={styles.infoContainer}>
         <Text style={styles.label}>
           <Ionicons name={"square-outline"} size={20} color={"#80adad"}/> Checklist:
         </Text>
-       {/* <FlatList 
+        <FlatList 
           data={[1,2,3,4,5]}
           renderItem={({item}) => (
           <Text>{item}</Text>
           )}
           keyExtractor={() => {}}
           contentContainerStyle={{ columnGap: SIZES.medium }}
-        /> */}
-      </View>
+        /> 
+      </View>*/}
     
      </View>
   )
