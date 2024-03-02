@@ -7,51 +7,70 @@ import { ExpandableView, Spacer } from '../utils';
 import Layout from "../_layout";
 import { Ionicons } from "@expo/vector-icons";
 import { PropertyCard } from "./cards/PropertyCards";
+import { ItemType } from "../API";
 
-export default function ItemPage({item}) {
+export default function NewItem({navigation, item}) {
 
   const [isExpanded, setIsExpanded] = useState(true);
-
-  //TODO:
-  /*
-    - CHECK ITEM TYPE
-    - ADD DIFFERENT FIELDS BASED ON ITEM TYPE
-    - ADD FUNCTIONALITY FOR SAVING/UPDATING THE FIELDS
-  */
-
+  
   return (
     <SafeAreaView style={styles.infoContainer}>
       <TouchableOpacity
         onPress={() => {
-            setIsExpanded(!isExpanded);
           }}
           style={styles.titleContainer}
       >
       <View style={styles.row}>
-        <Text style={styles.label}>Properties</Text>
+        <Text style={styles.label}>{ItemType.Item}</Text>
         <Ionicons name={"information-circle-outline"} size={SIZES.xLarge} style={styles.icon}/> 
       </View>
       </TouchableOpacity>
-      <ExpandableView expanded={isExpanded} view={PropertyCard} params={{item}} vh={500} />
 
-      
-      {/*<Spacer size={20} />
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("Item", {item: {"itemType" : ItemType.Item}});
+          }}
+          style={styles.titleContainer}
+      >
+      <View style={styles.row}>
+        <Text style={styles.label}>{ItemType.Task}</Text>
+        <Ionicons name={"information-circle-outline"} size={SIZES.xLarge} style={styles.icon}/> 
+      </View>
+      </TouchableOpacity>
 
-      <View style={styles.infoContainer}>
-        <Text style={styles.label}>
-          <Ionicons name={"square-outline"} size={20} color={"#80adad"}/> Checklist:
-        </Text>
-        <FlatList 
-          data={[1,2,3,4,5]}
-          renderItem={({item}) => (
-          <Text>{item}</Text>
-          )}
-          keyExtractor={() => {}}
-          contentContainerStyle={{ columnGap: SIZES.medium }}
-        /> 
-      </View>*/}
-    
-     </SafeAreaView>
+      <TouchableOpacity
+        onPress={() => {
+          }}
+          style={styles.titleContainer}
+      >
+      <View style={styles.row}>
+        <Text style={styles.label}>{ItemType.Event}</Text>
+        <Ionicons name={"information-circle-outline"} size={SIZES.xLarge} style={styles.icon}/> 
+      </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={() => {
+          }}
+          style={styles.titleContainer}
+      >
+      <View style={styles.row}>
+        <Text style={styles.label}>{ItemType.Page}</Text>
+        <Ionicons name={"information-circle-outline"} size={SIZES.xLarge} style={styles.icon}/> 
+      </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={() => {
+          }}
+          style={styles.titleContainer}
+      >
+      <View style={styles.row}>
+        <Text style={styles.label}>{ItemType.Recipe}</Text>
+        <Ionicons name={"information-circle-outline"} size={SIZES.xLarge} style={styles.icon}/> 
+      </View>
+      </TouchableOpacity>
+    </SafeAreaView>
   )
 };
 
@@ -112,5 +131,3 @@ const styles = StyleSheet.create({
     margin: SIZES.xSmall,
   },
 });
-
-//export default TaskCard

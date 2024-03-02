@@ -13,6 +13,7 @@ import Login from './screens/LoginScreen';
 import { EmptyItemCard } from './screens/cards/EmptyItemCard';
 import { useFonts } from 'expo-font';
 import ItemPage from './screens/ItemPage';
+import NewItem from './screens/NewItem';
 
 
 const Stack = createNativeStackNavigator();
@@ -35,7 +36,7 @@ export default function App() {
       //<Stack.Screen name="Profile" component={ProfileScreen} initialParams={{ isOwnProfile: false }} />
       //<Stack.Screen name="Drafts" component={DraftsScreen}/>
       }
-      <Stack.Screen name="New" component={EmptyItemCard}/>
+      <Stack.Screen name="New" component={NewItem}/>
       <Stack.Screen name="Directory" component={Directory}/>
       <Stack.Screen name="VibeCheck" component={VibeCheck}/>
       <Stack.Screen name="Backlog" component={Backlog}/>

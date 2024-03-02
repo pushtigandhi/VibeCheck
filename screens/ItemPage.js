@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image,
         StyleSheet, Animated, FlatList, SafeAreaView } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -15,11 +15,21 @@ const BRAND_ICON = require("../assets/icon.png")
 
 export default function ItemPage({route}) {
   const { item } = route.params;
-  const { title, description, favicon, tags, itemType,} = item;
+  const { title, description, favicon, tags, itemType} = item;
 
   const [isExpanded, setIsExpanded] = useState(true);
-
+  
+  const [itemTitle, setItemTitle] = useState('Title');
+  const [itemDesc, setItemDesc] = useState('Description');
   const [notes, setNotes] = useState('');
+
+  useEffect(() => {
+    if (!!item.title) {
+      setItemTitle(item.title);
+    }
+    if(!!item.description)
+      setItemDesc(item.description);
+  }, [item]); // Update category and section when item changes
 
   return (
     <SafeAreaView style={styles.container}>
@@ -34,8 +44,13 @@ export default function ItemPage({route}) {
           {/* <View style={styles.imageBox}>
             <Text style={[styles.border, {fontSize: 140}]}>{item.icon}</Text>
           </View> */}
-        <Text style={styles.title}>{title}</Text>
-        {!!description && (<Text style={styles.description}>{description}</Text>)}
+        <TextInput style={styles.title}
+            placeholder={itemTitle}>
+        </TextInput>
+        {/* <Text style={styles.title}>{itemTitle}</Text> */}
+        <TextInput style={styles.description} 
+            placeholder={itemDesc}>
+        </TextInput>
 
         <TouchableOpacity
             onPress={() => {

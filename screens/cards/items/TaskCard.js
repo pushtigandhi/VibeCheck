@@ -10,7 +10,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { PropertyCard } from "../PropertyCards";
 
 export const expandedSubTaskCard = ({task}) => {
-  const [subtasks, setSubtasks] = useState(task.subtasks);
+  const [subtasks, setSubtasks] = useState([]);
+
+  if(!!task.subtasks) {
+    setSubtasks(task.subtasks);
+  }
 
   function checkToggle(subtaskID) {
     
