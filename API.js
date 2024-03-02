@@ -800,9 +800,20 @@ export async function GETdirectoryTEST(profileID) {
 
     const body = {"directory": [
         {
-            "sections": ["All"],
-            "_id": "65c5bd250ecbb74370648816",
-            "title": "Backlog"
+            "_id": "65dffad64102392ebb57839c",
+            "title": "Backlog",
+            "sections": [
+                "All"
+            ]
+        },
+        {
+            "title": "Cooking",
+            "sections": [
+                "All",
+                "Recipes",
+                "Tips"
+            ],
+            "_id": "65e172b61635ad960dabdc32"
         }
     ]};
     let directory = body.directory;
@@ -963,6 +974,29 @@ export async function GETitemsTEST(itemType, filter={}) {
                 "subtasks": [],
                 "createdAt": "2024-02-29T03:40:59.685Z",
                 "updatedAt": "2024-02-29T03:40:59.685Z",
+                "__v": 0
+            },
+            {
+                "_id": "65e134a91635ad960dabdc1b",
+                "title": "task with subtask",
+                "category": "Backlog",
+                "section": "All",
+                "icon": "📍",
+                "tags": [
+                    "new"
+                ],
+                "notes": [],
+                "owner": "65dffad64102392ebb57839b",
+                "itemType": "Task",
+                "subtasks": [
+                    {
+                        "isChecked": false,
+                        "task": "first subtask",
+                        "_id": "65e134a91635ad960dabdc1c"
+                    }
+                ],
+                "createdAt": "2024-03-01T01:51:37.332Z",
+                "updatedAt": "2024-03-01T01:53:24.873Z",
                 "__v": 0
             }
         ]

@@ -32,7 +32,7 @@ export const DailyCalendar = ({showSidebar = false}) => {
           scrollEnabled={true}
         >
           {hours.map((hour) => (
-            <View style={styles.cardsContainer}>
+            <View style={styles.cardsContainer} key={hour + "_root"}>
               <View style={styles.row}>
                 <View style={styles.label}>
                   <Text style={styles.time}>{hour}</Text>

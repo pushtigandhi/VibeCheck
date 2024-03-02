@@ -3,29 +3,13 @@ import { View, Text, TouchableOpacity,
         StyleSheet, Animated, FlatList, ScrollView } from 'react-native';
 
 import { COLORS, SHADOWS, FONT, SIZES } from "../../constants";
-import { Ionicons } from "@expo/vector-icons";
-import { Spacer } from "../../utils";
-import { ExpandableView } from "../../utils";
-import { ItemType } from "../../API";
-
-import expandedTaskCard from "./items/TaskCard";
 
 const BacklogCard = ({navigation, item}) => {
-    const [isExpanded, setIsExpanded] = useState(false);
-    const [itemType, setItemType] = useState(ItemType.Item);
-
-    const onPressItem = () => {
-        if (!!!item.itemType) {
-          navigation.navigate(item.itemType, listing);
-          return;
-        }
-    };
-
   return (
     <View style={styles.cardContainer}>
       <TouchableOpacity
         onPress={() => {
-            navigation.navigate("Item", item);
+            navigation.navigate("Item", {item});
           }}
           style={styles.titleContainer}
       >

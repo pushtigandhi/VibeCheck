@@ -4,7 +4,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './screens/HomeScreen';
 import Contacts from './screens/Contacts';
 import ProfileScreen from './screens/ProfileScreen';
-import NewItem from './screens/NewItem';
 import Directory from './screens/Directory';
 import DirectoryCard from './screens/cards/DirectoryCard';
 import VibeCheck from './screens/VibeCheck';
@@ -13,7 +12,7 @@ import Login from './screens/LoginScreen';
 
 import { EmptyItemCard } from './screens/cards/EmptyItemCard';
 import { useFonts } from 'expo-font';
-import ItemPage from './screens/NewItem';
+import ItemPage from './screens/ItemPage';
 
 
 const Stack = createNativeStackNavigator();

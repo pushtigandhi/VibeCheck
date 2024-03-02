@@ -37,7 +37,7 @@ const SingleSelectDropdown = ({ options, placeholder="Select item", defaultValue
         value={value}
         onChange={item => {
             setValue(item.value);
-            setFn(item.value);
+            setFn(item.label);
         }}
         renderLeftIcon={() => (
             <>{icon}</>

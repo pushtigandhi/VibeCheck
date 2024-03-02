@@ -11,17 +11,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import SingleSelectDropdown from "../../components/SingleSelectDropdown";
 import MultiSelectDropdown from "../../components/MultiSelectDropdown";
-
-const data = [
-  { label: 'Item 1', value: '1' },
-  { label: 'Item 2', value: '2' },
-  { label: 'Item 3', value: '3' },
-  { label: 'Item 4', value: '4' },
-  { label: 'Item 5', value: '5' },
-  { label: 'Item 6', value: '6' },
-  { label: 'Item 7', value: '7' },
-  { label: 'Item 8', value: '8' },
-];
+import { GETdirectoryTEST } from "../../API";
 
 export const PropertyCard = ({ item = null }) => {
   const [category, setCategory] = useState('');
@@ -45,22 +35,20 @@ export const PropertyCard = ({ item = null }) => {
 
   async function getDirectoryFromAPI() {
     try {
-        let directory_ = await GETdirectory();
-        return directory_;
+      let directory_ = await GETdirectoryTEST();
+      return directory_;
     } catch (error) {
-      console.log("error fetching directory");
-      console.log(error);
-
-        return [];
+      console.log("Error fetching directory:", error);
+      return [];
     }
   }
-  
+
   async function getTagsFromAPI() {
     try {
         let allTags_ = await GETtags();
         return allTags_;
     } catch (error) {
-      console.log("error fetching directory");
+      console.log("error fetching tags");
       console.log(error);
 
         return [];
@@ -71,31 +59,52 @@ export const PropertyCard = ({ item = null }) => {
     getDirectoryFromAPI().then((directory_) => {
       setDirectory(directory_);
     }).catch((err) => {
-        alert(err.message)
-    })
-
+      console.error("Error fetching directory:", err.message);
+    });
+    
     getTagsFromAPI().then((allTags_) => {
       setAllTags(allTags_);
     }).catch((err) => {
         alert(err.message)
     })
+  }, []); // Empty dependency array to run only once on component mount
 
-    if (!!item) {
-      // if we are editing an item, set the state to the item's values
-      // setTitle(item.title);
-      // setDescription(item.description);
+  useEffect(() => {
+    if (item) {
       setCategory(item.category);
       setSection(item.section);
-      setStartTime(item.startTime);
-      setEndTime(item.endTime);
-      setStartDate(item.startDate);
-      setPriority(item.priority);
-      setRepeat(item.repeat);
-      setTags(item.tags);
+      if(!!item.startTime)
+        setStartTime(item.startTime);
+      if(!!item.endTime)
+        setEndTime(item.endTime);
+      if(!!item.startDate)
+        setStartDate(item.startDate);
+      if(!!item.priority)
+        setPriority(item.priority);
+      if(!!item.repeat)
+        setRepeat(item.repeat);
+      if(!!item.tags)
+        setTags(item.tags);
     }
+  }, [item]); // Update category and section when item changes
 
-    
-  }, [item]) // only run once on load
+  function getTitles() {
+    const categoryTitles = directory.map(cat => {
+      return cat.title;
+    });
+    return categoryTitles.map((title, index) => ({
+      label: title,
+      value: String(index + 1)
+    }));
+  }
+
+  function getSections() {
+    const sectionTitles = directory.find(cat => cat.title === category).sections;
+    return sectionTitles.map((title, index) => ({
+      label: title,
+      value: String(index + 1)
+    }));
+  }
 
   async function save() {
     item.category = category;
@@ -135,6 +144,12 @@ export const PropertyCard = ({ item = null }) => {
     }
   };
 
+  const renderCategories = ({ item }) => (
+    <View key={item["_id"] + "root"} >
+        <DirectoryCard category={item} key={item["_id"]} sections={item.sections} />
+    </View>
+  );
+
   return (
     <SafeAreaView style={styles.infoContainer}>
 
@@ -143,12 +158,16 @@ export const PropertyCard = ({ item = null }) => {
         <Ionicons name={"information-circle-outline"} size={size} style={styles.icon}/> 
       </View> */}
       <ScrollView style={styles.propertiesContainer}>
-      <SingleSelectDropdown options={directory.map(cat => cat.title)} placeholder="Category" defaultValue={category} setFn={setCategory}
-        icon={<Ionicons name={"folder-open-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
+      {directory.length > 0 ? (
+        <SingleSelectDropdown options={getTitles()} placeholder={!!category ? category : "Category"} setFn={setCategory}
+          icon={<Ionicons name={"folder-open-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
+      ) : (
+        <Text>Loading categories...</Text>
+      )}
 
-      {!!category && (
+      {!!category && directory.length > 0 && (
         <View>
-          <SingleSelectDropdown options={directory.find(cat => cat.title === category).sections} placeholder="Sections" defaultValue={section} setFn={setSection}
+          <SingleSelectDropdown options={getSections()} placeholder={!!section ? section : "Section"} setFn={setSection}
             icon={<Ionicons name={"bookmark-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
         </View>
       )}
