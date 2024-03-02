@@ -9,7 +9,7 @@ import Layout from "../../../_layout";
 import { Ionicons } from "@expo/vector-icons";
 import { PropertyCard } from "../PropertyCards";
 
-export const expandedTaskCard = ({task}) => {
+export const expandedSubTaskCard = ({task}) => {
   const [subtasks, setSubtasks] = useState(task.subtasks);
 
   function checkToggle(subtaskID) {
@@ -18,10 +18,6 @@ export const expandedTaskCard = ({task}) => {
 
   return (
     <View style={styles.expandedContainer}>
-      <View style={[styles.row, {borderBottomWidth: 1, borderBottomColor: COLORS({opacity:1}).darkBlue}]}>
-        <Text style={styles.section}>Subtasks</Text>
-        <Ionicons name={"checkbox-outline"} size={SIZES.large} style={styles.icon}/> 
-      </View>
       {subtasks.length > 0 && subtasks.map(item => (
         <View style={styles.row} key={item["_id"] + "_root"}>
           <TouchableOpacity style={styles.sectionContainer} key={item["_id"]} 
@@ -44,13 +40,15 @@ export const expandedTaskCard = ({task}) => {
 };
 
 export const TaskCard = ({task, expanded=false}) => {
-  const [isExpanded, setIsExpanded] = useState(expanded);
+  const [isPropExpanded, setIsPropExpanded] = useState(expanded);
+  const [isSubtaskExpanded, setIsSubtaskExpanded] = useState(true);
+  const [isInstructionExpanded, setIsInstructionExpanded] = useState(true);
 
   return (
     <View style={styles.infoContainer}>
       <TouchableOpacity
         onPress={() => {
-            setIsExpanded(!isExpanded);
+          setIsPropExpanded(!isPropExpanded);
           }}
           style={styles.titleContainer}
       >
@@ -59,39 +57,20 @@ export const TaskCard = ({task, expanded=false}) => {
           <Ionicons name={"information-circle-outline"} size={SIZES.xLarge} style={styles.icon}/> 
         </View>
       </TouchableOpacity>
-      <ExpandableView expanded={isExpanded} view={PropertyCard} params={{item}} vh={500} />
+      <ExpandableView expanded={isPropExpanded} view={PropertyCard} params={{item}} vh={500} />
       <TouchableOpacity
         onPress={() => {
-            setIsExpanded(!isExpanded);
+          setIsSubtaskExpanded(!isSubtaskExpanded);
           }}
           style={styles.titleContainer}
       >
-      <View style={styles.row}>
-        <Text style={styles.label}>Checklist</Text>
-        <Ionicons name={"checkbox-outline"} size={SIZES.small} style={styles.icon}/> 
-      </View>
+        <View style={styles.row}>
+          <Text style={styles.label}>Subtasks</Text>
+          <Ionicons name={"checkbox-outline"} size={SIZES.xLarge} style={styles.icon}/> 
+        </View>
       </TouchableOpacity>
-      {expandedTaskCard({task})}
-      {/* <ExpandableView expanded={isExpanded} view={expandedCard} params={{task}} vh={300} /> */}
-
-      
-      {/*<Spacer size={20} />
-
-      <View style={styles.infoContainer}>
-        <Text style={styles.label}>
-          <Ionicons name={"square-outline"} size={20} color={"#80adad"}/> Checklist:
-        </Text>
-        <FlatList 
-          data={[1,2,3,4,5]}
-          renderItem={({item}) => (
-          <Text>{item}</Text>
-          )}
-          keyExtractor={() => {}}
-          contentContainerStyle={{ columnGap: SIZES.medium }}
-        /> 
-      </View>*/}
-    
-     </View>
+      <ExpandableView expanded={isSubtaskExpanded} view={expandedSubTaskCard} params={{task}} vh={500} />
+    </View>
   )
 };
 
@@ -108,12 +87,6 @@ label:{
   flexDirection: "row",
   justifyContent: "center",
 },
-section: {
-  fontSize: SIZES.large,
-  fontFamily: FONT.regular,
-  color: COLORS({opacity:1}).darkBlue,
-  
-},
 icon: {
   marginRight: SIZES.xxSmall,
   color: COLORS({opacity:0.8}).darkBlue,
@@ -122,6 +95,18 @@ row: {
   flexDirection: "row",
   justifyContent: "flex-start",
   alignItems: "center",
+},
+expandedContainer: {
+  width: '90%',
+  margin: SIZES.xSmall,
+  paddingBottom: SIZES.medium,
+  paddingHorizontal: SIZES.medium,
+  flex: 1,
+},
+item: {
+  fontSize: SIZES.large,
+  fontFamily: FONT.regular,
+  color: COLORS({opacity:1}).darkBlue,
 },
 });
 

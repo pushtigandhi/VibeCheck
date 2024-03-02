@@ -14,8 +14,8 @@ const BacklogCard = ({navigation, item}) => {
           style={styles.titleContainer}
       >
         <View style={styles.row}>
-        <Text style={{ fontSize: SIZES.regular}}> {item.icon} </Text>
-            <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
+          <Text style={{ fontSize: SIZES.regular}}>{item.icon}</Text>
+          <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
         </View>
       </TouchableOpacity>
     </View>
@@ -56,12 +56,6 @@ const styles = StyleSheet.create({
     fontSize: SIZES.medium,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).white,
-  },
-  expandedContainer: {
-    paddingBottom: SIZES.medium,
-    paddingHorizontal: SIZES.medium,
-    flex: 1,
-    overflow: 'scroll',
   },
   row: {
     flexDirection: "row",

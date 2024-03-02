@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image,
         StyleSheet, Animated, FlatList, SafeAreaView } from 'react-native';
-
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { COLORS, SHADOWS, FONT, SIZES } from "../constants";
 import { ExpandableView, Spacer } from '../utils';
 import Layout from "../_layout";
@@ -9,16 +9,31 @@ import { Ionicons } from "@expo/vector-icons";
 import { PropertyCard } from "./cards/PropertyCards";
 import { ItemType } from "../API";
 import { ScrollView } from "react-native-gesture-handler";
-import { expandedTaskCard } from "./cards/items/TaskCard";
+import { expandedSubTaskCard } from "./cards/items/TaskCard";
+
+const BRAND_ICON = require("../assets/icon.png")
 
 export default function ItemPage({route}) {
   const { item } = route.params;
-  const { title, description, tags, itemType} = item;
+  const { title, description, favicon, tags, itemType,} = item;
 
   const [isExpanded, setIsExpanded] = useState(true);
 
+  const [notes, setNotes] = useState('');
+
   return (
     <SafeAreaView style={styles.container}>
+    <GestureHandlerRootView>
+      <ScrollView scrollEnabled={true}>
+        <View style={styles.imageBox}>
+          <Image
+            source={BRAND_ICON}
+            style={[styles.border, { width: 140, height: 140}]}
+          />
+        </View>
+          {/* <View style={styles.imageBox}>
+            <Text style={[styles.border, {fontSize: 140}]}>{item.icon}</Text>
+          </View> */}
         <Text style={styles.title}>{title}</Text>
         {!!description && (<Text style={styles.description}>{description}</Text>)}
 
@@ -42,14 +57,22 @@ export default function ItemPage({route}) {
             </View>
           </View>
         </TouchableOpacity>
-        <ExpandableView expanded={isExpanded} view={PropertyCard} params={{item}} vh={500} />
+        <ExpandableView expanded={isExpanded} view={PropertyCard} params={{item}} vh={300} />
 
         {!!itemType && itemType === ItemType.Task && (
-          <View style={styles.propContainer}>
-           {expandedTaskCard({task: item})}
+          <View>
+            <View style={[styles.propContainer, styles.row]}>
+              <Text style={styles.label} numberOfLines={1}>Subtasks</Text>
+              <Ionicons name={"checkbox-outline"} size={SIZES.xLarge} style={styles.icon}/> 
+            </View>
+            {expandedSubTaskCard({task: item})}
           </View>
         )}
-        
+        {!!notes && (
+          <Text>{notes}</Text>
+        )}
+      </ScrollView>
+    </GestureHandlerRootView>
     </SafeAreaView>
     
   )
@@ -92,8 +115,7 @@ const styles = StyleSheet.create({
     padding: SIZES.medium,
     borderColor: COLORS({opacity:0.5}).darkBlue,
     borderBottomWidth: 1,
-    borderBottomLeftRadius: SIZES.xLarge,
-    borderBottomRightRadius: SIZES.xLarge,
+    borderRadius: SIZES.medium,
     marginHorizontal: SIZES.medium,
   },
   label: {
@@ -107,4 +129,14 @@ const styles = StyleSheet.create({
     flex: 1,
     overflow: 'scroll',
   },
+  imageBox: {
+    alignItems: "center",
+    justifyContent: "center",
+    
+  },
+  border: {
+    borderWidth: 1,
+    borderColor: COLORS({opacity:1}).navy,
+    borderRadius: SIZES.medium
+  }
 });

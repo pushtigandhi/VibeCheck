@@ -157,7 +157,7 @@ export const PropertyCard = ({ item = null }) => {
         <Text style={styles.label}>Properties</Text>
         <Ionicons name={"information-circle-outline"} size={size} style={styles.icon}/> 
       </View> */}
-      <ScrollView style={styles.propertiesContainer}>
+      <ScrollView>
       {directory.length > 0 ? (
         <SingleSelectDropdown options={getTitles()} placeholder={!!category ? category : "Category"} setFn={setCategory}
           icon={<Ionicons name={"folder-open-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
@@ -338,9 +338,6 @@ const styles = StyleSheet.create({
     borderRadius: SIZES.medium/2,
     borderWidth: 1,
     borderColor: COLORS({opacity:1}).navy,
-  },
-  propertiesContainer: {
-    height: '70%',
   },
   row: {
     flexDirection: "row",
