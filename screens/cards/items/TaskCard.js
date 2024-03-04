@@ -9,48 +9,54 @@ import Layout from "../../../_layout";
 import { Ionicons } from "@expo/vector-icons";
 import { PropertyCard } from "../PropertyCards";
 
-export const expandedSubTaskCard = ({task}) => {
-  const [subtasks, setSubtasks] = useState([]);
+const expandedSubTaskCard = ({originalSubtasks, setFn}) => {
+  const [subtasks, setSubtasks] = useState(originalSubtasks);
 
-  if(!!task.subtasks) {
-    setSubtasks(task.subtasks);
-  }
-
-  function checkToggle(subtaskID) {
-    
-  }
-
+  const toggleSubtask = (id) => {
+    const updatedSubtasks = subtasks.map((subtask) => {
+      if (subtask["_id"] === id) {
+        return { ...subtask, isChecked: !subtask.isChecked };
+      }
+      return subtask;
+    });
+    setSubtasks(updatedSubtasks);
+    setFn({"subtasks": updatedSubtasks}); // Indicate that changes have been made
+  };
   return (
     <View style={styles.expandedContainer}>
-      {subtasks.length > 0 && subtasks.map(item => (
-        <View style={styles.row} key={item["_id"] + "_root"}>
-          <TouchableOpacity style={styles.sectionContainer} key={item["_id"]} 
-            onPress={() => {
-              item.isChecked == !item.isChecked
-            }}
-          >
+      <TouchableOpacity style={styles.addButtonIcon} >
+        <Ionicons name={"add-circle"} size={SIZES.large} style={styles.iconInverted} />
+      </TouchableOpacity>
+      {subtasks.length > 0 ? (subtasks.map(item => (
+        <TouchableOpacity style={styles.subtaskContainer} key={item["_id"]} 
+          onPress={() => toggleSubtask(item["_id"])}
+        >
+          <View style={styles.row}>
             {item.isChecked ? (
               <Ionicons name={"checkbox-outline"} size={SIZES.large} style={styles.icon}/> 
             ) : (
               <Ionicons name={"square-outline"} size={SIZES.large} style={styles.icon}/>
             )}
-          </TouchableOpacity>
-          <Text style={styles.item} numberOfLines={1}>{item.task}</Text>
+            <Text style={styles.item} numberOfLines={1}>{item.task}</Text>
+          </View>
+        </TouchableOpacity>
+      ))) : (
+        <View>
+          <Text style={[styles.item, {marginRight: SIZES.small}]} numberOfLines={1}>None</Text>
         </View>
-      ))}
-
+      )}
     </View>
   )
 };
 
-export const TaskCard = ({task, expanded=false}) => {
-  const [isPropExpanded, setIsPropExpanded] = useState(expanded);
+export const TaskCard = ({task, setFn}) => {
+  //const [isPropExpanded, setIsPropExpanded] = useState(expanded);
   const [isSubtaskExpanded, setIsSubtaskExpanded] = useState(true);
-  const [isInstructionExpanded, setIsInstructionExpanded] = useState(true);
+  const [isPressable, setIsPressable] = useState(true);
 
   return (
     <View style={styles.infoContainer}>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         onPress={() => {
           setIsPropExpanded(!isPropExpanded);
           }}
@@ -61,19 +67,29 @@ export const TaskCard = ({task, expanded=false}) => {
           <Ionicons name={"information-circle-outline"} size={SIZES.xLarge} style={styles.icon}/> 
         </View>
       </TouchableOpacity>
-      <ExpandableView expanded={isPropExpanded} view={PropertyCard} params={{item}} vh={500} />
+      <ExpandableView expanded={isPropExpanded} view={PropertyCard} params={{task}} vh={500} /> */}
       <TouchableOpacity
         onPress={() => {
           setIsSubtaskExpanded(!isSubtaskExpanded);
-          }}
-          style={styles.titleContainer}
+        }}
+        style={styles.propContainer}
+        disabled={!isPressable}
       >
-        <View style={styles.row}>
-          <Text style={styles.label}>Subtasks</Text>
-          <Ionicons name={"checkbox-outline"} size={SIZES.xLarge} style={styles.icon}/> 
+        <View style={[styles.row, {justifyContent: "space-between"}]}>
+          <View style={styles.row}>
+            <Ionicons name={"checkbox-outline"} size={SIZES.xLarge} style={styles.icon}/> 
+            <Text style={styles.label} numberOfLines={1}>Subtasks</Text>
+          </View>
+          <View>
+            {isSubtaskExpanded ? (
+                <Ionicons name="chevron-up-outline" size={SIZES.xLarge} style={styles.icon}/>
+            ) : (
+                <Ionicons name="chevron-down-outline" size={SIZES.xLarge} style={styles.icon}/>
+            )}
+          </View>
         </View>
       </TouchableOpacity>
-      <ExpandableView expanded={isSubtaskExpanded} view={expandedSubTaskCard} params={{task}} vh={500} />
+      <ExpandableView expanded={isSubtaskExpanded} view={expandedSubTaskCard} params={{"originalSubtasks": task.subtasks, "setFn": setFn}} vh={300} />
     </View>
   )
 };
@@ -83,16 +99,16 @@ infoContainer: {
   backgroundColor: COLORS.lightWhite,
   borderRadius: SIZES.medium/2,
 },
-label:{
-  fontSize: SIZES.medium,
+label: {
+  fontSize: SIZES.large,
   fontFamily: FONT.regular,
-  color: "#B3AEC6",
-  margin: SIZES.xSmall,
-  flexDirection: "row",
-  justifyContent: "center",
+  color: COLORS({opacity:1}).darkBlue,
+},
+iconInverted: {
+  color: COLORS({opacity:1}).white,
 },
 icon: {
-  marginRight: SIZES.xxSmall,
+  //marginRight: SIZES.xxSmall,
   color: COLORS({opacity:0.8}).darkBlue,
 },
 row: {
@@ -102,15 +118,44 @@ row: {
 },
 expandedContainer: {
   width: '90%',
-  margin: SIZES.xSmall,
-  paddingBottom: SIZES.medium,
-  paddingHorizontal: SIZES.medium,
+  margin: SIZES.medium,
+  backgroundColor: COLORS.lightWhite,
+  borderRadius: SIZES.medium/2,
+  borderWidth: 1,
+  borderColor: COLORS({opacity:1}).navy,
+  padding: SIZES.medium,
   flex: 1,
 },
+addButtonIcon: {
+  height: SIZES.xxLarge,
+  margin: SIZES.xSmall,
+  backgroundColor: COLORS({opacity:0.5}).darkBlue,
+  borderRadius: SIZES.small,
+  ...SHADOWS.medium,
+  shadowColor: COLORS({opacity:1}).indigo,
+  alignItems: "center",
+  justifyContent: "center",
+},
 item: {
-  fontSize: SIZES.large,
+  fontSize: SIZES.mlarge,
   fontFamily: FONT.regular,
   color: COLORS({opacity:1}).darkBlue,
+},
+propContainer: {
+  width: '90%',
+  padding: SIZES.medium,
+  borderColor: COLORS({opacity:0.5}).darkBlue,
+  borderBottomWidth: 1,
+  borderRadius: SIZES.medium,
+  marginHorizontal: SIZES.medium,
+},
+subtaskContainer: {
+  margin: SIZES.xxSmall,
+  padding: SIZES.xSmall,
+  backgroundColor: COLORS({opacity:0.5}).lightWhite,
+  borderRadius: SIZES.small,
+  ...SHADOWS.medium,
+  shadowColor: COLORS({opacity:1}).indigo,
 },
 });
 

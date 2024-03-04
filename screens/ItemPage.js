@@ -7,28 +7,80 @@ import { ExpandableView, Spacer } from '../utils';
 import Layout from "../_layout";
 import { Ionicons } from "@expo/vector-icons";
 import { PropertyCard } from "./cards/PropertyCards";
-import { ItemType } from "../API";
+import { ItemType } from "../constants";
 import { ScrollView } from "react-native-gesture-handler";
 import { expandedSubTaskCard } from "./cards/items/TaskCard";
+import TaskCard from "./cards/items/TaskCard";
+import { PATCHitemTEST } from "../API";
+
+import React from "react";
 
 const BRAND_ICON = require("../assets/icon.png")
 
-export default function ItemPage({route}) {
+export default function ItemPage({ navigation, route}) {
   const { item } = route.params;
-  const { title, description, favicon, tags, itemType} = item;
+  const { title, description, favicon, icon, tags, itemType, _id } = item;
 
   const [isExpanded, setIsExpanded] = useState(true);
   
   const [itemTitle, setItemTitle] = useState('Title');
   const [itemDesc, setItemDesc] = useState('Description');
+  const [itemIcon, setItemIcon] = useState(icon.toString());
   const [notes, setNotes] = useState('');
 
-  useEffect(() => {
-    if (!!item.title) {
-      setItemTitle(item.title);
+  const [hasChanges, setHasChanges] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const [newItem, setNewItem] = useState({});
+
+  function updateNewItem(params) {
+    if(params.subtasks) {
+      setNewItem({... newItem, subtasks: params.subtasks});
     }
-    if(!!item.description)
-      setItemDesc(item.description);
+  }
+
+  function doRefresh() {
+    console.log(newItem);
+    setRefreshing(true);
+    PATCHitemTEST(itemType, {
+        ...newItem
+      }, _id)
+      .then((item_) => {
+          setRefreshing(false);
+    }).catch((error) => {
+        console.log(error);
+        setRefreshing(false);
+    });
+  };
+
+  useEffect(() => {
+    doRefresh();
+  }, [item]);
+
+  const onRefresh = React.useCallback(() => {
+    doRefresh();
+  }, [item]);
+
+  //const [isEmoji, setIsEmoji] = useState(false);
+
+  // Regex to check for emojis. This pattern covers a wide range of emojis but might not be exhaustive.
+  //const emojiRegex = /(\p{Emoji_Presentation}|\p{Extended_Pictographic})/gu;
+
+  // const handleIconChange = (newIcon) => {
+  //   if(setIsEmoji(emojiRegex.test(newIcon))) {
+  //     setItemIcon(newIcon);
+  //   };
+  // };
+
+  useEffect(() => {
+    if (!!_id) {
+      setNewItem(item);
+    }
+    if (title) {
+      setItemTitle(title);
+    }
+    if(description)
+      setItemDesc(description);
   }, [item]); // Update category and section when item changes
 
   return (
@@ -36,17 +88,36 @@ export default function ItemPage({route}) {
     <GestureHandlerRootView>
       <ScrollView scrollEnabled={true}>
         <View style={styles.imageBox}>
-          <Image
-            source={BRAND_ICON}
-            style={[styles.border, { width: 140, height: 140}]}
-          />
+          <TouchableOpacity style={styles.cancel}>
+            <Ionicons name={"close-outline"} size={SIZES.xxLarge} style={styles.iconInverted}/> 
+          </TouchableOpacity>
+          <TouchableOpacity>
+            {!!favicon ? (
+              <Image
+                source={BRAND_ICON}
+                style={[styles.border, { width: 140, height: 140}]}
+              />
+            ) : (
+              <Ionicons name={"camera-outline"} size={80} style={[styles.border,styles.icon, {padding: 30}]}/> 
+            )}
+          </TouchableOpacity>
+          <TouchableOpacity onPress={doRefresh} style={styles.save}>
+            <Ionicons name={"checkmark-outline"} size={SIZES.xxLarge} style={styles.iconInverted}/> 
+          </TouchableOpacity>
         </View>
-          {/* <View style={styles.imageBox}>
-            <Text style={[styles.border, {fontSize: 140}]}>{item.icon}</Text>
-          </View> */}
-        <TextInput style={styles.title}
-            placeholder={itemTitle}>
-        </TextInput>
+        <View style={[styles.row, styles.title]}>
+          {/* TODO: SELECT NEW ICON
+          <TextInput
+            style={{fontSize: SIZES.xLarge, borderRightWidth: 1, borderBlockColor: COLORS({opacity:1}).navy}}
+            onChangeText={handleIconChange}
+            value={itemIcon}
+            placeholder={itemIcon}
+          /> */}
+          <Text style={{fontSize: SIZES.xLarge}}>{itemIcon}</Text>
+          <TextInput style={{width: "100%", fontSize: SIZES.xLarge}}
+              placeholder={itemTitle}>
+          </TextInput>
+        </View>
         {/* <Text style={styles.title}>{itemTitle}</Text> */}
         <TextInput style={styles.description} 
             placeholder={itemDesc}>
@@ -73,14 +144,14 @@ export default function ItemPage({route}) {
           </View>
         </TouchableOpacity>
         <ExpandableView expanded={isExpanded} view={PropertyCard} params={{item}} vh={300} />
-
-        {!!itemType && itemType === ItemType.Task && (
-          <View>
-            <View style={[styles.propContainer, styles.row]}>
-              <Text style={styles.label} numberOfLines={1}>Subtasks</Text>
-              <Ionicons name={"checkbox-outline"} size={SIZES.xLarge} style={styles.icon}/> 
-            </View>
-            {expandedSubTaskCard({task: item})}
+        {itemType === ItemType.Task && (
+          <TaskCard task={item} setFn={updateNewItem} />
+        )}
+        {itemType === ItemType.Page && (
+          <View style={styles.propContainer}>
+            <TextInput style={styles.description}
+              placeholder="Add text here"
+            ></TextInput>
           </View>
         )}
         {!!notes && (
@@ -145,13 +216,37 @@ const styles = StyleSheet.create({
     overflow: 'scroll',
   },
   imageBox: {
-    alignItems: "center",
-    justifyContent: "center",
-    
+    flexDirection: "row",
+    justifyContent: "space-between",
+    margin: SIZES.Small,
   },
   border: {
     borderWidth: 1,
     borderColor: COLORS({opacity:1}).navy,
     borderRadius: SIZES.medium
-  }
+  },
+  icon: {
+    color: COLORS({opacity:0.8}).darkBlue,
+  },
+  iconInverted: {
+    color: COLORS({opacity:0.8}).white,
+  },
+  cancel: {
+    height: SIZES.xLarge * 2,
+    padding: SIZES.xSmall,
+    margin: SIZES.xSmall,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: COLORS({opacity:1}).lightRed,
+    borderRadius: SIZES.medium
+  },
+  save: {
+    height: SIZES.xLarge * 2,
+    padding: SIZES.xSmall,
+    margin: SIZES.xSmall,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: COLORS({opacity:1}).lightGreen,
+    borderRadius: SIZES.medium
+  },
 });

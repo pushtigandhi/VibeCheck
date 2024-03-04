@@ -1,15 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
-
+import { ItemType } from './constants'
 export const BASE_URL = 'http://172.27.72.214:3000/api/v0';
-
-export const ItemType = {
-    Item: 'Item',
-    Task: 'Task',
-    Event: 'Event',
-    Page: 'Page',
-    Recipe: 'Recipe'
-};
 
 const USERS_BASE_URL = `${BASE_URL}/users`;
 const PROFILE_BASE_URL = `${PROFILE_BASE_URL}`;
@@ -1029,10 +1021,7 @@ export async function PATCHitemTEST(itemType, newItem, itemID) {
     delete newItem._id; // remove _id from newPost
     delete newItem.id;
 
-    const response = await fetchWithAuthJSON(`${ITEMS_BASE_URL}/${itemID}${ext}`, {
-        method: "PATCH",
-        body: JSON.stringify(newItem),
-    });
+    const response = `${ITEMS_BASE_URL}/${itemID}${ext}`;
 
     console.log(response);
 

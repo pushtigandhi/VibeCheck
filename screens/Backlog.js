@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { SafeAreaView, View, FlatList, StyleSheet, Text } from "react-native";
 import { COLORS, FONT, SIZES } from "../constants";
 import HomeNavigation from "./HomeNavigation";
-import { GETitems, GETitemsTEST, ItemType } from "../API";
+import { GETitems, GETitemsTEST } from "../API";
 import ContactCard from "./cards/ContactCard";
 import BacklogCard from "./cards/BacklogCard";
+import { ItemType } from "../constants";
 
 export default function Backlog ({navigation, scrollEnabled = true}) {
   const [items, setItems] = useState([]);

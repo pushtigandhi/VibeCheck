@@ -7,9 +7,9 @@ import { ExpandableView, Spacer } from '../utils';
 import Layout from "../_layout";
 import { Ionicons } from "@expo/vector-icons";
 import { PropertyCard } from "./cards/PropertyCards";
-import { ItemType } from "../API";
+import * as df  from "../constants/default";
 
-export default function NewItem({navigation, item}) {
+export default function NewItem({navigation}) {
 
   const [isExpanded, setIsExpanded] = useState(true);
   
@@ -21,52 +21,55 @@ export default function NewItem({navigation, item}) {
           style={styles.titleContainer}
       >
       <View style={styles.row}>
-        <Text style={styles.label}>{ItemType.Item}</Text>
+        <Text style={styles.label}>{df.ItemType.Item}</Text>
         <Ionicons name={"information-circle-outline"} size={SIZES.xLarge} style={styles.icon}/> 
       </View>
       </TouchableOpacity>
 
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("Item", {item: {"itemType" : ItemType.Item}});
-          }}
-          style={styles.titleContainer}
+          navigation.navigate("Item", {item: df.defaultTask});
+        }}
+        style={styles.titleContainer}
       >
       <View style={styles.row}>
-        <Text style={styles.label}>{ItemType.Task}</Text>
+        <Text style={styles.label}>{df.ItemType.Task}</Text>
         <Ionicons name={"information-circle-outline"} size={SIZES.xLarge} style={styles.icon}/> 
       </View>
       </TouchableOpacity>
 
       <TouchableOpacity
         onPress={() => {
-          }}
-          style={styles.titleContainer}
+          navigation.navigate("Item", {item: {"itemType" : df.defaultEvent}});
+        }}
+        style={styles.titleContainer}
       >
       <View style={styles.row}>
-        <Text style={styles.label}>{ItemType.Event}</Text>
+        <Text style={styles.label}>{df.ItemType.Event}</Text>
         <Ionicons name={"information-circle-outline"} size={SIZES.xLarge} style={styles.icon}/> 
       </View>
       </TouchableOpacity>
 
       <TouchableOpacity
         onPress={() => {
-          }}
-          style={styles.titleContainer}
+          navigation.navigate("Item", {item: {"itemType" : df.defaultPage}});
+        }}
+        style={styles.titleContainer}
       >
       <View style={styles.row}>
-        <Text style={styles.label}>{ItemType.Page}</Text>
+        <Text style={styles.label}>{df.ItemType.Page}</Text>
         <Ionicons name={"information-circle-outline"} size={SIZES.xLarge} style={styles.icon}/> 
       </View>
       </TouchableOpacity>
 
       <TouchableOpacity
         onPress={() => {
-          }}
-          style={styles.titleContainer}
+          navigation.navigate("Item", {item: {"itemType" : df.defaultRecipe}});
+        }}
+        style={styles.titleContainer}
       >
       <View style={styles.row}>
-        <Text style={styles.label}>{ItemType.Recipe}</Text>
+        <Text style={styles.label}>{df.ItemType.Recipe}</Text>
         <Ionicons name={"information-circle-outline"} size={SIZES.xLarge} style={styles.icon}/> 
       </View>
       </TouchableOpacity>
