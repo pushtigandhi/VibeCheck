@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, Text, TextInput, TouchableOpacity, Image,
-        StyleSheet, Animated, FlatList, ScrollView } from 'react-native';
+import { SafeAreaView, View, Text, Modal, TouchableOpacity,
+        StyleSheet, ScrollView } from 'react-native';
 
-import { COLORS, SHADOWS, FONT, SIZES } from "../../constants";
+import { COLORS, SHADOWS, FONT, SIZES, ItemType } from "../../constants";
 import { MyDateTimePicker, PhoneNumberInput, ExpandableView } from '../../utils';
 //import Layout from "../../../_layout";
 import { Ionicons } from "@expo/vector-icons";
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import DropDownPicker from 'react-native-dropdown-picker';
+import { Picker } from '@react-native-picker/picker';
 import SingleSelectDropdown from "../../components/SingleSelectDropdown";
 import MultiSelectDropdown from "../../components/MultiSelectDropdown";
 import { GETdirectoryTEST } from "../../API";
 
-export const PropertyCard = ({ item = null }) => {
+export const PropertyCard = ({ item = null, itemType, setFn}) => {
   const [category, setCategory] = useState('');
   const [section, setSection] = useState('');
   const [duration, setDuration] = useState(15);
@@ -24,14 +24,26 @@ export const PropertyCard = ({ item = null }) => {
   const [tags, setTags] = useState([]);
   const [priority, setPriority] = useState('');
   const [repeat, setRepeat] = useState('');
-  //const [notes, setNotes] = useState([]);
+  
   const [directory, setDirectory] = useState([]);
   const [allTags, setAllTags] = useState([]);
+
+  const [pickerVisible, setPickerVisible] = useState(false);
+
+  const togglePicker = () => {
+    setPickerVisible(!pickerVisible);
+  };
 
   const multiDay = false;
   const hasSections = true;
 
   const size = 25;
+
+  // Generate picker items
+  const pickerItems = [];
+  for (let i = 5; i <= 60; i += 5) {
+    pickerItems.push(<Picker.Item key={i} label={`${i}`} value={`${i}`} />);
+  }
 
   async function getDirectoryFromAPI() {
     try {
@@ -214,7 +226,7 @@ export const PropertyCard = ({ item = null }) => {
           </TouchableOpacity>
         </View>
       )} */}
-      {!multiDay && (
+      {(itemType === ItemType.Task || itemType === ItemType.Event) && (
         <View>
           <View style={[styles.row, styles.property]}>
             <Ionicons name={"calendar-outline"} size={size} style={styles.icon}/>
@@ -223,38 +235,47 @@ export const PropertyCard = ({ item = null }) => {
               mode={"date"} // or "date" or "time"
               is24Hour={true}
               display="default"
-              onChange={selectedDate => {
+              onChange={(event, selectedDate) => {
                 const currentDate = selectedDate || startDate;
                 setStartDate(currentDate);
+                setFn({"startDate": startDate});
               }}
-              //maximumDate={new Date()}
             />
           </View>
           <View style={[styles.row, styles.property]}>
-              <Ionicons name={"timer-outline"} size={size} style={styles.icon}/>
-              <DateTimePicker
-                value={startTime}
-                mode={"time"} // or "date" or "time"
-                is24Hour={true}
-                display="default"
-                minuteInterval={15}
-                onChange={selectedDate => {
-                  onChangeDate(selectedDate, true);
-                }}
-                //maximumDate={new Date()}
-              />
-              <Text style={styles.property}> - TO -</Text>
-              <DateTimePicker
-                value={endTime}
-                mode={"time"} // or "date" or "time"
-                is24Hour={true}
-                display="default"
-                minuteInterval={15}
-                onChange={selectedDate => {
-                  onChangeDate(selectedDate, false);
-                }}
-                //maximumDate={new Date()}
-              />
+            <Ionicons name={"alarm-outline"} size={size} style={styles.icon}/>
+            <DateTimePicker
+              value={startTime}
+              mode={"time"} // or "date" or "time"
+              is24Hour={true}
+              display="default"
+              minuteInterval={15}
+              onChange={(event, selectedDate) => {
+                const currentDate = selectedDate || startDate;
+                setStartTime(currentDate);
+                setFn({"startTime": startTime});
+              }}
+            />
+          </View>
+          <View style={[styles.row, styles.property]}>
+            <Ionicons name={"timer-outline"} size={size} style={styles.icon}/>
+            {pickerVisible ? (
+              <Picker
+                selectedValue={duration}
+                onValueChange={(newDuration) => (
+                  setDuration(newDuration),
+                  togglePicker(),
+                  setFn({"duration": newDuration})
+                )}
+                style={styles.picker}>
+                {pickerItems}
+              </Picker>
+            ) : (
+              <TouchableOpacity onPress={togglePicker} style={styles.duration}>
+                <Text style={{fontSize: SIZES.medium}}>{duration}</Text>
+              </TouchableOpacity>
+            )}
+            <Text style={styles.property}>Minutes</Text>
           </View>
         </View>
       )}
@@ -268,14 +289,16 @@ export const PropertyCard = ({ item = null }) => {
       <View style={[styles.row, styles.property]}>
         <TouchableOpacity style={[styles.row, styles.box, priority === 'LOW' ? styles.selectedBox:styles.unselectedBox]}
           onPress={() => (
-            priority === 'LOW'?  setPriority('') : setPriority("LOW")
+            priority === 'LOW'?  setPriority('') : setPriority("LOW"),
+            setFn({"priority": priority})
           )}
         >
           <Ionicons name={"star-outline"} size={20} style={[priority === 'LOW' ? styles.iconInverse:styles.icon]} />
         </TouchableOpacity>
         <TouchableOpacity style={[styles.row, styles.box, priority === 'MED' ? styles.selectedBox:styles.unselectedBox]}
           onPress={() => (
-              priority === 'MED'?  setPriority('') : setPriority("MED")
+              priority === 'MED'?  setPriority('') : setPriority("MED"),
+              setFn({"priority": priority})
           )}
         >
           <Ionicons name={"star-outline"} size={20} style={[priority === 'MED' ? styles.iconInverse:styles.icon]} />
@@ -283,7 +306,8 @@ export const PropertyCard = ({ item = null }) => {
         </TouchableOpacity>
         <TouchableOpacity style={[styles.row, styles.box, priority === 'HIGH' ? styles.selectedBox:styles.unselectedBox]}
           onPress={() => (
-            priority === 'HIGH'?  setPriority('') : setPriority("HIGH")
+            priority === 'HIGH'?  setPriority('') : setPriority("HIGH"),
+            setFn({"priority": priority})
           )}
         >
           <Ionicons name={"star-outline"} size={20} style={[priority === 'HIGH' ? styles.iconInverse:styles.icon]} />
@@ -292,40 +316,49 @@ export const PropertyCard = ({ item = null }) => {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.row}>
-        <Ionicons name={"repeat-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} /> 
-        <Text style={styles.property}>Repeat</Text>
-      </View>
-      <View style={[styles.row, styles.property]}>
-        <TouchableOpacity style={[styles.row, styles.box, repeat === 'ONCE' ? styles.selectedBox:styles.unselectedBox]}
-          onPress={() => (
-            repeat === 'ONCE'? setRepeat('') : setRepeat("ONCE")
-          )}
-        >
-          <Text style={[styles.property, repeat === 'ONCE' ? styles.selectedText:styles.unselectedText]}>Once</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.row, styles.box, repeat === 'DAILY' ? styles.selectedBox:styles.unselectedBox]}
-          onPress={() => (
-            repeat === 'DAILY'? setRepeat('') : setRepeat("DAILY")
-          )}
-        >
-          <Text style={[styles.property, repeat === 'DAILY' ? styles.selectedText:styles.unselectedText]}>Daily</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.row, styles.box, repeat === 'WEEKLY' ? styles.selectedBox:styles.unselectedBox]}
-          onPress={() => (
-            repeat === 'WEEKLY'? setRepeat('') : setRepeat("WEEKLY")
-          )}
-        >
-          <Text style={[styles.property, repeat === 'WEEKLY' ? styles.selectedText:styles.unselectedText]}>Weekly</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.row, styles.box, repeat === 'MONTHLY' ? styles.selectedBox:styles.unselectedBox]}
-          onPress={() => (
-            repeat === 'MONTHLY'? setRepeat('') : setRepeat("MONTHLY")
-          )}
-        >
-          <Text style={[styles.property, repeat === 'MONTHLY' ? styles.selectedText:styles.unselectedText]}>Monthly</Text>
-        </TouchableOpacity>
-      </View>
+      {(itemType === ItemType.Task || itemType === ItemType.Event) && (
+        <View>
+          <View style={styles.row}>
+            <Ionicons name={"repeat-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} /> 
+            <Text style={styles.property}>Repeat</Text>
+          </View>
+          <View style={[styles.row, styles.property]}>
+            <TouchableOpacity style={[styles.row, styles.box, repeat === 'ONCE' ? styles.selectedBox:styles.unselectedBox]}
+              onPress={() => (
+                repeat === 'ONCE'? setRepeat('') : setRepeat("ONCE"),
+                setFn({"repeat": repeat})
+              )}
+            >
+              <Text style={[styles.property, repeat === 'ONCE' ? styles.selectedText:styles.unselectedText]}>Once</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.row, styles.box, repeat === 'DAILY' ? styles.selectedBox:styles.unselectedBox]}
+              onPress={() => (
+                repeat === 'DAILY'? setRepeat('') : setRepeat("DAILY"),
+                setFn({"repeat": repeat})
+              )}
+            >
+              <Text style={[styles.property, repeat === 'DAILY' ? styles.selectedText:styles.unselectedText]}>Daily</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.row, styles.box, repeat === 'WEEKLY' ? styles.selectedBox:styles.unselectedBox]}
+              onPress={() => (
+                repeat === 'WEEKLY'? setRepeat('') : setRepeat("WEEKLY"),
+                setFn({"repeat": repeat})
+              )}
+            >
+              <Text style={[styles.property, repeat === 'WEEKLY' ? styles.selectedText:styles.unselectedText]}>Weekly</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.row, styles.box, repeat === 'MONTHLY' ? styles.selectedBox:styles.unselectedBox]}
+              onPress={() => (
+                repeat === 'MONTHLY'? setRepeat('') : setRepeat("MONTHLY"),
+                setFn({"repeat": repeat})
+              )}
+            >
+              <Text style={[styles.property, repeat === 'MONTHLY' ? styles.selectedText:styles.unselectedText]}>Monthly</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+      
     </ScrollView>
     </SafeAreaView>
   )
@@ -401,5 +434,15 @@ const styles = StyleSheet.create({
     fontSize: SIZES.medium,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).darkBlue,
+  },
+  duration: {
+    backgroundColor: COLORS({opacity:0.5}).lightGrey,
+    padding: SIZES.xSmall,
+    borderRadius: SIZES.xSmall,
+    marginLeft: SIZES.xSmall,
+  },
+  picker: {
+    width: 100,
+    height: 150,
   },
 });

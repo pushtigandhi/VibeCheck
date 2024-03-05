@@ -12,46 +12,31 @@ import { ScrollView } from "react-native-gesture-handler";
 import { expandedSubTaskCard } from "./cards/items/TaskCard";
 import TaskCard from "./cards/items/TaskCard";
 import { PATCHitemTEST } from "../API";
+import * as ImagePicker from 'expo-image-picker';
 
 import React from "react";
 
-const BRAND_ICON = require("../assets/icon.png")
+const defaultImage = require("../assets/icon.png")
 
 export default function ItemPage({ navigation, route}) {
   const { item } = route.params;
-  const { title, description, favicon, icon, tags, itemType, _id } = item;
+  const { title, description, favicon, icon, tags, notes, itemType, _id } = item;
 
   const [isExpanded, setIsExpanded] = useState(true);
   
   const [itemTitle, setItemTitle] = useState('Title');
   const [itemDesc, setItemDesc] = useState('Description');
   const [itemIcon, setItemIcon] = useState(icon.toString());
-  const [notes, setNotes] = useState('');
+  const [itemNotes, setItemNotes] = useState('Notes');
+
+  const [itemFavicon, setItemFavicon] = useState(null);
+  const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
+
 
   const [hasChanges, setHasChanges] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
   const [newItem, setNewItem] = useState({});
-
-  function updateNewItem(params) {
-    if(params.subtasks) {
-      setNewItem({... newItem, subtasks: params.subtasks});
-    }
-  }
-
-  function doRefresh() {
-    console.log(newItem);
-    setRefreshing(true);
-    PATCHitemTEST(itemType, {
-        ...newItem
-      }, _id)
-      .then((item_) => {
-          setRefreshing(false);
-    }).catch((error) => {
-        console.log(error);
-        setRefreshing(false);
-    });
-  };
 
   useEffect(() => {
     doRefresh();
@@ -73,35 +58,123 @@ export default function ItemPage({ navigation, route}) {
   // };
 
   useEffect(() => {
+    (async () => {
+      let galleryStatus = await ImagePicker.getMediaLibraryPermissionsAsync();
+      if (galleryStatus.status !== 'granted')
+      {
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+        galleryStatus = await ImagePicker.getMediaLibraryPermissionsAsync();
+      }
+      setHasGalleryPermission(galleryStatus.status == 'granted');
+    })
+
     if (!!_id) {
       setNewItem(item);
     }
     if (title) {
       setItemTitle(title);
     }
-    if(description)
+    if(description) {
       setItemDesc(description);
+    }
+    if(favicon) {
+      setItemFavicon(favicon);
+    }
   }, [item]); // Update category and section when item changes
+
+  const pickImage = async () => {
+    let pickerResult = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+      quality:1,
+    });
+
+    if (!pickerResult.canceled) {
+      const img = pickerResult.assets[0]; // Accessing the first selected asset
+      setItemFavicon(img); // Using the uri from the first asset
+    }
+
+    if (hasGalleryPermission === false) {
+      return <Text>Access to photo library not granted</Text>
+    }
+  };
+
+  function doRefresh() {
+    console.log(newItem);
+    setRefreshing(true);
+    PATCHitemTEST(itemType, {
+        ...newItem
+      }, _id)
+      .then((item_) => {
+          setRefreshing(false);
+    }).catch((error) => {
+        console.log(error);
+        setRefreshing(false);
+    });
+  };
+
+  function updateNewItem(params) {
+    if(params.title) {
+      setNewItem({... newItem, "title": params.title});
+    }
+    if(params.description) {
+      setNewItem({... newItem, "description": params.description});
+    }
+    if(params.favicon) {
+      setNewItem({... newItem, "favicon": params.favicon});
+    }
+    if(params.category) {
+      setNewItem({... newItem, "category": params.category});
+    }
+    if(params.section) {
+      setNewItem({... newItem, "section": params.section});
+    }
+    if(params.duration) {
+      setNewItem({... newItem, "duration": params.duration});
+    }
+    if(params.startDate) {
+      setNewItem({... newItem, "startDate": params.startDate});
+    }
+    if(params.priority) {
+      setNewItem({... newItem, "priority": params.priority});
+    }
+    if(params.repeat) {
+      setNewItem({... newItem, "repeat": params.repeat});
+    }
+    if(params.tags) {
+      setNewItem({... newItem, "tags": params.tags});
+    }
+    if(params.notes) {
+      setNewItem({... newItem, "notes": params.notes});
+    }
+    if(params.subtasks) {
+      setNewItem({... newItem, subtasks: params.subtasks});
+    }
+  }
 
   return (
     <SafeAreaView style={styles.container}>
     <GestureHandlerRootView>
       <ScrollView scrollEnabled={true}>
         <View style={styles.imageBox}>
-          <TouchableOpacity style={styles.cancel}>
+          <TouchableOpacity style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightRed}]}>
             <Ionicons name={"close-outline"} size={SIZES.xxLarge} style={styles.iconInverted}/> 
           </TouchableOpacity>
-          <TouchableOpacity>
-            {!!favicon ? (
-              <Image
-                source={BRAND_ICON}
-                style={[styles.border, { width: 140, height: 140}]}
-              />
-            ) : (
-              <Ionicons name={"camera-outline"} size={80} style={[styles.border,styles.icon, {padding: 30}]}/> 
+          <TouchableOpacity 
+            onPress={(newFavicon) => (
+              pickImage(),
+              updateNewItem({"favicon": newFavicon})
             )}
+          >
+            <Image
+              source={itemFavicon ? { uri: itemFavicon.uri } : defaultImage}
+              style={[styles.border, { width: 140, height: 140}]}
+            />
+            {/* ) : (
+              <Ionicons name={"camera-outline"} size={80} style={[styles.border,styles.icon, {padding: 30}]}/> 
+            )} */}
           </TouchableOpacity>
-          <TouchableOpacity onPress={doRefresh} style={styles.save}>
+          <TouchableOpacity onPress={doRefresh} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightGreen}]}>
             <Ionicons name={"checkmark-outline"} size={SIZES.xxLarge} style={styles.iconInverted}/> 
           </TouchableOpacity>
         </View>
@@ -114,15 +187,19 @@ export default function ItemPage({ navigation, route}) {
             placeholder={itemIcon}
           /> */}
           <Text style={{fontSize: SIZES.xLarge}}>{itemIcon}</Text>
-          <TextInput style={{width: "100%", fontSize: SIZES.xLarge}}
-              placeholder={itemTitle}>
-          </TextInput>
+          <TextInput style={{width: "100%", fontSize: SIZES.xLarge, color: COLORS({opacity:0.9}).darkBlue}}
+            {...(title ? { defaultValue: itemTitle } : { placeholder: itemTitle })}
+            onChangeText={(newTitle) => (
+              updateNewItem({"title": newTitle})
+            )}
+          />
         </View>
-        {/* <Text style={styles.title}>{itemTitle}</Text> */}
         <TextInput style={styles.description} 
-            placeholder={itemDesc}>
-        </TextInput>
-
+          {...(description ? { defaultValue: itemDesc } : { placeholder: itemDesc })} 
+          onChangeText={(newDescription) => (
+            updateNewItem({"description": newDescription})
+          )}
+        />
         <TouchableOpacity
             onPress={() => {
                 setIsExpanded(!isExpanded);
@@ -143,7 +220,8 @@ export default function ItemPage({ navigation, route}) {
             </View>
           </View>
         </TouchableOpacity>
-        <ExpandableView expanded={isExpanded} view={PropertyCard} params={{item}} vh={300} />
+        <ExpandableView expanded={isExpanded} view={PropertyCard} params={{"item": item, "itemType": itemType, "setFn": updateNewItem}} vh={300} />
+
         {itemType === ItemType.Task && (
           <TaskCard task={item} setFn={updateNewItem} />
         )}
@@ -154,9 +232,13 @@ export default function ItemPage({ navigation, route}) {
             ></TextInput>
           </View>
         )}
-        {!!notes && (
-          <Text>{notes}</Text>
-        )}
+        <Spacer size={SIZES.xSmall} />
+        <TextInput style={styles.description} 
+          {...(notes ? { defaultValue: itemNotes } : { placeholder: itemNotes })} 
+          onChangeText={(newNotes) => (
+            updateNewItem({"notes": newNotes})
+          )}
+        />
       </ScrollView>
     </GestureHandlerRootView>
     </SafeAreaView>
@@ -168,7 +250,7 @@ const styles = StyleSheet.create({
   container: {
       width: "100%",
       padding: SIZES.medium,
-      backgroundColor: "#FFF",
+      backgroundColor: COLORS({opacity:1}).white,
       height: "100%",
   },
   row: {
@@ -179,11 +261,10 @@ const styles = StyleSheet.create({
   title:{
       fontSize: SIZES.xLarge,
       //fontFamily: FONT.regular,
-      color: COLORS({opacity:0.9}).darkBlue,
       padding: SIZES.medium,
       margin: SIZES.medium,
       borderWidth: 1,
-      borderColor: COLORS({opacity:1}).navy,
+      borderColor: COLORS({opacity:0.5}).darkBlue,
       borderRadius: SIZES.medium,
   },
   description:{
@@ -193,7 +274,7 @@ const styles = StyleSheet.create({
       padding: SIZES.medium,
       marginHorizontal: SIZES.medium,
       borderWidth: 1,
-      borderColor: COLORS({opacity:1}).navy,
+      borderColor: COLORS({opacity:0.5}).darkBlue,
       borderRadius: SIZES.medium,
   },
   propContainer: {
@@ -231,22 +312,13 @@ const styles = StyleSheet.create({
   iconInverted: {
     color: COLORS({opacity:0.8}).white,
   },
-  cancel: {
-    height: SIZES.xLarge * 2,
+  button: {
+    height: SIZES.xxLarge * 2,
+    width: SIZES.xxLarge * 2,
     padding: SIZES.xSmall,
-    margin: SIZES.xSmall,
+    marginHorizontal: SIZES.xSmall,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: COLORS({opacity:1}).lightRed,
-    borderRadius: SIZES.medium
-  },
-  save: {
-    height: SIZES.xLarge * 2,
-    padding: SIZES.xSmall,
-    margin: SIZES.xSmall,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: COLORS({opacity:1}).lightGreen,
     borderRadius: SIZES.medium
   },
 });
