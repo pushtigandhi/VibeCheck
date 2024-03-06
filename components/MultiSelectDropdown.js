@@ -4,8 +4,8 @@ import { MultiSelect } from 'react-native-element-dropdown';
 import { COLORS, SIZES } from '../constants';
 import { Ionicons } from "@expo/vector-icons";
 
-const MultiSelectDropdown = ({ options, placeholder="Select items", defaultValue=[], icon, setFn }) => {
-  const [selected, setSelected] = useState(defaultValue);
+const MultiSelectDropdown = ({ options, placeholder="Select items", icon, setFn }) => {
+  const [selected, setSelected] = useState([]);
 
   const renderItem = item => {
     return (

@@ -975,7 +975,8 @@ export async function GETitemsTEST(itemType, filter={}) {
                 "section": "All",
                 "icon": "📍",
                 "tags": [
-                    "new"
+                    "new",
+                    "first"
                 ],
                 "notes": [],
                 "owner": "65dffad64102392ebb57839b",

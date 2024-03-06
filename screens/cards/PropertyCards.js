@@ -3,7 +3,7 @@ import { SafeAreaView, View, Text, Modal, TouchableOpacity,
         StyleSheet, ScrollView } from 'react-native';
 
 import { COLORS, SHADOWS, FONT, SIZES, ItemType } from "../../constants";
-import { MyDateTimePicker, PhoneNumberInput, ExpandableView } from '../../utils';
+import { MyDateTimePicker, PhoneNumberInput, ExpandableView, Spacer } from '../../utils';
 //import Layout from "../../../_layout";
 import { Ionicons } from "@expo/vector-icons";
 import {Calendar, LocaleConfig} from 'react-native-calendars';
@@ -16,11 +16,9 @@ import { GETdirectoryTEST } from "../../API";
 export const PropertyCard = ({ item = null, itemType, setFn}) => {
   const [category, setCategory] = useState('');
   const [section, setSection] = useState('');
-  const [duration, setDuration] = useState(15);
-  const [startTime, setStartTime] = useState(new Date());
-  const [endTime, setEndTime] = useState(new Date(startTime.getTime() + 15 * 60 * 1000));
+  const [duration, setDuration] = useState(null);
   const [startDate, setStartDate] = useState(new Date());
-  //const [endDate, setEndDate] = !!item ? useState(item.endDate) : useState(new Date().getDate());
+  //const [endDate, setEndDate] = useState(new Date());
   const [tags, setTags] = useState([]);
   const [priority, setPriority] = useState('');
   const [repeat, setRepeat] = useState('');
@@ -28,21 +26,32 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
   const [directory, setDirectory] = useState([]);
   const [allTags, setAllTags] = useState([]);
 
-  const [pickerVisible, setPickerVisible] = useState(false);
+  const [hourPickerVisible, setHourPickerVisible] = useState(false);
+  const [minutePickerVisible, setMinutePickerVisible] = useState(false);
+  const [hour, setHour] = useState(0);
+  const [minute, setMinute] = useState(15);
 
-  const togglePicker = () => {
-    setPickerVisible(!pickerVisible);
+  const toggleHourPicker = () => {
+    setHourPickerVisible(!hourPickerVisible);
+   
   };
-
-  const multiDay = false;
-  const hasSections = true;
+  const toggleMinutePicker = () => {
+    setMinutePickerVisible(!minutePickerVisible);
+  };
+  function updateNewItem(params) { 
+    setFn(params);
+  };
 
   const size = 25;
 
   // Generate picker items
-  const pickerItems = [];
-  for (let i = 5; i <= 60; i += 5) {
-    pickerItems.push(<Picker.Item key={i} label={`${i}`} value={`${i}`} />);
+  const hourItem = [];
+  for (let i = 0; i <= 12; i++) {
+    hourItem.push(<Picker.Item key={i} label={`${i}`} value={`${i}`} />);
+  }
+  const minuteItem = [];
+  for (let i = 0; i <= 55; i += 5) {
+    minuteItem.push(<Picker.Item key={i} label={`${i}`} value={`${i}`} />);
   }
 
   async function getDirectoryFromAPI() {
@@ -85,12 +94,16 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
     if (item) {
       setCategory(item.category);
       setSection(item.section);
-      if(!!item.startTime)
-        setStartTime(item.startTime);
-      if(!!item.endTime)
-        setEndTime(item.endTime);
-      if(!!item.startDate)
-        setStartDate(item.startDate);
+      if(!!item.duration){
+        const hours = Math.floor(item.duration / 60);
+        const minutes = item.duration % 60;
+        setHour(hours);
+        setMinute(minutes);
+      }
+      if(!!item.startDate){
+        const parsedDate = new Date(item.startDate);
+        setStartDate(parsedDate);
+      }
       if(!!item.priority)
         setPriority(item.priority);
       if(!!item.repeat)
@@ -122,7 +135,7 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
     item.category = category;
     item.section = section;
     item.startTime = startTime;
-    item.endTime = endTime;
+    //item.endTime = endTime;
     item.startDate = startDate;
     item.priority = priority;
     item.repeat = repeat;
@@ -139,39 +152,16 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
     return true;
   }
 
-  const onChangeDate = (selectedDate, isStartTime) => {
-    const currentDate = selectedDate instanceof Date ? selectedDate : (isStartTime ? startTime : endTime); // Ensure currentDate is always a Date object
-    if (isStartTime) {
-        if (currentDate < endTime) {
-            setStartTime(currentDate);
-        } else {
-            const newEndTime = new Date(currentDate.getTime() + 15 * 60 * 1000);
-            setStartTime(currentDate);
-            setEndTime(newEndTime);
-        }
-    } else {
-        if (currentDate > startTime) {
-            setEndTime(currentDate);
-        }
-    }
+  const onChangeCategory = (newCategory) => {
+    setCategory(newCategory);
+    setSection("All");
   };
-
-  const renderCategories = ({ item }) => (
-    <View key={item["_id"] + "root"} >
-        <DirectoryCard category={item} key={item["_id"]} sections={item.sections} />
-    </View>
-  );
 
   return (
     <SafeAreaView style={styles.infoContainer}>
-
-      {/* <View style={styles.row}>
-        <Text style={styles.label}>Properties</Text>
-        <Ionicons name={"information-circle-outline"} size={size} style={styles.icon}/> 
-      </View> */}
       <ScrollView>
       {directory.length > 0 ? (
-        <SingleSelectDropdown options={getTitles()} placeholder={!!category ? category : "Category"} setFn={setCategory}
+        <SingleSelectDropdown options={getTitles()} placeholder={!!category ? category : "Category"} setFn={onChangeCategory}
           icon={<Ionicons name={"folder-open-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
       ) : (
         <Text>Loading categories...</Text>
@@ -184,7 +174,7 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
         </View>
       )}
 
-      <MultiSelectDropdown options={allTags.map(tag => tag.title)} placeholder="Tags" defaultValue={tags} setFn={setTags}
+      <MultiSelectDropdown options={allTags.map(tag => tag.title)} placeholder="Tags" setFn={setTags}
         icon={<Ionicons name={"list-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
       
       { /* OUT OF SCOPE - MULTI-DAY EVENT
@@ -238,41 +228,65 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
               onChange={(event, selectedDate) => {
                 const currentDate = selectedDate || startDate;
                 setStartDate(currentDate);
-                setFn({"startDate": startDate});
+                updateNewItem({"startDate": startDate});
               }}
             />
           </View>
           <View style={[styles.row, styles.property]}>
             <Ionicons name={"alarm-outline"} size={size} style={styles.icon}/>
             <DateTimePicker
-              value={startTime}
+              value={startDate}
               mode={"time"} // or "date" or "time"
               is24Hour={true}
               display="default"
-              minuteInterval={15}
               onChange={(event, selectedDate) => {
                 const currentDate = selectedDate || startDate;
-                setStartTime(currentDate);
-                setFn({"startTime": startTime});
+                setStartDate(currentDate);
+                updateNewItem({"startDate": startDate});
               }}
             />
           </View>
           <View style={[styles.row, styles.property]}>
             <Ionicons name={"timer-outline"} size={size} style={styles.icon}/>
-            {pickerVisible ? (
-              <Picker
-                selectedValue={duration}
-                onValueChange={(newDuration) => (
-                  setDuration(newDuration),
-                  togglePicker(),
-                  setFn({"duration": newDuration})
-                )}
-                style={styles.picker}>
-                {pickerItems}
-              </Picker>
+            {hourPickerVisible ? (
+              <View>
+                <Picker
+                  selectedValue={hour}
+                  onValueChange={(newHour) => (
+                    setHour(newHour),
+                    toggleHourPicker(),
+                    setDuration(newHour*60 + minute),
+                    updateNewItem({"duration": Number(newHour * 60) + Number(minute)})
+                  )}
+                  style={styles.picker}>
+                  {hourItem}
+                </Picker>
+                <Spacer size={30} />
+              </View>
             ) : (
-              <TouchableOpacity onPress={togglePicker} style={styles.duration}>
-                <Text style={{fontSize: SIZES.medium}}>{duration}</Text>
+              <TouchableOpacity onPress={toggleHourPicker} style={styles.duration}>
+                <Text style={{fontSize: SIZES.medium}}>{hour}</Text>
+              </TouchableOpacity>
+            )}
+            <Text style={styles.property}>Hours</Text>
+            {minutePickerVisible ? (
+              <View>
+                <Picker
+                  selectedValue={minute}
+                  onValueChange={(newMinute) => (
+                    setMinute(newMinute),
+                    toggleMinutePicker(),
+                    setDuration(hour*60 + newMinute),
+                    updateNewItem({"duration": Number(hour * 60) + Number(newMinute)})
+                  )}
+                  style={styles.picker}>
+                  {minuteItem}
+                </Picker>
+                <Spacer size={30} />
+              </View>
+            ) : (
+              <TouchableOpacity onPress={toggleMinutePicker} style={styles.duration}>
+                <Text style={{fontSize: SIZES.medium}}>{minute}</Text>
               </TouchableOpacity>
             )}
             <Text style={styles.property}>Minutes</Text>
@@ -289,7 +303,7 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
       <View style={[styles.row, styles.property]}>
         <TouchableOpacity style={[styles.row, styles.box, priority === 'LOW' ? styles.selectedBox:styles.unselectedBox]}
           onPress={() => (
-            priority === 'LOW'?  setPriority('') : setPriority("LOW"),
+            (async () => (priority === 'LOW'?  await setPriority('') : await setPriority("LOW"))),
             setFn({"priority": priority})
           )}
         >
@@ -297,8 +311,8 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
         </TouchableOpacity>
         <TouchableOpacity style={[styles.row, styles.box, priority === 'MED' ? styles.selectedBox:styles.unselectedBox]}
           onPress={() => (
-              priority === 'MED'?  setPriority('') : setPriority("MED"),
-              setFn({"priority": priority})
+            (async () => (priority === 'MED'?  await setPriority('') : await setPriority("MED"))),
+            setFn({"priority": priority})
           )}
         >
           <Ionicons name={"star-outline"} size={20} style={[priority === 'MED' ? styles.iconInverse:styles.icon]} />
@@ -306,7 +320,7 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
         </TouchableOpacity>
         <TouchableOpacity style={[styles.row, styles.box, priority === 'HIGH' ? styles.selectedBox:styles.unselectedBox]}
           onPress={() => (
-            priority === 'HIGH'?  setPriority('') : setPriority("HIGH"),
+            (async () => (priority === 'HIGH'?  await setPriority('') : await setPriority("HIGH"))),
             setFn({"priority": priority})
           )}
         >

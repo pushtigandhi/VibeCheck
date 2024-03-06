@@ -18,6 +18,7 @@ const defaultTask = {
     "category": "Backlog",
     "section": "All",
     "icon": '\u{1F4CB}',
+    "duration": 140,
   //  "favicon": 'U+1F4CB',//if favicon === icon then <View style={[styles.border, {padding: 20}}><Text style={{fontisize: 100}}>{favicon}</Text>
     "subtasks": [],
     "itemType" : ItemType.Task,
