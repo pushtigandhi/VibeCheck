@@ -22,6 +22,7 @@ const expandedSubTaskCard = ({originalSubtasks, setFn}) => {
     setSubtasks(updatedSubtasks);
     setFn({"subtasks": updatedSubtasks}); // Indicate that changes have been made
   };
+  
   return (
     <View style={styles.expandedContainer}>
       <TouchableOpacity style={styles.addButtonIcon} >
@@ -49,25 +50,13 @@ const expandedSubTaskCard = ({originalSubtasks, setFn}) => {
   )
 };
 
-export const TaskCard = ({task, setFn}) => {
+const TaskCard = ({item, setFn, expanded=false}) => {
   //const [isPropExpanded, setIsPropExpanded] = useState(expanded);
   const [isSubtaskExpanded, setIsSubtaskExpanded] = useState(true);
   const [isPressable, setIsPressable] = useState(true);
 
   return (
     <View style={styles.infoContainer}>
-      {/* <TouchableOpacity
-        onPress={() => {
-          setIsPropExpanded(!isPropExpanded);
-          }}
-          style={styles.titleContainer}
-      >
-        <View style={styles.row}>
-          <Text style={styles.label}>Properties</Text>
-          <Ionicons name={"information-circle-outline"} size={SIZES.xLarge} style={styles.icon}/> 
-        </View>
-      </TouchableOpacity>
-      <ExpandableView expanded={isPropExpanded} view={PropertyCard} params={{task}} vh={500} /> */}
       <TouchableOpacity
         onPress={() => {
           setIsSubtaskExpanded(!isSubtaskExpanded);
@@ -89,74 +78,74 @@ export const TaskCard = ({task, setFn}) => {
           </View>
         </View>
       </TouchableOpacity>
-      <ExpandableView expanded={isSubtaskExpanded} view={expandedSubTaskCard} params={{"originalSubtasks": task.subtasks, "setFn": setFn}} vh={300} />
+      <ExpandableView expanded={isSubtaskExpanded} view={expandedSubTaskCard} params={{"originalSubtasks": item.subtasks, "setFn": setFn}} vh={300} />
     </View>
   )
 };
 
 const styles = StyleSheet.create({
-infoContainer: {
-  backgroundColor: COLORS.lightWhite,
-  borderRadius: SIZES.medium/2,
-},
-label: {
-  fontSize: SIZES.large,
-  fontFamily: FONT.regular,
-  color: COLORS({opacity:1}).darkBlue,
-},
-iconInverted: {
-  color: COLORS({opacity:1}).white,
-},
-icon: {
-  //marginRight: SIZES.xxSmall,
-  color: COLORS({opacity:0.8}).darkBlue,
-},
-row: {
-  flexDirection: "row",
-  justifyContent: "flex-start",
-  alignItems: "center",
-},
-expandedContainer: {
-  width: '90%',
-  margin: SIZES.medium,
-  backgroundColor: COLORS.lightWhite,
-  borderRadius: SIZES.medium/2,
-  borderWidth: 1,
-  borderColor: COLORS({opacity:1}).navy,
-  padding: SIZES.medium,
-  flex: 1,
-},
-addButtonIcon: {
-  height: SIZES.xxLarge,
-  margin: SIZES.xSmall,
-  backgroundColor: COLORS({opacity:0.5}).darkBlue,
-  borderRadius: SIZES.small,
-  ...SHADOWS.medium,
-  shadowColor: COLORS({opacity:1}).indigo,
-  alignItems: "center",
-  justifyContent: "center",
-},
-item: {
-  fontSize: SIZES.mlarge,
-  fontFamily: FONT.regular,
-  color: COLORS({opacity:1}).darkBlue,
-},
-propContainer: {
-  width: '90%',
-  padding: SIZES.medium,
-  borderColor: COLORS({opacity:0.5}).darkBlue,
-  borderBottomWidth: 1,
-  borderRadius: SIZES.medium,
-  marginHorizontal: SIZES.medium,
-},
-subtaskContainer: {
-  margin: SIZES.xxSmall,
-  padding: SIZES.xSmall,
-  backgroundColor: COLORS({opacity:0.5}).lightWhite,
-  borderRadius: SIZES.small,
-  ...SHADOWS.medium,
-  shadowColor: COLORS({opacity:1}).indigo,
-},
+  infoContainer: {
+    backgroundColor: COLORS.lightWhite,
+    borderRadius: SIZES.medium/2,
+  },
+  label: {
+    fontSize: SIZES.large,
+    fontFamily: FONT.regular,
+    color: COLORS({opacity:1}).darkBlue,
+  },
+  iconInverted: {
+    color: COLORS({opacity:1}).white,
+  },
+  icon: {
+    //marginRight: SIZES.xxSmall,
+    color: COLORS({opacity:0.8}).darkBlue,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
+  expandedContainer: {
+    width: '90%',
+    margin: SIZES.medium,
+    backgroundColor: COLORS.lightWhite,
+    borderRadius: SIZES.medium/2,
+    borderWidth: 1,
+    borderColor: COLORS({opacity:1}).navy,
+    padding: SIZES.medium,
+    flex: 1,
+  },
+  addButtonIcon: {
+    height: SIZES.xxLarge,
+    margin: SIZES.xSmall,
+    backgroundColor: COLORS({opacity:0.5}).darkBlue,
+    borderRadius: SIZES.small,
+    ...SHADOWS.medium,
+    shadowColor: COLORS({opacity:1}).indigo,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  item: {
+    fontSize: SIZES.mlarge,
+    fontFamily: FONT.regular,
+    color: COLORS({opacity:1}).darkBlue,
+  },
+  propContainer: {
+    width: '90%',
+    padding: SIZES.medium,
+    borderColor: COLORS({opacity:0.5}).darkBlue,
+    borderBottomWidth: 1,
+    borderRadius: SIZES.medium,
+    marginHorizontal: SIZES.medium,
+  },
+  subtaskContainer: {
+    margin: SIZES.xxSmall,
+    padding: SIZES.xSmall,
+    backgroundColor: COLORS({opacity:0.5}).lightWhite,
+    borderRadius: SIZES.small,
+    ...SHADOWS.medium,
+    shadowColor: COLORS({opacity:1}).indigo,
+  },
 });
 
 export default TaskCard

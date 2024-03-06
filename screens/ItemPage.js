@@ -11,6 +11,7 @@ import { ItemType } from "../constants";
 import { ScrollView } from "react-native-gesture-handler";
 import { expandedSubTaskCard } from "./cards/items/TaskCard";
 import TaskCard from "./cards/items/TaskCard";
+import EventCard from "./cards/items/EventCard";
 import { PATCHitemTEST } from "../API";
 import * as ImagePicker from 'expo-image-picker';
 
@@ -184,28 +185,7 @@ export default function ItemPage({ navigation, route}) {
             <Ionicons name={"checkmark-outline"} size={SIZES.xxLarge} style={styles.iconInverted}/> 
           </TouchableOpacity>
         </View>
-        <View style={[styles.row, styles.title]}>
-          {/* TODO: SELECT NEW ICON
-          <TextInput
-            style={{fontSize: SIZES.xLarge, borderRightWidth: 1, borderBlockColor: COLORS({opacity:1}).navy}}
-            onChangeText={handleIconChange}
-            value={itemIcon}
-            placeholder={itemIcon}
-          /> */}
-          <Text style={{fontSize: SIZES.xLarge}}>{itemIcon}</Text>
-          <TextInput style={{width: "100%", fontSize: SIZES.xLarge, color: COLORS({opacity:0.9}).darkBlue}}
-            {...(title ? { defaultValue: itemTitle } : { placeholder: itemTitle })}
-            onChangeText={(newTitle) => (
-              updateNewItem({"title": newTitle})
-            )}
-          />
-        </View>
-        <TextInput style={styles.description} 
-          {...(description ? { defaultValue: itemDesc } : { placeholder: itemDesc })} 
-          onChangeText={(newDescription) => (
-            updateNewItem({"description": newDescription})
-          )}
-        />
+        
         <TouchableOpacity
             onPress={() => {
                 setIsExpanded(!isExpanded);
@@ -228,8 +208,36 @@ export default function ItemPage({ navigation, route}) {
         </TouchableOpacity>
         <ExpandableView expanded={isExpanded} view={PropertyCard} params={{"item": item, "itemType": itemType, "setFn": updateNewItem}} vh={300} />
 
-        {itemType === ItemType.Task && (
-          <TaskCard task={item} setFn={updateNewItem} />
+        <View style={[styles.row, styles.title]}>
+          {/* TODO: SELECT NEW ICON
+          <TextInput
+            style={{fontSize: SIZES.xLarge, borderRightWidth: 1, borderBlockColor: COLORS({opacity:1}).navy}}
+            onChangeText={handleIconChange}
+            value={itemIcon}
+            placeholder={itemIcon}
+          /> */}
+          <Text style={{fontSize: SIZES.xLarge}}>{itemIcon}</Text>
+          <TextInput style={{width: "100%", fontSize: SIZES.xLarge, color: COLORS({opacity:0.9}).darkBlue}}
+            {...(title ? { defaultValue: itemTitle } : { placeholder: itemTitle })}
+            onChangeText={(newTitle) => (
+              updateNewItem({"title": newTitle})
+            )}
+          />
+        </View>
+        {itemType !== ItemType.Event && (
+          <TextInput style={styles.description} 
+            {...(description ? { defaultValue: itemDesc } : { placeholder: itemDesc })} 
+            onChangeText={(newDescription) => (
+              updateNewItem({"description": newDescription})
+            )}
+          />
+        )}
+
+        {itemType === ItemType.Event && (
+          <EventCard item={item} setFn={updateNewItem} />
+        )}  
+        {(itemType === ItemType.Task || itemType === ItemType.Event) && (
+          <TaskCard item={item} setFn={updateNewItem} />
         )}
         {itemType === ItemType.Page && (
           <View style={styles.propContainer}>
@@ -238,7 +246,9 @@ export default function ItemPage({ navigation, route}) {
             ></TextInput>
           </View>
         )}
+        
         <Spacer size={SIZES.xSmall} />
+
         <TextInput style={styles.description} 
           {...(notes ? { defaultValue: itemNotes } : { placeholder: itemNotes })} 
           onChangeText={(newNotes) => (

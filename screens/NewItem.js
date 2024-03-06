@@ -40,7 +40,7 @@ export default function NewItem({navigation}) {
 
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("Item", {item: {"itemType" : df.defaultEvent}});
+          navigation.navigate("Item", {item: df.defaultEvent});
         }}
         style={styles.titleContainer}
       >
@@ -52,7 +52,7 @@ export default function NewItem({navigation}) {
 
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("Item", {item: {"itemType" : df.defaultPage}});
+          navigation.navigate("Item", {item: df.defaultPage});
         }}
         style={styles.titleContainer}
       >
@@ -64,7 +64,7 @@ export default function NewItem({navigation}) {
 
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("Item", {item: {"itemType" : df.defaultRecipe}});
+          navigation.navigate("Item", {item: df.defaultRecipe});
         }}
         style={styles.titleContainer}
       >

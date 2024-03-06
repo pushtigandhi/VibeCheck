@@ -8,34 +8,23 @@ import { taskProperties } from "../PropertyCards";
 import Layout from "../../../_layout";
 import { Ionicons } from "@expo/vector-icons";
 import { PropertyCard } from "../PropertyCards";
+import TaskCard from "./TaskCard";
 
-export const expandedSubTaskCard = ({task}) => {
-  const [subtasks, setSubtasks] = useState([]);
-
-  if(!!task.subtasks) {
-    setSubtasks(task.subtasks);
-  }
-
-  function checkToggle(subtaskID) {
-    
-  }
+const expandedContactList = ({contactList, setFn}) => {
+  const [contacts, setContacts] = useState(contactList);
 
   return (
     <View style={styles.expandedContainer}>
-      {subtasks.length > 0 ? (subtasks.map(item => (
+      <TouchableOpacity style={styles.addButtonIcon} >
+        <Ionicons name={"add-circle"} size={SIZES.large} style={styles.iconInverted} />
+      </TouchableOpacity>
+      {contacts.length > 0 ? (contacts.map(item => (
         <View style={styles.row} key={item["_id"] + "_root"}>
-          <TouchableOpacity style={styles.sectionContainer} key={item["_id"]} 
-            onPress={() => {
-              item.isChecked == !item.isChecked
-            }}
+          <TouchableOpacity style={styles.contactContainer} key={item["_id"]} 
+            onPress={() => {}}
           >
-            {item.isChecked ? (
-              <Ionicons name={"checkbox-outline"} size={SIZES.large} style={styles.icon}/> 
-            ) : (
-              <Ionicons name={"square-outline"} size={SIZES.large} style={styles.icon}/>
-            )}
+          <Text style={styles.item} numberOfLines={1}>{item.name}</Text>
           </TouchableOpacity>
-          <Text style={styles.item} numberOfLines={1}>{item.task}</Text>
         </View>
       ))) : (
         <View>
@@ -47,75 +36,118 @@ export const expandedSubTaskCard = ({task}) => {
   )
 };
 
-export const EventCard = ({event, expanded=false}) => {
-  const [isPropExpanded, setIsPropExpanded] = useState(expanded);
-  const [isSubtaskExpanded, setIsSubtaskExpanded] = useState(true);
-  const [isInstructionExpanded, setIsInstructionExpanded] = useState(true);
+const EventCard = ({item, setFn, expanded=false}) => {
+  const [location, setLocation] = useState('Location');
+
+  const [isContactsExpanded, setIsContactsExpanded] = useState(true);
+  const [isPressable, setIsPressable] = useState(true);
 
   return (
     <View style={styles.infoContainer}>
+      <TextInput style={styles.location} 
+        {...(item.location ? { defaultValue: item.location } : { placeholder: location })} 
+        onChangeText={(newLocation) => (
+          setLocation({"location": newLocation})
+        )}
+      />
       <TouchableOpacity
         onPress={() => {
-          setIsPropExpanded(!isPropExpanded);
-          }}
-          style={styles.titleContainer}
+          setIsContactsExpanded(!isContactsExpanded);
+        }}
+        style={styles.propContainer}
+        disabled={!isPressable}
       >
-        <View style={styles.row}>
-          <Text style={styles.label}>Properties</Text>
-          <Ionicons name={"information-circle-outline"} size={SIZES.xLarge} style={styles.icon}/> 
+        <View style={[styles.row, {justifyContent: "space-between"}]}>
+          <View style={styles.row}>
+            <Text style={styles.label} numberOfLines={1}>Contacts</Text>
+          </View>
+          <View>
+            {isContactsExpanded ? (
+                <Ionicons name="chevron-up-outline" size={SIZES.xLarge} style={styles.icon}/>
+            ) : (
+                <Ionicons name="chevron-down-outline" size={SIZES.xLarge} style={styles.icon}/>
+            )}
+          </View>
         </View>
       </TouchableOpacity>
-      <ExpandableView expanded={isPropExpanded} view={PropertyCard} params={{event}} vh={500} />
-      <TouchableOpacity
-        onPress={() => {
-          setIsSubtaskExpanded(!isSubtaskExpanded);
-          }}
-          style={styles.titleContainer}
-      >
-        <View style={styles.row}>
-          <Text style={styles.label}>Subtasks</Text>
-          <Ionicons name={"checkbox-outline"} size={SIZES.xLarge} style={styles.icon}/> 
-        </View>
-      </TouchableOpacity>
-      <ExpandableView expanded={isSubtaskExpanded} view={expandedSubTaskCard} params={{event}} vh={500} />
+      <ExpandableView expanded={isContactsExpanded} view={expandedContactList} params={{"contactList": item.contacts, "setFn": setFn}} vh={300} />
     </View>
   )
 };
 
 const styles = StyleSheet.create({
-infoContainer: {
-  backgroundColor: COLORS.lightWhite,
-  borderRadius: SIZES.medium/2,
-},
-label:{
-  fontSize: SIZES.medium,
-  fontFamily: FONT.regular,
-  color: "#B3AEC6",
-  margin: SIZES.xSmall,
-  flexDirection: "row",
-  justifyContent: "center",
-},
-icon: {
-  marginRight: SIZES.xxSmall,
-  color: COLORS({opacity:0.8}).darkBlue,
-},
-row: {
-  flexDirection: "row",
-  justifyContent: "flex-start",
-  alignItems: "center",
-},
-expandedContainer: {
-  width: '90%',
-  margin: SIZES.xSmall,
-  paddingBottom: SIZES.medium,
-  paddingHorizontal: SIZES.medium,
-  flex: 1,
-},
-item: {
-  fontSize: SIZES.mlarge,
-  fontFamily: FONT.regular,
-  color: COLORS({opacity:1}).darkBlue,
-},
+  infoContainer: {
+    backgroundColor: COLORS.lightWhite,
+    borderRadius: SIZES.medium/2,
+  },
+  label: {
+    fontSize: SIZES.large,
+    fontFamily: FONT.regular,
+    color: COLORS({opacity:1}).darkBlue,
+  },
+  iconInverted: {
+    color: COLORS({opacity:1}).white,
+  },
+  icon: {
+    //marginRight: SIZES.xxSmall,
+    color: COLORS({opacity:0.8}).darkBlue,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
+  expandedContainer: {
+    width: '90%',
+    margin: SIZES.medium,
+    backgroundColor: COLORS.lightWhite,
+    borderRadius: SIZES.medium/2,
+    borderWidth: 1,
+    borderColor: COLORS({opacity:1}).navy,
+    padding: SIZES.medium,
+    flex: 1,
+  },
+  addButtonIcon: {
+    height: SIZES.xxLarge,
+    margin: SIZES.xSmall,
+    backgroundColor: COLORS({opacity:0.5}).darkBlue,
+    borderRadius: SIZES.small,
+    ...SHADOWS.medium,
+    shadowColor: COLORS({opacity:1}).indigo,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  item: {
+    fontSize: SIZES.mlarge,
+    fontFamily: FONT.regular,
+    color: COLORS({opacity:1}).darkBlue,
+  },
+  propContainer: {
+    width: '90%',
+    padding: SIZES.medium,
+    borderColor: COLORS({opacity:0.5}).darkBlue,
+    borderBottomWidth: 1,
+    borderRadius: SIZES.medium,
+    marginHorizontal: SIZES.medium,
+  },
+  contactContainer: {
+    margin: SIZES.xxSmall,
+    padding: SIZES.xSmall,
+    backgroundColor: COLORS({opacity:0.5}).lightWhite,
+    borderRadius: SIZES.small,
+    ...SHADOWS.medium,
+    shadowColor: COLORS({opacity:1}).indigo,
+  },
+  location:{
+    fontSize: SIZES.medium,
+    //fontFamily: FONT.regular,
+    color: COLORS({opacity:0.9}).darkBlue,
+    padding: SIZES.medium,
+    marginHorizontal: SIZES.medium,
+    borderWidth: 1,
+    borderColor: COLORS({opacity:0.5}).darkBlue,
+    borderRadius: SIZES.medium,
+  },
 });
 
-export default TaskCard
+export default EventCard
