@@ -131,27 +131,6 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
     }));
   }
 
-  async function save() {
-    item.category = category;
-    item.section = section;
-    item.startTime = startTime;
-    //item.endTime = endTime;
-    item.startDate = startDate;
-    item.priority = priority;
-    item.repeat = repeat;
-    item.tags = tags;
-
-    //navigation.navigate("Drafts");
-  }
-
-  function validatePostFields() {
-    if (title === "" || description === "") {
-      alert("Please fill in all fields");
-      return false;
-    }
-    return true;
-  }
-
   const onChangeCategory = (newCategory) => {
     setCategory(newCategory);
     setSection("All");

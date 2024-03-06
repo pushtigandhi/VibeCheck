@@ -38,10 +38,6 @@ export default function ItemPage({ navigation, route}) {
 
   const [newItem, setNewItem] = useState({});
 
-  useEffect(() => {
-    doRefresh();
-  }, [item]);
-
   const onRefresh = React.useCallback(() => {
     doRefresh();
   }, [item]);
@@ -100,8 +96,10 @@ export default function ItemPage({ navigation, route}) {
   };
 
   function doRefresh() {
-    console.log(newItem);
     setRefreshing(true);
+    if(!validatePostFields()){
+      return;
+    };
     PATCHitemTEST(itemType, {
         ...newItem
       }, _id)
@@ -112,6 +110,14 @@ export default function ItemPage({ navigation, route}) {
         setRefreshing(false);
     });
   };
+  
+  function validatePostFields() {
+    if (!newItem.title) {
+      alert("Please add a Title");
+      return false;
+    }
+    return true;
+  }
 
   function updateNewItem(params) {
     if(params.title) {
@@ -157,7 +163,7 @@ export default function ItemPage({ navigation, route}) {
     <GestureHandlerRootView>
       <ScrollView scrollEnabled={true}>
         <View style={styles.imageBox}>
-          <TouchableOpacity style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightRed}]}>
+          <TouchableOpacity onPress={() => (navigation.goBack())} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightRed}]}>
             <Ionicons name={"close-outline"} size={SIZES.xxLarge} style={styles.iconInverted}/> 
           </TouchableOpacity>
           <TouchableOpacity 
