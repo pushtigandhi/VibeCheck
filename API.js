@@ -1022,6 +1022,7 @@ export async function PATCHitemTEST(itemType, newItem, itemID) {
     delete newItem._id; // remove _id from newPost
     delete newItem.id;
 
+    console.log(newItem);
     const response = `${ITEMS_BASE_URL}/${itemID}${ext}`;
 
     console.log(response);

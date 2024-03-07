@@ -39,8 +39,8 @@ const defaultPage = {
     "itemType" : ItemType.Page,
 }
 const defaultRecipe = {
-    "category": "Backlog",
-    "section": "All",
+    "category": "Cooking",
+    "section": "Recipes",
     "icon": '\u{1F37D}',
   //  "favicon": 'U+1F4CB',//if favicon === icon then <View style={[styles.border, {padding: 20}}><Text style={{fontisize: 100}}>{favicon}</Text>
     "itemType" : ItemType.Recipe,

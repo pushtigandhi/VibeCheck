@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image,
-        StyleSheet, Animated, FlatList, SafeAreaView } from 'react-native';
+        StyleSheet, Animated, FlatList, SafeAreaView, KeyboardAvoidingView } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { COLORS, SHADOWS, FONT, SIZES } from "../constants";
 import { ExpandableView, Spacer } from '../utils';
@@ -160,112 +160,112 @@ export default function ItemPage({ navigation, route}) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-    <GestureHandlerRootView>
-      <ScrollView scrollEnabled={true}>
-        <View style={styles.imageBox}>
-          <TouchableOpacity onPress={() => (navigation.goBack())} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightRed}]}>
-            <Ionicons name={"close-outline"} size={SIZES.xxLarge} style={styles.iconInverted}/> 
-          </TouchableOpacity>
-          <TouchableOpacity 
-            onPress={(newFavicon) => (
-              pickImage(),
-              updateNewItem({"favicon": newFavicon})
-            )}
-          >
-            <Image
-              source={itemFavicon ? { uri: itemFavicon.uri } : defaultImage}
-              style={[styles.border, { width: 140, height: 140}]}
-            />
-            {/* ) : (
-              <Ionicons name={"camera-outline"} size={80} style={[styles.border,styles.icon, {padding: 30}]}/> 
-            )} */}
-          </TouchableOpacity>
-          <TouchableOpacity onPress={doRefresh} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightGreen}]}>
-            <Ionicons name={"checkmark-outline"} size={SIZES.xxLarge} style={styles.iconInverted}/> 
-          </TouchableOpacity>
-        </View>
-        
-        <TouchableOpacity
-            onPress={() => {
-                setIsExpanded(!isExpanded);
-              }}
-            style={styles.propContainer}
-        >
-          <View style={[styles.row, {justifyContent: "space-between"}]}>
-            <View style={styles.row}>
-              <Ionicons name={"information-circle-outline"} size={SIZES.xLarge} style={styles.icon}/> 
-              <Text style={styles.label} numberOfLines={1}>Properties</Text>
-            </View>
-            <View>
-              {isExpanded ? (
-                  <Ionicons name="chevron-up-outline" size={SIZES.xLarge} style={styles.icon}/>
-              ) : (
-                  <Ionicons name="chevron-down-outline" size={SIZES.xLarge} style={styles.icon}/>
+    <KeyboardAvoidingView
+      behavior="padding"
+      style={styles.container}>
+      <SafeAreaView>
+      <GestureHandlerRootView>
+        <ScrollView scrollEnabled={true}>
+          <View style={styles.imageBox}>
+            <TouchableOpacity onPress={() => (navigation.goBack())} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightRed}]}>
+              <Ionicons name={"close-outline"} size={SIZES.xxLarge} style={styles.iconInverted}/> 
+            </TouchableOpacity>
+            <TouchableOpacity 
+              onPress={(newFavicon) => (
+                pickImage(),
+                updateNewItem({"favicon": newFavicon})
               )}
+            >
+              <Image
+                source={itemFavicon ? { uri: itemFavicon.uri } : defaultImage}
+                style={[styles.border, { width: 140, height: 140}]}
+              />
+              {/* ) : (
+                <Ionicons name={"camera-outline"} size={80} style={[styles.border,styles.icon, {padding: 30}]}/> 
+              )} */}
+            </TouchableOpacity>
+            <TouchableOpacity onPress={doRefresh} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightGreen}]}>
+              <Ionicons name={"checkmark-outline"} size={SIZES.xxLarge} style={styles.iconInverted}/> 
+            </TouchableOpacity>
+          </View>
+          
+          <TouchableOpacity
+              onPress={() => {
+                  setIsExpanded(!isExpanded);
+                }}
+              style={styles.propContainer}
+          >
+            <View style={[styles.row, {justifyContent: "space-between"}]}>
+              <View style={styles.row}>
+                <Ionicons name={"information-circle-outline"} size={SIZES.xLarge} style={styles.icon}/> 
+                <Text style={styles.label} numberOfLines={1}>Properties</Text>
+              </View>
+              <View>
+                {isExpanded ? (
+                    <Ionicons name="chevron-up-outline" size={SIZES.xLarge} style={styles.icon}/>
+                ) : (
+                    <Ionicons name="chevron-down-outline" size={SIZES.xLarge} style={styles.icon}/>
+                )}
+              </View>
             </View>
+          </TouchableOpacity>
+          <ExpandableView expanded={isExpanded} view={PropertyCard} params={{"item": item, "itemType": itemType, "setFn": updateNewItem}} vh={300} />
+
+          <View style={[styles.row, styles.title]}>
+            {/* TODO: SELECT NEW ICON
+            <TextInput
+              style={{fontSize: SIZES.xLarge, borderRightWidth: 1, borderBlockColor: COLORS({opacity:1}).navy}}
+              onChangeText={handleIconChange}
+              value={itemIcon}
+              placeholder={itemIcon}
+            /> */}
+            <Text style={{fontSize: SIZES.xLarge}}>{itemIcon}</Text>
+            <TextInput style={{width: "100%", fontSize: SIZES.xLarge, color: COLORS({opacity:0.9}).darkBlue}}
+              {...(title ? { defaultValue: itemTitle } : { placeholder: itemTitle })}
+              onChangeText={(newTitle) => (
+                updateNewItem({"title": newTitle})
+              )}
+            />
           </View>
-        </TouchableOpacity>
-        <ExpandableView expanded={isExpanded} view={PropertyCard} params={{"item": item, "itemType": itemType, "setFn": updateNewItem}} vh={300} />
-
-        <View style={[styles.row, styles.title]}>
-          {/* TODO: SELECT NEW ICON
-          <TextInput
-            style={{fontSize: SIZES.xLarge, borderRightWidth: 1, borderBlockColor: COLORS({opacity:1}).navy}}
-            onChangeText={handleIconChange}
-            value={itemIcon}
-            placeholder={itemIcon}
-          /> */}
-          <Text style={{fontSize: SIZES.xLarge}}>{itemIcon}</Text>
-          <TextInput style={{width: "100%", fontSize: SIZES.xLarge, color: COLORS({opacity:0.9}).darkBlue}}
-            {...(title ? { defaultValue: itemTitle } : { placeholder: itemTitle })}
-            onChangeText={(newTitle) => (
-              updateNewItem({"title": newTitle})
-            )}
-          />
-        </View>
-        {itemType !== ItemType.Event && (
-          <TextInput style={styles.description} 
-            {...(description ? { defaultValue: itemDesc } : { placeholder: itemDesc })} 
-            onChangeText={(newDescription) => (
-              updateNewItem({"description": newDescription})
-            )}
-          />
-        )}
-
-        {itemType === ItemType.Event && (
-          <EventCard item={item} setFn={updateNewItem} />
-        )}  
-        {(itemType === ItemType.Task || itemType === ItemType.Event) && (
-          <TaskCard item={item} setFn={updateNewItem} />
-        )}
-        {itemType === ItemType.Page && (
-          <View style={styles.propContainer}>
+          {!(itemType === ItemType.Page) && (
             <TextInput style={styles.description}
-              placeholder="Add text here"
-            ></TextInput>
-          </View>
-        )}
-        
-        <Spacer size={SIZES.xSmall} />
-
-        <TextInput style={styles.description} 
-          {...(notes ? { defaultValue: itemNotes } : { placeholder: itemNotes })} 
-          onChangeText={(newNotes) => (
-            updateNewItem({"notes": newNotes})
+              multiline 
+              {...(description ? { defaultValue: itemDesc } : { placeholder: itemDesc })} 
+              onChangeText={(newDescription) => (
+                updateNewItem({"description": newDescription})
+              )}
+            />
           )}
-        />
-      </ScrollView>
-    </GestureHandlerRootView>
-    </SafeAreaView>
-    
+
+          {itemType === ItemType.Event && (
+            <View>
+              <Spacer size={10} />
+              <EventCard item={item} setFn={updateNewItem} />
+            </View>
+          )}  
+          {(itemType === ItemType.Task || itemType === ItemType.Event) && (
+            <TaskCard item={item} setFn={updateNewItem} />
+          )}
+          
+          {itemType === ItemType.Page && (
+            <TextInput style={styles.notes} 
+              multiline
+              {...(notes ? { defaultValue: itemNotes } : { placeholder: itemNotes })} 
+              onChangeText={(newNotes) => (
+                updateNewItem({"notes": newNotes})
+              )}
+            />
+          )}
+        </ScrollView>
+      </GestureHandlerRootView>
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   )
 };
 
 const styles = StyleSheet.create({
   container: {
       width: "100%",
-      padding: SIZES.medium,
       backgroundColor: COLORS({opacity:1}).white,
       height: "100%",
   },
@@ -293,6 +293,17 @@ const styles = StyleSheet.create({
       borderColor: COLORS({opacity:0.5}).darkBlue,
       borderRadius: SIZES.medium,
   },
+  notes:{
+    fontSize: SIZES.medium,
+    //fontFamily: FONT.regular,
+    height: 400,
+    color: COLORS({opacity:0.9}).darkBlue,
+    padding: SIZES.medium,
+    marginHorizontal: SIZES.medium,
+    borderWidth: 1,
+    borderColor: COLORS({opacity:0.5}).darkBlue,
+    borderRadius: SIZES.medium,
+},
   propContainer: {
     width: '90%',
     padding: SIZES.medium,

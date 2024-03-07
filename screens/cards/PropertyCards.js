@@ -273,11 +273,22 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
         </View>
       )}
 
-      <View style={styles.row}>
-        <Ionicons name={"alert-outline"} size={size} style={styles.icon}/> 
-        <Text style={styles.property}>
-          Priority
-        </Text>
+      <View>
+        {(itemType === ItemType.Task || itemType === ItemType.Event) ? (
+          <View style={styles.row}>
+            <Ionicons name={"alert-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
+            <Text style={styles.property}>
+              Priority
+            </Text>
+          </View>
+        ) : (
+          <View style={styles.row}>
+            <Ionicons name={"star-half-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
+            <Text style={styles.property}>
+              Rating
+            </Text>
+          </View>
+        )} 
       </View>
       <View style={[styles.row, styles.property]}>
         <TouchableOpacity style={[styles.row, styles.box, priority === 'LOW' ? styles.selectedBox:styles.unselectedBox]}

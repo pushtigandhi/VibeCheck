@@ -17,12 +17,13 @@ export default function NewItem({navigation}) {
     <SafeAreaView style={styles.infoContainer}>
       <TouchableOpacity
         onPress={() => {
-          }}
-          style={styles.titleContainer}
+          navigation.navigate("Item", {item: df.defaultItem})
+        }}
+        style={styles.titleContainer}
       >
       <View style={styles.row}>
         <Text style={styles.label}>{df.ItemType.Item}</Text>
-        <Ionicons name={"information-circle-outline"} size={SIZES.xLarge} style={styles.icon}/> 
+        <Text style={{fontSize: SIZES.xLarge}}>{df.defaultItem.icon}</Text>
       </View>
       </TouchableOpacity>
 
@@ -34,7 +35,7 @@ export default function NewItem({navigation}) {
       >
       <View style={styles.row}>
         <Text style={styles.label}>{df.ItemType.Task}</Text>
-        <Ionicons name={"information-circle-outline"} size={SIZES.xLarge} style={styles.icon}/> 
+        <Text style={{fontSize: SIZES.xLarge}}>{df.defaultTask.icon}</Text>
       </View>
       </TouchableOpacity>
 
@@ -46,7 +47,7 @@ export default function NewItem({navigation}) {
       >
       <View style={styles.row}>
         <Text style={styles.label}>{df.ItemType.Event}</Text>
-        <Ionicons name={"information-circle-outline"} size={SIZES.xLarge} style={styles.icon}/> 
+        <Text style={{fontSize: SIZES.xLarge}}>{df.defaultEvent.icon}</Text>
       </View>
       </TouchableOpacity>
 
@@ -58,7 +59,7 @@ export default function NewItem({navigation}) {
       >
       <View style={styles.row}>
         <Text style={styles.label}>{df.ItemType.Page}</Text>
-        <Ionicons name={"information-circle-outline"} size={SIZES.xLarge} style={styles.icon}/> 
+        <Text style={{fontSize: SIZES.xLarge}}>{df.defaultPage.icon}</Text>
       </View>
       </TouchableOpacity>
 
@@ -70,7 +71,7 @@ export default function NewItem({navigation}) {
       >
       <View style={styles.row}>
         <Text style={styles.label}>{df.ItemType.Recipe}</Text>
-        <Ionicons name={"information-circle-outline"} size={SIZES.xLarge} style={styles.icon}/> 
+        <Text style={{fontSize: SIZES.xLarge}}>{df.defaultRecipe.icon}</Text>
       </View>
       </TouchableOpacity>
     </SafeAreaView>
