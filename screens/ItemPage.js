@@ -17,13 +17,13 @@ import * as ImagePicker from 'expo-image-picker';
 
 import React from "react";
 
-const defaultImage = require("../assets/icon.png")
+const defaultImage = require("../assets/icon.png");
 
-export default function ItemPage({ navigation, route}) {
+export default function ItemPage({ navigation, route, expanded=true}) {
   const { item } = route.params;
   const { title, description, favicon, icon, tags, notes, itemType, _id } = item;
 
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(expanded);
   
   const [itemTitle, setItemTitle] = useState('Title');
   const [itemDesc, setItemDesc] = useState('Description');
@@ -67,6 +67,7 @@ export default function ItemPage({ navigation, route}) {
 
     if (!!_id) {
       setNewItem(item);
+      setIsExpanded(false);
     }
     if (title) {
       setItemTitle(title);
@@ -303,7 +304,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS({opacity:0.5}).darkBlue,
     borderRadius: SIZES.medium,
-},
+  },
   propContainer: {
     width: '90%',
     padding: SIZES.medium,

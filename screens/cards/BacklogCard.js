@@ -24,7 +24,7 @@ const BacklogCard = ({navigation, item}) => {
 
 const styles = StyleSheet.create({
   cardContainer: {
-    width: '90%',
+    width: '95%',
     margin: SIZES.xSmall,
     backgroundColor: "#FFF",
     borderRadius: SIZES.xLarge,

@@ -7,20 +7,24 @@ import { Ionicons } from "@expo/vector-icons";
 import { Spacer } from "../../utils";
 import { ExpandableView } from "../../utils";
 
-const expandedCard = ({sections}) => {
+const expandedCard = ({navigation, category, sections}) => {
   return (
     <ScrollView style={styles.expandedContainer}>
       {sections.map(section => (
-        <TouchableOpacity style={styles.sectionContainer} key={section + "_root"}>
-            <Text style={styles.section} numberOfLines={1}>{section}</Text>
+        <TouchableOpacity style={styles.sectionContainer} key={section + "_root"}
+          onPress={() => {
+            navigation.navigate("Section", {"category": category, "section": section})
+          }}
+        >
+          <Text style={styles.section} numberOfLines={1}>{section}</Text>
         </TouchableOpacity>
       ))}
     </ScrollView>
   )
 };
 
-const DirectoryCard = ({category, sections}) => {
-    const [isExpanded, setIsExpanded] = useState(false);
+const DirectoryCard = ({navigation, category, sections}) => {
+  const [isExpanded, setIsExpanded] = useState(false);
 
   return (
     <View style={styles.cardContainer}>
@@ -35,14 +39,14 @@ const DirectoryCard = ({category, sections}) => {
             <Text style={styles.title} numberOfLines={1}>{category.title}</Text>
         </View>
       </TouchableOpacity>
-      <ExpandableView expanded={isExpanded} view={expandedCard} params={{sections}} vh={150} />
+      <ExpandableView expanded={isExpanded} view={expandedCard} params={{navigation, category, sections}} vh={150} />
     </View>
   )
 };
 
 const styles = StyleSheet.create({
   cardContainer: {
-    width: '90%',
+    width: '95%',
     margin: SIZES.xSmall,
     backgroundColor: "#FFF",
     borderRadius: SIZES.xLarge,

@@ -7,7 +7,7 @@ import HomeNavigation from "./HomeNavigation";
 import { GETdirectoryTEST } from "../API";
 import DirectoryCard from "./cards/DirectoryCard"
 
-export default function Directory ({scrollEnabled = true}) {
+export default function Directory ({navigation, scrollEnabled = true}) {
   const [categories, setCategories] = useState([]);
   const [title, setTitle] = useState("");
   const data = ["hello","world","i","have","arrived"];
@@ -38,7 +38,6 @@ export default function Directory ({scrollEnabled = true}) {
   async function getDirectoryFromAPI() {
       try {
           let categories_ = await GETdirectoryTEST();
-          console.log(categories_);
           return categories_;
       } catch (error) {
         console.log("error fetching directory");
@@ -60,7 +59,7 @@ export default function Directory ({scrollEnabled = true}) {
 
   const renderCategory = ({ item }) => (
     <View key={item["_id"] + "root"} >
-        <DirectoryCard category={item} key={item["_id"]} sections={item.sections} />
+        <DirectoryCard navigation={navigation} category={item} key={item["_id"]} sections={item.sections} />
     </View>
   );
 
