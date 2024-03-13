@@ -16,12 +16,10 @@ import { GETdirectoryTEST } from "../../API";
 export const PropertyCard = ({ item = null, itemType, setFn}) => {
   const [category, setCategory] = useState('');
   const [section, setSection] = useState('');
-  const [duration, setDuration] = useState(null);
   const [startDate, setStartDate] = useState(new Date());
-  //const [endDate, setEndDate] = useState(new Date());
   const [tags, setTags] = useState([]);
-  const [priority, setPriority] = useState('');
-  const [repeat, setRepeat] = useState('');
+  const [priority, setPriority] = useState(null);
+  const [repeat, setRepeat] = useState(null);
   
   const [directory, setDirectory] = useState([]);
   const [allTags, setAllTags] = useState([]);
@@ -131,9 +129,15 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
     }));
   }
 
+  const onChangeSection = (newSection) => {
+    setSection(newSection);
+    updateNewItem({"section": newSection});
+  };
+
   const onChangeCategory = (newCategory) => {
     setCategory(newCategory);
     setSection("All");
+    updateNewItem({"category": newCategory});
   };
 
   return (
@@ -148,7 +152,7 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
 
       {!!category && directory.length > 0 && (
         <View>
-          <SingleSelectDropdown options={getSections()} placeholder={!!section ? section : "Section"} setFn={setSection}
+          <SingleSelectDropdown options={getSections()} placeholder={!!section ? section : "Section"} setFn={onChangeSection}
             icon={<Ionicons name={"bookmark-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
         </View>
       )}
@@ -291,18 +295,26 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
         )} 
       </View>
       <View style={[styles.row, styles.property]}>
+        <TouchableOpacity style={[styles.row, styles.box, repeat === 'NONE' ? styles.selectedBox:styles.unselectedBox]}
+          onPress={() => (
+            setPriority("NONE"),
+            updateNewItem({"priority": "NONE"})
+          )}
+        >
+          <Text style={[styles.property, repeat === 'NEVER' ? styles.selectedText:styles.unselectedText]}>None</Text>
+        </TouchableOpacity>
         <TouchableOpacity style={[styles.row, styles.box, priority === 'LOW' ? styles.selectedBox:styles.unselectedBox]}
           onPress={() => (
-            (async () => (priority === 'LOW'?  await setPriority('') : await setPriority("LOW"))),
-            setFn({"priority": priority})
+            setPriority("LOW"),
+            updateNewItem({"priority": "LOW"})
           )}
         >
           <Ionicons name={"star-outline"} size={20} style={[priority === 'LOW' ? styles.iconInverse:styles.icon]} />
         </TouchableOpacity>
         <TouchableOpacity style={[styles.row, styles.box, priority === 'MED' ? styles.selectedBox:styles.unselectedBox]}
           onPress={() => (
-            (async () => (priority === 'MED'?  await setPriority('') : await setPriority("MED"))),
-            setFn({"priority": priority})
+            setPriority("MED"),
+            updateNewItem({"priority": "MED"})
           )}
         >
           <Ionicons name={"star-outline"} size={20} style={[priority === 'MED' ? styles.iconInverse:styles.icon]} />
@@ -310,8 +322,8 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
         </TouchableOpacity>
         <TouchableOpacity style={[styles.row, styles.box, priority === 'HIGH' ? styles.selectedBox:styles.unselectedBox]}
           onPress={() => (
-            (async () => (priority === 'HIGH'?  await setPriority('') : await setPriority("HIGH"))),
-            setFn({"priority": priority})
+            setPriority("HIGH"),
+            updateNewItem({"priority": "HIGH"})
           )}
         >
           <Ionicons name={"star-outline"} size={20} style={[priority === 'HIGH' ? styles.iconInverse:styles.icon]} />
@@ -327,34 +339,42 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
             <Text style={styles.property}>Repeat</Text>
           </View>
           <View style={[styles.row, styles.property]}>
+            <TouchableOpacity style={[styles.row, styles.box, repeat === 'NEVER' ? styles.selectedBox:styles.unselectedBox]}
+              onPress={() => (
+                setRepeat("NEVER"),
+                updateNewItem({"repeat": "NEVER"})
+              )}
+            >
+              <Text style={[styles.property, repeat === 'NEVER' ? styles.selectedText:styles.unselectedText]}>Never</Text>
+            </TouchableOpacity>
             <TouchableOpacity style={[styles.row, styles.box, repeat === 'ONCE' ? styles.selectedBox:styles.unselectedBox]}
               onPress={() => (
-                repeat === 'ONCE'? setRepeat('') : setRepeat("ONCE"),
-                setFn({"repeat": repeat})
+                setRepeat("ONCE"),
+                updateNewItem({"repeat": "ONCE"})
               )}
             >
               <Text style={[styles.property, repeat === 'ONCE' ? styles.selectedText:styles.unselectedText]}>Once</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.row, styles.box, repeat === 'DAILY' ? styles.selectedBox:styles.unselectedBox]}
               onPress={() => (
-                repeat === 'DAILY'? setRepeat('') : setRepeat("DAILY"),
-                setFn({"repeat": repeat})
+                setRepeat("DAILY"),
+                updateNewItem({"repeat": "DAILY"})
               )}
             >
               <Text style={[styles.property, repeat === 'DAILY' ? styles.selectedText:styles.unselectedText]}>Daily</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.row, styles.box, repeat === 'WEEKLY' ? styles.selectedBox:styles.unselectedBox]}
               onPress={() => (
-                repeat === 'WEEKLY'? setRepeat('') : setRepeat("WEEKLY"),
-                setFn({"repeat": repeat})
+                setRepeat("WEEKLY"),
+                updateNewItem({"repeat": "WEEKLY"})
               )}
             >
               <Text style={[styles.property, repeat === 'WEEKLY' ? styles.selectedText:styles.unselectedText]}>Weekly</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.row, styles.box, repeat === 'MONTHLY' ? styles.selectedBox:styles.unselectedBox]}
               onPress={() => (
-                repeat === 'MONTHLY'? setRepeat('') : setRepeat("MONTHLY"),
-                setFn({"repeat": repeat})
+                setRepeat("MONTHLY"),
+                updateNewItem({"repeat": "MONTHLY"})
               )}
             >
               <Text style={[styles.property, repeat === 'MONTHLY' ? styles.selectedText:styles.unselectedText]}>Monthly</Text>

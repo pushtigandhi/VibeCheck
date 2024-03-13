@@ -20,39 +20,33 @@ import React from "react";
 const defaultImage = require("../assets/icon.png");
 
 export default function ItemPage({ navigation, route, expanded=true}) {
-  const { item } = route.params;
-  const { title, description, favicon, icon, tags, notes, itemType, _id } = item;
+  // const { item } = route.params;
+  // const { title, description, favicon, icon, tags, notes, itemType, _id } = item;
+  const [itemType, setItemType] = useState('');
 
-  const [isExpanded, setIsExpanded] = useState(expanded);
+  const [title, setTitle] = useState(null);
+  const [description, setDescription] = useState(null);
+  const [favicon, setFavicon] = useState(null);
+  const [icon, setIcon] = useState('');
+  const [notes, setNotes] = useState(null);
+  const [category, setCategory] = useState('');
+  const [section, setSection] = useState('');
+  const [duration, setDuration] = useState(15);
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+  const [tags, setTags] = useState([]);
+  const [priority, setPriority] = useState(null);
+  const [repeat, setRepeat] = useState(null);
   
-  const [itemTitle, setItemTitle] = useState('Title');
-  const [itemDesc, setItemDesc] = useState('Description');
-  const [itemIcon, setItemIcon] = useState(icon.toString());
-  const [itemNotes, setItemNotes] = useState('Notes');
+  const [isExpanded, setIsExpanded] = useState(expanded);
 
-  const [itemFavicon, setItemFavicon] = useState(null);
   const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
 
-
-  const [hasChanges, setHasChanges] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-
-  const [newItem, setNewItem] = useState({});
 
   const onRefresh = React.useCallback(() => {
     doRefresh();
-  }, [item]);
-
-  //const [isEmoji, setIsEmoji] = useState(false);
-
-  // Regex to check for emojis. This pattern covers a wide range of emojis but might not be exhaustive.
-  //const emojiRegex = /(\p{Emoji_Presentation}|\p{Extended_Pictographic})/gu;
-
-  // const handleIconChange = (newIcon) => {
-  //   if(setIsEmoji(emojiRegex.test(newIcon))) {
-  //     setItemIcon(newIcon);
-  //   };
-  // };
+  }, [route.params?.item]);
 
   useEffect(() => {
     (async () => {
@@ -65,20 +59,21 @@ export default function ItemPage({ navigation, route, expanded=true}) {
       setHasGalleryPermission(galleryStatus.status == 'granted');
     })
 
-    if (!!_id) {
-      setNewItem(item);
-      setIsExpanded(false);
+    if (route.params?.item) {
+      const { item } = route.params;
+      setItemType(item.itemType);
+      setCategory(item.category);
+      setSection(item.section);
+      setIcon(item.icon.toString());
+      if (item["_id"]) {
+        setIsExpanded(false);
+        setTitle(item.title);
+        if (item.description) {
+          setDescription(item.description);
+        } 
+      }
     }
-    if (title) {
-      setItemTitle(title);
-    }
-    if(description) {
-      setItemDesc(description);
-    }
-    if(favicon) {
-      setItemFavicon(favicon);
-    }
-  }, [item]); // Update category and section when item changes
+  }, [route.params?.item]); // Update category and section when item changes
 
   const pickImage = async () => {
     let pickerResult = await ImagePicker.launchImageLibraryAsync({
@@ -89,7 +84,7 @@ export default function ItemPage({ navigation, route, expanded=true}) {
 
     if (!pickerResult.canceled) {
       const img = pickerResult.assets[0]; // Accessing the first selected asset
-      setItemFavicon(img); // Using the uri from the first asset
+      setFavicon(img); // Using the uri from the first asset
     }
 
     if (hasGalleryPermission === false) {
@@ -98,23 +93,49 @@ export default function ItemPage({ navigation, route, expanded=true}) {
   };
 
   function doRefresh() {
+    let item = {
+      title: title,
+      category: category,
+      section: section,
+      icon: icon,
+    };
+
+    if (description !== null) {
+      item.description = description;
+    } if (favicon !== null) {
+      item.favicon = favicon;
+    } if (notes !== null) {
+      item.notes = notes;
+    } if (repeat !== null) {
+      item.repeat = repeat;
+    } if (priority !== null) {
+      item.priority = priority;
+    }
+
+    if(itemType === ItemType.Task || itemType === ItemType.Event) {
+      item.startDate = startDate;
+      item.duration = duration;
+      item.endDate = new Date(endDate.setMinutes(endDate.getMinutes() + 15));
+    }
+
     setRefreshing(true);
-    if(!validatePostFields()){
+    if(!validatePostFields(item)){
       return;
     };
-    PATCHitemTEST(itemType, {
-        ...newItem
-      }, _id)
-      .then((item_) => {
-          setRefreshing(false);
-    }).catch((error) => {
-        console.log(error);
-        setRefreshing(false);
-    });
+    console.log(item);
+    // PATCHitemTEST(itemType, {
+    //     ...item
+    //   }, _id)
+    //   .then((item_) => {
+    //       setRefreshing(false);
+    // }).catch((error) => {
+    //     console.log(error);
+    //     setRefreshing(false);
+    // });
   };
   
-  function validatePostFields() {
-    if (!newItem.title) {
+  function validatePostFields(item) {
+    if (!item.title) {
       alert("Please add a Title");
       return false;
     }
@@ -122,42 +143,32 @@ export default function ItemPage({ navigation, route, expanded=true}) {
   }
 
   function updateNewItem(params) {
-    if(params.title) {
-      setNewItem({... newItem, "title": params.title});
-    }
-    if(params.description) {
-      setNewItem({... newItem, "description": params.description});
-    }
-    if(params.favicon) {
-      setNewItem({... newItem, "favicon": params.favicon});
-    }
     if(params.category) {
-      setNewItem({... newItem, "category": params.category});
+      setCategory(params.category);
     }
     if(params.section) {
-      setNewItem({... newItem, "section": params.section});
+      setSection(params.section);
     }
     if(params.duration) {
-      setNewItem({... newItem, "duration": params.duration});
+      setDuration(params.duration);
     }
     if(params.startDate) {
-      setNewItem({... newItem, "startDate": params.startDate});
+      setStartDate(params.startDate);
+      setEndDate(params.startDate);
     }
     if(params.priority) {
-      setNewItem({... newItem, "priority": params.priority});
+      console.log(params.priority);
+      setPriority(params.priority);
     }
     if(params.repeat) {
-      setNewItem({... newItem, "repeat": params.repeat});
+      setRepeat(params.repeat);
     }
-    if(params.tags) {
-      setNewItem({... newItem, "tags": params.tags});
-    }
-    if(params.notes) {
-      setNewItem({... newItem, "notes": params.notes});
-    }
-    if(params.subtasks) {
-      setNewItem({... newItem, subtasks: params.subtasks});
-    }
+    // if(params.tags) {
+    //   setNewItem({... newItem, "tags": params.tags});
+    // }
+    // if(params.subtasks) {
+    //   setNewItem({... newItem, subtasks: params.subtasks});
+    // }
   }
 
   return (
@@ -174,16 +185,14 @@ export default function ItemPage({ navigation, route, expanded=true}) {
             <TouchableOpacity 
               onPress={(newFavicon) => (
                 pickImage(),
-                updateNewItem({"favicon": newFavicon})
+                setFavicon(newFavicon)
+                //updateNewItem({"favicon": newFavicon})
               )}
             >
               <Image
-                source={itemFavicon ? { uri: itemFavicon.uri } : defaultImage}
+                source={favicon ? { uri: favicon.uri } : defaultImage}
                 style={[styles.border, { width: 140, height: 140}]}
               />
-              {/* ) : (
-                <Ionicons name={"camera-outline"} size={80} style={[styles.border,styles.icon, {padding: 30}]}/> 
-              )} */}
             </TouchableOpacity>
             <TouchableOpacity onPress={doRefresh} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightGreen}]}>
               <Ionicons name={"checkmark-outline"} size={SIZES.xxLarge} style={styles.iconInverted}/> 
@@ -210,7 +219,7 @@ export default function ItemPage({ navigation, route, expanded=true}) {
               </View>
             </View>
           </TouchableOpacity>
-          <ExpandableView expanded={isExpanded} view={PropertyCard} params={{"item": item, "itemType": itemType, "setFn": updateNewItem}} vh={300} />
+          <ExpandableView expanded={isExpanded} view={PropertyCard} params={{"item": route.params?.item, "itemType": itemType, "setFn": updateNewItem}} vh={300} />
 
           <View style={[styles.row, styles.title]}>
             {/* TODO: SELECT NEW ICON
@@ -220,41 +229,35 @@ export default function ItemPage({ navigation, route, expanded=true}) {
               value={itemIcon}
               placeholder={itemIcon}
             /> */}
-            <Text style={{fontSize: SIZES.xLarge}}>{itemIcon}</Text>
+            <Text style={{fontSize: SIZES.xLarge}}>{icon}</Text>
             <TextInput style={{width: "100%", fontSize: SIZES.xLarge, color: COLORS({opacity:0.9}).darkBlue}}
-              {...(title ? { defaultValue: itemTitle } : { placeholder: itemTitle })}
-              onChangeText={(newTitle) => (
-                updateNewItem({"title": newTitle})
-              )}
+              {...(title ? { defaultValue: title } : { placeholder: "Title" })}
+              onChangeText={(newTitle) => setTitle(newTitle)}
             />
           </View>
           {!(itemType === ItemType.Page) && (
             <TextInput style={styles.description}
               multiline 
-              {...(description ? { defaultValue: itemDesc } : { placeholder: itemDesc })} 
-              onChangeText={(newDescription) => (
-                updateNewItem({"description": newDescription})
-              )}
+              {...(description ? { defaultValue: description } : { placeholder: "Description" })} 
+              onChangeText={(newDescription) => setDescription(newDescription)}
             />
           )}
 
           {itemType === ItemType.Event && (
             <View>
               <Spacer size={10} />
-              <EventCard item={item} setFn={updateNewItem} />
+              <EventCard item={route.params?.item} setFn={updateNewItem} />
             </View>
           )}  
           {(itemType === ItemType.Task || itemType === ItemType.Event) && (
-            <TaskCard item={item} setFn={updateNewItem} />
+            <TaskCard item={route.params?.item} setFn={updateNewItem} />
           )}
           
           {itemType === ItemType.Page && (
             <TextInput style={styles.notes} 
               multiline
-              {...(notes ? { defaultValue: itemNotes } : { placeholder: itemNotes })} 
-              onChangeText={(newNotes) => (
-                updateNewItem({"notes": newNotes})
-              )}
+              {...(notes ? { defaultValue: itemNotes } : { placeholder: "Notes" })} 
+              onChangeText={(newNotes) => setNotes(newNotes)}
             />
           )}
         </ScrollView>
@@ -296,7 +299,6 @@ const styles = StyleSheet.create({
   },
   notes:{
     fontSize: SIZES.medium,
-    //fontFamily: FONT.regular,
     height: 400,
     color: COLORS({opacity:0.9}).darkBlue,
     padding: SIZES.medium,

@@ -947,6 +947,9 @@ export async function GETitemsTEST(itemType, filter={}) {
                 ],
                 "notes": [],
                 "owner": "65dffad64102392ebb57839b",
+                "duration": "30",
+                "startDate": "2024-03-29T05:15:00.000Z",
+                "endDate": "2024-03-13T07:08:05.326Z",
                 "createdAt": "2024-02-29T03:37:10.111Z",
                 "updatedAt": "2024-02-29T03:37:10.111Z",
                 "__v": 0
@@ -964,6 +967,9 @@ export async function GETitemsTEST(itemType, filter={}) {
                 "owner": "65dffad64102392ebb57839b",
                 "itemType": "Task",
                 "subtasks": [],
+                "duration": "20",
+                "startDate": "2024-03-29T08:30:00.000Z",
+                "endDate": "2024-03-13T07:08:05.326Z",
                 "createdAt": "2024-02-29T03:40:59.685Z",
                 "updatedAt": "2024-02-29T03:40:59.685Z",
                 "__v": 0
@@ -988,6 +994,9 @@ export async function GETitemsTEST(itemType, filter={}) {
                         "_id": "65e134a91635ad960dabdc1c"
                     }
                 ],
+                "duration": "10",
+                "startDate": "2024-03-29T12:45:00.000Z",
+                "endDate": "2024-03-13T07:08:05.326Z",
                 "createdAt": "2024-03-01T01:51:37.332Z",
                 "updatedAt": "2024-03-01T01:53:24.873Z",
                 "__v": 0

@@ -1,26 +1,37 @@
-import React from "react";
-import { ToolBar } from "../../components/Toolbar";
-import { SolidBars } from "../../assets/icons/SolidBars";
-import { CalendarWeek } from "../../assets/icons/CalendarWeek";
-import { PlusCircle } from "../../assets/icons/PlusCircle";
-//import { CalendarDaySmall } from "../../components/CalendarDaySmall";
+import React, { useEffect, useState } from "react";
 import { Spacer } from "../../utils/index";
 import {Calendar, LocaleConfig} from 'react-native-calendars';
-import { SIZES, COLORS } from "../../constants";
+import { SIZES, COLORS, FONT, SHADOWS } from "../../constants";
 import { Sidebar } from "../../components/Sidebar";
-import { TaskCard } from "../cards/items/TaskCard";
-
-import { View, StyleSheet, Text, ScrollView } from 'react-native';
+import { GETitems, GETitemsTEST } from "../../API";
+import { ItemType } from "../../constants";
+import { View, StyleSheet, Text, ScrollView, TouchableOpacity } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { Ionicons } from "@expo/vector-icons";
 
 export const DailyCalendar = ({showSidebar = false}) => {
+  const [items, setItems] = useState([]);
+  const [startDate, setStartDate] = useState([]);
 
-  // const [items, setItems] = useState([]);
-  // const [title, setTitle] = useState("");
+  async function getItemsFromAPI() {
+    try {
+      let items_ = await GETitemsTEST(ItemType.Item);
+      return items_;
+    } catch (error) {
+      console.log("error fetching items");
+      console.log(error);
+      return [];
+    }
+  }
 
-  const hours = ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00"]
-  //, "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00",
-    //        "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"];
-  
+  useEffect(() => {
+    getItemsFromAPI().then((items_) => {
+      setItems(items_);
+    }).catch((err) => {
+      alert(err.message)
+    })
+  }, []) // only run once on load
+
   return (
     <View>
         {showSidebar && (
@@ -31,74 +42,88 @@ export const DailyCalendar = ({showSidebar = false}) => {
           style={styles.calendarView}
           scrollEnabled={true}
         >
-          {hours.map((hour) => (
-            <View style={styles.cardsContainer} key={hour + "_root"}>
-              <View style={styles.row}>
-                <View style={styles.label}>
-                  <Text style={styles.time}>{hour}</Text>
+          {items.map((item) => (
+            <View style={styles.cardsContainer} key={item["_id"] + "_root"}>
+              <View style={{flexDirection: "row"}}>
+                <View style={{flexDirection: "column", alignItems: "center"}}>
+                  <View style={styles.label}>
+                    <DateTimePicker
+                      value={new Date(item.startDate)}
+                      mode={"time"} // or "date" or "time"
+                      is24Hour={true}
+                      display="default"
+                      disabled={true}
+                    />
+                  </View>
+                  <Text style={{ fontSize: SIZES.xxLarge}}>{item.icon}</Text>
+                  <View style={styles.label}>
+                    <DateTimePicker
+                      value={new Date(item.endDate)}
+                      mode={"time"} // or "date" or "time"
+                      is24Hour={true}
+                      display="default"
+                      disabled={true}
+                    />
+                  </View>
                 </View>
-                <View style={styles.dayCardContainer}>
-                    <Text style={styles.title}>title</Text>
-                </View> 
+                <TouchableOpacity
+                    onPress={() => {
+                        navigation.navigate("Item", {item});
+                    }}
+                    key={item["_id"] + "root"} 
+                    style={styles.dayCardContainer}
+                >
+                  <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
+                  {!!item.subtasks && item.subtasks.length > 0 && (
+                    <Text>Subtasks: {item.subtasks.length}</Text>
+                  )}
+                </TouchableOpacity>
               </View>
             </View>
           ))}
         </ScrollView>
-
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  toolBarInstance: {
-    borderColor: '#aad6e7',
-    width: 'unset',
-  },
-  iconFontAwesome3: {
-    height: 16,
-    position: 'relative',
-    width: 16,
-  },
-  designComponentInstanceNode: {
-    color: '#229fd0',
-  },
-  toolBar2: {
-    backgroundColor: '#aad6e7',
-  },
-  toolBar3: {
-    backgroundColor: '#229fd0',
-  },
   cardsContainer: {
+    padding: SIZES.medium,
     marginTop: SIZES.medium,
+    backgroundColor: "#FFF",
+    borderRadius: SIZES.small,
+    ...SHADOWS.xSmall,
+    shadowColor: COLORS({opacity:1}).indigo,
   },
   calendarView: {
     padding: 10,
-    width: 500,
+    width: "100%",
+    height: "100%"
   },
   row: {
     flexDirection: "row",
-    //justifyContent: "space-between",
     alignItems: "center",
   },
   label: {
-    width: "10%",
+   // backgroundColor: COLORS({opacity:0.5}).primary,
+   //width: "30%",
+    borderWidth: 1,
+    borderColor: COLORS({opacity: 1}).darkBlue,
+    borderRadius: SIZES.xSmall,
+    // ...SHADOWS.medium,
+    // shadowColor: COLORS({opacity:1}).indigo,
   },
   dayCardContainer: {
-    height: 50,
-    width: 150,
-    padding: 10,
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: COLORS({opacity: 1}).tertiary,
-    borderRadius: SIZES.medium,
-    //...SHADOWS.medium,
-    shadowColor: COLORS({opacity:1}).indigo,
-  },
-  time: {
-      color: COLORS({opacity: 1}).primary,
+    flex: 1,
+    //padding: SIZES.medium,
+    marginLeft: SIZES.xSmall,
+    // borderRadius: SIZES.small,
+    // ...SHADOWS.xSmall,
+    // shadowColor: COLORS({opacity:1}).indigo,
   },
   title: {
-      fontSize: SIZES.medium,
-      color: COLORS({opacity: 1}).primary,
+    fontSize: SIZES.xLarge,
+    //fontFamily: FONT.regular,
+    color: COLORS({opacity:1}).darkBlue,
   },
 });
