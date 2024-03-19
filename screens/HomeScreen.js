@@ -1,5 +1,6 @@
 import React from "react";
-import { View, TouchableOpacity, Text, TextInput, RefreshControl, SafeAreaView } from 'react-native';
+import { View, TouchableOpacity, Text, TextInput, 
+    FlatList, RefreshControl, SafeAreaView } from 'react-native';
 import { StyleSheet } from "react-native";
 import { COLORS, FONT, SIZES, SHADOWS } from "../constants";
 import HomeNavigation from "./HomeNavigation";
@@ -16,10 +17,18 @@ import { MonthlyCalendar } from "./partialViews/MonthlyCalendar";
 import { useNavigation } from "@react-navigation/native";
 import { ToolBar } from "../components/Toolbar";
 
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 import { Ionicons } from "@expo/vector-icons";
 import { useState, useEffect } from "react";
 
+import { GETtodayTEST, GETweekTEST, GETmonthTEST } from "../API";
+import { ItemType } from "../constants";
+
+import { Dimensions } from 'react-native';
+
 export default function HomeScreen ({ navigation, route }) {
+    const calendarHeight = Dimensions.get('window').height - 330;    
     const active = "class";
     const mobile = true;
 
@@ -45,19 +54,89 @@ export default function HomeScreen ({ navigation, route }) {
         }
     });
 
+    const [items, setItems] = useState([]);
+
+    async function getItemsFromAPI() {
+        try {
+        let items_ = await GETtodayTEST(ItemType.Item);
+        return items_;
+        } catch (error) {
+        console.log("error fetching items");
+        console.log(error);
+        return [];
+        }
+    }
+
+    useEffect(() => {
+        getItemsFromAPI().then((items_) => {
+        setItems(items_);
+        }).catch((err) => {
+        alert(err.message)
+        })
+    }, []) // only run once on load
+
+    const renderItem = ({ item }) => (
+        <>{state === 'day' && (
+            <View style={styles.cardsContainer} key={item["_id"] + "_root"}>
+              <View style={{flexDirection: "row"}}>
+                <View style={{flexDirection: "column", alignItems: "center"}}>
+                  <DateTimePicker
+                    value={new Date(item.startDate)}
+                    mode={"time"} // or "date" or "time"
+                    is24Hour={true}
+                    display="default"
+                    disabled={true}
+                  />
+                  <DateTimePicker
+                    value={new Date(item.endDate)}
+                    mode={"time"} // or "date" or "time"
+                    is24Hour={true}
+                    display="default"
+                    disabled={true}
+                  />
+                </View>
+                <View style={{ justifyContent: "center"}}>
+                  <Text style={{ fontSize: SIZES.xxLarge}}>{item.icon}</Text>
+                </View>
+                <TouchableOpacity
+                    onPress={() => {
+                        navigation.navigate("Item", {item});
+                    }}
+                    key={item["_id"] + "root"} 
+                    style={styles.dayCardContainer}
+                >
+                  <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
+                  {!!item.location && (
+                    <Text style={styles.prop}>Location: {item.location}</Text>
+                  )}
+                  {!!item.subtasks && item.subtasks.length > 0 && (
+                    <Text style={styles.prop}>Subtasks: {item.subtasks.length}</Text>
+                  )}
+                  {!!item.priority && (
+                    <Text style={styles.prop}>Priority: {item.priority}</Text>
+                  )}
+                </TouchableOpacity>
+              </View>
+            </View>
+        )}
+        {state === 'week' && (
+            <WeeklyCalendar showSidebar={showSidebar} />
+        )}
+        {state === 'month' && (
+            <MonthlyCalendar month={0} startDay={0} showSidebar={showSidebar} />
+        )}</>
+    );
+
     return (
         <SafeAreaView style={styles.screen}>
+             <View style={[styles.row, {flex: 0, height: 75}]}>
+                <TouchableOpacity style={styles.profileButton}>
+                    <Ionicons name={"person"} size={SIZES.xxLarge} style={{color: COLORS({opacity:1}).darkBlue}}/>
+                </TouchableOpacity>
+                <TextInput style={styles.intention} />
+            </View>
+            <View style={{ flex: 1, backgroundColor: 'white' }}>
             <View style={styles.container}>
-                <View style={styles.row}>
-                    <View >
-                    <TouchableOpacity style={styles.profileButton}>
-                        <SixteenPopupUser style={styles.elementPopupUser} color="#229FD0"  />
-                    </TouchableOpacity>
-                    </View>
-
-                    <TextInput style={styles.intention} />
-                </View>
-                <Spacer size={20} />
                 <View style={styles.calendarContainer} refreshControl={
                     <RefreshControl
                         refreshing={refreshing}
@@ -70,7 +149,47 @@ export default function HomeScreen ({ navigation, route }) {
                         onRefresh={toggleSidebar}
                         showSidebar={showSidebar}
                     />
-                    {state === 'day' && (
+                    <View style={styles.iconRoot}>
+                        <TouchableOpacity 
+                            onPress={() => {
+                                setState("day");
+                                setRefreshing(true);
+                            }}
+                            style={{flex:1}}
+                        >
+                            <Text style={state === 'day' ? styles.tabActive : styles.tabInactive} >DAY</Text>
+                            {/* <Ionicons name={"ellipse"} size={10} style={state === 'day' ? styles.tabActive : styles.tabInactive} /> */}
+                        </TouchableOpacity>
+                        <TouchableOpacity 
+                            onPress={() => {
+                                setState("week");
+                                setRefreshing(true);
+                            }}
+                            style={{flex:1}}
+
+                        >
+                            <Text style={state === 'week' ? styles.tabActive : styles.tabInactive} >WEEK</Text>
+                            {/* <Ionicons name={"ellipse"} size={10} style={state === 'week' ? styles.tabActive : styles.tabInactive} /> */}
+                        </TouchableOpacity>
+                        <TouchableOpacity 
+                            onPress={() => {
+                                setState("month");
+                                setRefreshing(true);
+                            }}
+                            style={{flex:1}}
+                        >
+                            <Text style={state === 'month' ? styles.tabActive : styles.tabInactive} >MONTH</Text>
+                            {/* <Ionicons name={"ellipse"} size={10} style={state === 'month' ? styles.tabActive : styles.tabInactive} /> */}
+                        </TouchableOpacity>
+                    </View>
+                    <FlatList
+                        data={items}
+                        renderItem={renderItem}
+                        keyExtractor={(item) => item["_id"]} 
+                        style={{height: calendarHeight}}
+                    />
+                    
+                    {/*{state === 'day' && (
                         <DailyCalendar showSidebar={showSidebar} />
                     )}
                     {state === 'week' && (
@@ -78,76 +197,48 @@ export default function HomeScreen ({ navigation, route }) {
                     )}
                     {state === 'month' && (
                         <MonthlyCalendar month={0} startDay={0} showSidebar={showSidebar} />
-                    )}
+                    )}*/}
                 </View>
-                <View style={styles.iconRoot}>
-                    <TouchableOpacity 
-                        onPress={() => {
-                            setState("day");
-                            setRefreshing(true);
-                        }}
-                    >
-                        <Ionicons name={"ellipse"} size={10} style={state === 'day' ? styles.tabActive : styles.tabInactive} />
-                    </TouchableOpacity>
-                    <TouchableOpacity 
-                        onPress={() => {
-                            setState("week");
-                            setRefreshing(true);
-                        }}
-                    >
-                        <Ionicons name={"ellipse"} size={10} style={state === 'week' ? styles.tabActive : styles.tabInactive} />
-                    </TouchableOpacity>
-                    <TouchableOpacity 
-                        onPress={() => {
-                            setState("month");
-                            setRefreshing(true);
-                        }}
-                    >
-                        <Ionicons name={"ellipse"} size={10} style={state === 'month' ? styles.tabActive : styles.tabInactive} />
-                    </TouchableOpacity>
-                </View>
+                
             </View>
-            <HomeNavigation size={30} iconColor={COLORS({opacity:1}).primary}/>
-
+            
+            </View>
+            <HomeNavigation style={{flex: 0}} size={SIZES.xxLarge} iconColor={COLORS({opacity:1}).primary}/> 
         </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
     screen: {
-        height: '100%',
-        width: '100%',
+        // height: '100%',
+        // width: '100%',
+        flex:1,
         backgroundColor: "#FFF",
     },
     container: {
         // flex: 1,
         // justifyContent: "space-between",
         //alignItems: "center",
-        padding: SIZES.medium,
-        borderRadius: SIZES.xLarge,
-        ...SHADOWS.medium,
-        shadowColor: COLORS({opacity:1}).indigo,
-        //marginBottom: SIZES.xSmall,
+       // flexBasis: 'auto',
+        top:0,
+        //flex: 1,
+        paddingHorizontal: SIZES.medium,
+        marginTop: SIZES.xxSmall,
     },
     calendarContainer: {
         borderWidth: 1,
-        borderColor: '#aad6e7',
-        borderRadius: 6,
-        height: "80%",
-        width: "auto",
+        borderColor: COLORS({opacity:1}).darkBlue,
+        borderRadius: SIZES.small,
+        //flex: 8,
+        //height: "auto",
+        //width: "auto",
         overflow:"hidden",
     },
-    elementPopupUser: {
-      height: 20,
-      position: 'absolute',
-      width: 20,
-    },
     profileButton: {
-      borderColor: '#aad6e7',
+      borderColor: COLORS({opacity:1}).darkBlue,
       borderRadius: 100,
+      marginHorizontal: SIZES.medium,
       height: 75,
-      left: 0,
-      position: 'absolute',
       width: 75,
       borderWidth: 1,
       justifyContent: 'center',
@@ -156,43 +247,45 @@ const styles = StyleSheet.create({
     },
     intention: {
         borderWidth: 1,
-        borderColor: '#aad6e7',
-        borderRadius: 6,
+        borderColor: COLORS({opacity:1}).darkBlue,
+        borderRadius: SIZES.xxSmall,
         height: 75,
-        width: 250,
-        fontSize: 20,
+        marginRight: SIZES.medium,
+        //width: 250,
+        flex: 1,
+        fontSize: SIZES.large,
         color: 'white',
     },
     row: {
         flexDirection: "row",
-        justifyContent: "space-between",
-        //alignItems: "baseline",
+        alignItems: "center",
     },
     column: {
         flexDirection: "column",
         justifyContent: "space-between",
-        //alignItems: "baseline",
-    },
-    root: {
-        flexDirection: "row",
-        justifyContent: "space-around",
     },
     iconRoot: {
-        //alignItems: "center",
+        //flex: 0,
         flexDirection: "row",
         justifyContent: "center",
-        //display: "flex",
+        //height: SIZES.xSmall,
     },
     icon: {
-        color: COLORS({opacity:1}).primary,
+        color: COLORS({opacity:1}).darkBlue,
         margin: 5,
     },
     tabActive: {
-        color: COLORS({opacity:1}).primary,
+        padding: SIZES.xxSmall,
+        backgroundColor: COLORS({opacity:1}).darkBlue,
         margin: 10,
+        color: COLORS({opacity: 1}).white,
+        fontWeight: "bold",
     },
     tabInactive: {
-        color: COLORS({opacity:1}).tertiary,
+        padding: SIZES.xxSmall,
+        backgroundColor: COLORS({opacity:0.5}).darkBlue,
         margin: 10,
+        color: COLORS({opacity: 1}).white,
+        fontWeight: "normal",
     },
-  });
+});

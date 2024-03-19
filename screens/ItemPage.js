@@ -12,6 +12,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { expandedSubTaskCard } from "./cards/items/TaskCard";
 import TaskCard from "./cards/items/TaskCard";
 import EventCard from "./cards/items/EventCard";
+import RecipeCard from "./cards/items/RecipeCard";
 import { PATCHitemTEST } from "../API";
 import * as ImagePicker from 'expo-image-picker';
 
@@ -37,6 +38,8 @@ export default function ItemPage({ navigation, route, expanded=true}) {
   const [tags, setTags] = useState([]);
   const [priority, setPriority] = useState(null);
   const [repeat, setRepeat] = useState(null);
+  
+  const [updatedItem, setUpdatedItem] = useState({});
   
   const [isExpanded, setIsExpanded] = useState(expanded);
 
@@ -100,22 +103,30 @@ export default function ItemPage({ navigation, route, expanded=true}) {
       icon: icon,
     };
 
-    if (description !== null) {
+    if (description) {
       item.description = description;
-    } if (favicon !== null) {
+    } if (favicon) {
       item.favicon = favicon;
-    } if (notes !== null) {
+    } if (notes) {
       item.notes = notes;
-    } if (repeat !== null) {
-      item.repeat = repeat;
-    } if (priority !== null) {
-      item.priority = priority;
+    } if (updatedItem.repeat) {
+      item.repeat = updatedItem.repeat;
+    } if (updatedItem.priority) {
+      item.priority = updatedItem.priority;
+    } if (updatedItem.ingredients) {
+      item.ingredients = updatedItem.ingredients;
+    } if (updatedItem.instructions) {
+      item.instructions = updatedItem.instructions;
+    } if (updatedItem.servings) {
+      item.servings = updatedItem.servings;
+    } if (updatedItem.location) {
+      item.location = updatedItem.location;
     }
 
     if(itemType === ItemType.Task || itemType === ItemType.Event) {
       item.startDate = startDate;
       item.duration = duration;
-      item.endDate = new Date(endDate.setMinutes(endDate.getMinutes() + 15));
+      item.endDate = new Date(endDate.setMinutes(endDate.getMinutes() + duration));
     }
 
     setRefreshing(true);
@@ -157,18 +168,29 @@ export default function ItemPage({ navigation, route, expanded=true}) {
       setEndDate(params.startDate);
     }
     if(params.priority) {
-      console.log(params.priority);
       setPriority(params.priority);
     }
     if(params.repeat) {
       setRepeat(params.repeat);
     }
     // if(params.tags) {
-    //   setNewItem({... newItem, "tags": params.tags});
+    //   setUpdatedItem({... updatedItem, "tags": params.tags});
     // }
-    // if(params.subtasks) {
-    //   setNewItem({... newItem, subtasks: params.subtasks});
-    // }
+    if(params.subtasks) {
+      setUpdatedItem({... updatedItem, subtasks: params.subtasks});
+    }
+    if(params.ingredients) {
+      setUpdatedItem({... updatedItem, ingredients: params.ingredients});
+    }
+    if(params.instructions) {
+      setUpdatedItem({... updatedItem, instructions: params.instructions});
+    }
+    if(params.servings) {
+      setUpdatedItem({... updatedItem, servings: params.servings});
+    }
+    if(params.location) {
+      setUpdatedItem({... updatedItem, location: params.location});
+    }
   }
 
   return (
@@ -229,7 +251,7 @@ export default function ItemPage({ navigation, route, expanded=true}) {
               value={itemIcon}
               placeholder={itemIcon}
             /> */}
-            <Text style={{fontSize: SIZES.xLarge}}>{icon}</Text>
+            <Text style={{fontSize: SIZES.xLarge, marginRight: SIZES.xxSmall}}>{icon}</Text>
             <TextInput style={{width: "100%", fontSize: SIZES.xLarge, color: COLORS({opacity:0.9}).darkBlue}}
               {...(title ? { defaultValue: title } : { placeholder: "Title" })}
               onChangeText={(newTitle) => setTitle(newTitle)}
@@ -248,7 +270,8 @@ export default function ItemPage({ navigation, route, expanded=true}) {
               <Spacer size={10} />
               <EventCard item={route.params?.item} setFn={updateNewItem} />
             </View>
-          )}  
+          )}
+
           {(itemType === ItemType.Task || itemType === ItemType.Event) && (
             <TaskCard item={route.params?.item} setFn={updateNewItem} />
           )}
@@ -260,6 +283,11 @@ export default function ItemPage({ navigation, route, expanded=true}) {
               onChangeText={(newNotes) => setNotes(newNotes)}
             />
           )}
+
+          {itemType === ItemType.Recipe && (
+            <RecipeCard item={route.params?.item} setFn={updateNewItem} />
+          )}
+
         </ScrollView>
       </GestureHandlerRootView>
       </SafeAreaView>
@@ -279,7 +307,7 @@ const styles = StyleSheet.create({
       alignItems: "center",
   },
   title:{
-      fontSize: SIZES.xLarge,
+      //fontSize: SIZES.xLarge,
       //fontFamily: FONT.regular,
       padding: SIZES.medium,
       margin: SIZES.medium,

@@ -37,7 +37,7 @@ const expandedContactList = ({contactList, setFn}) => {
 };
 
 const EventCard = ({item, setFn, expanded=false}) => {
-  const [location, setLocation] = useState('Location');
+  const [location, setLocation] = useState('');
 
   const [isContactsExpanded, setIsContactsExpanded] = useState(true);
   const [isPressable, setIsPressable] = useState(true);
@@ -45,9 +45,10 @@ const EventCard = ({item, setFn, expanded=false}) => {
   return (
     <View style={styles.infoContainer}>
       <TextInput style={styles.location} 
-        {...(item.location ? { defaultValue: item.location } : { placeholder: location })} 
+        {...(item.location ? { defaultValue: item.location.toString() } : { placeholder: "Location" })} 
         onChangeText={(newLocation) => (
-          setLocation({"location": newLocation})
+          setLocation({"location": newLocation}),
+          setFn({"location": newLocation})
         )}
       />
       <TouchableOpacity

@@ -11,7 +11,6 @@ import { Ionicons } from "@expo/vector-icons";
 
 export const DailyCalendar = ({showSidebar = false}) => {
   const [items, setItems] = useState([]);
-  const [startDate, setStartDate] = useState([]);
 
   async function getItemsFromAPI() {
     try {
@@ -46,25 +45,23 @@ export const DailyCalendar = ({showSidebar = false}) => {
             <View style={styles.cardsContainer} key={item["_id"] + "_root"}>
               <View style={{flexDirection: "row"}}>
                 <View style={{flexDirection: "column", alignItems: "center"}}>
-                  <View style={styles.label}>
-                    <DateTimePicker
-                      value={new Date(item.startDate)}
-                      mode={"time"} // or "date" or "time"
-                      is24Hour={true}
-                      display="default"
-                      disabled={true}
-                    />
-                  </View>
+                  <DateTimePicker
+                    value={new Date(item.startDate)}
+                    mode={"time"} // or "date" or "time"
+                    is24Hour={true}
+                    display="default"
+                    disabled={true}
+                  />
+                  <DateTimePicker
+                    value={new Date(item.endDate)}
+                    mode={"time"} // or "date" or "time"
+                    is24Hour={true}
+                    display="default"
+                    disabled={true}
+                  />
+                </View>
+                <View style={{ justifyContent: "center"}}>
                   <Text style={{ fontSize: SIZES.xxLarge}}>{item.icon}</Text>
-                  <View style={styles.label}>
-                    <DateTimePicker
-                      value={new Date(item.endDate)}
-                      mode={"time"} // or "date" or "time"
-                      is24Hour={true}
-                      display="default"
-                      disabled={true}
-                    />
-                  </View>
                 </View>
                 <TouchableOpacity
                     onPress={() => {
@@ -74,8 +71,14 @@ export const DailyCalendar = ({showSidebar = false}) => {
                     style={styles.dayCardContainer}
                 >
                   <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
+                  {!!item.location && (
+                    <Text style={styles.prop}>Location: {item.location}</Text>
+                  )}
                   {!!item.subtasks && item.subtasks.length > 0 && (
-                    <Text>Subtasks: {item.subtasks.length}</Text>
+                    <Text style={styles.prop}>Subtasks: {item.subtasks.length}</Text>
+                  )}
+                  {!!item.priority && (
+                    <Text style={styles.prop}>Priority: {item.priority}</Text>
                   )}
                 </TouchableOpacity>
               </View>
@@ -88,9 +91,8 @@ export const DailyCalendar = ({showSidebar = false}) => {
 
 const styles = StyleSheet.create({
   cardsContainer: {
-    padding: SIZES.medium,
     marginTop: SIZES.medium,
-    backgroundColor: "#FFF",
+    backgroundColor: COLORS({opacity:1}).white,// "#FFF",
     borderRadius: SIZES.small,
     ...SHADOWS.xSmall,
     shadowColor: COLORS({opacity:1}).indigo,
@@ -115,15 +117,17 @@ const styles = StyleSheet.create({
   },
   dayCardContainer: {
     flex: 1,
-    //padding: SIZES.medium,
+    padding: SIZES.xxSmall,
     marginLeft: SIZES.xSmall,
     // borderRadius: SIZES.small,
     // ...SHADOWS.xSmall,
     // shadowColor: COLORS({opacity:1}).indigo,
   },
   title: {
-    fontSize: SIZES.xLarge,
-    //fontFamily: FONT.regular,
+    fontSize: SIZES.large,
     color: COLORS({opacity:1}).darkBlue,
   },
+  prop: {
+    color: COLORS({opacity:1}).darkBlue,
+  }
 });

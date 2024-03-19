@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, Text, Modal, TouchableOpacity,
+import { SafeAreaView, View, Text, TextInput, Modal, TouchableOpacity,
         StyleSheet, ScrollView } from 'react-native';
 
 import { COLORS, SHADOWS, FONT, SIZES, ItemType } from "../../constants";
@@ -18,6 +18,7 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
   const [section, setSection] = useState('');
   const [startDate, setStartDate] = useState(new Date());
   const [tags, setTags] = useState([]);
+  const [serving, setServing] = useState(null);
   const [priority, setPriority] = useState(null);
   const [repeat, setRepeat] = useState(null);
   
@@ -200,7 +201,7 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
         </View>
       )} */}
       {(itemType === ItemType.Task || itemType === ItemType.Event) && (
-        <View>
+        <>
           <View style={[styles.row, styles.property]}>
             <Ionicons name={"calendar-outline"} size={size} style={styles.icon}/>
             <DateTimePicker
@@ -229,7 +230,10 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
               }}
             />
           </View>
-          <View style={[styles.row, styles.property]}>
+        </>
+      )}
+      {(itemType === ItemType.Task || itemType === ItemType.Event || itemType === ItemType.Recipe ) && (
+            <View style={[styles.row, styles.property]}>
             <Ionicons name={"timer-outline"} size={size} style={styles.icon}/>
             {hourPickerVisible ? (
               <View>
@@ -274,9 +278,23 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
             )}
             <Text style={styles.property}>Minutes</Text>
           </View>
+          )}
+      {(itemType === ItemType.Recipe) && (
+        <View style={styles.row}>
+          <Ionicons name={"restaurant-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
+          <Text style={styles.property}>
+            Servings
+          </Text>
+          <TextInput keyboardType="numeric"
+            onChangeText={(serving_) => (
+              setServing(serving_),
+              updateNewItem({"serving": Number(serving_)})
+            )}
+            {...(serving ? { defaultValue: serving.toString() } : { placeholder: "0" })}
+           style={[styles.property, styles.box, {backgroundColor: "#FFF"}]}
+          />
         </View>
       )}
-
       <View>
         {(itemType === ItemType.Task || itemType === ItemType.Event) ? (
           <View style={styles.row}>
@@ -295,13 +313,10 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
         )} 
       </View>
       <View style={[styles.row, styles.property]}>
-        <TouchableOpacity style={[styles.row, styles.box, repeat === 'NONE' ? styles.selectedBox:styles.unselectedBox]}
-          onPress={() => (
-            setPriority("NONE"),
-            updateNewItem({"priority": "NONE"})
-          )}
+        <TouchableOpacity style={[styles.row, styles.box, priority === 'NONE' ? styles.selectedBox:styles.unselectedBox]}
+          onPress={() => setPriority("NONE")}
         >
-          <Text style={[styles.property, repeat === 'NEVER' ? styles.selectedText:styles.unselectedText]}>None</Text>
+          <Ionicons name={"close-outline"} size={20} style={[priority === 'NONE' ? styles.iconInverse:styles.icon]} />
         </TouchableOpacity>
         <TouchableOpacity style={[styles.row, styles.box, priority === 'LOW' ? styles.selectedBox:styles.unselectedBox]}
           onPress={() => (
@@ -340,12 +355,9 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
           </View>
           <View style={[styles.row, styles.property]}>
             <TouchableOpacity style={[styles.row, styles.box, repeat === 'NEVER' ? styles.selectedBox:styles.unselectedBox]}
-              onPress={() => (
-                setRepeat("NEVER"),
-                updateNewItem({"repeat": "NEVER"})
-              )}
+              onPress={() => setRepeat("NEVER")}
             >
-              <Text style={[styles.property, repeat === 'NEVER' ? styles.selectedText:styles.unselectedText]}>Never</Text>
+              <Ionicons name={"close-outline"} size={20} style={[priority === 'NONE' ? styles.iconInverse:styles.icon]} />
             </TouchableOpacity>
             <TouchableOpacity style={[styles.row, styles.box, repeat === 'ONCE' ? styles.selectedBox:styles.unselectedBox]}
               onPress={() => (
