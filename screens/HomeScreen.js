@@ -6,10 +6,6 @@ import { COLORS, FONT, SIZES, SHADOWS } from "../constants";
 import HomeNavigation from "./HomeNavigation";
 
 import { Spacer } from '../utils';
-import { SixteenPopupUser } from "../assets/icons/SixteenPopupUser"
-import { CalendarWeek } from "../assets/icons/CalendarWeek";
-import { PlusCircle } from "../assets/icons/PlusCircle";
-import { SolidBars } from "../assets/icons/SolidBars";
 
 import { DailyCalendar } from "./partialViews/DailyCalendar";
 import { WeeklyCalendar } from "./partialViews/WeeklyCalendar";
@@ -27,8 +23,10 @@ import { ItemType } from "../constants";
 
 import { Dimensions } from 'react-native';
 
+import { Sidebar } from "../components/Sidebar";
+
 export default function HomeScreen ({ navigation, route }) {
-    const calendarHeight = Dimensions.get('window').height - 330;    
+    const calendarHeight = Dimensions.get('window').height - 333;    
     const active = "class";
     const mobile = true;
 
@@ -54,89 +52,15 @@ export default function HomeScreen ({ navigation, route }) {
         }
     });
 
-    const [items, setItems] = useState([]);
-
-    async function getItemsFromAPI() {
-        try {
-        let items_ = await GETtodayTEST(ItemType.Item);
-        return items_;
-        } catch (error) {
-        console.log("error fetching items");
-        console.log(error);
-        return [];
-        }
-    }
-
-    useEffect(() => {
-        getItemsFromAPI().then((items_) => {
-        setItems(items_);
-        }).catch((err) => {
-        alert(err.message)
-        })
-    }, []) // only run once on load
-
-    const renderItem = ({ item }) => (
-        <>{state === 'day' && (
-            <View style={styles.cardsContainer} key={item["_id"] + "_root"}>
-              <View style={{flexDirection: "row"}}>
-                <View style={{flexDirection: "column", alignItems: "center"}}>
-                  <DateTimePicker
-                    value={new Date(item.startDate)}
-                    mode={"time"} // or "date" or "time"
-                    is24Hour={true}
-                    display="default"
-                    disabled={true}
-                  />
-                  <DateTimePicker
-                    value={new Date(item.endDate)}
-                    mode={"time"} // or "date" or "time"
-                    is24Hour={true}
-                    display="default"
-                    disabled={true}
-                  />
-                </View>
-                <View style={{ justifyContent: "center"}}>
-                  <Text style={{ fontSize: SIZES.xxLarge}}>{item.icon}</Text>
-                </View>
-                <TouchableOpacity
-                    onPress={() => {
-                        navigation.navigate("Item", {item});
-                    }}
-                    key={item["_id"] + "root"} 
-                    style={styles.dayCardContainer}
-                >
-                  <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
-                  {!!item.location && (
-                    <Text style={styles.prop}>Location: {item.location}</Text>
-                  )}
-                  {!!item.subtasks && item.subtasks.length > 0 && (
-                    <Text style={styles.prop}>Subtasks: {item.subtasks.length}</Text>
-                  )}
-                  {!!item.priority && (
-                    <Text style={styles.prop}>Priority: {item.priority}</Text>
-                  )}
-                </TouchableOpacity>
-              </View>
-            </View>
-        )}
-        {state === 'week' && (
-            <WeeklyCalendar showSidebar={showSidebar} />
-        )}
-        {state === 'month' && (
-            <MonthlyCalendar month={0} startDay={0} showSidebar={showSidebar} />
-        )}</>
-    );
-
     return (
         <SafeAreaView style={styles.screen}>
-             <View style={[styles.row, {flex: 0, height: 75}]}>
+             <View style={[styles.row, {flex: 0, height: 75, marginBottom: SIZES.xxSmall}]}>
                 <TouchableOpacity style={styles.profileButton}>
                     <Ionicons name={"person"} size={SIZES.xxLarge} style={{color: COLORS({opacity:1}).darkBlue}}/>
                 </TouchableOpacity>
                 <TextInput style={styles.intention} />
             </View>
             <View style={{ flex: 1, backgroundColor: 'white' }}>
-            <View style={styles.container}>
                 <View style={styles.calendarContainer} refreshControl={
                     <RefreshControl
                         refreshing={refreshing}
@@ -182,26 +106,21 @@ export default function HomeScreen ({ navigation, route }) {
                             {/* <Ionicons name={"ellipse"} size={10} style={state === 'month' ? styles.tabActive : styles.tabInactive} /> */}
                         </TouchableOpacity>
                     </View>
-                    <FlatList
-                        data={items}
-                        renderItem={renderItem}
-                        keyExtractor={(item) => item["_id"]} 
-                        style={{height: calendarHeight}}
-                    />
-                    
-                    {/*{state === 'day' && (
-                        <DailyCalendar showSidebar={showSidebar} />
+                    {showSidebar && (
+                        <Sidebar />
                     )}
-                    {state === 'week' && (
-                        <WeeklyCalendar showSidebar={showSidebar} />
-                    )}
-                    {state === 'month' && (
-                        <MonthlyCalendar month={0} startDay={0} showSidebar={showSidebar} />
-                    )}*/}
+                    <View style={{height: calendarHeight}} >
+                        {state === 'day' && (
+                            <DailyCalendar showSidebar={showSidebar} />
+                        )}
+                        {state === 'week' && (
+                            <WeeklyCalendar showSidebar={showSidebar} />
+                        )}
+                        {state === 'month' && (
+                            <MonthlyCalendar month={0} startDay={0} showSidebar={showSidebar} />
+                        )}
+                    </View>
                 </View>
-                
-            </View>
-            
             </View>
             <HomeNavigation style={{flex: 0}} size={SIZES.xxLarge} iconColor={COLORS({opacity:1}).primary}/> 
         </SafeAreaView>
@@ -215,24 +134,10 @@ const styles = StyleSheet.create({
         flex:1,
         backgroundColor: "#FFF",
     },
-    container: {
-        // flex: 1,
-        // justifyContent: "space-between",
-        //alignItems: "center",
-       // flexBasis: 'auto',
+    calendarContainer: {
         top:0,
-        //flex: 1,
         paddingHorizontal: SIZES.medium,
         marginTop: SIZES.xxSmall,
-    },
-    calendarContainer: {
-        borderWidth: 1,
-        borderColor: COLORS({opacity:1}).darkBlue,
-        borderRadius: SIZES.small,
-        //flex: 8,
-        //height: "auto",
-        //width: "auto",
-        overflow:"hidden",
     },
     profileButton: {
       borderColor: COLORS({opacity:1}).darkBlue,

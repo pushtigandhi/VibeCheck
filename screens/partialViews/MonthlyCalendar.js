@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ToolBar } from "../../components/Toolbar";
 import { SolidBars } from "../../assets/icons/SolidBars";
 import { CalendarWeek } from "../../assets/icons/CalendarWeek";
@@ -8,6 +8,9 @@ import { Spacer } from "../../utils/index";
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import { COLORS, SIZES } from "../../constants";
 import { Sidebar } from "../../components/Sidebar";
+
+import { GETitems, GETitemsTEST } from "../../API";
+import { ItemType } from "../../constants";
 
 import { View, StyleSheet, Text, ScrollView } from 'react-native';
 
@@ -40,14 +43,31 @@ export const MonthlyCalendar = ({month, startDay, showSidebar = false}) => {
             <Text>{''}</Text>
         </View>
     ));
+
+    const [items, setItems] = useState([]);
+  const [startDate, setStartDate] = useState([]);
+
+  async function getItemsFromAPI() {
+    try {
+      let items_ = await GETitemsTEST(ItemType.Item);
+      return items_;
+    } catch (error) {
+      console.log("error fetching items");
+      console.log(error);
+      return [];
+    }
+  }
+
+  useEffect(() => {
+    getItemsFromAPI().then((items_) => {
+      setItems(items_);
+    }).catch((err) => {
+      alert(err.message)
+    })
+  }, []) // only run once on load
     
   return (
     <View style={styles.container}>
-
-      {showSidebar && (
-        <Sidebar />
-      )}
-
       <ScrollView horizontal={true} scrollEnabled={true}>
         <View style={{ width: 700 }}>
           <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>

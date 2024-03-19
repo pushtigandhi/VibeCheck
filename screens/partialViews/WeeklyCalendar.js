@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ToolBar } from "../../components/Toolbar";
 import { SolidBars } from "../../assets/icons/SolidBars";
 import { CalendarWeek } from "../../assets/icons/CalendarWeek";
@@ -7,51 +7,65 @@ import { PlusCircle } from "../../assets/icons/PlusCircle";
 import { Spacer } from "../../utils/index";
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import { SIZES, COLORS } from "../../constants";
-import { Sidebar } from "../../components/Sidebar";
+import { GETitems, GETitemsTEST } from "../../API";
+import { ItemType } from "../../constants";
 
 import { View, StyleSheet, Text, ScrollView } from 'react-native';
 
 export const WeeklyCalendar = ({showSidebar = false}) => {
 
-  // const [items, setItems] = useState([]);
-  // const [title, setTitle] = useState("");
+  const [items, setItems] = useState([]);
+  const [startDate, setStartDate] = useState([]);
+
+  async function getItemsFromAPI() {
+    try {
+      let items_ = await GETitemsTEST(ItemType.Item);
+      return items_;
+    } catch (error) {
+      console.log("error fetching items");
+      console.log(error);
+      return [];
+    }
+  }
+
+  useEffect(() => {
+    getItemsFromAPI().then((items_) => {
+      setItems(items_);
+    }).catch((err) => {
+      alert(err.message)
+    })
+  }, []) // only run once on load
 
   const days = ["Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun"];
   
   return (
-    <View style={styles.container}>
-
-        {showSidebar && (
-          <Sidebar />
-        )}
-
-        <ScrollView 
-          style={styles.calendarView}
-          scrollEnabled={true}
-        >
-          {days.map((day) => (
-            <View style={styles.cardsContainer}>
-              <View style={styles.row}>
-                <View style={styles.label}>
-                  <Text style={styles.span}>{day}</Text>
-                </View>
-                <ScrollView horizontal={true} style={styles.content}>
-                  <View style={styles.dayCardContainer}>
-                      <Text style={styles.title}>title</Text>
-                  </View> 
-                </ScrollView>
+    <View style={styles.container}> 
+      <ScrollView 
+        style={styles.calendarView}
+        scrollEnabled={true}
+      >
+        {days.map((day) => (
+          <View style={styles.cardsContainer}>
+            <View style={styles.row}>
+              <View style={styles.label}>
+                <Text style={styles.span}>{day}</Text>
               </View>
+              <ScrollView horizontal={true} style={styles.content}>
+                <View style={styles.dayCardContainer}>
+                    <Text style={styles.title}>title</Text>
+                </View> 
+              </ScrollView>
             </View>
-          ))}
-        </ScrollView>
-
+          </View>
+        ))}
+      </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    //flex: 1,
   },
   toolBarInstance: {
     borderColor: '#aad6e7',
@@ -76,7 +90,7 @@ const styles = StyleSheet.create({
   },
   calendarView: {
     //padding: 10,
-    width: 500,
+    //width: 500,
   },
   row: {
     flexDirection: "row",
