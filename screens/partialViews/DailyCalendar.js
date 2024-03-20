@@ -11,7 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 export const DailyCalendar = ({showSidebar = false}) => {
   const [items, setItems] = useState([]);
-  const [startDate, setStartDate] = useState([]);
+  const [today, setToday] = useState(new Date());
 
   async function getItemsFromAPI() {
     try {

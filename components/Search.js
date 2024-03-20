@@ -11,7 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 export const Search = ({
   property1,
-  searchButtonColor = "#6A778B",
+  searchButtonColor = "rgba(35, 73, 146, 0.5)",
   inputType = "text",
 }) => {
   const [state, dispatch] = useReducer(reducer, {
@@ -105,7 +105,7 @@ Search.propTypes = {
 
 const styles = StyleSheet.create({
   root: {
-    backgroundColor: COLORS({opacity:1}).tertiary,
+    backgroundColor: COLORS({opacity:0.8}).darkBlue,
     height: 30,
     weight: 30,
     borderRadius: '100%',

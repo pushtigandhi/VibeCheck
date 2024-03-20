@@ -1,5 +1,5 @@
 const COLORS = ({ opacity = 1 }) => ({
-  primary: `rgba(34, 159, 208, ${opacity})`,
+  primary: `rgba(35, 73, 146, ${opacity})`, //`rgba(34, 159, 208, ${opacity})`,
   secondary: `rgba(102, 187, 220, ${opacity})`,
   tertiary: `rgba(170, 214, 231, ${opacity})`,
 

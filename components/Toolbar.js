@@ -1,25 +1,67 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Search } from "./Search";
 import { Typography } from "./Typography";
 import { View, TouchableOpacity, StyleSheet, Text, TextInput, RefreshControl } from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "../constants";
+import DateTimePicker from '@react-native-community/datetimepicker';
 //import "./style.css";
 
 export const ToolBar = ({
-  property1,
+  state,
   mobile,
   onRefresh,
   showSidebar = false,
+  date,
 }) => {
+
+  const [currentDate, setCurrentDate] = useState(date);
+  const [formattedDate, setFormattedDate] = useState(null);
+  const [showDatePicker, toggleShowDatePicker] = useState(false);
+
+  useEffect(() => {
+    doRefresh(date);
+  }, [state])
+
+  function doRefresh(formatDate) {
+    if (mobile && state === 'day') {
+      const options = { month: 'short', day: '2-digit' };
+      setFormattedDate(formatDate.toLocaleDateString('en-US', options));
+    }
+    if (mobile && state === 'week') {
+      const dayOfWeek = formatDate.getDay(); // Get the day of the week (0-6, where 0 is Sunday)
+      const startOfWeek = new Date(formatDate); // Clone the date
+      startOfWeek.setDate(formatDate.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1)); // Find Monday
+      const endOfWeek = new Date(startOfWeek); // Clone the startOfWeek
+      endOfWeek.setDate(startOfWeek.getDate() + 6); // Add 6 days to find Sunday
+
+      const options = { day: '2-digit' };
+      const formattedStart = startOfWeek.toLocaleDateString('en-US', options); // Format start of the week
+      const formattedEnd = endOfWeek.toLocaleDateString('en-US', options); // Format end of the week
+
+      setFormattedDate(`${formattedStart}-${formattedEnd} ${startOfWeek.toLocaleDateString('en-US', { month: 'short' })}`);
+    }
+    if (mobile && state === 'month') {
+      setFormattedDate(formatDate.toLocaleDateString('en-US', { month: 'long' }));
+    }
+  };
+
+  const toggleDatePicker = React.useCallback(() => {
+    if (!showDatePicker) { 
+      toggleShowDatePicker(true);
+    }
+    else { 
+      toggleShowDatePicker(false);
+    }
+  });
+
   return (
+    <>
     <View 
         style={[
                 styles.toolBar,
                 styles.row,
-                //mobile ? styles.mobileTrueLeftContent : styles.mobileFalseLeftContent,
-                //styles.toolBarInstance,
             ]}
         >
 
@@ -35,35 +77,21 @@ export const ToolBar = ({
             <Ionicons name={"reorder-three-outline"} size={30} style={styles.icon} /> 
           }
         </TouchableOpacity>
-        {["day", "month", "week"].includes(property1) && (
+        {["day", "month", "week"].includes(state) && (
           <View style={[styles.row, styles.toolBar.divWrapper]}>
             {/* <View style={styles.toolBar.typography2}> */}
             <Text style={[styles.span, {fontWeight:'500'}]}>
-                {!mobile && property1 === 'day' && <>01 January </>}
-                {mobile && property1 === 'day' && <>01 Jan </>}
-                {!mobile && property1 === 'week' && <>01-07 January </>}
-                {property1 === 'week' && mobile && <>01-07 Jan </>}
-                {property1 === 'month' && !mobile && <>January </>}
-                {property1 === 'month' && mobile && <>Jan </>}
+                {String(formattedDate)}
             </Text>
-            <Text style={styles.span}>2024</Text>
-            {/* </View> */}
+            <Text style={styles.span}> {String(date.getFullYear())}</Text>
+           {/* </View> */}
           </View>
         )}
-
-        {property1 === "year" && (
-          <Typography
-            bold={false}
-            //className="instance-node-2"
-            divClassName={`${!mobile && "class-6"}`}
-            text="2022"
-            type={mobile ? "h-5" : "h1"}
-          />
-        )}
-
-        <Ionicons name={"calendar-outline"} size={20} style={styles.icon} />
-
+        <TouchableOpacity onPress={toggleDatePicker}>
+          <Ionicons name={"calendar-outline"} size={20} style={styles.icon} />
+        </TouchableOpacity>
       </View>
+      
       <View style={[styles.row, styles.rightContent]}>
         <TouchableOpacity>
           <Search
@@ -77,11 +105,24 @@ export const ToolBar = ({
         </TouchableOpacity>
       </View>
     </View>
+    {showDatePicker && (
+        <DateTimePicker
+          value={currentDate}
+          mode={"date"} // or "date" or "time"
+          display="spinner"
+          onChange={(event, selectedDate) => {
+            const curr = selectedDate || currentDate;
+            setCurrentDate(curr);
+            doRefresh(curr);
+          }}
+        />
+      )}
+    </>
   );
 };
 
 ToolBar.propTypes = {
-  property1: PropTypes.oneOf(["month", "year", "day", "week"]),
+  state: PropTypes.oneOf(["month", "year", "day", "week"]),
   mobile: PropTypes.bool,
   searchIconColor: PropTypes.string,
 };
@@ -135,7 +176,7 @@ const styles = StyleSheet.create({
     span: {
       //fontWeight: '500',
       fontSize: 16,
-      color: "#229FD0",
+      color: COLORS({opacity:1}).primary,
     },
     textWrapper2: {
       //fontFamily: 'Inter, Helvetica',

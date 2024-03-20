@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, TouchableOpacity, Text, TextInput, 
     FlatList, RefreshControl, SafeAreaView } from 'react-native';
 import { StyleSheet } from "react-native";
@@ -16,7 +16,6 @@ import { ToolBar } from "../components/Toolbar";
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { Ionicons } from "@expo/vector-icons";
-import { useState, useEffect } from "react";
 
 import { GETtodayTEST, GETweekTEST, GETmonthTEST } from "../API";
 import { ItemType } from "../constants";
@@ -26,7 +25,9 @@ import { Dimensions } from 'react-native';
 import { Sidebar } from "../components/Sidebar";
 
 export default function HomeScreen ({ navigation, route }) {
-    const calendarHeight = Dimensions.get('window').height - 333;    
+    const calendarHeight = Dimensions.get('window').height - 333;
+    const [today, setToday] = useState(new Date());
+
     const active = "class";
     const mobile = true;
 
@@ -69,9 +70,10 @@ export default function HomeScreen ({ navigation, route }) {
                 }>
                     <ToolBar
                         mobile={true}
-                        property1={state}
+                        state={state}
                         onRefresh={toggleSidebar}
                         showSidebar={showSidebar}
+                        date={today}
                     />
                     <View style={styles.iconRoot}>
                         <TouchableOpacity 
