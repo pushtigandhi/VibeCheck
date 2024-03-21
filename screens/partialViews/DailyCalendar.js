@@ -33,7 +33,13 @@ export const DailyCalendar = ({showSidebar = false}) => {
   }, []) // only run once on load
 
   const renderItem = ({ item }) => (
-    <View style={styles.cardsContainer} key={item["_id"] + "_root"}>
+    <TouchableOpacity
+      onPress={() => {
+          navigation.navigate("Item", {item});
+      }}
+      key={item["_id"] + "root"} 
+      style={styles.cardsContainer}
+    >
       <View style={{flexDirection: "row"}}>
         <View style={{flexDirection: "column", alignItems: "center"}}>
           <DateTimePicker
@@ -54,13 +60,7 @@ export const DailyCalendar = ({showSidebar = false}) => {
         <View style={{ justifyContent: "center"}}>
           <Text style={{ fontSize: SIZES.xxLarge}}>{item.icon}</Text>
         </View>
-        <TouchableOpacity
-            onPress={() => {
-                navigation.navigate("Item", {item});
-            }}
-            key={item["_id"] + "root"} 
-            style={styles.dayCardContainer}
-        >
+        <View style={styles.dayCardContainer}>
           <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
           {!!item.location && (
             <Text style={styles.prop}>Location: {item.location}</Text>
@@ -71,9 +71,9 @@ export const DailyCalendar = ({showSidebar = false}) => {
           {!!item.priority && (
             <Text style={styles.prop}>Priority: {item.priority}</Text>
           )}
-        </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -100,22 +100,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  label: {
-   // backgroundColor: COLORS({opacity:0.5}).primary,
-   //width: "30%",
-    borderWidth: 1,
-    borderColor: COLORS({opacity: 1}).darkBlue,
-    borderRadius: SIZES.xSmall,
-    // ...SHADOWS.medium,
-    // shadowColor: COLORS({opacity:1}).indigo,
-  },
   dayCardContainer: {
     flex: 1,
     padding: SIZES.xxSmall,
     marginLeft: SIZES.xSmall,
-    // borderRadius: SIZES.small,
-    // ...SHADOWS.xSmall,
-    // shadowColor: COLORS({opacity:1}).indigo,
   },
   title: {
     fontSize: SIZES.large,

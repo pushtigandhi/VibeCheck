@@ -6,11 +6,12 @@ import { PlusCircle } from "../../assets/icons/PlusCircle";
 //import { CalendarDaySmall } from "../../components/CalendarDaySmall";
 import { Spacer } from "../../utils/index";
 import {Calendar, LocaleConfig} from 'react-native-calendars';
-import { SIZES, COLORS } from "../../constants";
-import { GETitems, GETitemsTEST } from "../../API";
+import { SIZES, COLORS, FONT, SHADOWS } from "../../constants";
+import { GETitems, GETweekTEST } from "../../API";
 import { ItemType } from "../../constants";
 
-import { View, StyleSheet, Text, ScrollView } from 'react-native';
+import { View, StyleSheet, Text, ScrollView, FlatList, TouchableOpacity } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export const WeeklyCalendar = ({showSidebar = false}) => {
 
@@ -19,7 +20,7 @@ export const WeeklyCalendar = ({showSidebar = false}) => {
 
   async function getItemsFromAPI() {
     try {
-      let items_ = await GETitemsTEST(ItemType.Item);
+      let items_ = await GETweekTEST(ItemType.Item);
       return items_;
     } catch (error) {
       console.log("error fetching items");
@@ -36,104 +37,112 @@ export const WeeklyCalendar = ({showSidebar = false}) => {
     })
   }, []) // only run once on load
 
-  const days = ["Mon", "Tues", "Wed", "Thur", "Fri", "Sat", "Sun"];
+
+  const days = ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"];
+
+  const renderItem = ({ item }) => (
+    <TouchableOpacity style={styles.cardsContainer} key={item["_id"] + "_root"} 
+      onPress={() => {
+        navigation.navigate("Item", {item});
+    }}>
+        <>
+          <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
+          {!!item.location && (
+            <Text style={styles.prop}>Location: {item.location}</Text>
+          )}
+          {!!item.subtasks && item.subtasks.length > 0 && (
+            <Text style={styles.prop}>Subtasks: {item.subtasks.length}</Text>
+          )}
+          {!!item.priority && (
+            <Text style={styles.prop}>Priority: {item.priority}</Text>
+          )}
+        </>
+        <View style={{flexDirection: "row"}}>
+          <View style={{ justifyContent: "center"}}>
+            <Text style={{ fontSize: SIZES.medium}}>{item.icon}</Text>
+          </View>
+          <View style={{flexDirection: "column", alignItems: "right"}}>
+            <Text>{String(new Date(item.startDate).getHours())}:{new Date(item.startDate).getMinutes() < 10 ? String("0"+ new Date(item.startDate).getMinutes()) : String(new Date(item.startDate).getMinutes())}</Text>
+            <Text>{String(new Date(item.endDate).getHours())}:{new Date(item.endDate).getMinutes() < 10 ? String("0"+ new Date(item.endDate).getMinutes()) : String(new Date(item.endDate).getMinutes())}</Text>
+          </View>
+        </View>
+    </TouchableOpacity>
+  );
   
   return (
     <View style={styles.container}> 
-      <ScrollView 
-        style={styles.calendarView}
+      <ScrollView
         scrollEnabled={true}
+        horizontal={true}
       >
-        {days.map((day) => (
-          <View style={styles.cardsContainer}>
-            <View style={styles.row}>
-              <View style={styles.label}>
+        <View style={styles.row}>
+          {days.map((day) => (
+            <View style={styles.column}>
+              <View style={styles.label} key={day}>
                 <Text style={styles.span}>{day}</Text>
               </View>
-              <ScrollView horizontal={true} style={styles.content}>
-                <View style={styles.dayCardContainer}>
-                    <Text style={styles.title}>title</Text>
-                </View> 
-              </ScrollView>
+              <FlatList
+                data={items[day]}
+                renderItem={renderItem}
+                keyExtractor={(item) => item["_id"]} 
+                style={styles.calendarView}
+              />
             </View>
-          </View>
-        ))}
+          ))}
+      </View>
       </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    //flex: 1,
-  },
-  toolBarInstance: {
-    borderColor: '#aad6e7',
-    width: 'unset',
-  },
-  iconFontAwesome3: {
-    height: 16,
-    position: 'relative',
-    width: 16,
-  },
-  designComponentInstanceNode: {
-    color: '#229fd0',
-  },
-  toolBar2: {
-    backgroundColor: '#aad6e7',
-  },
-  toolBar3: {
-    backgroundColor: '#229fd0',
-  },
   cardsContainer: {
-    //marginTop: SIZES.medium,
+    marginBottom: SIZES.medium,
+    backgroundColor: COLORS({opacity:1}).white,// "#FFF",
+    borderRadius: SIZES.small,
+    ...SHADOWS.xSmall,
+    shadowColor: COLORS({opacity:1}).indigo,
+    width: 100,
+    padding: SIZES.xxSmall,
+    marginHorizontal: SIZES.xSmall,
   },
   calendarView: {
-    //padding: 10,
-    //width: 500,
+    margin: 0,
   },
   row: {
     flexDirection: "row",
-    //justifyContent: "space-between",
-    //alignItems: "baseline",
-    borderTopWidth: 0.5,
-    borderBottomWidth: 0.5,
-    borderColor: "#aad6e7",
+  },
+  column: {
+    flexDirection: "column",
+    borderLeftWidth: 0.5,
+    borderColor: COLORS({opacity:1}).lightGrey,
   },
   label: {
     //paddingLeft: 10,
-    width: 50,
-    height: 100,
+    height: 50,
+    width: 100,
     alignItems: "center",
     justifyContent: "center",
-    borderRightWidth: 0.5,
-    borderColor: "#aad6e7",
-  },
-  content: {
-    //justifyContent: "center",
-    padding: 10,
+    borderTopWidth: 0.5, 
+    borderBottomWidth: 0.5,
+    borderColor: COLORS({opacity:1}).lightGrey,
+    marginHorizontal: SIZES.xSmall,
+    padding: SIZES.xxSmall,
   },
   span: {
     fontWeight: '500',
     //fontSize: 16,
     color: "#229FD0",
   },
-  dayCardContainer: {
-    height: 50,
-    width: 150,
-    padding: 10,
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: COLORS({opacity: 1}).tertiary,
-    borderRadius: SIZES.medium,
-    //...SHADOWS.medium,
-    shadowColor: COLORS({opacity:1}).indigo,
-  },
   time: {
       color: COLORS({opacity: 1}).primary,
   },
   title: {
-      fontSize: SIZES.medium,
+      //fontSize: SIZES.small,
       color: COLORS({opacity: 1}).primary,
+      //overflow: 'hidden'
   },
+  prop: {
+    color: COLORS({opacity:1}).darkBlue,
+  }
 });

@@ -31,7 +31,7 @@ export default function HomeScreen ({ navigation, route }) {
     const active = "class";
     const mobile = true;
 
-    const [state, setState] = useState("day");
+    const [state, setState] = useState("week");
 
     const [refreshing, setRefreshing] = useState(false);
     const [showSidebar, toggleShowSidebar] = useState(false);

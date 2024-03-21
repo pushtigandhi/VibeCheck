@@ -1135,129 +1135,206 @@ export async function GETweekTEST(itemType, filter={}) {
 
     const response = `${ITEMS_BASE_URL}/${ext}` + new URLSearchParams(filter);
 
+    console.log(response);
+
     const body = {
-        "items": [
-            {
-                "_id": "65dffbe64102392ebb5783b0",
-                "title": "WEEK item 0",
-                "category": "Backlog",
-                "section": "All",
-                "icon": "📍",
-                "tags": [
-                    "new"
-                ],
-                "notes": [],
-                "owner": "65dffad64102392ebb57839b",
-                "duration": "30",
-                "startDate": "2024-03-29T05:15:00.000Z",
-                "endDate": "2024-03-13T07:08:05.326Z",
-                "createdAt": "2024-02-29T03:37:10.111Z",
-                "updatedAt": "2024-02-29T03:37:10.111Z",
-                "__v": 0
-            },{
-                "_id": "65dffbe64102392ebb5783b0",
-                "title": "today item 1",
-                "category": "Backlog",
-                "section": "All",
-                "icon": "📍",
-                "tags": [
-                    "new"
-                ],
-                "notes": [],
-                "owner": "65dffad64102392ebb57839b",
-                "duration": "30",
-                "startDate": "2024-03-29T05:15:00.000Z",
-                "endDate": "2024-03-13T07:08:05.326Z",
-                "createdAt": "2024-02-29T03:37:10.111Z",
-                "updatedAt": "2024-02-29T03:37:10.111Z",
-                "__v": 0
-            },{
-                "_id": "65dffbe64102392ebb5783b0",
-                "title": "today item 2",
-                "category": "Backlog",
-                "section": "All",
-                "icon": "📍",
-                "tags": [
-                    "new"
-                ],
-                "notes": [],
-                "owner": "65dffad64102392ebb57839b",
-                "duration": "30",
-                "startDate": "2024-03-29T05:15:00.000Z",
-                "endDate": "2024-03-13T07:08:05.326Z",
-                "createdAt": "2024-02-29T03:37:10.111Z",
-                "updatedAt": "2024-02-29T03:37:10.111Z",
-                "__v": 0
-            },{
-                "_id": "65dffbe64102392ebb5783b0",
-                "title": "today item 3",
-                "category": "Backlog",
-                "section": "All",
-                "icon": "📍",
-                "tags": [
-                    "new"
-                ],
-                "notes": [],
-                "owner": "65dffad64102392ebb57839b",
-                "duration": "30",
-                "startDate": "2024-03-29T05:15:00.000Z",
-                "endDate": "2024-03-13T07:08:05.326Z",
-                "createdAt": "2024-02-29T03:37:10.111Z",
-                "updatedAt": "2024-02-29T03:37:10.111Z",
-                "__v": 0
-            },{
-                "_id": "65dffbe64102392ebb5783b0",
-                "title": "test item 4",
-                "category": "Backlog",
-                "section": "All",
-                "icon": "📍",
-                "tags": [
-                    "new"
-                ],
-                "notes": [],
-                "owner": "65dffad64102392ebb57839b",
-                "duration": "30",
-                "startDate": "2024-03-29T05:15:00.000Z",
-                "endDate": "2024-03-13T07:08:05.326Z",
-                "createdAt": "2024-02-29T03:37:10.111Z",
-                "updatedAt": "2024-02-29T03:37:10.111Z",
-                "__v": 0
-            },{
-                "_id": "65dffbe64102392ebb5783b0",
-                "title": "test item 5",
-                "category": "Backlog",
-                "section": "All",
-                "icon": "📍",
-                "tags": [
-                    "new"
-                ],
-                "notes": [],
-                "owner": "65dffad64102392ebb57839b",
-                "duration": "30",
-                "startDate": "2024-03-29T05:15:00.000Z",
-                "endDate": "2024-03-13T07:08:05.326Z",
-                "createdAt": "2024-02-29T03:37:10.111Z",
-                "updatedAt": "2024-02-29T03:37:10.111Z",
-                "__v": 0
-            },{
-                "_id": "65dffbe64102392ebb5783b0",
-                "title": "test item 6",
-                "category": "Backlog",
-                "section": "All",
-                "icon": "📍",
-                "tags": [
-                    "new"
-                ],
-                "notes": [],
-                "owner": "65dffad64102392ebb57839b",
-                "duration": "30",
-                "startDate": "2024-03-29T05:15:00.000Z",
-                "endDate": "2024-03-13T07:08:05.326Z",
-                "createdAt": "2024-02-29T03:37:10.111Z",
-                "updatedAt": "2024-02-29T03:37:10.111Z",
-                "__v": 0
-            },{
-                "_id": "65dffbe64102392ebb5783b0",
+        "week": {
+        "Mon" : 
+        [
+                {
+                    "_id": "65dffbe64102392ebb5783b1",
+                    "title": "WEEK item 0",
+                    "category": "Backlog",
+                    "section": "All",
+                    "icon": "📍",
+                    "tags": [
+                        "new"
+                    ],
+                    "notes": [],
+                    "owner": "65dffad64102392ebb57839b",
+                    "duration": "30",
+                    "startDate": "2024-03-29T05:15:00.000Z",
+                    "endDate": "2024-03-13T07:08:05.326Z",
+                    "createdAt": "2024-02-29T03:37:10.111Z",
+                    "updatedAt": "2024-02-29T03:37:10.111Z",
+                    "__v": 0
+                },{
+                    "_id": "65dffbe64102392ebb5783b0",
+                    "title": "today item 1",
+                    "category": "Backlog",
+                    "section": "All",
+                    "icon": "📍",
+                    "tags": [
+                        "new"
+                    ],
+                    "notes": [],
+                    "owner": "65dffad64102392ebb57839b",
+                    "duration": "30",
+                    "startDate": "2024-03-29T05:15:00.000Z",
+                    "endDate": "2024-03-13T07:08:05.326Z",
+                    "createdAt": "2024-02-29T03:37:10.111Z",
+                    "updatedAt": "2024-02-29T03:37:10.111Z",
+                    "__v": 0
+                },{
+                    "_id": "65dffbe64102392ebb5783b2",
+                    "title": "today item 2",
+                    "category": "Backlog",
+                    "section": "All",
+                    "icon": "📍",
+                    "tags": [
+                        "new"
+                    ],
+                    "notes": [],
+                    "owner": "65dffad64102392ebb57839b",
+                    "duration": "30",
+                    "startDate": "2024-03-29T05:15:00.000Z",
+                    "endDate": "2024-03-13T07:08:05.326Z",
+                    "createdAt": "2024-02-29T03:37:10.111Z",
+                    "updatedAt": "2024-02-29T03:37:10.111Z",
+                    "__v": 0
+            }],
+        "Tues" : [
+                {
+                    "_id": "65dffbe64102392ebb5783b4",
+                    "title": "today item 3",
+                    "category": "Backlog",
+                    "section": "All",
+                    "icon": "📍",
+                    "tags": [
+                        "new"
+                    ],
+                    "notes": [],
+                    "owner": "65dffad64102392ebb57839b",
+                    "duration": "30",
+                    "startDate": "2024-03-29T05:15:00.000Z",
+                    "endDate": "2024-03-13T07:08:05.326Z",
+                    "createdAt": "2024-02-29T03:37:10.111Z",
+                    "updatedAt": "2024-02-29T03:37:10.111Z",
+                    "__v": 0
+                },{
+                    "_id": "65dffbe64102392ebb5783b0",
+                    "title": "test item 4",
+                    "category": "Backlog",
+                    "section": "All",
+                    "icon": "📍",
+                    "tags": [
+                        "new"
+                    ],
+                    "notes": [],
+                    "owner": "65dffad64102392ebb57839b",
+                    "duration": "30",
+                    "startDate": "2024-03-29T05:15:00.000Z",
+                    "endDate": "2024-03-13T07:08:05.326Z",
+                    "createdAt": "2024-02-29T03:37:10.111Z",
+                    "updatedAt": "2024-02-29T03:37:10.111Z",
+                    "__v": 0
+                },{
+                    "_id": "65dffbe64102392ebb5783b0243",
+                    "title": "test item 5",
+                    "category": "Backlog",
+                    "section": "All",
+                    "icon": "📍",
+                    "tags": [
+                        "new"
+                    ],
+                    "notes": [],
+                    "owner": "65dffad64102392ebb57839b",
+                    "duration": "30",
+                    "startDate": "2024-03-29T05:15:00.000Z",
+                    "endDate": "2024-03-13T07:08:05.326Z",
+                    "createdAt": "2024-02-29T03:37:10.111Z",
+                    "updatedAt": "2024-02-29T03:37:10.111Z",
+                    "__v": 0
+            }],
+        "Wed" : [
+                {
+                    "_id": "65dffbe64102392ebb5783b0124",
+                    "title": "test item 6",
+                    "category": "Backlog",
+                    "section": "All",
+                    "icon": "📍",
+                    "tags": [
+                        "new"
+                    ],
+                    "notes": [],
+                    "owner": "65dffad64102392ebb57839b",
+                    "duration": "30",
+                    "startDate": "2024-03-29T05:15:00.000Z",
+                    "endDate": "2024-03-13T07:08:05.326Z",
+                    "createdAt": "2024-02-29T03:37:10.111Z",
+                    "updatedAt": "2024-02-29T03:37:10.111Z",
+                    "__v": 0
+            }],
+        "Thurs": [{
+                    "_id": "65dffbe64102392ebb5783b034",
+                    "title": "test item 7",
+                    "category": "Backlog",
+                    "section": "All",
+                    "icon": "📍",
+                    "tags": [
+                        "new"
+                    ],
+                    "notes": [],
+                    "owner": "65dffad64102392ebb57839b",
+                    "duration": "30",
+                    "startDate": "2024-03-29T05:15:00.000Z",
+                    "endDate": "2024-03-13T07:08:05.326Z",
+                    "createdAt": "2024-02-29T03:37:10.111Z",
+                    "updatedAt": "2024-02-29T03:37:10.111Z",
+                    "__v": 0
+            }],
+        "Fri": [{
+                    "_id": "65dffccb4102392ebb5783b9425",
+                    "title": "test task 8",
+                    "category": "Backlog",
+                    "section": "All",
+                    "icon": "📍",
+                    "tags": [
+                        "new"
+                    ],
+                    "notes": [],
+                    "owner": "65dffad64102392ebb57839b",
+                    "itemType": "Task",
+                    "location": "23 locatiton",
+                    "subtasks": [],
+                    "duration": "20",
+                    "startDate": "2024-03-29T08:30:00.000Z",
+                    "endDate": "2024-03-13T07:08:05.326Z",
+                    "createdAt": "2024-02-29T03:40:59.685Z",
+                    "updatedAt": "2024-02-29T03:40:59.685Z",
+                    "__v": 0
+            }],
+        "Sat": [
+                {
+                    "_id": "65e134a91635ad960dabdc1b35635",
+                    "title": "task with subtask",
+                    "category": "Backlog",
+                    "section": "All",
+                    "icon": "📍",
+                    "tags": [
+                        "new",
+                        "first"
+                    ],
+                    "notes": [],
+                    "owner": "65dffad64102392ebb57839b",
+                    "itemType": "Task",
+                    "subtasks": [
+                        {
+                            "isChecked": false,
+                            "task": "first subtask",
+                            "_id": "65e134a91635ad960dabdc1c"
+                        }
+                    ],
+                    "duration": "10",
+                    "startDate": "2024-03-29T12:45:00.000Z",
+                    "endDate": "2024-03-13T07:08:05.326Z",
+                    "createdAt": "2024-03-01T01:51:37.332Z",
+                    "updatedAt": "2024-03-01T01:53:24.873Z",
+                    "__v": 0
+                }
+            ],
+        "Sun": [{
+                "_id": "65dffbe64102392ebb5783b0356356",
                 "title": "test item 7",
                 "category": "Backlog",
                 "section": "All",
@@ -1273,64 +1350,13 @@ export async function GETweekTEST(itemType, filter={}) {
                 "createdAt": "2024-02-29T03:37:10.111Z",
                 "updatedAt": "2024-02-29T03:37:10.111Z",
                 "__v": 0
-            },
-            {
-                "_id": "65dffccb4102392ebb5783b9",
-                "title": "test task 8",
-                "category": "Backlog",
-                "section": "All",
-                "icon": "📍",
-                "tags": [
-                    "new"
-                ],
-                "notes": [],
-                "owner": "65dffad64102392ebb57839b",
-                "itemType": "Task",
-                "location": "23 locatiton",
-                "subtasks": [],
-                "duration": "20",
-                "startDate": "2024-03-29T08:30:00.000Z",
-                "endDate": "2024-03-13T07:08:05.326Z",
-                "createdAt": "2024-02-29T03:40:59.685Z",
-                "updatedAt": "2024-02-29T03:40:59.685Z",
-                "__v": 0
-            },
-            {
-                "_id": "65e134a91635ad960dabdc1b",
-                "title": "task with subtask",
-                "category": "Backlog",
-                "section": "All",
-                "icon": "📍",
-                "tags": [
-                    "new",
-                    "first"
-                ],
-                "notes": [],
-                "owner": "65dffad64102392ebb57839b",
-                "itemType": "Task",
-                "subtasks": [
-                    {
-                        "isChecked": false,
-                        "task": "first subtask",
-                        "_id": "65e134a91635ad960dabdc1c"
-                    }
-                ],
-                "duration": "10",
-                "startDate": "2024-03-29T12:45:00.000Z",
-                "endDate": "2024-03-13T07:08:05.326Z",
-                "createdAt": "2024-03-01T01:51:37.332Z",
-                "updatedAt": "2024-03-01T01:53:24.873Z",
-                "__v": 0
-            }
-        ]
-    };
-    let items = body.items;
-    return items.map((item) => {
-        return {
-            ...item,
+            }]
         }
-    });
+    };
+    let week = body.week;
+    return week;
 }
+
 export async function GETmonthTEST(itemType, filter={}) {
     const ext = getURL(itemType);
 
