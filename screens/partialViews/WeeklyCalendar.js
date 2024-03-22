@@ -81,6 +81,7 @@ export const WeeklyCalendar = ({showSidebar = false}) => {
               <View style={styles.label} key={day}>
                 <Text style={styles.span}>{day}</Text>
               </View>
+              <Spacer size={SIZES.xxSmall} />
               <FlatList
                 data={items[day]}
                 renderItem={renderItem}

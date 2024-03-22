@@ -13,17 +13,7 @@ export const Sidebar = () => {
 
     return (
         <View style={styles.sidebar}>
-            <Calendar
-                onDayPress={day => {
-                    setSelected(day.dateString);
-                }}
-                markedDates={{
-                    [selected]: {selected: true, disableTouchEvent: true, selectedDotColor: 'orange'}
-                }}
-                firstDay={1}
-                theme={styles.calendar}
-            />
-            <Spacer size={20} />
+        <Text>Coming soon!</Text>
             <View style={styles.frame5}>
                 {/* <View style={styles.frame6}>
                   <SpiralCalendar className="spiral-calendar-instance" />

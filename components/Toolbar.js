@@ -4,9 +4,10 @@ import { Search } from "./Search";
 import { Typography } from "./Typography";
 import { View, TouchableOpacity, StyleSheet, Text, TextInput, RefreshControl } from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
-import { COLORS } from "../constants";
+import { COLORS, SIZES, SHADOWS } from "../constants";
 import DateTimePicker from '@react-native-community/datetimepicker';
-//import "./style.css";
+
+import {Calendar, LocaleConfig} from 'react-native-calendars';
 
 export const ToolBar = ({
   state,
@@ -16,27 +17,30 @@ export const ToolBar = ({
   date,
 }) => {
 
+  const [selected, setSelected] = useState('');
   const [currentDate, setCurrentDate] = useState(date);
   const [formattedDate, setFormattedDate] = useState(null);
   const [showDatePicker, toggleShowDatePicker] = useState(false);
 
   useEffect(() => {
-    doRefresh(date);
+    toggleShowDatePicker(false);
+    doRefresh(currentDate);
   }, [state])
 
   function doRefresh(formatDate) {
     if (mobile && state === 'day') {
-      const options = { month: 'short', day: '2-digit' };
+      const options = { month: 'short', day: '2-digit', timeZone: 'UTC' };
       setFormattedDate(formatDate.toLocaleDateString('en-US', options));
     }
     if (mobile && state === 'week') {
       const dayOfWeek = formatDate.getDay(); // Get the day of the week (0-6, where 0 is Sunday)
       const startOfWeek = new Date(formatDate); // Clone the date
-      startOfWeek.setDate(formatDate.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1)); // Find Monday
+      startOfWeek.setDate(formatDate.getDate() - dayOfWeek); // Find Monday
+      //startOfWeek.setDate(formatDate.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1)); // Find Monday
       const endOfWeek = new Date(startOfWeek); // Clone the startOfWeek
       endOfWeek.setDate(startOfWeek.getDate() + 6); // Add 6 days to find Sunday
 
-      const options = { day: '2-digit' };
+      const options = { day: '2-digit', timeZone: 'UTC' };
       const formattedStart = startOfWeek.toLocaleDateString('en-US', options); // Format start of the week
       const formattedEnd = endOfWeek.toLocaleDateString('en-US', options); // Format end of the week
 
@@ -104,9 +108,7 @@ export const ToolBar = ({
           <Ionicons name={"add-circle"} size={20} style={styles.iconInverted} />
         </TouchableOpacity>
       </View>
-    </View>
-    {showDatePicker && (
-        <DateTimePicker
+    </View>{/* <DateTimePicker
           value={currentDate}
           mode={"date"} // or "date" or "time"
           display="spinner"
@@ -115,7 +117,20 @@ export const ToolBar = ({
             setCurrentDate(curr);
             doRefresh(curr);
           }}
-        />
+        /> */}
+    {showDatePicker && (
+      <Calendar
+        onDayPress={day => {
+            setSelected(day.dateString);
+            setCurrentDate(new Date(day.dateString));
+            doRefresh(new Date(day.dateString));
+        }}
+        markedDates={{
+            [selected]: {selected: true, disableTouchEvent: true, selectedDotColor: 'orange'}
+        }}
+        firstDay={1}
+        theme={styles.calendar}
+      />
       )}
     </>
   );
@@ -233,4 +248,16 @@ const styles = StyleSheet.create({
       color: COLORS({opacity:1}).white,
       margin: 5,
     },
+    calendar: {
+      textDayFontSize: SIZES.medium,
+      dayTextColor: COLORS({opacity:1}).secondary,
+      selectedDayTextColor: COLORS({opacity:1}).lightWhite,
+      selectedDotColor: COLORS({opacity:1}).primary,
+      todayTextColor: COLORS({opacity:1}).lightWhite,
+      todayBackgroundColor: COLORS({opacity:0.8}).darkBlue,
+      arrowColor: COLORS({opacity:1}).primary,
+      monthTextColor: COLORS({opacity:1}).primary,
+      //textMonthFontWeight: '500',
+      textSectionTitleColor: COLORS({opacity:0.8}).darkBlue,
+  },
   });

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { View, TouchableOpacity, Text, TextInput, 
-    FlatList, RefreshControl, SafeAreaView } from 'react-native';
+import { View, TouchableOpacity, Text, TextInput, Keyboard,
+    FlatList, RefreshControl, SafeAreaView, TouchableWithoutFeedback } from 'react-native';
 import { StyleSheet } from "react-native";
 import { COLORS, FONT, SIZES, SHADOWS } from "../constants";
 import HomeNavigation from "./HomeNavigation";
@@ -31,7 +31,7 @@ export default function HomeScreen ({ navigation, route }) {
     const active = "class";
     const mobile = true;
 
-    const [state, setState] = useState("week");
+    const [state, setState] = useState("day");
 
     const [refreshing, setRefreshing] = useState(false);
     const [showSidebar, toggleShowSidebar] = useState(false);
@@ -53,13 +53,19 @@ export default function HomeScreen ({ navigation, route }) {
         }
     });
 
+    const dismissKeyboard = () => {
+        Keyboard.dismiss();
+    };
+
     return (
         <SafeAreaView style={styles.screen}>
              <View style={[styles.row, {flex: 0, height: 75, marginBottom: SIZES.xxSmall}]}>
                 <TouchableOpacity style={styles.profileButton}>
                     <Ionicons name={"person"} size={SIZES.xxLarge} style={{color: COLORS({opacity:1}).darkBlue}}/>
                 </TouchableOpacity>
-                <TextInput style={styles.intention} />
+                <TouchableWithoutFeedback onPress={dismissKeyboard}>
+                    <TextInput style={styles.intention} />
+                </TouchableWithoutFeedback>
             </View>
             <View style={{ flex: 1, backgroundColor: 'white' }}>
                 <View style={styles.calendarContainer} refreshControl={
@@ -76,10 +82,11 @@ export default function HomeScreen ({ navigation, route }) {
                         date={today}
                     />
                     <View style={styles.iconRoot}>
-                        <TouchableOpacity 
+                        <TouchableOpacity
+                            disabled={state === "day" ? true : false} 
                             onPress={() => {
-                                setState("day");
                                 setRefreshing(true);
+                                setState("day");
                             }}
                             style={{flex:1}}
                         >
@@ -87,9 +94,10 @@ export default function HomeScreen ({ navigation, route }) {
                             {/* <Ionicons name={"ellipse"} size={10} style={state === 'day' ? styles.tabActive : styles.tabInactive} /> */}
                         </TouchableOpacity>
                         <TouchableOpacity 
+                            disabled={state === "week" ? true : false} 
                             onPress={() => {
-                                setState("week");
                                 setRefreshing(true);
+                                setState("week");
                             }}
                             style={{flex:1}}
 
@@ -98,9 +106,10 @@ export default function HomeScreen ({ navigation, route }) {
                             {/* <Ionicons name={"ellipse"} size={10} style={state === 'week' ? styles.tabActive : styles.tabInactive} /> */}
                         </TouchableOpacity>
                         <TouchableOpacity 
+                            disabled={state === "month" ? true : false} 
                             onPress={() => {
-                                setState("month");
                                 setRefreshing(true);
+                                setState("month");
                             }}
                             style={{flex:1}}
                         >
