@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image,
-        StyleSheet, Animated, FlatList, SafeAreaView, KeyboardAvoidingView } from 'react-native';
+        StyleSheet, SafeAreaView, KeyboardAvoidingView } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { COLORS, SHADOWS, FONT, SIZES } from "../constants";
 import { ExpandableView, Spacer } from '../utils';
-import Layout from "../_layout";
 import { Ionicons } from "@expo/vector-icons";
 import { PropertyCard } from "./cards/PropertyCards";
 import { ItemType } from "../constants";
@@ -21,8 +20,8 @@ import React from "react";
 const defaultImage = require("../assets/icon.png");
 
 export default function ItemPage({ navigation, route, expanded=true}) {
-  // const { item } = route.params;
-  // const { title, description, favicon, icon, tags, notes, itemType, _id } = item;
+  const [showSave, setShowSave] = useState(false);
+
   const [itemType, setItemType] = useState('');
 
   const [title, setTitle] = useState(null);
@@ -154,6 +153,8 @@ export default function ItemPage({ navigation, route, expanded=true}) {
   }
 
   function updateNewItem(params) {
+    setShowSave(true);
+
     if(params.category) {
       setCategory(params.category);
     }
@@ -201,13 +202,18 @@ export default function ItemPage({ navigation, route, expanded=true}) {
       <GestureHandlerRootView>
         <ScrollView scrollEnabled={true}>
           <View style={styles.imageBox}>
-            <TouchableOpacity onPress={() => (navigation.goBack())} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightRed}]}>
-              <Ionicons name={"close-outline"} size={SIZES.xxLarge} style={styles.iconInverted}/> 
-            </TouchableOpacity>
-            <TouchableOpacity 
+            <View>
+            {showSave && (
+              <TouchableOpacity onPress={() => (navigation.goBack())} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightRed}]}>
+                <Ionicons name={"close-outline"} size={SIZES.xxLarge} style={styles.iconInverted}/> 
+              </TouchableOpacity>
+            )}
+            </View>
+            <TouchableOpacity style={{alignConten: "center"}}
               onPress={(newFavicon) => (
                 pickImage(),
-                setFavicon(newFavicon)
+                setFavicon(newFavicon),
+                setShowSave(true)
                 //updateNewItem({"favicon": newFavicon})
               )}
             >
@@ -216,9 +222,13 @@ export default function ItemPage({ navigation, route, expanded=true}) {
                 style={[styles.border, { width: 140, height: 140}]}
               />
             </TouchableOpacity>
-            <TouchableOpacity onPress={doRefresh} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightGreen}]}>
-              <Ionicons name={"checkmark-outline"} size={SIZES.xxLarge} style={styles.iconInverted}/> 
-            </TouchableOpacity>
+            <View>
+            {showSave && (
+              <TouchableOpacity onPress={doRefresh} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightGreen}]}>
+                <Ionicons name={"checkmark-outline"} size={SIZES.xxLarge} style={styles.iconInverted}/> 
+              </TouchableOpacity>
+            )}
+            </View>
           </View>
           
           <TouchableOpacity
@@ -254,14 +264,20 @@ export default function ItemPage({ navigation, route, expanded=true}) {
             <Text style={{fontSize: SIZES.xLarge, marginRight: SIZES.xxSmall}}>{icon}</Text>
             <TextInput style={{width: "100%", fontSize: SIZES.xLarge, color: COLORS({opacity:0.9}).darkBlue}}
               {...(title ? { defaultValue: title } : { placeholder: "Title" })}
-              onChangeText={(newTitle) => setTitle(newTitle)}
+              onChangeText={(newTitle) => (
+                setTitle(newTitle), 
+                setShowSave(true)
+              )}
             />
           </View>
           {!(itemType === ItemType.Page) && (
             <TextInput style={styles.description}
               multiline 
               {...(description ? { defaultValue: description } : { placeholder: "Description" })} 
-              onChangeText={(newDescription) => setDescription(newDescription)}
+              onChangeText={(newDescription) => (
+                setDescription(newDescription),
+                setShowSave(true)
+              )}
             />
           )}
 

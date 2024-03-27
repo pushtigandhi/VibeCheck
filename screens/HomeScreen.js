@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, TouchableOpacity, Text, TextInput, Keyboard,
-    FlatList, RefreshControl, SafeAreaView, TouchableWithoutFeedback } from 'react-native';
-import { StyleSheet } from "react-native";
+    FlatList, RefreshControl, SafeAreaView, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import { COLORS, FONT, SIZES, SHADOWS } from "../constants";
 import HomeNavigation from "./HomeNavigation";
 
@@ -13,20 +12,22 @@ import { MonthlyCalendar } from "./partialViews/MonthlyCalendar";
 import { useNavigation } from "@react-navigation/native";
 import { ToolBar } from "../components/Toolbar";
 
-import DateTimePicker from '@react-native-community/datetimepicker';
-
 import { Ionicons } from "@expo/vector-icons";
 
-import { GETtodayTEST, GETweekTEST, GETmonthTEST } from "../API";
 import { ItemType } from "../constants";
 
 import { Dimensions } from 'react-native';
 
 import { Sidebar } from "../components/Sidebar";
+import { GETdirectoryTEST } from "../API";
+
+import { directoryList } from "../API";
 
 export default function HomeScreen ({ navigation, route }) {
-    const calendarHeight = Dimensions.get('window').height - 333;
-    const [today, setToday] = useState(new Date());
+    const calendarHeight = Dimensions.get('window').height - 300;
+    const [selectedDate, setSelectedDate] = useState(new Date());
+
+    const [items, setItems] = useState([]);
 
     const active = "class";
     const mobile = true;
@@ -37,8 +38,8 @@ export default function HomeScreen ({ navigation, route }) {
     const [showSidebar, toggleShowSidebar] = useState(false);
 
 
-    const onRefresh = React.useCallback(() => {
-        //setRefreshing(false);
+    const onRefresh = React.useCallback((updatedDate) => {
+        setSelectedDate(updatedDate);
     });
 
     const toggleSidebar = React.useCallback(() => {
@@ -59,7 +60,7 @@ export default function HomeScreen ({ navigation, route }) {
 
     return (
         <SafeAreaView style={styles.screen}>
-             <View style={[styles.row, {flex: 0, height: 75, marginBottom: SIZES.xxSmall}]}>
+             <View style={[styles.row, {flex: 0, height: 75}]}>
                 <TouchableOpacity style={styles.profileButton}>
                     <Ionicons name={"person"} size={SIZES.xxLarge} style={{color: COLORS({opacity:1}).darkBlue}}/>
                 </TouchableOpacity>
@@ -74,12 +75,10 @@ export default function HomeScreen ({ navigation, route }) {
                         onRefresh={onRefresh}
                     />
                 }>
-                    <ToolBar
-                        mobile={true}
-                        state={state}
-                        onRefresh={toggleSidebar}
+                    <ToolBar mobile={true} state={state} date={selectedDate}
+                        toggleSidebar={toggleSidebar}
                         showSidebar={showSidebar}
-                        date={today}
+                        onRefresh={onRefresh}
                     />
                     <View style={styles.iconRoot}>
                         <TouchableOpacity
@@ -122,13 +121,13 @@ export default function HomeScreen ({ navigation, route }) {
                     )}
                     <View style={{height: calendarHeight}} >
                         {state === 'day' && (
-                            <DailyCalendar showSidebar={showSidebar} />
+                            <DailyCalendar navigation={navigation} date={selectedDate} />
                         )}
                         {state === 'week' && (
-                            <WeeklyCalendar showSidebar={showSidebar} />
+                            <WeeklyCalendar navigation={navigation} date={selectedDate} />
                         )}
                         {state === 'month' && (
-                            <MonthlyCalendar month={0} startDay={0} showSidebar={showSidebar} />
+                            <MonthlyCalendar navigation={navigation} date={selectedDate} month={selectedDate.getMonth()} />
                         )}
                     </View>
                 </View>
@@ -140,8 +139,6 @@ export default function HomeScreen ({ navigation, route }) {
 
 const styles = StyleSheet.create({
     screen: {
-        // height: '100%',
-        // width: '100%',
         flex:1,
         backgroundColor: "#FFF",
     },

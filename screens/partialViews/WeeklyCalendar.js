@@ -11,12 +11,16 @@ import { GETitems, GETweekTEST } from "../../API";
 import { ItemType } from "../../constants";
 
 import { View, StyleSheet, Text, ScrollView, FlatList, TouchableOpacity } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
 
-export const WeeklyCalendar = ({showSidebar = false}) => {
+import { Dimensions } from 'react-native';
+
+//const slotWidth = (Dimensions.get('window').width -36) / 7;
+
+const slotHeight = (Dimensions.get('window').height - 300) / 7;
+
+export const WeeklyCalendar = ({navigation, date}) => {
 
   const [items, setItems] = useState([]);
-  const [startDate, setStartDate] = useState([]);
 
   async function getItemsFromAPI() {
     try {
@@ -38,112 +42,114 @@ export const WeeklyCalendar = ({showSidebar = false}) => {
   }, []) // only run once on load
 
 
-  const days = ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"];
+  const days = ["SUN", "MON", "TUES", "WED", "THURS", "FRI", "SAT"];
+
+  // const renderItem = ({ item }) => (
+  //   <TouchableOpacity style={styles.cardsContainer} key={item["_id"] + "_root"} 
+  //     onPress={() => {
+  //       navigation.navigate("Item", {item});
+  //   }}>
+  //       <Text style={styles.title}>{item.title}</Text>
+  //       <View style={styles.row}>
+  //         <Text style={styles.timeLabel}>{String(new Date(item.startDate).getHours())}:{new Date(item.startDate).getMinutes() < 10 ? String("0"+ new Date(item.startDate).getMinutes()) : String(new Date(item.startDate).getMinutes())}</Text>
+  //         <View style={{ justifyContent: "center"}}>
+  //           <Text style={{ fontSize: SIZES.medium}}>{item.icon}</Text>
+  //         </View>
+  //         <Text style={styles.timeLabel}>{String(new Date(item.endDate).getHours())}:{new Date(item.endDate).getMinutes() < 10 ? String("0"+ new Date(item.endDate).getMinutes()) : String(new Date(item.endDate).getMinutes())}</Text>
+  //       </View>
+  //   </TouchableOpacity>
+  // );
 
   const renderItem = ({ item }) => (
     <TouchableOpacity style={styles.cardsContainer} key={item["_id"] + "_root"} 
       onPress={() => {
         navigation.navigate("Item", {item});
     }}>
-        <>
-          <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
-          {!!item.location && (
-            <Text style={styles.prop}>Location: {item.location}</Text>
-          )}
-          {!!item.subtasks && item.subtasks.length > 0 && (
-            <Text style={styles.prop}>Subtasks: {item.subtasks.length}</Text>
-          )}
-          {!!item.priority && (
-            <Text style={styles.prop}>Priority: {item.priority}</Text>
-          )}
-        </>
-        <View style={{flexDirection: "row"}}>
-          <View style={{ justifyContent: "center"}}>
-            <Text style={{ fontSize: SIZES.medium}}>{item.icon}</Text>
-          </View>
-          <View style={{flexDirection: "column", alignItems: "right"}}>
-            <Text>{String(new Date(item.startDate).getHours())}:{new Date(item.startDate).getMinutes() < 10 ? String("0"+ new Date(item.startDate).getMinutes()) : String(new Date(item.startDate).getMinutes())}</Text>
-            <Text>{String(new Date(item.endDate).getHours())}:{new Date(item.endDate).getMinutes() < 10 ? String("0"+ new Date(item.endDate).getMinutes()) : String(new Date(item.endDate).getMinutes())}</Text>
-          </View>
+      <Text style={styles.title}>{item.title}</Text>
+      <View style={styles.row}>
+        <View style={{ justifyContent: "center"}}>
+          <Text style={{ fontSize: SIZES.small}}>{item.icon}</Text>
         </View>
+        <Text style={styles.timeLabel}>{String(new Date(item.startDate).getHours())}:{new Date(item.startDate).getMinutes() < 10 ? String("0"+ new Date(item.startDate).getMinutes()) : String(new Date(item.startDate).getMinutes())}</Text>
+        <Text style={styles.timeLabel}>-</Text>
+        <Text style={styles.timeLabel}>{String(new Date(item.endDate).getHours())}:{new Date(item.endDate).getMinutes() < 10 ? String("0"+ new Date(item.endDate).getMinutes()) : String(new Date(item.endDate).getMinutes())}</Text>
+      </View>
     </TouchableOpacity>
   );
   
   return (
-    <View style={styles.container}> 
-      <ScrollView
-        scrollEnabled={true}
-        horizontal={true}
-      >
-        <View style={styles.row}>
-          {days.map((day) => (
-            <View style={styles.column}>
-              <View style={styles.label} key={day}>
-                <Text style={styles.span}>{day}</Text>
-              </View>
-              <Spacer size={SIZES.xxSmall} />
-              <FlatList
-                data={items[day]}
-                renderItem={renderItem}
-                keyExtractor={(item) => item["_id"]} 
-                style={styles.calendarView}
-              />
-            </View>
-          ))}
-      </View>
-      </ScrollView>
+    <View style={styles.column}>
+      {days.map((day) => (
+        <View style={[styles.row, {borderBottomWidth: 0.5, borderColor: COLORS({opacity:1}).lightGrey}]}>
+          <View style={styles.label} key={day}>
+            <Text style={styles.span}>{day.slice(0,1)}</Text>
+          </View>
+          <FlatList
+            data={items[day]}
+            renderItem={renderItem}
+            keyExtractor={(item) => item["_id"]} 
+            style={styles.calendarView}
+            horizontal={true}
+          />
+        </View>
+      ))}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   cardsContainer: {
-    marginBottom: SIZES.medium,
+    //marginBottom: SIZES.medium,
     backgroundColor: COLORS({opacity:1}).white,// "#FFF",
-    borderRadius: SIZES.small,
+    borderRadius: SIZES.xSmall,
     ...SHADOWS.xSmall,
     shadowColor: COLORS({opacity:1}).indigo,
-    width: 100,
-    padding: SIZES.xxSmall,
-    marginHorizontal: SIZES.xSmall,
+    width: 100, //slotWidth - SIZES.xSmall,
+    height: slotHeight - SIZES.xSmall, 
+    padding: SIZES.tiny,
+    marginHorizontal: SIZES.tiny,
+    alignItems: "center",
+    justifyContent: "center",
   },
   calendarView: {
     margin: 0,
   },
   row: {
     flexDirection: "row",
+    alignItems: "center",
   },
   column: {
     flexDirection: "column",
-    borderLeftWidth: 0.5,
-    borderColor: COLORS({opacity:1}).lightGrey,
+    alignItems: "center",
   },
   label: {
     //paddingLeft: 10,
-    height: 50,
-    width: 100,
+    width: SIZES.xLarge, //slotWidth,
+    height: slotHeight,
     alignItems: "center",
     justifyContent: "center",
-    borderTopWidth: 0.5, 
-    borderBottomWidth: 0.5,
+    //borderLeftWidth: 0.5,
+    borderRightWidth: 0.5,
     borderColor: COLORS({opacity:1}).lightGrey,
-    marginHorizontal: SIZES.xSmall,
-    padding: SIZES.xxSmall,
+    //marginHorizontal: SIZES.xSmall,
+    //padding: SIZES.xxSmall,
   },
   span: {
-    fontWeight: '500',
-    //fontSize: 16,
-    color: "#229FD0",
-  },
-  time: {
-      color: COLORS({opacity: 1}).primary,
+    fontWeight: 'bold',
+    color: COLORS({opacity: 1}).primary,
   },
   title: {
-      //fontSize: SIZES.small,
-      color: COLORS({opacity: 1}).primary,
-      //overflow: 'hidden'
+    fontWeight: "200",
+    marginBottom: SIZES.xxSmall,
+    fontSize: SIZES.small,
   },
-  prop: {
-    color: COLORS({opacity:1}).darkBlue,
+  time: {
+    padding: SIZES.xSmall,
+    flexDirection: "column",
+    alignItems: "right",
+  },
+  timeLabel: {
+    fontWeight: "200",
+    fontSize: SIZES.small,
   }
 });

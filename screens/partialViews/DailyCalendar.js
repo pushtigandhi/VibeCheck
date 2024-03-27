@@ -9,7 +9,7 @@ import { View, StyleSheet, Text, ScrollView, FlatList, TouchableOpacity } from '
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from "@expo/vector-icons";
 
-export const DailyCalendar = ({showSidebar = false}) => {
+export const DailyCalendar = ({navigation, date}) => {
   const [items, setItems] = useState([]);
   const [today, setToday] = useState(new Date());
 
@@ -41,24 +41,12 @@ export const DailyCalendar = ({showSidebar = false}) => {
       style={styles.cardsContainer}
     >
       <View style={{flexDirection: "row"}}>
-        <View style={{flexDirection: "column", alignItems: "center"}}>
-          <DateTimePicker
-            value={new Date(item.startDate)}
-            mode={"time"} // or "date" or "time"
-            is24Hour={true}
-            display="default"
-            disabled={true}
-          />
-          <DateTimePicker
-            value={new Date(item.endDate)}
-            mode={"time"} // or "date" or "time"
-            is24Hour={true}
-            display="default"
-            disabled={true}
-          />
+        <View style={styles.time}>
+          <Text style={styles.timeLabel}>{String(new Date(item.startDate).getHours())}:{new Date(item.startDate).getMinutes() < 10 ? String("0"+ new Date(item.startDate).getMinutes()) : String(new Date(item.startDate).getMinutes())}</Text>
+          <Text style={styles.timeLabel}>{String(new Date(item.endDate).getHours())}:{new Date(item.endDate).getMinutes() < 10 ? String("0"+ new Date(item.endDate).getMinutes()) : String(new Date(item.endDate).getMinutes())}</Text>
         </View>
         <View style={{ justifyContent: "center"}}>
-          <Text style={{ fontSize: SIZES.xxLarge}}>{item.icon}</Text>
+          <Text style={{ fontSize: SIZES.xLarge}}>{item.icon}</Text>
         </View>
         <View style={styles.dayCardContainer}>
           <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
@@ -107,9 +95,18 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: SIZES.large,
-    color: COLORS({opacity:1}).darkBlue,
+    fontWeight: "200",
   },
   prop: {
-    color: COLORS({opacity:1}).darkBlue,
+    fontWeight: "200",
+  },
+  time: {
+    padding: SIZES.xSmall,
+    flexDirection: "column",
+    alignItems: "right",
+  },
+  timeLabel: {
+    fontWeight: "200",
+    fontSize: SIZES.medium,
   }
 });
