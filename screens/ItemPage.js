@@ -35,8 +35,6 @@ export default function ItemPage({ navigation, route, expanded=true}) {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [tags, setTags] = useState([]);
-  const [priority, setPriority] = useState(null);
-  const [repeat, setRepeat] = useState(null);
   
   const [updatedItem, setUpdatedItem] = useState({});
   

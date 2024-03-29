@@ -15,7 +15,8 @@ export const ToolBar = ({
   onRefresh,
   showSidebar = false,
   date,
-  toggleSidebar
+  toggleSidebar,
+  setFilterVisible
 }) => {
 
   const [selected, setSelected] = useState('');
@@ -88,12 +89,19 @@ export const ToolBar = ({
       </View>
       
       <View style={[styles.row, styles.rightContent]}>
-        <TouchableOpacity>
-          <Search
+          {/* <Search
             //className={searchPropertyDefaultClassName}
             //searchButtonColor={searchIconColor}
             property1="default"
-          />
+          /> */}
+        <TouchableOpacity
+          onPress={() => {
+            //setIsExpanded(!isExpanded);
+            setFilterVisible(true);
+          }}
+          style={styles.filterButtonIcon}
+        >
+          <Ionicons name={"options-outline"} size={20} style={styles.iconInverted}/>
         </TouchableOpacity>
         <TouchableOpacity style={styles.addButtonIcon} >
           <Ionicons name={"add-circle"} size={20} style={styles.iconInverted} />
@@ -104,7 +112,7 @@ export const ToolBar = ({
       <Calendar
         onDayPress={day => {
             setSelected(day.dateString);
-            onRefresh(new Date(day.year, day.month-1, day.day));
+            onRefresh(new Date(day.year, day.month-1, day.day), state);
         }}
         markedDates={{
             [selected]: {selected: true, disableTouchEvent: true}
@@ -193,22 +201,29 @@ const styles = StyleSheet.create({
       fontSize: 16,
     },
     addButtonIcon: {
-      height: 30,
-      width: 30,
-      borderRadius: '5%',
+      height: SIZES.xxLarge,
+      width: SIZES.xxLarge,
+      borderRadius: SIZES.xxSmall,
       backgroundColor: COLORS({opacity:1}).primary,
-      margin: 5,
-      alignContent: 'center',
+      marginRight: SIZES.xxSmall,
+      alignItems: 'center',
       justifyContent: 'center',
-      left:-10,
+    },
+    filterButtonIcon: {
+      height: SIZES.xxLarge,
+      width: SIZES.xxLarge,
+      borderRadius: SIZES.xxSmall,
+      backgroundColor: COLORS({opacity:0.7}).primary,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     icon: {
       color: COLORS({opacity:1}).primary,
-      margin: 5,
+      margin: SIZES.xxSmall,
     },
     iconInverted: {
       color: COLORS({opacity:1}).white,
-      margin: 5,
+      margin: SIZES.xxSmall,
     },
     calendar: {
       textDayFontSize: SIZES.medium,

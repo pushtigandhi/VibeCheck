@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, TouchableOpacity, Text, TextInput, Keyboard,
+import { View, TouchableOpacity, Text, TextInput, Keyboard, Modal,
     FlatList, RefreshControl, SafeAreaView, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import { COLORS, FONT, SIZES, SHADOWS } from "../constants";
 import HomeNavigation from "./HomeNavigation";
@@ -19,13 +19,16 @@ import { ItemType } from "../constants";
 import { Dimensions } from 'react-native';
 
 import { Sidebar } from "../components/Sidebar";
-import { GETdirectoryTEST } from "../API";
+import { GETdirectoryTEST, doOnStart } from "../API";
 
-import { directoryList } from "../API";
+//import { directoryList } from "../API";
+import FilterModal from "../components/FilterModal";
 
 export default function HomeScreen ({ navigation, route }) {
     const calendarHeight = Dimensions.get('window').height - 300;
     const [selectedDate, setSelectedDate] = useState(new Date());
+    const [filter, setFilter] = useState({});
+    const [filterVisible, setFilterVisible] = useState(false);
 
     const [items, setItems] = useState([]);
 
@@ -38,8 +41,9 @@ export default function HomeScreen ({ navigation, route }) {
     const [showSidebar, toggleShowSidebar] = useState(false);
 
 
-    const onRefresh = React.useCallback((updatedDate) => {
+    const onRefresh = React.useCallback((updatedDate, state) => {
         setSelectedDate(updatedDate);
+        setState(state);
     });
 
     const toggleSidebar = React.useCallback(() => {
@@ -58,9 +62,18 @@ export default function HomeScreen ({ navigation, route }) {
         Keyboard.dismiss();
     };
 
+    function closeFilter() {
+        //doRefresh(filter);
+        setFilterVisible(false);
+    }
+
+    useEffect(() => {
+        doOnStart();
+    }, [])
+
     return (
         <SafeAreaView style={styles.screen}>
-             <View style={[styles.row, {flex: 0, height: 75}]}>
+            <View style={[styles.row, {flex: 0, height: 75}]}>
                 <TouchableOpacity style={styles.profileButton}>
                     <Ionicons name={"person"} size={SIZES.xxLarge} style={{color: COLORS({opacity:1}).darkBlue}}/>
                 </TouchableOpacity>
@@ -79,6 +92,7 @@ export default function HomeScreen ({ navigation, route }) {
                         toggleSidebar={toggleSidebar}
                         showSidebar={showSidebar}
                         onRefresh={onRefresh}
+                        setFilterVisible={setFilterVisible}
                     />
                     <View style={styles.iconRoot}>
                         <TouchableOpacity
@@ -119,6 +133,9 @@ export default function HomeScreen ({ navigation, route }) {
                     {showSidebar && (
                         <Sidebar />
                     )}
+                    <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
+                        <FilterModal closeFilter={closeFilter} filter={filter} setFilter={setFilter} />
+                    </Modal>
                     <View style={{height: calendarHeight}} >
                         {state === 'day' && (
                             <DailyCalendar navigation={navigation} date={selectedDate} />
@@ -127,7 +144,7 @@ export default function HomeScreen ({ navigation, route }) {
                             <WeeklyCalendar navigation={navigation} date={selectedDate} />
                         )}
                         {state === 'month' && (
-                            <MonthlyCalendar navigation={navigation} date={selectedDate} month={selectedDate.getMonth()} />
+                            <MonthlyCalendar navigation={navigation} date={selectedDate} month={selectedDate.getMonth()} onRefresh={onRefresh} />
                         )}
                     </View>
                 </View>
@@ -144,7 +161,7 @@ const styles = StyleSheet.create({
     },
     calendarContainer: {
         top:0,
-        paddingHorizontal: SIZES.medium,
+        paddingHorizontal: SIZES.xSmall,
         marginTop: SIZES.xxSmall,
     },
     profileButton: {

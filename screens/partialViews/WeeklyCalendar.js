@@ -14,8 +14,6 @@ import { View, StyleSheet, Text, ScrollView, FlatList, TouchableOpacity } from '
 
 import { Dimensions } from 'react-native';
 
-//const slotWidth = (Dimensions.get('window').width -36) / 7;
-
 const slotHeight = (Dimensions.get('window').height - 300) / 7;
 
 export const WeeklyCalendar = ({navigation, date}) => {
@@ -39,32 +37,17 @@ export const WeeklyCalendar = ({navigation, date}) => {
     }).catch((err) => {
       alert(err.message)
     })
-  }, []) // only run once on load
+  }, [date])
 
 
   const days = ["SUN", "MON", "TUES", "WED", "THURS", "FRI", "SAT"];
 
-  // const renderItem = ({ item }) => (
-  //   <TouchableOpacity style={styles.cardsContainer} key={item["_id"] + "_root"} 
-  //     onPress={() => {
-  //       navigation.navigate("Item", {item});
-  //   }}>
-  //       <Text style={styles.title}>{item.title}</Text>
-  //       <View style={styles.row}>
-  //         <Text style={styles.timeLabel}>{String(new Date(item.startDate).getHours())}:{new Date(item.startDate).getMinutes() < 10 ? String("0"+ new Date(item.startDate).getMinutes()) : String(new Date(item.startDate).getMinutes())}</Text>
-  //         <View style={{ justifyContent: "center"}}>
-  //           <Text style={{ fontSize: SIZES.medium}}>{item.icon}</Text>
-  //         </View>
-  //         <Text style={styles.timeLabel}>{String(new Date(item.endDate).getHours())}:{new Date(item.endDate).getMinutes() < 10 ? String("0"+ new Date(item.endDate).getMinutes()) : String(new Date(item.endDate).getMinutes())}</Text>
-  //       </View>
-  //   </TouchableOpacity>
-  // );
-
   const renderItem = ({ item }) => (
-    <TouchableOpacity style={styles.cardsContainer} key={item["_id"] + "_root"} 
+    <TouchableOpacity style={styles.cardsContainer} //key={item["_id"] + "_root"} 
       onPress={() => {
         navigation.navigate("Item", {item});
-    }}>
+      }}
+    >
       <Text style={styles.title}>{item.title}</Text>
       <View style={styles.row}>
         <View style={{ justifyContent: "center"}}>
@@ -87,7 +70,7 @@ export const WeeklyCalendar = ({navigation, date}) => {
           <FlatList
             data={items[day]}
             renderItem={renderItem}
-            keyExtractor={(item) => item["_id"]} 
+            keyExtractor={(item) => item["_id"] + "_key"} 
             style={styles.calendarView}
             horizontal={true}
           />

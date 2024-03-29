@@ -14,7 +14,7 @@ import MultiSelectDropdown from "../../components/MultiSelectDropdown";
 
 import { directoryList } from "../../API";
 
-export const PropertyCard = ({ item = null, itemType, setFn}) => {
+export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) => {
   const [category, setCategory] = useState('');
   const [section, setSection] = useState('');
   const [startDate, setStartDate] = useState(new Date());
@@ -32,11 +32,12 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
 
   const toggleHourPicker = () => {
     setHourPickerVisible(!hourPickerVisible);
-   
   };
+
   const toggleMinutePicker = () => {
     setMinutePickerVisible(!minutePickerVisible);
   };
+   
   function updateNewItem(params) { 
     setFn(params);
   };
@@ -66,11 +67,11 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
   }
 
   useEffect(() => {
-    getTagsFromAPI().then((allTags_) => {
-      setAllTags(allTags_);
-    }).catch((err) => {
-        alert(err.message)
-    })
+    // getTagsFromAPI().then((allTags_) => {
+    //   setAllTags(allTags_);
+    // }).catch((err) => {
+    //     alert(err.message)
+    // })
   }, []); // Empty dependency array to run only once on component mount
 
   useEffect(() => {
@@ -96,8 +97,8 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
     }
   }, [item]); // Update category and section when item changes
 
-  function getTitles() {
-    const categoryTitles = directoryList.map(cat => {
+  function getCategories() {
+    const categoryTitles = directoryList._j.map(cat => {
       return cat.title;
     });
     return categoryTitles.map((title, index) => ({
@@ -107,7 +108,7 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
   }
 
   function getSections() {
-    const sectionTitles = directoryList.find(cat => cat.title === category).sections;
+    const sectionTitles = directoryList._j.find(cat => cat.title === category).sections;
     return sectionTitles.map((title, index) => ({
       label: title,
       value: String(index + 1)
@@ -128,19 +129,19 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
   return (
     <SafeAreaView style={styles.infoContainer}>
       <ScrollView>
-      {directoryList.length > 0 ? (
-        <SingleSelectDropdown options={getTitles()} placeholder={!!category ? category : "Category"} setFn={onChangeCategory}
+      {directoryList._j.length > 0 ? (
+        <SingleSelectDropdown options={getCategories()} placeholder={!!category ? category : "Category"} setFn={onChangeCategory}
           icon={<Ionicons name={"folder-open-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
       ) : (
         <Text>Loading categories...</Text>
       )}
 
-      {!!category && directoryList.length > 0 && (
-        <View>
-          <SingleSelectDropdown options={getSections()} placeholder={!!section ? section : "Section"} setFn={onChangeSection}
-            icon={<Ionicons name={"bookmark-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
-        </View>
-      )}
+      {!!category && (directoryList._j.length > 0 ? (
+        <SingleSelectDropdown options={getSections()} placeholder={!!section ? section : "Section"} setFn={onChangeSection}
+          icon={<Ionicons name={"bookmark-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
+      ) : (
+        <Text>Loading sections...</Text>
+      ))}
 
       <MultiSelectDropdown options={allTags.map(tag => tag.title)} placeholder="Tags" setFn={setTags}
         icon={<Ionicons name={"list-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
@@ -184,24 +185,24 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
           </TouchableOpacity>
         </View>
       )} */}
-      {(itemType === ItemType.Task || itemType === ItemType.Event) && (
+      {(itemType === ItemType.Task || itemType === ItemType.Event || isFilter) && (
         <>
-          <View style={[styles.row, styles.property]}>
-            <Ionicons name={"calendar-outline"} size={size} style={styles.icon}/>
-            <DateTimePicker
-              value={startDate}
-              mode={"date"} // or "date" or "time"
-              is24Hour={true}
-              display="default"
-              onChange={(event, selectedDate) => {
-                const currentDate = selectedDate || startDate;
-                setStartDate(currentDate);
-                updateNewItem({"startDate": startDate});
-              }}
-            />
-          </View>
-          <View style={[styles.row, styles.property]}>
-            <Ionicons name={"alarm-outline"} size={size} style={styles.icon}/>
+          <View style={[styles.row, styles.property, {justifyContent: "space-between"}]}>
+            <View style={styles.row}>
+              <Ionicons name={"calendar-outline"} size={size} style={styles.icon}/>
+              <DateTimePicker
+                value={startDate}
+                mode={"date"} // or "date" or "time"
+                is24Hour={true}
+                display="default"
+                onChange={(event, selectedDate) => {
+                  const currentDate = selectedDate || startDate;
+                  setStartDate(currentDate);
+                  updateNewItem({"startDate": startDate});
+                }}
+              />
+            </View>
+            {/* <Ionicons name={"alarm-outline"} size={size} style={styles.icon}/> */}
             <DateTimePicker
               value={startDate}
               mode={"time"} // or "date" or "time"
@@ -216,7 +217,7 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
           </View>
         </>
       )}
-      {(itemType === ItemType.Task || itemType === ItemType.Event || itemType === ItemType.Recipe ) && (
+      {(itemType === ItemType.Task || itemType === ItemType.Event || isFilter) && (
             <View style={[styles.row, styles.property]}>
             <Ionicons name={"timer-outline"} size={size} style={styles.icon}/>
             {hourPickerVisible ? (
@@ -280,18 +281,18 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
         </View>
       )}
       <View>
-        {(itemType === ItemType.Task || itemType === ItemType.Event) ? (
-          <View style={styles.row}>
-            <Ionicons name={"alert-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
-            <Text style={styles.property}>
-              Priority
-            </Text>
-          </View>
-        ) : (
+        {(itemType === ItemType.Recipe) ? (
           <View style={styles.row}>
             <Ionicons name={"star-half-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
             <Text style={styles.property}>
               Rating
+            </Text>
+          </View>
+        ) : (
+          <View style={styles.row}>
+            <Ionicons name={"alert-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
+            <Text style={styles.property}>
+              Priority
             </Text>
           </View>
         )} 
@@ -331,10 +332,10 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
         </TouchableOpacity>
       </View>
 
-      {(itemType === ItemType.Task || itemType === ItemType.Event) && (
+      {(itemType === ItemType.Task || itemType === ItemType.Event || isFilter) && (
         <View>
           <View style={styles.row}>
-            <Ionicons name={"repeat-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} /> 
+            <Ionicons name={"repeat-outline"} size={size} style={[styles.icon, {marginLeft: SIZES.xSmall, marginRight: SIZES.xxSmall}]} /> 
             <Text style={styles.property}>Repeat</Text>
           </View>
           <View style={[styles.row, styles.property]}>
@@ -406,7 +407,7 @@ const styles = StyleSheet.create({
     fontSize: SIZES.medium,
     fontFamily: FONT.regular,
     color: COLORS({opacity:0.8}).navy,
-    margin: SIZES.xxSmall,
+    margin: SIZES.xSmall,
   },
   icon: {
     //margin: SIZES.xxSmall,
@@ -420,7 +421,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: COLORS({opacity:1}).navy,
     borderRadius: SIZES.small,
-    padding: SIZES.xxSmall,
+    padding: SIZES.tiny,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: SIZES.xxSmall,

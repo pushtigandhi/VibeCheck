@@ -1,13 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Spacer } from "../../utils/index";
-import {Calendar, LocaleConfig} from 'react-native-calendars';
 import { SIZES, COLORS, FONT, SHADOWS } from "../../constants";
-import { Sidebar } from "../../components/Sidebar";
-import { GETitems, GETitemsTEST } from "../../API";
+import { GETitems, GETitemsTEST, GETtodayTEST } from "../../API";
 import { ItemType } from "../../constants";
 import { View, StyleSheet, Text, ScrollView, FlatList, TouchableOpacity } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { Ionicons } from "@expo/vector-icons";
 
 export const DailyCalendar = ({navigation, date}) => {
   const [items, setItems] = useState([]);
@@ -15,7 +10,7 @@ export const DailyCalendar = ({navigation, date}) => {
 
   async function getItemsFromAPI() {
     try {
-      let items_ = await GETitemsTEST(ItemType.Item);
+      let items_ = await GETtodayTEST();
       return items_;
     } catch (error) {
       console.log("error fetching items");
@@ -30,7 +25,7 @@ export const DailyCalendar = ({navigation, date}) => {
     }).catch((err) => {
       alert(err.message)
     })
-  }, []) // only run once on load
+  }, [date])
 
   const renderItem = ({ item }) => (
     <TouchableOpacity

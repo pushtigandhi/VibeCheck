@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity,
         StyleSheet, Animated, FlatList, ScrollView } from 'react-native';
-
 import { COLORS, SHADOWS, FONT, SIZES } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { Spacer } from "../../utils";
@@ -27,7 +26,7 @@ const DirectoryCard = ({navigation, category, sections}) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <View style={styles.cardContainer}>
+    <>
       <TouchableOpacity
         onPress={() => {
             setIsExpanded(!isExpanded);
@@ -40,39 +39,29 @@ const DirectoryCard = ({navigation, category, sections}) => {
         </View>
       </TouchableOpacity>
       <ExpandableView expanded={isExpanded} view={expandedCard} params={{navigation, category, sections}} vh={150} />
-    </View>
+    </>
   )
 };
 
 const styles = StyleSheet.create({
-  cardContainer: {
-    width: '95%',
-    margin: SIZES.xSmall,
-    backgroundColor: "#FFF",
-    borderRadius: SIZES.xLarge,
-    ...SHADOWS.medium,
-    shadowColor: COLORS({opacity:1}).indigo,
-  },
   titleContainer: {
-    width: '100%',
+   // width: '100%',
     padding: SIZES.medium,
-    borderColor: COLORS({opacity:0.5}).darkBlue,
+    borderColor: COLORS({opacity:0.5}).primary,
     borderBottomWidth: 1,
     borderBottomLeftRadius: SIZES.xLarge,
     borderBottomRightRadius: SIZES.xLarge,
   },
   sectionContainer: {
-    margin: SIZES.xSmall,
+    margin: SIZES.tiny,
     padding: SIZES.xSmall,
-    backgroundColor: COLORS({opacity:0.5}).darkBlue,
-    borderRadius: SIZES.small,
-    ...SHADOWS.medium,
-    shadowColor: COLORS({opacity:1}).indigo,
+    backgroundColor: COLORS({opacity:0.5}).primary,
+    borderRadius: SIZES.xSmall,
   },
   title: {
     fontSize: SIZES.large,
     fontFamily: FONT.regular,
-    color: COLORS({opacity:1}).darkBlue,
+    color: COLORS({opacity:1}).primary,
   },
   section: {
     fontSize: SIZES.medium,
@@ -80,8 +69,10 @@ const styles = StyleSheet.create({
     color: COLORS({opacity:1}).white,
   },
   expandedContainer: {
+    backgroundColor: COLORS({opacity:1}).lightWhite,
     paddingBottom: SIZES.medium,
     paddingHorizontal: SIZES.medium,
+    borderRadius: SIZES.medium,
     flex: 1,
     overflow: 'scroll',
   },
@@ -92,7 +83,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: SIZES.xxSmall,
-    color: COLORS({opacity:0.8}).darkBlue,
+    color: COLORS({opacity:0.8}).primary,
   },
 });
 

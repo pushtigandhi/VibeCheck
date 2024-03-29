@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, FlatList, StyleSheet, Text, TouchableOpacity, ScrollView, Image } from "react-native";
+import { SafeAreaView, View, FlatList, StyleSheet, Text, TouchableOpacity, ScrollView, Image, Modal } from "react-native";
 import { COLORS, FONT, SIZES, SHADOWS } from "../constants";
 import HomeNavigation from "./HomeNavigation";
 import { GETitems, GETitemsTEST } from "../API";
@@ -7,16 +7,19 @@ import { ItemType } from "../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { ExpandableView } from "../utils";
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
+import FilterModal from "../components/FilterModal";
 
 const defaultImage = require("../assets/icon.png");
 
 const filter = ({navigation}) => {
+  // const validFields = ["category", "section", "startlt", "startgt", "endlt", "endgt", "duration", "priority", "tags", "icon", "search"];
+
     return (
       <ScrollView style={styles.expandedContainer}>
         <TouchableOpacity style={styles.sectionContainer} 
     //   key={section + "_root"}
         onPress={() => {
-            navigation.navigate("Item", {item});
+            //navigation.navigate("Item", {item});
         }}
         >
         <Text style={styles.section} numberOfLines={1}>item</Text>
@@ -26,55 +29,55 @@ const filter = ({navigation}) => {
 };
 
 const ListView = ({items, navigation}) => (
-    <ScrollView>
-    {items.length > 0 && items.map(item => (
-        <View key={item["_id"] + "root"} style={styles.cardContainer}>
-            <TouchableOpacity
-                onPress={() => {
-                    navigation.navigate("Item", {item});
-                }}
-                style={styles.titleContainer}
-            >
-                <View style={styles.row}>
-                <Text style={{ fontSize: SIZES.regular}}>{item.icon}</Text>
-                <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
-                </View>
-            </TouchableOpacity>
+  <FlatList
+    scrollEnabled={true}
+    data={items}
+    renderItem={({item}) => (
+      <TouchableOpacity style={styles.cardContainer} key={item["_id"] + "_root"}
+        onPress={() => {
+            navigation.navigate("Item", {item});
+        }}
+      >
+        <View style={styles.row}>
+          <Text style={{ fontSize: SIZES.regular}}>{item.icon}</Text>
+          <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
         </View>
-    ))}  
-    </ScrollView> 
+      </TouchableOpacity>
+    )}
+  /> 
 );
 
 const GalleryView = ({items, navigation}) => (
-    <ScrollView>
-    {items.length > 0 && items.map(item => (
-        <View style={styles.cardContainer}>
-            <TouchableOpacity
-                onPress={() => {
-                    navigation.navigate("Item", {item});
-                }}
-                style={styles.titleContainer}
-            >
-                <View style={styles.imageBox}>
-                    <Image
-                        source={item.favicon ? { uri: item.favicon.uri } : defaultImage}
-                        style={[styles.border, { width: 140, height: 140}]}
-                    />
-                </View>
-                <View style={styles.row}>
-                    <Text style={{fontSize: SIZES.xLarge}}>{item.icon}</Text>
-                    <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
-                </View>
-            </TouchableOpacity>
+  <FlatList
+    scrollEnabled={true}
+    data={items}
+    renderItem={({item}) => (
+      <TouchableOpacity style={styles.cardContainer} key={item["_id"] + "_root"}
+        onPress={() => {
+            navigation.navigate("Item", {item});
+        }}
+      >
+        <View style={styles.imageBox}>
+          <Image
+              source={item.favicon ? { uri: item.favicon.uri } : defaultImage}
+              style={[styles.border, { width: 140, height: 140}]}
+          />
         </View>
-    ))}
-    </ScrollView>
+        <View style={styles.row}>
+          <Text style={{fontSize: SIZES.xLarge}}>{item.icon}</Text>
+          <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
+        </View>
+      </TouchableOpacity>
+    )}
+  />
 );
 
 
 export default function SectionScreen ({navigation, route, scrollEnabled = true}) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [items, setItems] = useState([]);
+  const [filter, setFilter] = useState({});
+  const [filterVisible, setFilterVisible] = useState(false);
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
@@ -122,8 +125,13 @@ export default function SectionScreen ({navigation, route, scrollEnabled = true}
     }
   
     // Return the icon component
-    return <Ionicons name={iconName} size={30} color={COLORS({opacity:1}).darkBlue} />;
+    return <Ionicons name={iconName} size={30} color={COLORS({opacity:1}).primary} />;
   };
+
+  function closeFilter() {
+    //doRefresh(filter);
+    setFilterVisible(false);
+  }
 
   return (
     <SafeAreaView style={styles.screen}>
@@ -132,39 +140,35 @@ export default function SectionScreen ({navigation, route, scrollEnabled = true}
             <View style={styles.cardContainer}>
                 <TouchableOpacity
                     onPress={() => {
-                        setIsExpanded(!isExpanded);
+                        //setIsExpanded(!isExpanded);
+                        setFilterVisible(true);
                     }}
-                    style={styles.titleContainer}
                 >
                     <View style={styles.row}>
                         <Ionicons name={"options-outline"} size={30} style={styles.icon}/>
                         <Text style={styles.title} numberOfLines={1}>Filter</Text>
                     </View>
                 </TouchableOpacity>
-                <ExpandableView expanded={isExpanded} view={filter} params={{navigation}} vh={150} />
+                {/* <ExpandableView expanded={isExpanded} view={FilterModal} params={{navigation}} vh={150} /> */}
             </View>
+            <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
+              <FilterModal closeFilter={closeFilter} filter={filter} setFilter={setFilter} />
+            </Modal>
             <Text style={styles.header}>{route.params?.section}</Text>
         </View>
-        {/* <FlatList
-            scrollEnabled={scrollEnabled}
-            data={items}
-            renderItem={renderItem}
-        /> */}
         <TabView
-            navigationState={{ index, routes }}
-            renderScene={renderScene}
-            onIndexChange={setIndex}
-            initialLayout={{ width: 20 }}
-            renderTabBar={(props) => (
-                <TabBar
-                {...props}
-                renderIcon={renderIcon} // Pass the renderIcon function to render icons
-                style={{ backgroundColor: 'white' }}
-                // Add any other props you want to customize TabBar
-                />
-            )}
+          navigationState={{ index, routes }}
+          renderScene={renderScene}
+          onIndexChange={setIndex}
+          initialLayout={{ width: 20 }}
+          renderTabBar={(props) => (
+            <TabBar
+              {...props}
+              renderIcon={renderIcon} // Pass the renderIcon function to render icons
+              style={{ backgroundColor: 'white' }}
+            />
+          )}
         />
-        {/* <GalleryView items={items} /> */}
         <HomeNavigation size={30} iconColor={COLORS({opacity:1}).primary}/>
     </SafeAreaView>
     );
@@ -172,14 +176,13 @@ export default function SectionScreen ({navigation, route, scrollEnabled = true}
 
 const styles = StyleSheet.create({
   screen: {
-    height: '100%',
-    width: '100%',
+    flex: 1,
     backgroundColor: "#FFF",
   },
   header:{
     fontSize: SIZES.medium,
     //fontFamily: FONT.regular,
-    color: COLORS({opacity:0.9}).darkBlue,
+    color: COLORS({opacity:0.9}).primary,
     padding: SIZES.small,
     margin: SIZES.small,
     borderWidth: 1,
@@ -187,25 +190,21 @@ const styles = StyleSheet.create({
     borderRadius: SIZES.medium,
   },
   cardContainer: {
-    width: '95%',
+    //width: '95%',
     margin: SIZES.xSmall,
+    marginBottom: SIZES.tiny,
     backgroundColor: "#FFF",
-    borderRadius: SIZES.xLarge,
     ...SHADOWS.medium,
     shadowColor: COLORS({opacity:1}).indigo,
-  },
-  titleContainer: {
-    width: '100%',
     padding: SIZES.medium,
-    borderColor: COLORS({opacity:0.5}).darkBlue,
+    borderColor: COLORS({opacity:0.5}).primary,
     borderBottomWidth: 1,
-    borderBottomLeftRadius: SIZES.xLarge,
-    borderBottomRightRadius: SIZES.xLarge,
+    borderRadius: SIZES.small,
   },
   sectionContainer: {
     margin: SIZES.xSmall,
     padding: SIZES.xSmall,
-    backgroundColor: COLORS({opacity:0.5}).darkBlue,
+    backgroundColor: COLORS({opacity:0.5}).primary,
     borderRadius: SIZES.small,
     ...SHADOWS.medium,
     shadowColor: COLORS({opacity:1}).indigo,
@@ -213,7 +212,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: SIZES.large,
     fontFamily: FONT.regular,
-    color: COLORS({opacity:1}).darkBlue,
+    color: COLORS({opacity:1}).primary,
   },
   section: {
     fontSize: SIZES.medium,
@@ -233,12 +232,12 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: SIZES.xxSmall,
-    color: COLORS({opacity:0.8}).darkBlue,
+    color: COLORS({opacity:0.8}).primary,
   },
   propContainer: {
     width: '100%',
     padding: SIZES.medium,
-    borderColor: COLORS({opacity:0.5}).darkBlue,
+    borderColor: COLORS({opacity:0.5}).primary,
     borderBottomWidth: 1,
     borderRadius: SIZES.medium,
     backgroundColor: "#FFF"

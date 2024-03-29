@@ -1,5 +1,5 @@
 import { SafeAreaView, View, FlatList, StyleSheet, Text } from "react-native";
-import { COLORS, FONT, SIZES } from "../constants";
+import { COLORS, FONT, SIZES, SHADOWS } from "../constants";
 import { GETitems, POSTcreateItem, BASE_URL } from "../API";
 import { Ionicons } from "@expo/vector-icons";
 import { useState, useEffect } from "react";
@@ -10,11 +10,6 @@ import DirectoryCard from "./cards/DirectoryCard"
 export default function Directory ({navigation, scrollEnabled = true}) {
   const [categories, setCategories] = useState([]);
   const [title, setTitle] = useState("");
-  const data = ["hello","world","i","have","arrived"];
-
-  // function goHome() {
-  //   navigation.navigate('Home', { refresh: Math.random() });
-  // }
 
   function createCategory() {
     const category = {
@@ -58,7 +53,7 @@ export default function Directory ({navigation, scrollEnabled = true}) {
 
 
   const renderCategory = ({ item }) => (
-    <View key={item["_id"] + "root"} >
+    <View key={item["_id"] + "root"} style={styles.cardContainer}>
         <DirectoryCard navigation={navigation} category={item} key={item["_id"]} sections={item.sections} />
     </View>
   );
@@ -91,5 +86,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS({opacity:1}).navy,
     borderRadius: SIZES.medium,
+  },
+  cardContainer: {
+    //width: '100%',
+    margin: SIZES.xSmall,
+    backgroundColor: "#FFF",
+    borderRadius: SIZES.medium,
+    ...SHADOWS.medium,
+    shadowColor: COLORS({opacity:1}).indigo,
   },
 });

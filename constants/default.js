@@ -3,7 +3,8 @@ const ItemType = {
     Task: 'Task',
     Event: 'Event',
     Page: 'Page',
-    Recipe: 'Recipe'
+    Recipe: 'Recipe',
+    Scheduled: 'Scheduled'
 };
 
 const defaultItem = {
