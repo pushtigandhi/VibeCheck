@@ -13,7 +13,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 const slotWidth = (Dimensions.get('window').width - 20) / 7;
 const slotHeight = (Dimensions.get('window').height - 308) / 6;
 
-export const MonthlyCalendar = ({navigation, date, month, onRefresh}) => {
+export const MonthlyCalendar = ({navigation, date, month, onRefresh, filter, refreshing}) => {
 
   const startOfMonth = new Date(date.getFullYear(), month, 1); // Get the start of the current month
 
@@ -39,9 +39,9 @@ export const MonthlyCalendar = ({navigation, date, month, onRefresh}) => {
 
   const [items, setItems] = useState([]);
 
-  async function getItemsFromAPI() {
+  async function getItemsFromAPI(filter={}) {
     try {
-      let items_ = await GETmonthTEST(ItemType.Item);
+      let items_ = await GETmonthTEST(filter);
       return items_;
     } catch (error) {
       console.log("error fetching items");
@@ -51,12 +51,12 @@ export const MonthlyCalendar = ({navigation, date, month, onRefresh}) => {
   }
 
   useEffect(() => {
-    getItemsFromAPI().then((items_) => {
+    getItemsFromAPI(filter).then((items_) => {
       setItems(items_);
     }).catch((err) => {
       alert(err.message)
     })
-  }, [date]) // only run once on load
+  }, [date, refreshing]) // only run once on load
 
   return (
     <GestureHandlerRootView style={{alignItems: "center"}}>

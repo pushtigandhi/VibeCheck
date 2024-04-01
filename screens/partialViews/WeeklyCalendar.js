@@ -16,13 +16,13 @@ import { Dimensions } from 'react-native';
 
 const slotHeight = (Dimensions.get('window').height - 300) / 7;
 
-export const WeeklyCalendar = ({navigation, date}) => {
+export const WeeklyCalendar = ({navigation, date, filter, refreshing}) => {
 
   const [items, setItems] = useState([]);
 
-  async function getItemsFromAPI() {
+  async function getItemsFromAPI(filter={}) {
     try {
-      let items_ = await GETweekTEST(ItemType.Item);
+      let items_ = await GETweekTEST(filter);
       return items_;
     } catch (error) {
       console.log("error fetching items");
@@ -32,12 +32,12 @@ export const WeeklyCalendar = ({navigation, date}) => {
   }
 
   useEffect(() => {
-    getItemsFromAPI().then((items_) => {
+    getItemsFromAPI(filter).then((items_) => {
       setItems(items_);
     }).catch((err) => {
       alert(err.message)
     })
-  }, [date])
+  }, [date, refreshing])
 
 
   const days = ["SUN", "MON", "TUES", "WED", "THURS", "FRI", "SAT"];
@@ -70,7 +70,7 @@ export const WeeklyCalendar = ({navigation, date}) => {
           <FlatList
             data={items[day]}
             renderItem={renderItem}
-            keyExtractor={(item) => item["_id"] + "_key"} 
+            keyExtractor={(item) => item["_id"]} 
             style={styles.calendarView}
             horizontal={true}
           />

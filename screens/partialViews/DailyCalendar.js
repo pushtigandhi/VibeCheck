@@ -4,13 +4,13 @@ import { GETitems, GETitemsTEST, GETtodayTEST } from "../../API";
 import { ItemType } from "../../constants";
 import { View, StyleSheet, Text, ScrollView, FlatList, TouchableOpacity } from 'react-native';
 
-export const DailyCalendar = ({navigation, date}) => {
+export const DailyCalendar = ({navigation, date, filter, refreshing}) => {
   const [items, setItems] = useState([]);
   const [today, setToday] = useState(new Date());
 
-  async function getItemsFromAPI() {
+  async function getItemsFromAPI(filter={}) {
     try {
-      let items_ = await GETtodayTEST();
+      let items_ = await GETtodayTEST(filter);
       return items_;
     } catch (error) {
       console.log("error fetching items");
@@ -18,14 +18,14 @@ export const DailyCalendar = ({navigation, date}) => {
       return [];
     }
   }
-
+  
   useEffect(() => {
-    getItemsFromAPI().then((items_) => {
+    getItemsFromAPI(filter).then((items_) => {
       setItems(items_);
     }).catch((err) => {
       alert(err.message)
     })
-  }, [date])
+  }, [date, refreshing])
 
   const renderItem = ({ item }) => (
     <TouchableOpacity

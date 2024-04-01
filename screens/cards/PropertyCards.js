@@ -18,6 +18,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
   const [category, setCategory] = useState('');
   const [section, setSection] = useState('');
   const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), startDate.getHours(), startDate.getMinutes() + 15));
   const [tags, setTags] = useState([]);
   const [serving, setServing] = useState(null);
   const [priority, setPriority] = useState(null);
@@ -67,6 +68,9 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
   }
 
   useEffect(() => {
+    if (isFilter) {
+      setMinute(0);
+    }
     // getTagsFromAPI().then((allTags_) => {
     //   setAllTags(allTags_);
     // }).catch((err) => {
@@ -76,8 +80,10 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
 
   useEffect(() => {
     if (item) {
-      setCategory(item.category);
-      setSection(item.section);
+      if(!!item.category)
+        setCategory(item.category);
+      if(!!item.section)
+        setSection(item.section);
       if(!!item.duration){
         const hours = Math.floor(item.duration / 60);
         const minutes = item.duration % 60;
@@ -87,6 +93,10 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
       if(!!item.startDate){
         const parsedDate = new Date(item.startDate);
         setStartDate(parsedDate);
+      }
+      if(!!item.endDate){
+        const parsedDate = new Date(item.endDate);
+        setEndDate(parsedDate);
       }
       if(!!item.priority)
         setPriority(item.priority);
@@ -103,7 +113,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
     });
     return categoryTitles.map((title, index) => ({
       label: title,
-      value: String(index + 1)
+      value: title
     }));
   }
 
@@ -111,7 +121,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
     const sectionTitles = directoryList._j.find(cat => cat.title === category).sections;
     return sectionTitles.map((title, index) => ({
       label: title,
-      value: String(index + 1)
+      value: title
     }));
   }
 
@@ -187,38 +197,66 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
       )} */}
       {(itemType === ItemType.Task || itemType === ItemType.Event || isFilter) && (
         <>
-          <View style={[styles.row, styles.property, {justifyContent: "space-between"}]}>
+          <View style={[styles.row, styles.property, {justifyContent: "space-between"}, styles.divider]}>
             <View style={styles.row}>
               <Ionicons name={"calendar-outline"} size={size} style={styles.icon}/>
               <DateTimePicker
                 value={startDate}
-                mode={"date"} // or "date" or "time"
+                mode={"date"}
                 is24Hour={true}
                 display="default"
                 onChange={(event, selectedDate) => {
                   const currentDate = selectedDate || startDate;
                   setStartDate(currentDate);
-                  updateNewItem({"startDate": startDate});
+                  updateNewItem({"startDate": currentDate});
                 }}
               />
             </View>
-            {/* <Ionicons name={"alarm-outline"} size={size} style={styles.icon}/> */}
             <DateTimePicker
               value={startDate}
-              mode={"time"} // or "date" or "time"
+              mode={"time"}
               is24Hour={true}
               display="default"
+              minuteInterval={15}
               onChange={(event, selectedDate) => {
                 const currentDate = selectedDate || startDate;
                 setStartDate(currentDate);
-                updateNewItem({"startDate": startDate});
+                updateNewItem({"startDate": currentDate});
+              }}
+            />
+          </View>
+          <View style={[styles.row, styles.property, {justifyContent: "space-between"}, styles.divider]}>
+            <View style={styles.row}>
+              <Ionicons name={"calendar-outline"} size={size} style={styles.icon}/>
+              <DateTimePicker
+                value={endDate}
+                mode={"date"}
+                is24Hour={true}
+                display="default"
+                onChange={(event, selectedDate) => {
+                  const currentDate = selectedDate || endDate;
+                  setEndDate(currentDate);
+                  updateNewItem({"endDate": currentDate});
+                }}
+              />
+            </View>
+            <DateTimePicker
+              value={endDate}
+              mode={"time"}
+              is24Hour={true}
+              display="default"
+              minuteInterval={15}
+              onChange={(event, selectedDate) => {
+                const currentDate = selectedDate || endDate;
+                setEndDate(currentDate);
+                updateNewItem({"endDate": currentDate});
               }}
             />
           </View>
         </>
       )}
       {(itemType === ItemType.Task || itemType === ItemType.Event || isFilter) && (
-            <View style={[styles.row, styles.property]}>
+            <View style={[styles.row, styles.property, styles.divider]}>
             <Ionicons name={"timer-outline"} size={size} style={styles.icon}/>
             {hourPickerVisible ? (
               <View>
@@ -227,7 +265,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
                   onValueChange={(newHour) => (
                     setHour(newHour),
                     toggleHourPicker(),
-                    setDuration(newHour*60 + minute),
+                    //setDuration(newHour*60 + minute),
                     updateNewItem({"duration": Number(newHour * 60) + Number(minute)})
                   )}
                   style={styles.picker}>
@@ -248,7 +286,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
                   onValueChange={(newMinute) => (
                     setMinute(newMinute),
                     toggleMinutePicker(),
-                    setDuration(hour*60 + newMinute),
+                    //setDuration(hour*60 + newMinute),
                     updateNewItem({"duration": Number(hour * 60) + Number(newMinute)})
                   )}
                   style={styles.picker}>
@@ -297,7 +335,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
           </View>
         )} 
       </View>
-      <View style={[styles.row, styles.property]}>
+      <View style={[styles.row, styles.property, styles.divider]}>
         <TouchableOpacity style={[styles.row, styles.box, priority === 'NONE' ? styles.selectedBox:styles.unselectedBox]}
           onPress={() => setPriority("NONE")}
         >
@@ -342,7 +380,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
             <TouchableOpacity style={[styles.row, styles.box, repeat === 'NEVER' ? styles.selectedBox:styles.unselectedBox]}
               onPress={() => setRepeat("NEVER")}
             >
-              <Ionicons name={"close-outline"} size={20} style={[priority === 'NONE' ? styles.iconInverse:styles.icon]} />
+              <Ionicons name={"close-outline"} size={20} style={[repeat === 'NEVER' ? styles.iconInverse:styles.icon]} />
             </TouchableOpacity>
             <TouchableOpacity style={[styles.row, styles.box, repeat === 'ONCE' ? styles.selectedBox:styles.unselectedBox]}
               onPress={() => (
@@ -391,27 +429,32 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.lightWhite,
     borderRadius: SIZES.medium/2,
     borderWidth: 1,
-    borderColor: COLORS({opacity:1}).navy,
+    borderColor: COLORS({opacity:1}).secondary,
   },
   row: {
     flexDirection: "row",
     alignItems: "center",
   },
+  divider: {
+    paddingBottom: SIZES.xSmall,
+    borderBottomWidth: 1,
+    borderColor: COLORS({opacity:1}).secondary,
+  },
   label:{
     fontSize: SIZES.large,
     fontFamily: FONT.regular,
-    color: COLORS({opacity:1}).navy,
+    color: COLORS({opacity:1}).secondary,
     margin: SIZES.xSmall,
   },
   property:{
     fontSize: SIZES.medium,
     fontFamily: FONT.regular,
-    color: COLORS({opacity:0.8}).navy,
+    color: COLORS({opacity:0.8}).secondary,
     margin: SIZES.xSmall,
   },
   icon: {
     //margin: SIZES.xxSmall,
-    color: COLORS({opacity:1}).navy,
+    color: COLORS({opacity:1}).secondary,
   },
   iconInverse: {
     //margin: SIZES.xxSmall,
@@ -419,7 +462,7 @@ const styles = StyleSheet.create({
   },
   box: {
     borderWidth: 0.5,
-    borderColor: COLORS({opacity:1}).navy,
+    borderColor: COLORS({opacity:1}).secondary,
     borderRadius: SIZES.small,
     padding: SIZES.tiny,
     alignItems: 'center',
@@ -427,7 +470,7 @@ const styles = StyleSheet.create({
     marginRight: SIZES.xxSmall,
   },
   selectedBox: {
-    backgroundColor: COLORS({opacity:1}).navy,
+    backgroundColor: COLORS({opacity:1}).secondary,
   },
   unselectedBox: {
     backgroundColor: COLORS({opacity:1}).lightWhite,
@@ -436,12 +479,12 @@ const styles = StyleSheet.create({
     color: COLORS({opacity:1}).lightWhite,
   },
   unselectedText: {
-    color: COLORS({opacity:1}).navy,
+    color: COLORS({opacity:1}).secondary,
   },
   sectionContainer: {
     margin: SIZES.xSmall,
     padding: SIZES.xSmall,
-    backgroundColor: COLORS({opacity:0.5}).darkBlue,
+    backgroundColor: COLORS({opacity:0.5}).primary,
     borderRadius: SIZES.small,
     ...SHADOWS.medium,
     shadowColor: COLORS({opacity:1}).indigo,
@@ -449,12 +492,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: SIZES.large,
     fontFamily: FONT.regular,
-    color: COLORS({opacity:1}).darkBlue,
+    color: COLORS({opacity:1}).primary,
   },
   section: {
     fontSize: SIZES.medium,
     fontFamily: FONT.regular,
-    color: COLORS({opacity:1}).darkBlue,
+    color: COLORS({opacity:1}).primary,
   },
   duration: {
     backgroundColor: COLORS({opacity:0.5}).lightGrey,

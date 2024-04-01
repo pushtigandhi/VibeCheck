@@ -8,6 +8,7 @@ import SwitchSelector from "react-native-switch-selector";
 import SingleSelectDropdown from "./SingleSelectDropdown";
 import MultiSelectDropdown from "./MultiSelectDropdown";
 import { PropertyCard } from "../screens/cards/PropertyCards";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function FilterModal({ filter, setFilter, closeFilter }) {
     const sortOptions = [
@@ -21,7 +22,6 @@ export default function FilterModal({ filter, setFilter, closeFilter }) {
    // const [tagsText, setTagsText] = useState("");
     // const [bountyLTText, setBountyLTText] = useState("$");
     // const [bountyGTText, setBountyGTText] = useState("$");
-    const [duration, setDuration] = useState(15); // in km
 
     useEffect(() => {
         const indexOfOption = Object.values(sortOptions).indexOf("startTime");
@@ -49,29 +49,16 @@ export default function FilterModal({ filter, setFilter, closeFilter }) {
     // }
 
     function changeSortOption(optionValue) {
+        setFilter({... filter, "sortBy": optionValue});
         setSortOption(optionValue);
-        let sortBy = sortOptions[optionValue];
-        if (optionValue === "Start Time (Ascending)") {
-            const newFilter = filter
-            delete newFilter.sortBy;
-            setFilter(newFilter);
-        } else {
-            setFilter({
-                ...filter,
-                sortBy: sortBy,
-            });
-        }
     }
 
     function onClose() {
         closeFilter();
     }
 
-    function filterType(filterType) {
-        setFilter({
-            ...filter,
-            type: filterType
-        })
+    function resetFilter() {
+        
     }
 
     function updateFilter(params) {
@@ -102,7 +89,7 @@ export default function FilterModal({ filter, setFilter, closeFilter }) {
         if(params.location) {
             setFilter({... filter, location: params.location});
         }
-      }
+    }
 
     // search?: string;
     // tags?: [string];
@@ -120,17 +107,20 @@ export default function FilterModal({ filter, setFilter, closeFilter }) {
 
    
     return (
-        <View style={styles.root}>
+        <SafeAreaView style={styles.root}>
             <View style={styles.header}>
                 <Text style={styles.headerText}></Text>
                 <Ionicons name="close-sharp" size={40} color="black" onPress={onClose} style={styles.closeIcon} />
             </View>
+            <TouchableOpacity style={styles.header}>
+                <Text style={styles.headerText}>Reset</Text>
+            </TouchableOpacity>
             <Text style={styles.sortText}>Sort by:</Text>
             <SingleSelectDropdown options={sortOptions} placeholder={"Start Time (Ascending)"} setFn={changeSortOption}
                 icon={<Ionicons name={"swap-vertical-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
             {/* <SortDropdown onChangeSortOption={changeSortOption} options={sortOptions} value={sortOption} style={styles.sortDropdown} /> */}
 
-            <PropertyCard itemType={ItemType.Scheduled} setFn={updateFilter} isFilter={true} />
+            <PropertyCard item={filter} itemType={ItemType.Scheduled} setFn={updateFilter} isFilter={true} />
             
             
             <ScrollView style={styles.innerRoot}>
@@ -151,33 +141,35 @@ export default function FilterModal({ filter, setFilter, closeFilter }) {
                 <TouchableOpacity
                     style={styles.searchButton}
                     onPress={(closeFilter)}
-                    underlayColor='black'>
+                    //underlayColor='white'
+                    >
                     <Text style={styles.searchButtonText}>Search</Text>
                 </TouchableOpacity>
                 </View>
             </ScrollView>
-        </View>
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
     searchButton: {
-        marginRight: 90,
-        marginLeft: 90,
-        marginTop: 10,
-        paddingTop: 10,
-        paddingBottom: 10,
-        backgroundColor: '#adeae9',
-        borderRadius: 12,
+        // marginRight: 90,
+        // marginLeft: 90,
+        marginTop: SIZES.xSmall,
+        paddingTop: SIZES.xSmall,
+        paddingBottom: SIZES.xSmall,
+        backgroundColor: COLORS({opacity: 1}).secondary,
+        borderRadius: SIZES.small,
         borderWidth: 1,
-        borderColor: '#adeae9'
+        borderColor: COLORS({opacity: 1}).primary, 
     },
     searchButtonText: {
-        fontSize: 20,
-        alignSelf: "center"
+        fontSize: SIZES.large,
+        alignSelf: "center",
+        color: COLORS({opacity:1}).lightWhite,
     },
     headerText: {
-        fontSize: 20,
+        fontSize: SIZES.large,
         fontWeight: "bold",
         alignSelf: "center"
     },
@@ -192,17 +184,15 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         width: "100%",
         justifyContent: "space-between",
-        marginVertical: 10,
+        marginVertical: SIZES.xSmall,
         minHeight: "5%",
         maxHeight: "60%",
     },
     filterOptionLabel: {
         fontSize: 20,
         fontWeight: "bold",
-        marginBottom: 10,
+        marginBottom: SIZES.xSmall,
         flex: 1,
-    },
-    filterOptionItem: {
     },
     locationSelector: {
         height: 80,
@@ -218,12 +208,12 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         textAlignVertical: "center",
         alignSelf: "center",
-        marginHorizontal: 10,
+        marginHorizontal: SIZES.xSmall,
     },
     sortOptions: {
         display: "flex",
         flexDirection: "row",
-        paddingVertical: 10,
+        paddingVertical: SIZES.xSmall,
         width: "100%",
         justifyContent: "flex-start",
     },
@@ -238,8 +228,8 @@ const styles = StyleSheet.create({
     root: {
         display: "flex",
         flexDirection: "column",
-        height: "100%",
-        width: "100%",
+        flex: 1,
+        backgroundColor: COLORS({opacity:1}).white,
     },
     innerRoot: {
         display: "flex",
@@ -254,7 +244,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         paddingTop: 20,
-        paddingHorizontal: 10,
+        paddingHorizontal: SIZES.xSmall,
     },
     closeIcon: {
         alignSelf: "center",
@@ -262,20 +252,20 @@ const styles = StyleSheet.create({
     textInput: {
         borderColor: COLORS({opacity:1}).primary,
         backgroundColor: "white",
-        borderRadius: 10,
+        borderRadius: SIZES.xSmall,
         borderWidth: 2,
         padding: 15,
-        borderRadius: 10,
+        borderRadius: SIZES.xSmall,
         width: 260
     },
     rangeInput: {
         borderColor: COLORS({opacity:1}).primary,
         backgroundColor: "white",
-        borderRadius: 10,
+        borderRadius: SIZES.xSmall,
         borderWidth: 2,
-        margin: 10,
+        margin: SIZES.xSmall,
         padding: 15,
-        borderRadius: 10,
+        borderRadius: SIZES.xSmall,
         width: 100
     },
     bountyInputs: {

@@ -23,6 +23,7 @@ import { GETdirectoryTEST, doOnStart } from "../API";
 
 //import { directoryList } from "../API";
 import FilterModal from "../components/FilterModal";
+import { refresh } from "@react-native-community/netinfo";
 
 export default function HomeScreen ({ navigation, route }) {
     const calendarHeight = Dimensions.get('window').height - 300;
@@ -63,7 +64,7 @@ export default function HomeScreen ({ navigation, route }) {
     };
 
     function closeFilter() {
-        //doRefresh(filter);
+        setRefreshing(!refreshing);
         setFilterVisible(false);
     }
 
@@ -94,6 +95,9 @@ export default function HomeScreen ({ navigation, route }) {
                         onRefresh={onRefresh}
                         setFilterVisible={setFilterVisible}
                     />
+                    <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
+                        <FilterModal closeFilter={closeFilter} filter={filter} setFilter={setFilter} />
+                    </Modal>
                     <View style={styles.iconRoot}>
                         <TouchableOpacity
                             disabled={state === "day" ? true : false} 
@@ -133,18 +137,15 @@ export default function HomeScreen ({ navigation, route }) {
                     {showSidebar && (
                         <Sidebar />
                     )}
-                    <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
-                        <FilterModal closeFilter={closeFilter} filter={filter} setFilter={setFilter} />
-                    </Modal>
                     <View style={{height: calendarHeight}} >
                         {state === 'day' && (
-                            <DailyCalendar navigation={navigation} date={selectedDate} />
+                            <DailyCalendar navigation={navigation} date={selectedDate} filter={filter} refreshing={refreshing} />
                         )}
                         {state === 'week' && (
-                            <WeeklyCalendar navigation={navigation} date={selectedDate} />
+                            <WeeklyCalendar navigation={navigation} date={selectedDate} filter={filter} refreshing={refreshing} />
                         )}
                         {state === 'month' && (
-                            <MonthlyCalendar navigation={navigation} date={selectedDate} month={selectedDate.getMonth()} onRefresh={onRefresh} />
+                            <MonthlyCalendar navigation={navigation} date={selectedDate} month={selectedDate.getMonth()} filter={filter} onRefresh={onRefresh} refreshing={refreshing} />
                         )}
                     </View>
                 </View>

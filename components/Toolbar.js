@@ -101,7 +101,7 @@ export const ToolBar = ({
           }}
           style={styles.filterButtonIcon}
         >
-          <Ionicons name={"options-outline"} size={20} style={styles.iconInverted}/>
+          <Ionicons name={"funnel-outline"} size={20} style={styles.iconInverted}/>
         </TouchableOpacity>
         <TouchableOpacity style={styles.addButtonIcon} >
           <Ionicons name={"add-circle"} size={20} style={styles.iconInverted} />

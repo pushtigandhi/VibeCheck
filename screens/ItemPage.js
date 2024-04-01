@@ -20,7 +20,8 @@ import React from "react";
 const defaultImage = require("../assets/icon.png");
 
 export default function ItemPage({ navigation, route, expanded=true}) {
-  const [showSave, setShowSave] = useState(false);
+  const [enableSave, setEnableSave] = useState(true);
+  const [enableCancel, setEnableCancel] = useState(true);
 
   const [itemType, setItemType] = useState('');
 
@@ -151,7 +152,7 @@ export default function ItemPage({ navigation, route, expanded=true}) {
   }
 
   function updateNewItem(params) {
-    setShowSave(true);
+    setEnableCancel(false);
 
     if(params.category) {
       setCategory(params.category);
@@ -200,18 +201,14 @@ export default function ItemPage({ navigation, route, expanded=true}) {
       <GestureHandlerRootView>
         <ScrollView scrollEnabled={true}>
           <View style={styles.imageBox}>
-            <View>
-            {showSave && (
-              <TouchableOpacity onPress={() => (navigation.goBack())} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightRed}]}>
-                <Ionicons name={"close-outline"} size={SIZES.xxLarge} style={styles.iconInverted}/> 
-              </TouchableOpacity>
-            )}
-            </View>
+            <TouchableOpacity onPress={() => (navigation.goBack())} style={[styles.button, {backgroundColor: enableCancel ? COLORS({opacity:0.7}).lightRed : COLORS({opacity:1}).lightRed}]} disabled={enableCancel} > 
+              <Ionicons name={"close-outline"} size={SIZES.xxLarge} style={styles.iconInverted}/> 
+            </TouchableOpacity>
             <TouchableOpacity style={{alignConten: "center"}}
               onPress={(newFavicon) => (
                 pickImage(),
                 setFavicon(newFavicon),
-                setShowSave(true)
+                setEnableCancel(false)
                 //updateNewItem({"favicon": newFavicon})
               )}
             >
@@ -220,13 +217,9 @@ export default function ItemPage({ navigation, route, expanded=true}) {
                 style={[styles.border, { width: 140, height: 140}]}
               />
             </TouchableOpacity>
-            <View>
-            {showSave && (
-              <TouchableOpacity onPress={doRefresh} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightGreen}]}>
-                <Ionicons name={"checkmark-outline"} size={SIZES.xxLarge} style={styles.iconInverted}/> 
-              </TouchableOpacity>
-            )}
-            </View>
+            <TouchableOpacity onPress={doRefresh} style={[styles.button, {backgroundColor: enableSave ? COLORS({opacity:0.7}).lightGreen : COLORS({opacity:1}).lightGreen}]} disabled={enableSave} >
+              <Ionicons name={"checkmark-outline"} size={SIZES.xxLarge} style={styles.iconInverted}/> 
+            </TouchableOpacity>
           </View>
           
           <TouchableOpacity
@@ -264,7 +257,8 @@ export default function ItemPage({ navigation, route, expanded=true}) {
               {...(title ? { defaultValue: title } : { placeholder: "Title" })}
               onChangeText={(newTitle) => (
                 setTitle(newTitle), 
-                setShowSave(true)
+                setEnableCancel(false),
+                !!newTitle ? setEnableSave(false) :  setEnableSave(true)
               )}
             />
           </View>
@@ -274,7 +268,7 @@ export default function ItemPage({ navigation, route, expanded=true}) {
               {...(description ? { defaultValue: description } : { placeholder: "Description" })} 
               onChangeText={(newDescription) => (
                 setDescription(newDescription),
-                setShowSave(true)
+                setEnableCancel(false)
               )}
             />
           )}
@@ -311,9 +305,10 @@ export default function ItemPage({ navigation, route, expanded=true}) {
 
 const styles = StyleSheet.create({
   container: {
-      width: "100%",
-      backgroundColor: COLORS({opacity:1}).white,
-      height: "100%",
+    //width: "100%",
+    backgroundColor: COLORS({opacity:1}).white,
+    //height: "100%",
+    flex:1,
   },
   row: {
       flexDirection: "row",

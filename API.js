@@ -1026,7 +1026,7 @@ export async function DELETEtagTEST(tagID) {
 export async function GETtodayTEST(filter={}) {
     const response = `${ITEMS_BASE_URL}/` + new URLSearchParams(filter);
 
-    console.log(response);
+    console.log("today: " + response);
 
     const body = {
         "items": [
@@ -1225,12 +1225,10 @@ export async function GETtodayTEST(filter={}) {
     });
 }
 
-export async function GETweekTEST(itemType, filter={}) {
-    const ext = getURL(itemType);
+export async function GETweekTEST(filter={}) {
+    const response = `${ITEMS_BASE_URL}/` + new URLSearchParams(filter);
 
-    const response = `${ITEMS_BASE_URL}/${ext}` + new URLSearchParams(filter);
-
-    console.log(response);
+    console.log("week: " + response);
 
     const body = {
         "week": {
@@ -1471,10 +1469,10 @@ export async function GETweekTEST(itemType, filter={}) {
     return week;
 }
 
-export async function GETmonthTEST(itemType, filter={}) {
-    const ext = getURL(itemType);
+export async function GETmonthTEST(filter={}) {
+    const response = `${ITEMS_BASE_URL}/` + new URLSearchParams(filter);
 
-    const response = `${ITEMS_BASE_URL}/${ext}` + new URLSearchParams(filter);
+    console.log("month: " + response);
 
     const body = {
         "month": {
