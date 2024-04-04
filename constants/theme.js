@@ -6,6 +6,7 @@ const COLORS = ({ opacity = 1 }) => ({
   navy: `rgba(43, 96, 197, ${opacity})`,
   darkBlue: `rgba(35, 73, 146, ${opacity})`,
   indigo: `rgba(13, 6, 48, ${opacity})`,
+  shadow: `rgba(13, 6, 48, ${opacity})`,
 
   lavendar: `rgba(164, 176, 245, ${opacity})`,
   yellow: `rgba(241, 200, 131, ${opacity})`,
@@ -15,8 +16,9 @@ const COLORS = ({ opacity = 1 }) => ({
   grey: `rgba(181, 181, 181, ${opacity})`,
   lightGrey: `rgba(193, 192, 200, ${opacity})`,
 
-  white: `rgba(243, 244, 248, ${opacity})`,
-  lightWhite: `rgba(250, 250, 252, ${opacity})`,
+  ///lightWhite: `rgba(243, 244, 248, ${opacity})`,
+  white: `rgba(255, 255, 255, ${opacity})`,
+  lightWhite: `rgba(250, 250, 250, ${opacity})`,
 });
   
 const FONT = {

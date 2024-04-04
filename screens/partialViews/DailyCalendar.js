@@ -74,10 +74,10 @@ export const DailyCalendar = ({navigation, date, filter, refreshing}) => {
 const styles = StyleSheet.create({
   cardsContainer: {
     marginBottom: SIZES.medium,
-    backgroundColor: COLORS({opacity:1}).white,// "#FFF",
+    backgroundColor: COLORS({opacity:1}).lightWhite,// "#FFF",
     borderRadius: SIZES.small,
     ...SHADOWS.xSmall,
-    shadowColor: COLORS({opacity:1}).indigo,
+    shadowColor: COLORS({opacity:1}).shadow,
   },
   row: {
     flexDirection: "row",

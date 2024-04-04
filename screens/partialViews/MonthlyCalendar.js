@@ -95,9 +95,6 @@ export const MonthlyCalendar = ({navigation, date, month, onRefresh, filter, ref
 };
 
 const styles = StyleSheet.create({
-  calendarView: {
-    width: 500,
-  },
   row: {
     flexDirection: "row",
   },

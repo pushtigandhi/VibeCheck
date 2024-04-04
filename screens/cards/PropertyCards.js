@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, View, Text, TextInput, Modal, TouchableOpacity,
         StyleSheet, ScrollView } from 'react-native';
-
 import { COLORS, SHADOWS, FONT, SIZES, ItemType } from "../../constants";
-import { MyDateTimePicker, PhoneNumberInput, ExpandableView, Spacer } from '../../utils';
-//import Layout from "../../../_layout";
+import { Spacer } from '../../utils';
 import { Ionicons } from "@expo/vector-icons";
-import {Calendar, LocaleConfig} from 'react-native-calendars';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import SingleSelectDropdown from "../../components/SingleSelectDropdown";
@@ -17,13 +14,10 @@ import { directoryList } from "../../API";
 export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) => {
   const [category, setCategory] = useState('');
   const [section, setSection] = useState('');
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), startDate.getHours(), startDate.getMinutes() + 15));
   const [tags, setTags] = useState([]);
   const [serving, setServing] = useState(null);
   const [priority, setPriority] = useState(null);
-  const [repeat, setRepeat] = useState(null);
-  
+
   const [allTags, setAllTags] = useState([]);
 
   const [hourPickerVisible, setHourPickerVisible] = useState(false);
@@ -38,7 +32,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
   const toggleMinutePicker = () => {
     setMinutePickerVisible(!minutePickerVisible);
   };
-   
+
   function updateNewItem(params) { 
     setFn(params);
   };
@@ -90,18 +84,8 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
         setHour(hours);
         setMinute(minutes);
       }
-      if(!!item.startDate){
-        const parsedDate = new Date(item.startDate);
-        setStartDate(parsedDate);
-      }
-      if(!!item.endDate){
-        const parsedDate = new Date(item.endDate);
-        setEndDate(parsedDate);
-      }
       if(!!item.priority)
         setPriority(item.priority);
-      if(!!item.repeat)
-        setRepeat(item.repeat);
       if(!!item.tags)
         setTags(item.tags);
     }
@@ -156,105 +140,6 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
       <MultiSelectDropdown options={allTags.map(tag => tag.title)} placeholder="Tags" setFn={setTags}
         icon={<Ionicons name={"list-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
       
-      { /* OUT OF SCOPE - MULTI-DAY EVENT
-      {multiDay && (
-        <View>
-          <View style={styles.row}>
-            <TouchableOpacity onPress={() => {}}>
-              <Text style={styles.property}>
-                <Ionicons name={"calendar-outline"} size={size} style={styles.icon}/>
-                <DateTimePicker
-                  value={!!item.startDate ? new Date(item.startDate) : new Date()}
-                  mode={"date"} // or "date" or "time"
-                  is24Hour={true}
-                  display="default"
-                  //onChange={onChangeDate}
-                  //maximumDate={new Date()}
-                />
-              </Text>
-            </TouchableOpacity>
-            <Text> - TO -</Text>
-            <TouchableOpacity>
-              <Text style={styles.property}>
-                <Ionicons name={"calendar-outline"} size={size} style={styles.icon}/>
-                <DateTimePicker
-                  value={!!item.endDate ? new Date(item.endDate) : new Date()}
-                  mode={"date"} // or "date" or "time"
-                  is24Hour={true}
-                  display="default"
-                  //onChange={onChangeDate}
-                  //maximumDate={new Date()}
-                />
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <TouchableOpacity>
-            <Text style={styles.property}>
-              <Ionicons name={"timer-outline"} size={size} style={styles.icon}/> Duration
-            </Text>
-          </TouchableOpacity>
-        </View>
-      )} */}
-      {(itemType === ItemType.Task || itemType === ItemType.Event || isFilter) && (
-        <>
-          <View style={[styles.row, styles.property, {justifyContent: "space-between"}, styles.divider]}>
-            <View style={styles.row}>
-              <Ionicons name={"calendar-outline"} size={size} style={styles.icon}/>
-              <DateTimePicker
-                value={startDate}
-                mode={"date"}
-                is24Hour={true}
-                display="default"
-                onChange={(event, selectedDate) => {
-                  const currentDate = selectedDate || startDate;
-                  setStartDate(currentDate);
-                  updateNewItem({"startDate": currentDate});
-                }}
-              />
-            </View>
-            <DateTimePicker
-              value={startDate}
-              mode={"time"}
-              is24Hour={true}
-              display="default"
-              minuteInterval={15}
-              onChange={(event, selectedDate) => {
-                const currentDate = selectedDate || startDate;
-                setStartDate(currentDate);
-                updateNewItem({"startDate": currentDate});
-              }}
-            />
-          </View>
-          <View style={[styles.row, styles.property, {justifyContent: "space-between"}, styles.divider]}>
-            <View style={styles.row}>
-              <Ionicons name={"calendar-outline"} size={size} style={styles.icon}/>
-              <DateTimePicker
-                value={endDate}
-                mode={"date"}
-                is24Hour={true}
-                display="default"
-                onChange={(event, selectedDate) => {
-                  const currentDate = selectedDate || endDate;
-                  setEndDate(currentDate);
-                  updateNewItem({"endDate": currentDate});
-                }}
-              />
-            </View>
-            <DateTimePicker
-              value={endDate}
-              mode={"time"}
-              is24Hour={true}
-              display="default"
-              minuteInterval={15}
-              onChange={(event, selectedDate) => {
-                const currentDate = selectedDate || endDate;
-                setEndDate(currentDate);
-                updateNewItem({"endDate": currentDate});
-              }}
-            />
-          </View>
-        </>
-      )}
       {(itemType === ItemType.Task || itemType === ItemType.Event || isFilter) && (
             <View style={[styles.row, styles.property, styles.divider]}>
             <Ionicons name={"timer-outline"} size={size} style={styles.icon}/>
@@ -335,7 +220,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
           </View>
         )} 
       </View>
-      <View style={[styles.row, styles.property, styles.divider]}>
+      <View style={[styles.row, styles.property]}>
         <TouchableOpacity style={[styles.row, styles.box, priority === 'NONE' ? styles.selectedBox:styles.unselectedBox]}
           onPress={() => setPriority("NONE")}
         >
@@ -369,55 +254,6 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
           <Ionicons name={"star-outline"} size={20} style={[priority === 'HIGH' ? styles.iconInverse:styles.icon]} />
         </TouchableOpacity>
       </View>
-
-      {(itemType === ItemType.Task || itemType === ItemType.Event || isFilter) && (
-        <View>
-          <View style={styles.row}>
-            <Ionicons name={"repeat-outline"} size={size} style={[styles.icon, {marginLeft: SIZES.xSmall, marginRight: SIZES.xxSmall}]} /> 
-            <Text style={styles.property}>Repeat</Text>
-          </View>
-          <View style={[styles.row, styles.property]}>
-            <TouchableOpacity style={[styles.row, styles.box, repeat === 'NEVER' ? styles.selectedBox:styles.unselectedBox]}
-              onPress={() => setRepeat("NEVER")}
-            >
-              <Ionicons name={"close-outline"} size={20} style={[repeat === 'NEVER' ? styles.iconInverse:styles.icon]} />
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.row, styles.box, repeat === 'ONCE' ? styles.selectedBox:styles.unselectedBox]}
-              onPress={() => (
-                setRepeat("ONCE"),
-                updateNewItem({"repeat": "ONCE"})
-              )}
-            >
-              <Text style={[styles.property, repeat === 'ONCE' ? styles.selectedText:styles.unselectedText]}>Once</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.row, styles.box, repeat === 'DAILY' ? styles.selectedBox:styles.unselectedBox]}
-              onPress={() => (
-                setRepeat("DAILY"),
-                updateNewItem({"repeat": "DAILY"})
-              )}
-            >
-              <Text style={[styles.property, repeat === 'DAILY' ? styles.selectedText:styles.unselectedText]}>Daily</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.row, styles.box, repeat === 'WEEKLY' ? styles.selectedBox:styles.unselectedBox]}
-              onPress={() => (
-                setRepeat("WEEKLY"),
-                updateNewItem({"repeat": "WEEKLY"})
-              )}
-            >
-              <Text style={[styles.property, repeat === 'WEEKLY' ? styles.selectedText:styles.unselectedText]}>Weekly</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.row, styles.box, repeat === 'MONTHLY' ? styles.selectedBox:styles.unselectedBox]}
-              onPress={() => (
-                setRepeat("MONTHLY"),
-                updateNewItem({"repeat": "MONTHLY"})
-              )}
-            >
-              <Text style={[styles.property, repeat === 'MONTHLY' ? styles.selectedText:styles.unselectedText]}>Monthly</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      )}
-      
     </ScrollView>
     </SafeAreaView>
   )
@@ -426,10 +262,10 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
 const styles = StyleSheet.create({
   infoContainer: {
     margin: SIZES.medium,
-    backgroundColor: COLORS.lightWhite,
+    backgroundColor: COLORS({opacity:1}).lightWhite,
     borderRadius: SIZES.medium/2,
-    borderWidth: 1,
-    borderColor: COLORS({opacity:1}).secondary,
+    ...SHADOWS.medium,
+    shadowColor: COLORS({opacity:1}).shadow,
   },
   row: {
     flexDirection: "row",
@@ -487,7 +323,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS({opacity:0.5}).primary,
     borderRadius: SIZES.small,
     ...SHADOWS.medium,
-    shadowColor: COLORS({opacity:1}).indigo,
+    shadowColor: COLORS({opacity:1}).shadow,
   },
   title: {
     fontSize: SIZES.large,

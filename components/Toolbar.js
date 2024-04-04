@@ -6,6 +6,7 @@ import { View, TouchableOpacity, StyleSheet, Text, TextInput, RefreshControl } f
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS, SIZES, SHADOWS } from "../constants";
 import DateTimePicker from '@react-native-community/datetimepicker';
+import MiniTools from "./MiniTools";
 
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 
@@ -16,7 +17,9 @@ export const ToolBar = ({
   showSidebar = false,
   date,
   toggleSidebar,
-  setFilterVisible
+  setFilterVisible,
+  setScheduleVisible,
+  doSearch
 }) => {
 
   const [selected, setSelected] = useState('');
@@ -88,25 +91,9 @@ export const ToolBar = ({
         </TouchableOpacity>
       </View>
       
-      <View style={[styles.row, styles.rightContent]}>
-          {/* <Search
-            //className={searchPropertyDefaultClassName}
-            //searchButtonColor={searchIconColor}
-            property1="default"
-          /> */}
-        <TouchableOpacity
-          onPress={() => {
-            //setIsExpanded(!isExpanded);
-            setFilterVisible(true);
-          }}
-          style={styles.filterButtonIcon}
-        >
-          <Ionicons name={"funnel-outline"} size={20} style={styles.iconInverted}/>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.addButtonIcon} >
-          <Ionicons name={"add-circle"} size={20} style={styles.iconInverted} />
-        </TouchableOpacity>
-      </View>
+      {/* <View style={[styles.row, styles.rightContent]}>
+        <MiniTools setFilterVisible={setFilterVisible} doSearch={doSearch} />
+      </View> */}
     </View>
     {showDatePicker && (
       <Calendar
@@ -146,7 +133,6 @@ const styles = StyleSheet.create({
       flex: 'row',
       justifyContent: 'space-between',
       //position: 'relative',
-      width:"100%",
       height: 50,
     },
     leftContent: {

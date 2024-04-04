@@ -23,6 +23,8 @@ import { GETdirectoryTEST, doOnStart } from "../API";
 
 //import { directoryList } from "../API";
 import FilterModal from "../components/FilterModal";
+import ScheduleItem from "./ScheduleItem";
+import MiniTools from "../components/MiniTools";
 import { refresh } from "@react-native-community/netinfo";
 
 export default function HomeScreen ({ navigation, route }) {
@@ -30,6 +32,7 @@ export default function HomeScreen ({ navigation, route }) {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [filter, setFilter] = useState({});
     const [filterVisible, setFilterVisible] = useState(false);
+    const [scheduleVisible, setScheduleVisible] = useState(false);
 
     const [items, setItems] = useState([]);
 
@@ -67,6 +70,15 @@ export default function HomeScreen ({ navigation, route }) {
         setRefreshing(!refreshing);
         setFilterVisible(false);
     }
+    function closeSchedule() {
+        setRefreshing(!refreshing);
+        setScheduleVisible(false);
+    }
+    
+    function doSearch({search}) {
+        console.log(search);
+        setSearchBar(false);
+    }
 
     useEffect(() => {
         doOnStart();
@@ -94,9 +106,14 @@ export default function HomeScreen ({ navigation, route }) {
                         showSidebar={showSidebar}
                         onRefresh={onRefresh}
                         setFilterVisible={setFilterVisible}
+                        setScheduleVisible={setScheduleVisible}
+                        navigation={navigation}
                     />
                     <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
                         <FilterModal closeFilter={closeFilter} filter={filter} setFilter={setFilter} />
+                    </Modal>
+                    <Modal visible={scheduleVisible} animationType="slide" onRequestClose={closeSchedule}>
+                        <ScheduleItem navigation={navigation} close={closeSchedule} />
                     </Modal>
                     <View style={styles.iconRoot}>
                         <TouchableOpacity

@@ -2,13 +2,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { ScrollView, Text, View, StyleSheet, TouchableOpacity, TextInput} from "react-native";
 import { COLORS, FONT, SIZES, SHADOWS, ItemType } from "../constants";
 import React, { useEffect, useState } from "react";
-//import SortDropdown from "./SortDropdown";
 import Slider from '@react-native-community/slider';
 import SwitchSelector from "react-native-switch-selector";
 import SingleSelectDropdown from "./SingleSelectDropdown";
 import MultiSelectDropdown from "./MultiSelectDropdown";
 import { PropertyCard } from "../screens/cards/PropertyCards";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Scheduler } from "./Scheduler";
 
 export default function FilterModal({ filter, setFilter, closeFilter }) {
     const sortOptions = [
@@ -58,7 +58,7 @@ export default function FilterModal({ filter, setFilter, closeFilter }) {
     }
 
     function resetFilter() {
-        
+        setFilter({});
     }
 
     function updateFilter(params) {
@@ -80,9 +80,6 @@ export default function FilterModal({ filter, setFilter, closeFilter }) {
         if(params.repeat) {
             setFilter({... filter, repeat: params.repeat});
         }
-        // if(params.ingredients) {
-        //     setFilter({... filter, ingredients: params.ingredients});
-        // }
         if(params.servings) {
             setFilter({... filter, servings: params.servings});
         }
@@ -107,37 +104,23 @@ export default function FilterModal({ filter, setFilter, closeFilter }) {
 
    
     return (
-        <SafeAreaView style={styles.root}>
-            <View style={styles.header}>
-                <Text style={styles.headerText}></Text>
-                <Ionicons name="close-sharp" size={40} color="black" onPress={onClose} style={styles.closeIcon} />
+        <View style={styles.container}>
+            <View style={[styles.row, styles.header]}>
+                <TouchableOpacity onPress={resetFilter} style={[styles.button, {backgroundColor: COLORS({opacity:1}).tertiary, width: SIZES.xLarge * 4}]} >
+                    <Text style={styles.headerText}>Reset</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={onClose} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightRed, width: SIZES.xLarge * 2}]} > 
+                    <Ionicons name={"close-outline"} size={SIZES.xLarge} style={styles.iconInverted}/> 
+                </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.header}>
-                <Text style={styles.headerText}>Reset</Text>
-            </TouchableOpacity>
-            <Text style={styles.sortText}>Sort by:</Text>
-            <SingleSelectDropdown options={sortOptions} placeholder={"Start Time (Ascending)"} setFn={changeSortOption}
-                icon={<Ionicons name={"swap-vertical-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
-            {/* <SortDropdown onChangeSortOption={changeSortOption} options={sortOptions} value={sortOption} style={styles.sortDropdown} /> */}
+            <ScrollView>
+                <Text style={styles.sortText}>Sort by:</Text>
+                <SingleSelectDropdown options={sortOptions} placeholder={"Date (Ascending)"} setFn={changeSortOption}
+                    icon={<Ionicons name={"swap-vertical-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
 
-            <PropertyCard item={filter} itemType={ItemType.Scheduled} setFn={updateFilter} isFilter={true} />
-            
-            
-            <ScrollView style={styles.innerRoot}>
-                <View style={styles.innnerInnerRoot}>
+                <PropertyCard item={filter} itemType={ItemType.Scheduled} setFn={updateFilter} isFilter={true} />
                 
-
-                {/* <View style={styles.sortOptions}>
-                    <Text style={styles.sortText}>Tags:</Text>
-                    <TextInput
-                        style={styles.textInput}
-                        onChangeText={onChangeTags}
-                        value={tagsText}
-                        autoCapitalize="none"
-                        autoCorrect={false}
-                    />
-                </View> */}
-
+                <Scheduler item={filter} setFn={updateFilter} />
                 <TouchableOpacity
                     style={styles.searchButton}
                     onPress={(closeFilter)}
@@ -145,33 +128,61 @@ export default function FilterModal({ filter, setFilter, closeFilter }) {
                     >
                     <Text style={styles.searchButtonText}>Search</Text>
                 </TouchableOpacity>
-                </View>
             </ScrollView>
-        </SafeAreaView>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
+    container: {
+        backgroundColor: COLORS({opacity:1}).white,
+        flex:1,
+    },
+    row: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+    },
+    header: {
+        display: "flex",
+        marginTop: SIZES.small,
+        paddingTop: SIZES.xxLarge,
+        paddingHorizontal: SIZES.xSmall,
+    },
+    headerText: {
+        fontSize: SIZES.large,
+        alignSelf: "center",
+        color: COLORS({opacity:1}).white,
+    },
+    sortText: {
+        fontSize: 20,
+        fontWeight: "bold",
+        marginTop: SIZES.medium,
+        marginHorizontal: SIZES.medium,
+    },
+    button: {
+        height: SIZES.xLarge * 2,
+        padding: SIZES.xSmall,
+        marginHorizontal: SIZES.xSmall,
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: SIZES.medium
+    },
     searchButton: {
         // marginRight: 90,
         // marginLeft: 90,
+        marginHorizontal: 50,
         marginTop: SIZES.xSmall,
+        marginBottom: 25,
         paddingTop: SIZES.xSmall,
         paddingBottom: SIZES.xSmall,
         backgroundColor: COLORS({opacity: 1}).secondary,
         borderRadius: SIZES.small,
-        borderWidth: 1,
-        borderColor: COLORS({opacity: 1}).primary, 
     },
     searchButtonText: {
         fontSize: SIZES.large,
         alignSelf: "center",
         color: COLORS({opacity:1}).lightWhite,
-    },
-    headerText: {
-        fontSize: SIZES.large,
-        fontWeight: "bold",
-        alignSelf: "center"
     },
     filterOptions: {
         display: "flex",
@@ -198,11 +209,7 @@ const styles = StyleSheet.create({
         height: 80,
         overflow: "hidden",
     },
-    sortText: {
-        fontSize: 20,
-        fontWeight: "bold",
-        marginHorizontal: SIZES.small,
-    },
+    
     toSign: {
         fontSize: 20,
         fontWeight: "bold",
@@ -238,14 +245,7 @@ const styles = StyleSheet.create({
         width: "100%",
         paddingHorizontal: 20,
     },
-    header: {
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        paddingTop: 20,
-        paddingHorizontal: SIZES.xSmall,
-    },
+   
     closeIcon: {
         alignSelf: "center",
     },

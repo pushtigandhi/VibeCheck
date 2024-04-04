@@ -1701,6 +1701,8 @@ export async function GETitemsTEST(itemType, filter={}) {
 
     const response = `${ITEMS_BASE_URL}/${ext}` + new URLSearchParams(filter);
 
+    console.log("items: " + response);
+
     const body = {
         "items": [
             {

@@ -12,7 +12,7 @@ const expandedCard = ({navigation, category, sections}) => {
       {sections.map(section => (
         <TouchableOpacity style={styles.sectionContainer} key={section + "_root"}
           onPress={() => {
-            navigation.navigate("Section", {"category": category, "section": section})
+            navigation.navigate("ItemScreen", {"isSection": true, "category": category, "section": section})
           }}
         >
           <Text style={styles.section} numberOfLines={1}>{section}</Text>

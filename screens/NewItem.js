@@ -17,7 +17,7 @@ export default function NewItem({navigation}) {
     <SafeAreaView style={styles.infoContainer}>
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("Item", {item: df.defaultItem})
+          navigation.navigate("ItemScreen", {"isSection": false, "item": df.defaultItem});
         }}
         style={styles.titleContainer}
       >
@@ -29,7 +29,7 @@ export default function NewItem({navigation}) {
 
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("Item", {item: df.defaultTask});
+          navigation.navigate("ItemScreen", {"isSection": false, "item": df.defaultTask});
         }}
         style={styles.titleContainer}
       >
@@ -41,7 +41,7 @@ export default function NewItem({navigation}) {
 
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("Item", {item: df.defaultEvent});
+          navigation.navigate("ItemScreen", {"isSection": false, "item": df.defaultEvent});
         }}
         style={styles.titleContainer}
       >
@@ -53,19 +53,19 @@ export default function NewItem({navigation}) {
 
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("Item", {item: df.defaultPage});
+          navigation.navigate("ItemScreen", {"isSection": false, "item": df.defaultPage});
         }}
         style={styles.titleContainer}
       >
-      <View style={styles.row}>
-        <Text style={styles.label}>{df.ItemType.Page}</Text>
-        <Text style={{fontSize: SIZES.xLarge}}>{df.defaultPage.icon}</Text>
-      </View>
+        <View style={styles.row}>
+          <Text style={styles.label}>{df.ItemType.Page}</Text>
+          <Text style={{fontSize: SIZES.xLarge}}>{df.defaultPage.icon}</Text>
+        </View>
       </TouchableOpacity>
 
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("Item", {item: df.defaultRecipe});
+          navigation.navigate("ItemScreen", {"isSection": false, "item": df.defaultRecipe});
         }}
         style={styles.titleContainer}
       >
@@ -79,21 +79,14 @@ export default function NewItem({navigation}) {
 };
 
 const styles = StyleSheet.create({
-  cardContainer: {
-    width: '90%',
-    margin: SIZES.xSmall,
-    backgroundColor: "#FFF",
-    borderRadius: SIZES.xLarge,
-    ...SHADOWS.medium,
-    shadowColor: COLORS({opacity:1}).indigo,
+  infoContainer: {
+    flex:1,
+    backgroundColor: COLORS({opacity:1}).white,
   },
   titleContainer: {
-    width: '100%',
     padding: SIZES.medium,
     borderColor: COLORS({opacity:0.5}).darkBlue,
     borderBottomWidth: 1,
-    borderBottomLeftRadius: SIZES.xLarge,
-    borderBottomRightRadius: SIZES.xLarge,
   },
   sectionContainer: {
     margin: SIZES.xSmall,
@@ -101,7 +94,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS({opacity:0.5}).darkBlue,
     borderRadius: SIZES.small,
     ...SHADOWS.medium,
-    shadowColor: COLORS({opacity:1}).indigo,
+    shadowColor: COLORS({opacity:1}).shadow,
   },
   title: {
     fontSize: SIZES.large,
@@ -121,7 +114,8 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: "row",
-    justifyContent: "flex-start",
+    //justifyContent: "flex-start",
+    //justifyContent: "space-between",
     alignItems: "center",
   },
   icon: {
@@ -133,5 +127,13 @@ const styles = StyleSheet.create({
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).navy,
     margin: SIZES.xSmall,
+  },
+  button: {
+    height: SIZES.xLarge * 2,
+    padding: SIZES.xSmall,
+    marginHorizontal: SIZES.xSmall,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: SIZES.medium
   },
 });

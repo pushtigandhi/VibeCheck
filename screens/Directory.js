@@ -31,15 +31,14 @@ export default function Directory ({navigation, scrollEnabled = true}) {
   }
 
   async function getDirectoryFromAPI() {
-      try {
-          let categories_ = await GETdirectoryTEST();
-          return categories_;
-      } catch (error) {
-        console.log("error fetching directory");
-        console.log(error);
-
-          return [];
-      }
+    try {
+      let categories_ = await GETdirectoryTEST();
+      return categories_;
+    } catch (error) {
+      console.log("error fetching directory");
+      console.log(error);
+      return [];
+    }
   }
 
   useEffect(() => {
@@ -73,9 +72,8 @@ export default function Directory ({navigation, scrollEnabled = true}) {
 
 const styles = StyleSheet.create({
   screen: {
-    height: '100%',
-    width: '100%',
-    backgroundColor: COLORS({opacity:1}).lightWhite,
+    flex: 1,
+    backgroundColor: COLORS({opacity:1}).white,
   },
   header:{
     fontSize: SIZES.medium,
@@ -93,6 +91,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
     borderRadius: SIZES.medium,
     ...SHADOWS.medium,
-    shadowColor: COLORS({opacity:1}).indigo,
+    shadowColor: COLORS({opacity:1}).shadow,
   },
 });

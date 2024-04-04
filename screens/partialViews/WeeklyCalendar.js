@@ -83,10 +83,10 @@ export const WeeklyCalendar = ({navigation, date, filter, refreshing}) => {
 const styles = StyleSheet.create({
   cardsContainer: {
     //marginBottom: SIZES.medium,
-    backgroundColor: COLORS({opacity:1}).white,// "#FFF",
+    backgroundColor: COLORS({opacity:1}).lightWhite,// "#FFF",
     borderRadius: SIZES.xSmall,
     ...SHADOWS.xSmall,
-    shadowColor: COLORS({opacity:1}).indigo,
+    shadowColor: COLORS({opacity:1}).shadow,
     width: 100, //slotWidth - SIZES.xSmall,
     height: slotHeight - SIZES.xSmall, 
     padding: SIZES.tiny,

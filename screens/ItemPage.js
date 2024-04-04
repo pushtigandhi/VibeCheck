@@ -6,6 +6,7 @@ import { COLORS, SHADOWS, FONT, SIZES } from "../constants";
 import { ExpandableView, Spacer } from '../utils';
 import { Ionicons } from "@expo/vector-icons";
 import { PropertyCard } from "./cards/PropertyCards";
+import { Scheduler } from "../components/Scheduler";
 import { ItemType } from "../constants";
 import { ScrollView } from "react-native-gesture-handler";
 import { expandedSubTaskCard } from "./cards/items/TaskCard";
@@ -20,8 +21,7 @@ import React from "react";
 const defaultImage = require("../assets/icon.png");
 
 export default function ItemPage({ navigation, route, expanded=true}) {
-  const [enableSave, setEnableSave] = useState(true);
-  const [enableCancel, setEnableCancel] = useState(true);
+  const [disableSave, setDisableSave] = useState(true);
 
   const [itemType, setItemType] = useState('');
 
@@ -36,6 +36,8 @@ export default function ItemPage({ navigation, route, expanded=true}) {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [tags, setTags] = useState([]);
+
+  const [showScheduler, setShowScheduler] = useState(false);
   
   const [updatedItem, setUpdatedItem] = useState({});
   
@@ -152,8 +154,6 @@ export default function ItemPage({ navigation, route, expanded=true}) {
   }
 
   function updateNewItem(params) {
-    setEnableCancel(false);
-
     if(params.category) {
       setCategory(params.category);
     }
@@ -171,7 +171,7 @@ export default function ItemPage({ navigation, route, expanded=true}) {
       setPriority(params.priority);
     }
     if(params.repeat) {
-      setRepeat(params.repeat);
+      setUpdatedItem({... updatedItem, repeat: params.repeat});
     }
     // if(params.tags) {
     //   setUpdatedItem({... updatedItem, "tags": params.tags});
@@ -201,15 +201,13 @@ export default function ItemPage({ navigation, route, expanded=true}) {
       <GestureHandlerRootView>
         <ScrollView scrollEnabled={true}>
           <View style={styles.imageBox}>
-            <TouchableOpacity onPress={() => (navigation.goBack())} style={[styles.button, {backgroundColor: enableCancel ? COLORS({opacity:0.7}).lightRed : COLORS({opacity:1}).lightRed}]} disabled={enableCancel} > 
+            <TouchableOpacity onPress={() => (navigation.goBack())} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightRed}]} > 
               <Ionicons name={"close-outline"} size={SIZES.xxLarge} style={styles.iconInverted}/> 
             </TouchableOpacity>
             <TouchableOpacity style={{alignConten: "center"}}
               onPress={(newFavicon) => (
                 pickImage(),
-                setFavicon(newFavicon),
-                setEnableCancel(false)
-                //updateNewItem({"favicon": newFavicon})
+                setFavicon(newFavicon)
               )}
             >
               <Image
@@ -217,11 +215,39 @@ export default function ItemPage({ navigation, route, expanded=true}) {
                 style={[styles.border, { width: 140, height: 140}]}
               />
             </TouchableOpacity>
-            <TouchableOpacity onPress={doRefresh} style={[styles.button, {backgroundColor: enableSave ? COLORS({opacity:0.7}).lightGreen : COLORS({opacity:1}).lightGreen}]} disabled={enableSave} >
+            <TouchableOpacity onPress={doRefresh} style={[styles.button, {backgroundColor: disableSave ? COLORS({opacity:0.7}).lightGreen : COLORS({opacity:1}).lightGreen}]} disabled={disableSave} >
               <Ionicons name={"checkmark-outline"} size={SIZES.xxLarge} style={styles.iconInverted}/> 
             </TouchableOpacity>
           </View>
           
+          <View style={[styles.row, styles.title]}>
+            {/* TODO: SELECT NEW ICON
+            <TextInput
+              style={{fontSize: SIZES.xLarge, borderRightWidth: 1, borderBlockColor: COLORS({opacity:1}).navy}}
+              onChangeText={handleIconChange}
+              value={itemIcon}
+              placeholder={itemIcon}
+            /> */}
+            <Text style={{fontSize: SIZES.xLarge, marginRight: SIZES.xxSmall}}>{icon}</Text>
+            <TextInput style={{width: "100%", fontSize: SIZES.xLarge, color: COLORS({opacity:0.9}).primary}}
+              {...(title ? { defaultValue: title } : { placeholder: "Title" })}
+              onChangeText={(newTitle) => (
+                setTitle(newTitle),
+                newTitle ? setDisableSave(false) : setDisableSave(true)
+              )}
+            />
+          </View>
+
+          {!(itemType === ItemType.Page) && (
+            <TextInput style={styles.description}
+              multiline 
+              {...(description ? { defaultValue: description } : { placeholder: "Description" })} 
+              onChangeText={(newDescription) => (
+                setDescription(newDescription)
+              )}
+            />
+          )}
+
           <TouchableOpacity
               onPress={() => {
                   setIsExpanded(!isExpanded);
@@ -242,36 +268,29 @@ export default function ItemPage({ navigation, route, expanded=true}) {
               </View>
             </View>
           </TouchableOpacity>
-          <ExpandableView expanded={isExpanded} view={PropertyCard} params={{"item": route.params?.item, "itemType": itemType, "setFn": updateNewItem}} vh={300} />
+          <ExpandableView expanded={isExpanded} view={PropertyCard} params={{"item": route.params?.item, "itemType": itemType, "setFn": updateNewItem }} vh={360} />
 
-          <View style={[styles.row, styles.title]}>
-            {/* TODO: SELECT NEW ICON
-            <TextInput
-              style={{fontSize: SIZES.xLarge, borderRightWidth: 1, borderBlockColor: COLORS({opacity:1}).navy}}
-              onChangeText={handleIconChange}
-              value={itemIcon}
-              placeholder={itemIcon}
-            /> */}
-            <Text style={{fontSize: SIZES.xLarge, marginRight: SIZES.xxSmall}}>{icon}</Text>
-            <TextInput style={{width: "100%", fontSize: SIZES.xLarge, color: COLORS({opacity:0.9}).darkBlue}}
-              {...(title ? { defaultValue: title } : { placeholder: "Title" })}
-              onChangeText={(newTitle) => (
-                setTitle(newTitle), 
-                setEnableCancel(false),
-                !!newTitle ? setEnableSave(false) :  setEnableSave(true)
-              )}
-            />
-          </View>
-          {!(itemType === ItemType.Page) && (
-            <TextInput style={styles.description}
-              multiline 
-              {...(description ? { defaultValue: description } : { placeholder: "Description" })} 
-              onChangeText={(newDescription) => (
-                setDescription(newDescription),
-                setEnableCancel(false)
-              )}
-            />
-          )}
+          <TouchableOpacity
+              onPress={() => {
+                  setShowScheduler(!showScheduler);
+                }}
+              style={styles.propContainer}
+          >
+            <View style={[styles.row, {justifyContent: "space-between"}]}>
+              <View style={styles.row}>
+                <Ionicons name={"calendar-outline"} size={SIZES.xLarge} style={styles.icon}/> 
+                <Text style={styles.label} numberOfLines={1}>Schedule</Text>
+              </View>
+              <View>
+                {showScheduler ? (
+                    <Ionicons name="chevron-up-outline" size={SIZES.xLarge} style={styles.icon}/>
+                ) : (
+                    <Ionicons name="chevron-down-outline" size={SIZES.xLarge} style={styles.icon}/>
+                )}
+              </View>
+            </View>
+          </TouchableOpacity>
+          <ExpandableView expanded={showScheduler} view={Scheduler} params={{"item": route.params?.item, "setFn": updateNewItem}} vh={280} />
 
           {itemType === ItemType.Event && (
             <View>
@@ -305,19 +324,14 @@ export default function ItemPage({ navigation, route, expanded=true}) {
 
 const styles = StyleSheet.create({
   container: {
-    //width: "100%",
     backgroundColor: COLORS({opacity:1}).white,
-    //height: "100%",
     flex:1,
   },
   row: {
       flexDirection: "row",
-      //justifyContent: "space-between",
       alignItems: "center",
   },
   title:{
-      //fontSize: SIZES.xLarge,
-      //fontFamily: FONT.regular,
       padding: SIZES.medium,
       margin: SIZES.medium,
       borderWidth: 1,

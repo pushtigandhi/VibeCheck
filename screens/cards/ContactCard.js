@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
     borderRadius: SIZES.xLarge,
     ...SHADOWS.medium,
-    shadowColor: COLORS({opacity:1}).indigo,
+    shadowColor: COLORS({opacity:1}).shadow,
   },
   titleContainer: {
     width: '100%',
