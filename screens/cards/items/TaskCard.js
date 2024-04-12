@@ -53,7 +53,6 @@ const expandedSubTaskCard = ({originalSubtasks, setFn}) => {
 const TaskCard = ({item, setFn, expanded=false}) => {
   //const [isPropExpanded, setIsPropExpanded] = useState(expanded);
   const [isSubtaskExpanded, setIsSubtaskExpanded] = useState(true);
-  const [isPressable, setIsPressable] = useState(true);
 
   return (
     <View style={styles.infoContainer}>
@@ -62,7 +61,6 @@ const TaskCard = ({item, setFn, expanded=false}) => {
           setIsSubtaskExpanded(!isSubtaskExpanded);
         }}
         style={styles.propContainer}
-        disabled={!isPressable}
       >
         <View style={[styles.row, {justifyContent: "space-between"}]}>
           <View style={styles.row}>

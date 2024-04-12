@@ -4,7 +4,6 @@ const ItemType = {
     Event: 'Event',
     Page: 'Page',
     Recipe: 'Recipe',
-    Scheduled: 'Scheduled'
 };
 
 const defaultItem = {
@@ -12,6 +11,9 @@ const defaultItem = {
     "section": "All",
     "icon": '\u{1F4E6}',
   //  "favicon": 'U+1F4CB',//if favicon === icon then <View style={[styles.border, {padding: 20}}><Text style={{fontisize: 100}}>{favicon}</Text>
+    //"tags": [string];
+    "description": "",
+    "priority": "",
     "itemType" : ItemType.Item,
 }
 

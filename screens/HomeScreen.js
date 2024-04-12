@@ -26,6 +26,7 @@ import FilterModal from "../components/FilterModal";
 import ScheduleItem from "./ScheduleItem";
 import MiniTools from "../components/MiniTools";
 import { refresh } from "@react-native-community/netinfo";
+import NewItem from "./NewItem";
 
 export default function HomeScreen ({ navigation, route }) {
     const calendarHeight = Dimensions.get('window').height - 300;
@@ -77,7 +78,7 @@ export default function HomeScreen ({ navigation, route }) {
     
     function doSearch({search}) {
         console.log(search);
-        setSearchBar(false);
+       // setSearchBar(false);
     }
 
     useEffect(() => {
@@ -107,19 +108,19 @@ export default function HomeScreen ({ navigation, route }) {
                         onRefresh={onRefresh}
                         setFilterVisible={setFilterVisible}
                         setScheduleVisible={setScheduleVisible}
-                        navigation={navigation}
+                        doSearch={doSearch}
                     />
                     <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
                         <FilterModal closeFilter={closeFilter} filter={filter} setFilter={setFilter} />
                     </Modal>
                     <Modal visible={scheduleVisible} animationType="slide" onRequestClose={closeSchedule}>
-                        <ScheduleItem navigation={navigation} close={closeSchedule} />
+                        <NewItem navigation={navigation} />
                     </Modal>
                     <View style={styles.iconRoot}>
                         <TouchableOpacity
                             disabled={state === "day" ? true : false} 
                             onPress={() => {
-                                setRefreshing(true);
+                                setRefreshing(!refreshing);
                                 setState("day");
                             }}
                             style={{flex:1}}
@@ -130,7 +131,7 @@ export default function HomeScreen ({ navigation, route }) {
                         <TouchableOpacity 
                             disabled={state === "week" ? true : false} 
                             onPress={() => {
-                                setRefreshing(true);
+                                setRefreshing(!refreshing);
                                 setState("week");
                             }}
                             style={{flex:1}}
@@ -142,7 +143,7 @@ export default function HomeScreen ({ navigation, route }) {
                         <TouchableOpacity 
                             disabled={state === "month" ? true : false} 
                             onPress={() => {
-                                setRefreshing(true);
+                                setRefreshing(!refreshing);
                                 setState("month");
                             }}
                             style={{flex:1}}

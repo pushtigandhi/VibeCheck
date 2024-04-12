@@ -176,8 +176,8 @@ const styles = StyleSheet.create({
     margin: SIZES.xSmall,
     backgroundColor: COLORS({opacity:0.5}).darkBlue,
     borderRadius: SIZES.small,
-    ...SHADOWS.medium,
-    shadowColor: COLORS({opacity:1}).shadow,
+    // ...SHADOWS.medium,
+    // shadowColor: COLORS({opacity:1}).shadow,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -199,8 +199,8 @@ const styles = StyleSheet.create({
     padding: SIZES.xSmall,
     backgroundColor: COLORS({opacity:0.5}).lightWhite,
     borderRadius: SIZES.small,
-    ...SHADOWS.medium,
-    shadowColor: COLORS({opacity:1}).shadow,
+    // ...SHADOWS.medium,
+    // shadowColor: COLORS({opacity:1}).shadow,
   },
 });
 

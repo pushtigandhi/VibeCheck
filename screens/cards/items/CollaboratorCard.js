@@ -1,14 +1,8 @@
 import { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image,
-        StyleSheet, Animated, FlatList } from 'react-native';
-
+import { View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import { COLORS, SHADOWS, FONT, SIZES } from "../../../constants";
-import { ExpandableView, Spacer } from '../../../utils';
-import { taskProperties } from "../PropertyCards";
-import Layout from "../../../_layout";
+import { ExpandableView, Spacer } from '../../../utils'
 import { Ionicons } from "@expo/vector-icons";
-import { PropertyCard } from "../PropertyCards";
-import TaskCard from "./TaskCard";
 
 const expandedContactList = ({contactList, setFn}) => {
   const [contacts, setContacts] = useState(contactList);
@@ -36,31 +30,20 @@ const expandedContactList = ({contactList, setFn}) => {
   )
 };
 
-const EventCard = ({item, setFn, expanded=false}) => {
-  const [location, setLocation] = useState('');
-
+const CollaboratorCard = ({item, setFn, expanded=false}) => {
   const [isContactsExpanded, setIsContactsExpanded] = useState(true);
-  const [isPressable, setIsPressable] = useState(true);
 
   return (
     <View style={styles.infoContainer}>
-      <TextInput style={styles.location} 
-        {...(item.location ? { defaultValue: item.location.toString() } : { placeholder: "Location" })} 
-        onChangeText={(newLocation) => (
-          setLocation({"location": newLocation}),
-          setFn({"location": newLocation})
-        )}
-      />
       <TouchableOpacity
         onPress={() => {
           setIsContactsExpanded(!isContactsExpanded);
         }}
         style={styles.propContainer}
-        disabled={!isPressable}
       >
         <View style={[styles.row, {justifyContent: "space-between"}]}>
           <View style={styles.row}>
-            <Text style={styles.label} numberOfLines={1}>Contacts</Text>
+            <Text style={styles.label} numberOfLines={1}>Collaborators</Text>
           </View>
           <View>
             {isContactsExpanded ? (
@@ -103,6 +86,8 @@ const styles = StyleSheet.create({
     margin: SIZES.medium,
     backgroundColor: COLORS.lightWhite,
     borderRadius: SIZES.medium/2,
+    // ...SHADOWS.medium,
+    // shadowColor: COLORS({opacity:1}).shadow,
     borderWidth: 1,
     borderColor: COLORS({opacity:1}).navy,
     padding: SIZES.medium,
@@ -139,16 +124,6 @@ const styles = StyleSheet.create({
     ...SHADOWS.medium,
     shadowColor: COLORS({opacity:1}).shadow,
   },
-  location:{
-    fontSize: SIZES.medium,
-    //fontFamily: FONT.regular,
-    color: COLORS({opacity:0.9}).darkBlue,
-    padding: SIZES.medium,
-    marginHorizontal: SIZES.medium,
-    borderWidth: 1,
-    borderColor: COLORS({opacity:0.5}).darkBlue,
-    borderRadius: SIZES.medium,
-  },
 });
 
-export default EventCard
+export default CollaboratorCard
