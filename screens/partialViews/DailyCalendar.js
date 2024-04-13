@@ -30,7 +30,7 @@ export const DailyCalendar = ({navigation, date, filter, refreshing}) => {
   const renderItem = ({ item }) => (
     <TouchableOpacity
       onPress={() => {
-          navigation.navigate("Item", {item});
+          navigation.navigate("EmptyItemScreen", {item});
       }}
       key={item["_id"] + "root"} 
       style={styles.cardsContainer}

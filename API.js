@@ -1035,17 +1035,28 @@ export async function GETtodayTEST(filter={}) {
                 "title": "today item 0",
                 "category": "Backlog",
                 "section": "All",
+                "favicon": {"assetId": "4F79F283-507B-4320-8F94-0C7C3A443713/L0/001", "base64": null, "duration": null, "exif": null, "fileName": "IMG_1028.jpg", "fileSize": 3676591, "height": 4032, "type": "image", "uri": "file:///var/mobile/Containers/Data/Application/8FD0148E-FB7A-4CFA-8EB3-BA4B7FB68A68/Library/Caches/ExponentExperienceData/@anonymous/VibeCheck-c25b1d4f-7003-4b9f-8017-6562b5a94a07/ImagePicker/E7B586D7-1DB2-48EA-A098-44B0F036EF4F.jpg", "width": 3024},
                 "icon": "📍",
                 "tags": [
                     "new"
                 ],
-                "notes": [],
+                "servings": 3,
                 "owner": "65dffad64102392ebb57839b",
                 "duration": "30",
-                "startDate": "2024-03-29T05:15:00.000Z",
+                "startDate": "2024-03-12T05:15:00.000Z",
                 "endDate": "2024-03-13T07:08:05.326Z",
+                "repeat": "DAILY",
+                "priority": "HIGH",
                 "createdAt": "2024-02-29T03:37:10.111Z",
                 "updatedAt": "2024-02-29T03:37:10.111Z",
+                "itemType": "Task",
+                "subtasks": [
+                    {"isChecked": false, "task": "first subtask", "_id": "65e134a91635ad960dab35ytsdc1c"},
+                    {"isChecked": false, "task": "2 subtask", "_id": "65e134a91635ad960dabsrhjdc1c"},
+                    {"isChecked": false, "task": "3 subtask", "_id": "65e134a91635ad960dgkudabdc1c"},
+                    {"isChecked": false, "task": "4 subtask", "_id": "65e134a91635ad96tdku0dabdc1c"},
+                    {"isChecked": false, "task": "5 subtask", "_id": "65e134a91635ad96nhdtt0dabdc1c"}
+            ],
                 "__v": 0
             },{
                 "_id": "65dffbe64102392ebb5783b01235436457",
@@ -1056,7 +1067,12 @@ export async function GETtodayTEST(filter={}) {
                 "tags": [
                     "new"
                 ],
-                "notes": [],
+                "itemType": "Event",
+                "subtasks": [{"isChecked": false, "task": "first subtask", "_id": "65e134a91635ad960dab35ytsdc1c"},
+                {"isChecked": false, "task": "2 subtask", "_id": "65e134a91635ad960dabsrhjdc1c"}],
+                "contacts": [{"isChecked": false, "task": "4 subtask", "_id": "65e134a91635ad96tdku0dabdc1c"},
+                {"isChecked": false, "task": "5 subtask", "_id": "65e134a91635ad96nhdtt0dabdc1c"}],
+                "notes": "Hello, World!",
                 "owner": "65dffad64102392ebb57839b",
                 "duration": "30",
                 "startDate": "2024-03-29T05:15:00.000Z",
@@ -1073,9 +1089,9 @@ export async function GETtodayTEST(filter={}) {
                 "tags": [
                     "new"
                 ],
-                "notes": [],
                 "owner": "65dffad64102392ebb57839b",
                 "duration": "30",
+                "itemType": "Page",
                 "startDate": "2024-03-29T05:15:00.000Z",
                 "endDate": "2024-03-13T07:08:05.326Z",
                 "createdAt": "2024-02-29T03:37:10.111Z",
@@ -1086,11 +1102,15 @@ export async function GETtodayTEST(filter={}) {
                 "title": "today item 3",
                 "category": "Backlog",
                 "section": "All",
+                "itemType": "Recipe",
+                "ingredients": [{"isChecked": false, "task": "first subtask", "_id": "65e134a91635ad960dab35ytsdc1c"},
+                {"isChecked": false, "task": "2 subtask", "_id": "65e134a91635ad960dabsrhjdc1c"}],
+                "instructions": [{"isChecked": false, "task": "4 subtask", "_id": "65e134a91635ad96tdku0dabdc1c"},
+                {"isChecked": false, "task": "5 subtask", "_id": "65e134a91635ad96nhdtt0dabdc1c"}],
                 "icon": "📍",
                 "tags": [
                     "new"
                 ],
-                "notes": [],
                 "owner": "65dffad64102392ebb57839b",
                 "duration": "30",
                 "startDate": "2024-03-29T05:15:00.000Z",

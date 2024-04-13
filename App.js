@@ -10,7 +10,7 @@ import VibeCheck from './screens/VibeCheck';
 import Backlog from './screens/Backlog';
 import Login from './screens/LoginScreen';
 
-import EmptyItemCard from './screens/cards/EmptyItemCard';
+import EmptyItemCard from './screens/EmptyItemCard';
 import { useFonts } from 'expo-font';
 import ItemPage from './screens/ItemPage';
 import NewItem from './screens/NewItem';
@@ -42,6 +42,7 @@ export default function App() {
       <Stack.Screen name="Backlog" component={Backlog}/>
       <Stack.Screen name="Item" component={ItemPage}/>
       <Stack.Screen name="ItemScreen" component={ItemScreen}/>
+      <Stack.Screen name="EmptyItemScreen" component={EmptyItemCard}/>
     </Stack.Navigator>
   </NavigationContainer>
   );

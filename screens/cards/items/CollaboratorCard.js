@@ -4,14 +4,16 @@ import { COLORS, SHADOWS, FONT, SIZES } from "../../../constants";
 import { ExpandableView, Spacer } from '../../../utils'
 import { Ionicons } from "@expo/vector-icons";
 
-const expandedContactList = ({contactList, setFn}) => {
+const expandedContactList = ({contactList, setFn, isEditable}) => {
   const [contacts, setContacts] = useState(contactList);
 
   return (
     <View style={styles.expandedContainer}>
-      <TouchableOpacity style={styles.addButtonIcon} >
-        <Ionicons name={"add-circle"} size={SIZES.large} style={styles.iconInverted} />
-      </TouchableOpacity>
+      {isEditable==true && (
+        <TouchableOpacity style={styles.addButtonIcon} >
+          <Ionicons name={"add-circle"} size={SIZES.large} style={styles.iconInverted} />
+        </TouchableOpacity>
+      )}
       {contacts.length > 0 ? (contacts.map(item => (
         <View style={styles.row} key={item["_id"] + "_root"}>
           <TouchableOpacity style={styles.contactContainer} key={item["_id"]} 
@@ -30,7 +32,7 @@ const expandedContactList = ({contactList, setFn}) => {
   )
 };
 
-const CollaboratorCard = ({item, setFn, expanded=false}) => {
+const CollaboratorCard = ({item, setFn, isEditable=true}) => {
   const [isContactsExpanded, setIsContactsExpanded] = useState(true);
 
   return (
@@ -43,6 +45,7 @@ const CollaboratorCard = ({item, setFn, expanded=false}) => {
       >
         <View style={[styles.row, {justifyContent: "space-between"}]}>
           <View style={styles.row}>
+            <Ionicons name={"people-outline"} size={SIZES.xLarge} style={styles.icon} />
             <Text style={styles.label} numberOfLines={1}>Collaborators</Text>
           </View>
           <View>
@@ -54,7 +57,7 @@ const CollaboratorCard = ({item, setFn, expanded=false}) => {
           </View>
         </View>
       </TouchableOpacity>
-      <ExpandableView expanded={isContactsExpanded} view={expandedContactList} params={{"contactList": item.contacts, "setFn": setFn}} vh={300} />
+      <ExpandableView expanded={isContactsExpanded} view={expandedContactList} params={{"contactList": item.contacts, "setFn": setFn, "isEditable": isEditable}} vh={300} />
     </View>
   )
 };
@@ -109,7 +112,7 @@ const styles = StyleSheet.create({
     color: COLORS({opacity:1}).darkBlue,
   },
   propContainer: {
-    width: '90%',
+    flex: 1,
     padding: SIZES.medium,
     borderColor: COLORS({opacity:0.5}).darkBlue,
     borderBottomWidth: 1,
@@ -119,10 +122,10 @@ const styles = StyleSheet.create({
   contactContainer: {
     margin: SIZES.xxSmall,
     padding: SIZES.xSmall,
-    backgroundColor: COLORS({opacity:0.5}).lightWhite,
+    backgroundColor: COLORS({opacity:0.5}).white,
     borderRadius: SIZES.small,
-    ...SHADOWS.medium,
-    shadowColor: COLORS({opacity:1}).shadow,
+    borderColor: COLORS({opacity:0.5}).lightGrey,
+    borderWidth: 1,
   },
 });
 

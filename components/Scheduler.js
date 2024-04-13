@@ -5,7 +5,6 @@ import { SafeAreaView, View, Text, TextInput, Modal, TouchableOpacity,
 import { COLORS, SHADOWS, FONT, SIZES, ItemType } from  "../constants";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from '@react-native-community/datetimepicker';
-import e from "cors";
 
 export const Scheduler = ({ item = null, setFn}) => {
   const [startDate, setStartDate] = useState(new Date());

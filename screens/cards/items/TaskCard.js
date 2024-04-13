@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image,
+import { useState, useEffect } from "react";
+import { View, Text, TextInput, TouchableOpacity, Image, ScrollView,
         StyleSheet, Animated, FlatList } from 'react-native';
 
 import { COLORS, SHADOWS, FONT, SIZES } from "../../../constants";
@@ -9,8 +9,17 @@ import Layout from "../../../_layout";
 import { Ionicons } from "@expo/vector-icons";
 import { PropertyCard } from "../PropertyCards";
 
-const expandedSubTaskCard = ({originalSubtasks, setFn}) => {
+const expandedSubTaskCard = ({originalSubtasks, setFn, isEditable, unSelect = false, setUnSelect}) => {
   const [subtasks, setSubtasks] = useState(originalSubtasks);
+
+  const unSelectAll = () => {
+    const updatedSubtasks = subtasks.map((subtask) => {
+        return { ...subtask, isChecked: false };
+    });
+    setSubtasks(updatedSubtasks);
+    setFn({"subtasks": updatedSubtasks});
+    setUnSelect(false);
+  };
 
   const toggleSubtask = (id) => {
     const updatedSubtasks = subtasks.map((subtask) => {
@@ -22,12 +31,21 @@ const expandedSubTaskCard = ({originalSubtasks, setFn}) => {
     setSubtasks(updatedSubtasks);
     setFn({"subtasks": updatedSubtasks}); // Indicate that changes have been made
   };
+
+  useEffect(() => {
+    if(unSelect == true) {
+      unSelectAll();
+    }
+  }, [unSelect]);
   
   return (
-    <View style={styles.expandedContainer}>
-      <TouchableOpacity style={styles.addButtonIcon} >
-        <Ionicons name={"add-circle"} size={SIZES.large} style={styles.iconInverted} />
-      </TouchableOpacity>
+    <ScrollView style={styles.expandedContainer}>
+      {isEditable==true && (
+        <TouchableOpacity style={styles.addButtonIcon} >
+          <Ionicons name={"add-circle"} size={SIZES.large} style={styles.iconInverted} />
+        </TouchableOpacity>
+      )}
+      
       {subtasks.length > 0 ? (subtasks.map(item => (
         <TouchableOpacity style={styles.subtaskContainer} key={item["_id"]} 
           onPress={() => toggleSubtask(item["_id"])}
@@ -46,37 +64,42 @@ const expandedSubTaskCard = ({originalSubtasks, setFn}) => {
           <Text style={[styles.item, {marginRight: SIZES.small}]} numberOfLines={1}>None</Text>
         </View>
       )}
-    </View>
+    </ScrollView>
   )
 };
 
-const TaskCard = ({item, setFn, expanded=false}) => {
+const TaskCard = ({item, setFn, isEditable=true}) => {
   //const [isPropExpanded, setIsPropExpanded] = useState(expanded);
   const [isSubtaskExpanded, setIsSubtaskExpanded] = useState(true);
+  const [unSelect, setUnSelect] = useState(false);
 
   return (
     <View style={styles.infoContainer}>
-      <TouchableOpacity
-        onPress={() => {
+      <View style={[styles.row, styles.propContainer, {justifyContent: "space-between"}]}>
+        <TouchableOpacity style={[styles.row, {flex: 2}]} onPress={() => {
           setIsSubtaskExpanded(!isSubtaskExpanded);
-        }}
-        style={styles.propContainer}
-      >
-        <View style={[styles.row, {justifyContent: "space-between"}]}>
+        }}>
           <View style={styles.row}>
             <Ionicons name={"checkbox-outline"} size={SIZES.xLarge} style={styles.icon}/> 
             <Text style={styles.label} numberOfLines={1}>Subtasks</Text>
           </View>
-          <View>
+          <View style={styles.row}>
+            
             {isSubtaskExpanded ? (
                 <Ionicons name="chevron-up-outline" size={SIZES.xLarge} style={styles.icon}/>
             ) : (
                 <Ionicons name="chevron-down-outline" size={SIZES.xLarge} style={styles.icon}/>
             )}
           </View>
-        </View>
-      </TouchableOpacity>
-      <ExpandableView expanded={isSubtaskExpanded} view={expandedSubTaskCard} params={{"originalSubtasks": item.subtasks, "setFn": setFn}} vh={300} />
+        </TouchableOpacity>
+        {item.subtasks.length > 0 && (
+          <TouchableOpacity onPress={() => (setUnSelect(true))} style={[styles.box, {flex: 1}]} disabled={!isSubtaskExpanded}>
+            <Text style={{fontSize: SIZES.medium, color: COLORS({opacity:1}).white}}>Unselect All</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+      <ExpandableView expanded={isSubtaskExpanded} view={expandedSubTaskCard} 
+        params={{"originalSubtasks": item.subtasks, "setFn": setFn, "isEditable": isEditable, "unSelect": unSelect, "setUnSelect": setUnSelect}} vh={300} />
     </View>
   )
 };
@@ -104,13 +127,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   expandedContainer: {
-    width: '90%',
     margin: SIZES.medium,
-    backgroundColor: COLORS.lightWhite,
+    backgroundColor: COLORS({opacity:1}).lightWhite,
     borderRadius: SIZES.medium/2,
     borderWidth: 1,
     borderColor: COLORS({opacity:1}).navy,
     padding: SIZES.medium,
+    paddingBottom: SIZES.xxLarge,
     flex: 1,
   },
   addButtonIcon: {
@@ -129,7 +152,7 @@ const styles = StyleSheet.create({
     color: COLORS({opacity:1}).darkBlue,
   },
   propContainer: {
-    width: '90%',
+    flex: 1,
     padding: SIZES.medium,
     borderColor: COLORS({opacity:0.5}).darkBlue,
     borderBottomWidth: 1,
@@ -139,10 +162,18 @@ const styles = StyleSheet.create({
   subtaskContainer: {
     margin: SIZES.xxSmall,
     padding: SIZES.xSmall,
-    backgroundColor: COLORS({opacity:0.5}).lightWhite,
+    backgroundColor: COLORS({opacity:0.5}).white,
     borderRadius: SIZES.small,
-    ...SHADOWS.medium,
-    shadowColor: COLORS({opacity:1}).shadow,
+    borderColor: COLORS({opacity:0.5}).lightGrey,
+    borderWidth: 1,
+  },
+  box: {
+    backgroundColor: COLORS({opacity:1}).secondary,
+    borderRadius: SIZES.xxSmall,
+    padding: SIZES.xSmall,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: SIZES.xxSmall,
   },
 });
 

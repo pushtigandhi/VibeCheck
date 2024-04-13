@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image,
         StyleSheet, Animated, FlatList } from 'react-native';
 
@@ -9,7 +9,7 @@ import Layout from "../../../_layout";
 import { Ionicons } from "@expo/vector-icons";
 import { PropertyCard } from "../PropertyCards";
 
-const expandedIngredients = ({originalIngredients, setFn}) => {
+const expandedIngredients = ({originalIngredients, setFn, isEditable, unSelect = false, setUnSelect}) => {
   const [ingredients, setIngredients] = useState(originalIngredients);
 
   const toggleIngredient = (id) => {
@@ -22,12 +22,29 @@ const expandedIngredients = ({originalIngredients, setFn}) => {
     setIngredients(updatedIngredients);
     setFn({"ingredients": updatedIngredients}); // Indicate that changes have been made
   };
+
+  const unSelectAll = () => {
+    const updatedIngredients = ingredients.map((ingredient) => {
+        return { ...ingredient, isChecked: false };
+    });
+    setIngredients(updatedIngredients);
+    setFn({"ingredients": updatedIngredients});
+    setUnSelect(false);
+  };
+
+  useEffect(() => {
+    if(unSelect == true) {
+      unSelectAll();
+    }
+  }, [unSelect]);
   
   return (
     <View style={styles.expandedContainer}>
-      <TouchableOpacity style={styles.addButtonIcon} >
-        <Ionicons name={"add-circle"} size={SIZES.large} style={styles.iconInverted} />
-      </TouchableOpacity>
+      {isEditable==true && (
+        <TouchableOpacity style={styles.addButtonIcon} >
+          <Ionicons name={"add-circle"} size={SIZES.large} style={styles.iconInverted} />
+        </TouchableOpacity>
+      )}
       {ingredients.length > 0 ? (ingredients.map(item => (
         <TouchableOpacity style={styles.subtaskContainer} key={item["_id"]} 
           onPress={() => toggleIngredient(item["_id"])}
@@ -50,9 +67,9 @@ const expandedIngredients = ({originalIngredients, setFn}) => {
   )
 };
 
-const expandedInstructions = ({originalInstructions, setFn}) => {
+const expandedInstructions = ({originalInstructions, setFn, isEditable, unSelect = false, setUnSelect}) => {
     const [instructions, setInstructions] = useState(originalInstructions);
-  
+
     const toggleInstruction = (id) => {
       const updatedInstructions = instructions.map((instruction) => {
         if (instruction["_id"] === id) {
@@ -63,12 +80,29 @@ const expandedInstructions = ({originalInstructions, setFn}) => {
       setInstructions(updatedInstructions);
       setFn({"instructions": updatedInstructions}); // Indicate that changes have been made
     };
-    
+
+    const unSelectAll = () => {
+      const updatedInstructions = instructions.map((instruction) => {
+          return { ...instruction, isChecked: false };
+      });
+      setInstructions(updatedInstructions);
+      setFn({"instructions": updatedInstructions});
+      setUnSelect(false);
+    };
+  
+    useEffect(() => {
+      if(unSelect == true) {
+        unSelectAll();
+      }
+    }, [unSelect]);
+
     return (
       <View style={styles.expandedContainer}>
-        <TouchableOpacity style={styles.addButtonIcon} >
-          <Ionicons name={"add-circle"} size={SIZES.large} style={styles.iconInverted} />
-        </TouchableOpacity>
+        {isEditable==true && (
+          <TouchableOpacity style={styles.addButtonIcon} >
+            <Ionicons name={"add-circle"} size={SIZES.large} style={styles.iconInverted} />
+          </TouchableOpacity>
+        )}
         {instructions.length > 0 ? (instructions.map(item => (
           <TouchableOpacity style={styles.subtaskContainer} key={item["_id"]} 
             onPress={() => toggleInstruction(item["_id"])}
@@ -91,50 +125,62 @@ const expandedInstructions = ({originalInstructions, setFn}) => {
     )
   };
 
-const RecipeCard = ({item, setFn, expanded=false}) => {
+const RecipeCard = ({item, setFn, isEditable=true}) => {
   const [isIngredientsExpanded, setIsIngredientsExpanded] = useState(true);
   const [isInstructionsExpanded, setIsInstructionsExpanded] = useState(true);
 
+  const [unSelectIngredients, setUnSelectIngredients] = useState(false);
+  const [unSelectInstructions, setUnSelectInstructions] = useState(false);
+
   return (
     <View style={styles.infoContainer}>
-      <TouchableOpacity
-        onPress={() => {
+      <View style={[styles.row, styles.propContainer, {justifyContent: "space-between"}]}>
+        <TouchableOpacity style={[styles.row, {flex: 2}]}
+          onPress={() => {
             setIsIngredientsExpanded(!isIngredientsExpanded);
-        }}
-        style={styles.propContainer}
-       // disabled={!isPressable}
-      >
-        <View style={[styles.row, {justifyContent: "space-between"}]}>
+          }}
+        >
           <Text style={styles.label} numberOfLines={1}>Ingredients</Text>
-          <View>
+          <View style={styles.row}>
             {isIngredientsExpanded ? (
                 <Ionicons name="chevron-up-outline" size={SIZES.xLarge} style={styles.icon}/>
             ) : (
                 <Ionicons name="chevron-down-outline" size={SIZES.xLarge} style={styles.icon}/>
             )}
           </View>
-        </View>
-      </TouchableOpacity>
-      <ExpandableView expanded={isIngredientsExpanded} view={expandedIngredients} params={{"originalIngredients": item.ingredients, "setFn": setFn}} vh={300} />
-      <TouchableOpacity
-        onPress={() => {
-            setIsInstructionsExpanded(!isInstructionsExpanded);
-        }}
-        style={styles.propContainer}
-       // disabled={!isPressable}
-      >
-        <View style={[styles.row, {justifyContent: "space-between"}]}>
+        </TouchableOpacity>
+        {item.ingredients.length > 0 && (
+          <TouchableOpacity onPress={() => (setUnSelectIngredients(true))} style={[styles.box, {flex: 1}]} disabled={!isIngredientsExpanded}>
+            <Text style={{fontSize: SIZES.medium, color: COLORS({opacity:1}).white}}>Unselect All</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+      <ExpandableView expanded={isIngredientsExpanded} view={expandedIngredients} 
+        params={{"originalIngredients": item.ingredients, "setFn": setFn, "isEditable": isEditable, "unSelect": unSelectIngredients, "setUnSelect": setUnSelectIngredients}} vh={300} />
+      
+      <View style={[styles.row, styles.propContainer, {justifyContent: "space-between"}]}>
+        <TouchableOpacity style={[styles.row, {flex: 2}]}
+          onPress={() => {
+              setIsInstructionsExpanded(!isInstructionsExpanded);
+          }}
+        >
           <Text style={styles.label} numberOfLines={1}>Instructions</Text>
-          <View>
+          <View style={styles.row}>
             {isInstructionsExpanded ? (
                 <Ionicons name="chevron-up-outline" size={SIZES.xLarge} style={styles.icon}/>
             ) : (
                 <Ionicons name="chevron-down-outline" size={SIZES.xLarge} style={styles.icon}/>
             )}
           </View>
-        </View>
-      </TouchableOpacity>
-      <ExpandableView expanded={isInstructionsExpanded} view={expandedInstructions} params={{"originalInstructions": item.instructions, "setFn": setFn}} vh={300} />
+        </TouchableOpacity>
+        {item.instructions.length > 0 && (
+          <TouchableOpacity onPress={() => (setUnSelectInstructions(true))} style={[styles.box, {flex: 1}]} disabled={!isInstructionsExpanded}>
+            <Text style={{fontSize: SIZES.medium, color: COLORS({opacity:1}).white}}>Unselect All</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+      <ExpandableView expanded={isInstructionsExpanded} view={expandedInstructions} 
+        params={{"originalInstructions": item.instructions, "setFn": setFn, "isEditable": isEditable, "unSelect": unSelectInstructions, "setUnSelect": setUnSelectInstructions}} vh={300} />
     </View>
   )
 };
@@ -162,13 +208,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   expandedContainer: {
-    width: '90%',
     margin: SIZES.medium,
-    backgroundColor: COLORS.lightWhite,
+    backgroundColor: COLORS({opacity:1}).lightWhite,
     borderRadius: SIZES.medium/2,
     borderWidth: 1,
     borderColor: COLORS({opacity:1}).navy,
     padding: SIZES.medium,
+    paddingBottom: SIZES.xxLarge,
     flex: 1,
   },
   addButtonIcon: {
@@ -187,7 +233,7 @@ const styles = StyleSheet.create({
     color: COLORS({opacity:1}).darkBlue,
   },
   propContainer: {
-    width: '90%',
+    flex: 1,
     padding: SIZES.medium,
     borderColor: COLORS({opacity:0.5}).darkBlue,
     borderBottomWidth: 1,
@@ -197,10 +243,18 @@ const styles = StyleSheet.create({
   subtaskContainer: {
     margin: SIZES.xxSmall,
     padding: SIZES.xSmall,
-    backgroundColor: COLORS({opacity:0.5}).lightWhite,
+    backgroundColor: COLORS({opacity:0.5}).white,
     borderRadius: SIZES.small,
-    // ...SHADOWS.medium,
-    // shadowColor: COLORS({opacity:1}).shadow,
+    borderColor: COLORS({opacity:0.5}).lightGrey,
+    borderWidth: 1,
+  },
+  box: {
+    backgroundColor: COLORS({opacity:1}).secondary,
+    borderRadius: SIZES.xxSmall,
+    padding: SIZES.xSmall,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: SIZES.xxSmall,
   },
 });
 
