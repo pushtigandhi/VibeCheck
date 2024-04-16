@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { EventType } from "expo-linking";
-import { SpiralCalendar } from "./SpiralCalendar";
 import { Typography } from "./Typography";
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import { COLORS, SIZES } from "../constants";
@@ -15,27 +14,6 @@ export const Sidebar = () => {
         <View style={styles.sidebar}>
         <Text>Coming soon!</Text>
             <View style={styles.frame5}>
-                {/* <View style={styles.frame6}>
-                  <SpiralCalendar className="spiral-calendar-instance" />
-                  <Typography
-                    bold={false}
-                    className="design-component-instance-node-2"
-                    divClassName="design-component-instance-node-3"
-                    text="Today"
-                    type="h-5"
-                  />
-                </View> */}
-                    {/* <EventTypes
-                    className="event-types-instance"
-                    colour="green"
-                    description={false}
-                    orientation="horizontal"
-                    pastel
-                    size="small"
-                    typeButtonBoldWrapperDivClassName="frame-7"
-                    typeButtonBoldWrapperText="Daily Standup"
-                    typeButtonBoldWrapperTypeButtonBoldClassName="design-component-instance-node-2"
-                    /> */}
             </View>
         </View>
     );

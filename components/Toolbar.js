@@ -19,7 +19,8 @@ export const ToolBar = ({
   toggleSidebar,
   setFilterVisible,
   setScheduleVisible,
-  doSearch
+  doSearch,
+  isHome = false
 }) => {
 
   const [selected, setSelected] = useState('');
@@ -67,17 +68,20 @@ export const ToolBar = ({
     <>
     <View style={[styles.toolBar, styles.row]}>
       <View style={[styles.row, styles.leftContent]}>
-        <TouchableOpacity 
-          onPress={() => {
-            toggleSidebar();
-          }}
-        >
-          {showSidebar ? 
-            <Ionicons name={"close-circle-sharp"} size={30} style={styles.icon} />
-            :
-            <Ionicons name={"reorder-three-outline"} size={30} style={styles.icon} /> 
-          }
-        </TouchableOpacity>
+        {isHome && (
+          <TouchableOpacity 
+            onPress={() => {
+              toggleSidebar();
+            }}
+          >
+            {showSidebar ? 
+              <Ionicons name={"close-circle-sharp"} size={30} style={styles.icon} />
+              :
+              <Ionicons name={"reorder-three-outline"} size={30} style={styles.icon} /> 
+            }
+          </TouchableOpacity>
+        )}
+        
         {["day", "month", "week"].includes(state) && (
           <View style={[styles.row]}>
             <Text style={[styles.span, {fontWeight:'500'}]}>
@@ -91,9 +95,12 @@ export const ToolBar = ({
         </TouchableOpacity>
       </View>
       
-      {/* <View style={[styles.row, styles.rightContent]}>
-        <MiniTools setFilterVisible={setFilterVisible} doSearch={doSearch} />
-      </View> */}
+      {isHome && (
+        <View style={[styles.row, styles.rightContent]}>
+          <MiniTools setFilterVisible={setFilterVisible} doSearch={doSearch} route={setScheduleVisible} />
+        </View>
+      )}
+      
     </View>
     {showDatePicker && (
       <Calendar

@@ -66,6 +66,8 @@ export default function ItemScreen ({navigation, route, scrollEnabled = true}) {
   const [filterVisible, setFilterVisible] = useState(false);
 
   const [refreshing, setRefreshing] = useState(false);
+
+  const [search, setSearch] = useState('');
   const [expandSearchBar, setSearchBar] = useState(false);
 
   const [index, setIndex] = React.useState(0);
@@ -102,7 +104,7 @@ export default function ItemScreen ({navigation, route, scrollEnabled = true}) {
     setFilterVisible(false);
   }
 
-  function doSearch({search}) {
+  function doSearch() {
     console.log(search);
     setSearchBar(false);
   }
@@ -131,13 +133,13 @@ export default function ItemScreen ({navigation, route, scrollEnabled = true}) {
 
   useEffect(() => {
     if (route.params?.isSection) {
-      setFilter({... filter, category: route.params?.category.title, section: route.params?.section})
+      setFilter({... filter, category: route.params?.category.title, section: route.params?.section.title})
     }
   }, []) // only run once on load
 
   useEffect(() => {
     if (route.params?.isSection) {
-      setTitle(route.params?.section);
+      setTitle(route.params?.section.title);
       getSectionItemsFromAPI().then((items_) => {
         setItems(items_);
       }).catch((err) => {
@@ -158,15 +160,7 @@ export default function ItemScreen ({navigation, route, scrollEnabled = true}) {
     <SafeAreaView style={styles.screen}>
         <View style={[styles.row, styles.propContainer, {justifyContent: "space-between"}]}>
           <Text style={styles.title}>{title}</Text>
-          <MiniTools navigation={navigation} setFilterVisible={setFilterVisible} doSearch={doSearch} 
-            route={
-              route.params?.isSection ? 
-                [ItemType.Item, {item: {"category": route.params?.category.title, "section": route.params?.section, "icon": '\u{1F4E6}', "itemType" : ItemType.Item}}]
-                : 
-                [ItemType.Item, {item: route.params?.item}]
-            }
-          />
-          {/* <View style={styles.row}>
+          <View style={styles.row}>
             <TouchableOpacity
               style={[styles.row, styles.searchInput]}
               onPress={() => {
@@ -176,10 +170,11 @@ export default function ItemScreen ({navigation, route, scrollEnabled = true}) {
               <Ionicons name={"search-outline"} size={20} style={styles.iconInverted} />
               {expandSearchBar && (
                 <TextInput style={{width: SIZES.xxLarge*4, fontSize: SIZES.medium, color: COLORS({opacity:1}).primary}} 
-                  placeholder="search"
-                  onSubmitEditing={(newSearch) => (doSearch(newSearch))}
+                  {...(search ? { defaultValue: search } : { placeholder: "search" })}
+                  onChangeText={(newSearch) => (setSearch(newSearch))}
                   returnKeyType='search'
-                /> 
+                  onSubmitEditing={() => (doSearch())}
+                />
               )}
             </TouchableOpacity>
             <TouchableOpacity
@@ -193,15 +188,15 @@ export default function ItemScreen ({navigation, route, scrollEnabled = true}) {
             <TouchableOpacity
               onPress={() => {
                 route.params?.isSection ? 
-                  navigation.navigate("Item", {item: {"category": route.params?.category.title, "section": route.params?.section, "icon": '\u{1F4E6}', "itemType" : ItemType.Item}})
+                  navigation.navigate("EditItem", {item: {"category": route.params?.category.title, "section": route.params?.section, "icon": '\u{1F4E6}', "itemType" : ItemType.Item}})
                   : 
-                  navigation.navigate("Item", {item: route.params?.item})
+                  navigation.navigate("EditItem", {item: route.params?.item})
               }}
               style={[styles.row, styles.addButton]}
             >
               <Ionicons name={"add-circle"} size={20} style={styles.iconInverted}/>
             </TouchableOpacity>
-          </View> */}
+          </View>
         </View>
         
         

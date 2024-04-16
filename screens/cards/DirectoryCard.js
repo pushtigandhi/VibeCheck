@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity,
         StyleSheet, Animated, FlatList, ScrollView } from 'react-native';
-import { COLORS, SHADOWS, FONT, SIZES } from "../../constants";
+import { COLORS, SHADOWS, FONT, SIZES, ViewType } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { Spacer } from "../../utils";
 import { ExpandableView } from "../../utils";
@@ -10,12 +10,17 @@ const expandedCard = ({navigation, category, sections}) => {
   return (
     <ScrollView style={styles.expandedContainer}>
       {sections.map(section => (
-        <TouchableOpacity style={styles.sectionContainer} key={section + "_root"}
+        <TouchableOpacity style={styles.sectionContainer} key={section["_id"] + "_root"}
           onPress={() => {
-            navigation.navigate("ItemScreen", {"isSection": true, "category": category, "section": section})
+            if(section.view == ViewType.Default) {
+              navigation.navigate("ItemScreen", {"isSection": true, "category": category, "section": section})
+            }
+            else if(section.view == ViewType.Schedule) {
+              navigation.navigate("ScheduleView", {"isSection": true, "category": category, "section": section})
+            }
           }}
         >
-          <Text style={styles.section} numberOfLines={1}>{section}</Text>
+          <Text style={styles.section} numberOfLines={1}>{section.title}</Text>
         </TouchableOpacity>
       ))}
     </ScrollView>

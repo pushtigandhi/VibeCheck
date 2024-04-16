@@ -16,9 +16,9 @@ import { Dimensions } from 'react-native';
 
 const slotHeight = (Dimensions.get('window').height - 300) / 7;
 
-export const WeeklyCalendar = ({navigation, date, filter, refreshing}) => {
+export const WeeklyCalendar = ({navigation, date, filter, refreshing, items}) => {
 
-  const [items, setItems] = useState([]);
+  //const [items, setItems] = useState([]);
 
   async function getItemsFromAPI(filter={}) {
     try {
@@ -32,12 +32,14 @@ export const WeeklyCalendar = ({navigation, date, filter, refreshing}) => {
   }
 
   useEffect(() => {
-    getItemsFromAPI(filter).then((items_) => {
-      setItems(items_);
-    }).catch((err) => {
-      alert(err.message)
-    })
-  }, [date, refreshing])
+    // getItemsFromAPI(filter).then((items_) => {
+    //   setItems(items_);
+    // }).catch((err) => {
+    //   alert(err.message)
+    // })
+    console.log("day: " +items);
+
+  }, [refreshing])
 
 
   const days = ["SUN", "MON", "TUES", "WED", "THURS", "FRI", "SAT"];

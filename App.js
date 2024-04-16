@@ -10,11 +10,12 @@ import VibeCheck from './screens/VibeCheck';
 import Backlog from './screens/Backlog';
 import Login from './screens/LoginScreen';
 
-import EmptyItemCard from './screens/EmptyItemCard';
+import ItemCard from './screens/ItemCard';
 import { useFonts } from 'expo-font';
-import ItemPage from './screens/ItemPage';
+import EditScreen from './screens/EditScreen';
 import NewItem from './screens/NewItem';
 import ItemScreen from './screens/ItemScreen';
+import ScheduleView from './screens/views/ScheduleView';
 
 const Stack = createNativeStackNavigator();
 
@@ -40,9 +41,10 @@ export default function App() {
       <Stack.Screen name="Directory" component={Directory}/>
       <Stack.Screen name="VibeCheck" component={VibeCheck}/>
       <Stack.Screen name="Backlog" component={Backlog}/>
-      <Stack.Screen name="Item" component={ItemPage}/>
+      <Stack.Screen name="EditItem" component={EditScreen}/>
       <Stack.Screen name="ItemScreen" component={ItemScreen}/>
-      <Stack.Screen name="EmptyItemScreen" component={EmptyItemCard}/>
+      <Stack.Screen name="ScheduleView" component={ScheduleView}/>
+      <Stack.Screen name="Item" component={ItemCard}/>
     </Stack.Navigator>
   </NavigationContainer>
   );

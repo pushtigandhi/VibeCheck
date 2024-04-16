@@ -30,7 +30,7 @@ export const DailyCalendar = ({navigation, date, filter, refreshing}) => {
   const renderItem = ({ item }) => (
     <TouchableOpacity
       onPress={() => {
-          navigation.navigate("EmptyItemScreen", {item});
+          navigation.navigate("Item", {item});
       }}
       key={item["_id"] + "root"} 
       style={styles.cardsContainer}
@@ -98,6 +98,7 @@ const styles = StyleSheet.create({
   time: {
     padding: SIZES.xSmall,
     flexDirection: "column",
+    justifyContent: "space-between",
     alignItems: "right",
   },
   timeLabel: {

@@ -4,7 +4,7 @@ import { COLORS, FONT, SIZES, SHADOWS } from "../constants";
 import { ItemType } from "../constants";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function MiniTools ({navigation, route, setFilterVisible, doSearch}) {
+export default function MiniTools ({navigation=null, route, setFilterVisible, doSearch}) {
 
   const [expandSearchBar, setSearchBar] = useState(false);
 
@@ -37,7 +37,7 @@ export default function MiniTools ({navigation, route, setFilterVisible, doSearc
             <Ionicons name={"funnel-outline"} size={20} style={styles.iconInverted}/>
         </TouchableOpacity>
         <TouchableOpacity
-            onPress={() => {navigation.navigate(route[0], route[1])}}
+            onPress={() => {navigation ? navigation.navigate(route[0], route[1]) : route(true)}}
             style={[styles.row, styles.addButtonIcon]}
         >
             <Ionicons name={"add-circle"} size={20} style={styles.iconInverted}/>

@@ -4,6 +4,12 @@ const ItemType = {
     Event: 'Event',
     Page: 'Page',
     Recipe: 'Recipe',
+    Scheduled: 'Scheduled',
+};
+
+const ViewType = {
+  Schedule: 'Schedule',
+  Default: 'Default'
 };
 
 const defaultItem = {
@@ -51,4 +57,4 @@ const defaultRecipe = {
     "itemType" : ItemType.Recipe,
 }
  
-export { ItemType, defaultItem, defaultTask, defaultEvent, defaultPage, defaultRecipe };
+export { ItemType, ViewType, defaultItem, defaultTask, defaultEvent, defaultPage, defaultRecipe };

@@ -1,51 +1,40 @@
 import React, { useEffect, useState } from "react";
-import { View, TouchableOpacity, Text, TextInput, Keyboard, Modal,
-    FlatList, RefreshControl, SafeAreaView, TouchableWithoutFeedback, StyleSheet } from 'react-native';
-import { COLORS, FONT, SIZES, SHADOWS } from "../constants";
-import HomeNavigation from "./HomeNavigation";
+import { SIZES, COLORS, FONT, SHADOWS } from "../../constants";
+import { GETitems, GETitemsTEST, GETtodayTEST, GETscheduledTEST } from "../../API";
+import { ItemType } from "../../constants";
+import { DailyCalendar } from "./DailyCalendar";
+import { WeeklyCalendar } from "./WeeklyCalendar";
+import { MonthlyCalendar } from "./MonthlyCalendar";
+import { View, StyleSheet, Text, ScrollView, FlatList, TouchableOpacity, Dimensions, RefreshControl,
+    Modal } from 'react-native';
 
-import { Spacer } from '../utils';
+import { ToolBar } from "../../components/Toolbar";
+import FilterModal from "../../components/FilterModal";
+import NewItem from "../NewItem";
+import { Sidebar } from "../../components/Sidebar";
 
-import { DailyCalendar } from "./partialViews/DailyCalendar";
-import { WeeklyCalendar } from "./partialViews/WeeklyCalendar";
-import { MonthlyCalendar } from "./partialViews/MonthlyCalendar";
-import { useNavigation } from "@react-navigation/native";
-import { ToolBar } from "../components/Toolbar";
-
-import { Ionicons } from "@expo/vector-icons";
-
-import { ItemType } from "../constants";
-
-import { Dimensions } from 'react-native';
-
-import { Sidebar } from "../components/Sidebar";
-import { GETdirectoryTEST, doOnStart } from "../API";
-
-//import { directoryList } from "../API";
-import FilterModal from "../components/FilterModal";
-import ScheduleItem from "./ScheduleItem";
-import MiniTools from "../components/MiniTools";
-import { refresh } from "@react-native-community/netinfo";
-import NewItem from "./NewItem";
-import { CalendarView } from "./partialViews/CalendarView";
-
-export default function HomeScreen ({ navigation, route }) {
+export const CalendarView = ({navigation, filter={}, setFilter}, isHome=false) => {
     const calendarHeight = Dimensions.get('window').height - 300;
     const [selectedDate, setSelectedDate] = useState(new Date());
-    const [filter, setFilter] = useState({});
     const [filterVisible, setFilterVisible] = useState(false);
     const [scheduleVisible, setScheduleVisible] = useState(false);
 
-    const [items, setItems] = useState([]);
-
-    const active = "class";
-    const mobile = true;
-
     const [state, setState] = useState("day");
+    const [items, setItems] = useState([]);
 
     const [refreshing, setRefreshing] = useState(false);
     const [showSidebar, toggleShowSidebar] = useState(false);
 
+    async function getScheduledItemsFromAPI() {
+        try {
+          let items_ = await GETscheduledTEST(selectedDate, state, filter);
+          return items_;
+        } catch (error) {
+          console.log("error fetching items");
+          console.log(error);
+          return [];
+        }
+    }
 
     const onRefresh = React.useCallback((updatedDate, state) => {
         setSelectedDate(updatedDate);
@@ -64,10 +53,6 @@ export default function HomeScreen ({ navigation, route }) {
         }
     });
 
-    const dismissKeyboard = () => {
-        Keyboard.dismiss();
-    };
-
     function closeFilter() {
         setRefreshing(!refreshing);
         setFilterVisible(false);
@@ -76,28 +61,23 @@ export default function HomeScreen ({ navigation, route }) {
         setRefreshing(!refreshing);
         setScheduleVisible(false);
     }
-    
+
     function doSearch({search}) {
         console.log(search);
        // setSearchBar(false);
     }
-
+    
     useEffect(() => {
-        doOnStart();
-    }, [])
+        // getItemsFromAPI(filter).then((items_) => {
+        //   setItems(items_);
+        // }).catch((err) => {
+        //   alert(err.message)
+        // })
+        getScheduledItemsFromAPI();
+      },[refreshing])
 
     return (
-        <SafeAreaView style={styles.screen}>
-            <View style={[styles.row, {flex: 0, height: 75}]}>
-                <TouchableOpacity style={styles.profileButton}>
-                    <Ionicons name={"person"} size={SIZES.xxLarge} style={{color: COLORS({opacity:1}).darkBlue}}/>
-                </TouchableOpacity>
-                <TouchableWithoutFeedback onPress={dismissKeyboard}>
-                    <TextInput style={styles.intention} />
-                </TouchableWithoutFeedback>
-            </View>
-            <CalendarView navigation={navigation} filter={filter} setFilter={setFilter} isHome={true} />
-            {/* <View style={{ flex: 1, backgroundColor: 'white' }}>
+            <View style={{ flex: 1, backgroundColor: 'white' }}>
                 <View style={styles.calendarContainer} refreshControl={
                     <RefreshControl
                         refreshing={refreshing}
@@ -111,7 +91,7 @@ export default function HomeScreen ({ navigation, route }) {
                         setFilterVisible={setFilterVisible}
                         setScheduleVisible={setScheduleVisible}
                         doSearch={doSearch}
-                        isHome={true}
+                        isHome={isHome}
                     />
                     <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
                         <FilterModal closeFilter={closeFilter} filter={filter} setFilter={setFilter} />
@@ -129,6 +109,7 @@ export default function HomeScreen ({ navigation, route }) {
                             style={{flex:1}}
                         >
                             <Text style={state === 'day' ? styles.tabActive : styles.tabInactive} >DAY</Text>
+                            {/* <Ionicons name={"ellipse"} size={10} style={state === 'day' ? styles.tabActive : styles.tabInactive} /> */}
                         </TouchableOpacity>
                         <TouchableOpacity 
                             disabled={state === "week" ? true : false} 
@@ -140,6 +121,7 @@ export default function HomeScreen ({ navigation, route }) {
 
                         >
                             <Text style={state === 'week' ? styles.tabActive : styles.tabInactive} >WEEK</Text>
+                            {/* <Ionicons name={"ellipse"} size={10} style={state === 'week' ? styles.tabActive : styles.tabInactive} /> */}
                         </TouchableOpacity>
                         <TouchableOpacity 
                             disabled={state === "month" ? true : false} 
@@ -150,6 +132,7 @@ export default function HomeScreen ({ navigation, route }) {
                             style={{flex:1}}
                         >
                             <Text style={state === 'month' ? styles.tabActive : styles.tabInactive} >MONTH</Text>
+                            {/* <Ionicons name={"ellipse"} size={10} style={state === 'month' ? styles.tabActive : styles.tabInactive} /> */}
                         </TouchableOpacity>
                     </View>
                     {showSidebar && (
@@ -167,9 +150,7 @@ export default function HomeScreen ({ navigation, route }) {
                         )}
                     </View>
                 </View>
-            </View> */}
-            <HomeNavigation style={{flex: 0}} size={SIZES.xxLarge} iconColor={COLORS({opacity:1}).primary}/> 
-        </SafeAreaView>
+            </View>
     );
 };
 
@@ -237,4 +218,11 @@ const styles = StyleSheet.create({
         color: COLORS({opacity: 1}).white,
         fontWeight: "normal",
     },
+    cardsContainer: {
+        marginBottom: SIZES.medium,
+        backgroundColor: COLORS({opacity:1}).lightWhite,// "#FFF",
+        borderRadius: SIZES.small,
+        ...SHADOWS.xSmall,
+        shadowColor: COLORS({opacity:1}).shadow,
+      },
 });

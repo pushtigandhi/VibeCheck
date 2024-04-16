@@ -7,6 +7,8 @@ import { ExpandableView, Spacer } from '../utils';
 import Layout from "../_layout";
 import { Ionicons } from "@expo/vector-icons";
 import { PropertyCard } from "./cards/PropertyCards";
+import HomeNavigation from "./HomeNavigation";
+import ItemCard from "./ItemCard";
 import * as df  from "../constants/default";
 
 export default function NewItem({navigation}) {
@@ -17,7 +19,8 @@ export default function NewItem({navigation}) {
     <SafeAreaView style={styles.infoContainer}>
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("ItemScreen", {"isSection": false, "item": df.defaultItem});
+          navigation.navigate("EditItem", {"item": df.defaultItem});
+          //renderEmptyItem({"itemType": "Item", "item": df.defaultItem})
         }}
         style={styles.titleContainer}
       >
@@ -29,7 +32,8 @@ export default function NewItem({navigation}) {
 
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("ItemScreen", {"isSection": false, "item": df.defaultTask});
+          navigation.navigate("EditItem", {"item": df.defaultTask});
+          //navigation.navigate("ItemScreen", {"isSection": false, "item": df.defaultTask});
         }}
         style={styles.titleContainer}
       >
@@ -41,7 +45,8 @@ export default function NewItem({navigation}) {
 
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("ItemScreen", {"isSection": false, "item": df.defaultEvent});
+          navigation.navigate("EditItem", {"item": df.defaultEvent});
+          //navigation.navigate("ItemScreen", {"isSection": false, "item": df.defaultEvent});
         }}
         style={styles.titleContainer}
       >
@@ -53,7 +58,8 @@ export default function NewItem({navigation}) {
 
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("ItemScreen", {"isSection": false, "item": df.defaultPage});
+          navigation.navigate("EditItem", {"item": df.defaultPage});
+          //navigation.navigate("ItemScreen", {"isSection": false, "item": df.defaultPage});
         }}
         style={styles.titleContainer}
       >
@@ -65,15 +71,17 @@ export default function NewItem({navigation}) {
 
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("ItemScreen", {"isSection": false, "item": df.defaultRecipe});
+          navigation.navigate("EditItem", {"item": df.defaultRecipe});
+          //navigation.navigate("ItemScreen", {"isSection": false, "item": df.defaultRecipe});
         }}
         style={styles.titleContainer}
       >
-      <View style={styles.row}>
-        <Text style={styles.label}>{df.ItemType.Recipe}</Text>
-        <Text style={{fontSize: SIZES.xLarge}}>{df.defaultRecipe.icon}</Text>
-      </View>
+        <View style={styles.row}>
+          <Text style={styles.label}>{df.ItemType.Recipe}</Text>
+          <Text style={{fontSize: SIZES.xLarge}}>{df.defaultRecipe.icon}</Text>
+        </View>
       </TouchableOpacity>
+      <HomeNavigation style={{flex: 0}} size={SIZES.xxLarge} iconColor={COLORS({opacity:1}).primary}/> 
     </SafeAreaView>
   )
 };

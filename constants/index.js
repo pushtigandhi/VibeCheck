@@ -1,6 +1,6 @@
 //import images from "./images";
 //import icons from "./icons";
 import { COLORS, FONT, SIZES, SHADOWS } from "./theme";
-import { ItemType, defaultItem, defaultTask, defaultEvent, defaultPage, defaultRecipe } from "./default";
+import { ItemType, ViewType, defaultItem, defaultTask, defaultEvent, defaultPage, defaultRecipe } from "./default";
 
-export { ItemType, COLORS, FONT, SIZES, SHADOWS };
+export { ItemType, ViewType, COLORS, FONT, SIZES, SHADOWS };

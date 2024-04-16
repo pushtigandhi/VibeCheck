@@ -9,7 +9,7 @@ const BacklogCard = ({navigation, item}) => {
     <View style={styles.cardContainer}>
       <TouchableOpacity
         onPress={() => {
-            navigation.navigate("Item", {item});
+            navigation.navigate("EditItem", {item});
           }}
           style={styles.titleContainer}
       >
@@ -25,7 +25,7 @@ const BacklogCard = ({navigation, item}) => {
 const styles = StyleSheet.create({
   cardContainer: {
     margin: SIZES.xSmall,
-    backgroundColor: "#FFF",
+    backgroundColor: COLORS({opacity:1}).white,
     borderRadius: SIZES.xSmall,
     ...SHADOWS.medium,
     shadowColor: COLORS({opacity:1}).shadow,
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
   titleContainer: {
     width: '100%',
     padding: SIZES.medium,
-    borderColor: COLORS({opacity:0.5}).darkBlue,
+    borderColor: COLORS({opacity:0.5}).primary,
     borderBottomWidth: 1,
     borderBottomLeftRadius: SIZES.xLarge,
     borderBottomRightRadius: SIZES.xLarge,
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   sectionContainer: {
     margin: SIZES.xSmall,
     padding: SIZES.xSmall,
-    backgroundColor: COLORS({opacity:0.5}).darkBlue,
+    backgroundColor: COLORS({opacity:0.5}).primary,
     borderRadius: SIZES.small,
     ...SHADOWS.medium,
     shadowColor: COLORS({opacity:1}).shadow,
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: SIZES.large,
     fontFamily: FONT.regular,
-    color: COLORS({opacity:1}).darkBlue,
+    color: COLORS({opacity:1}).primary,
   },
   section: {
     fontSize: SIZES.medium,
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: SIZES.xxSmall,
-    color: COLORS({opacity:0.8}).darkBlue,
+    color: COLORS({opacity:0.8}).primary,
   },
 });
 

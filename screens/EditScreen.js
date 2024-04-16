@@ -19,7 +19,7 @@ import React from "react";
 
 const defaultImage = require("../assets/icon.png");
 
-export default function ItemPage({ navigation, route, expanded=true}) {
+export default function EditScreen({ navigation, route, expanded=true}) {
   const [disableSave, setDisableSave] = useState(true);
 
   const [itemType, setItemType] = useState('');

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image, TouchableWithoutFeedback, 
+import { View, Text, TextInput, TouchableOpacity, Image, TouchableWithoutFeedback, Modal,
         StyleSheet, SafeAreaView, KeyboardAvoidingView } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { COLORS, SHADOWS, FONT, SIZES } from "../constants";
@@ -188,7 +188,7 @@ const Scheduler = ({ item = null }) => {
     )
 };
 
-export default function EmptyItemCard({ navigation, route }) {
+export default function ItemCard({ navigation, route }) {
   const [disableSave, setDisableSave] = useState(true);
 
   const [itemType, setItemType] = useState('');
@@ -203,6 +203,8 @@ export default function EmptyItemCard({ navigation, route }) {
 
   const [showScheduler, setShowScheduler] = useState(true);
   const [isExpanded, setIsExpanded] = useState(true);
+
+  const [modalVisible, setModalVisible] = useState(false);
 
   const [updatedItem, setUpdatedItem] = useState({});
 
@@ -229,12 +231,12 @@ export default function EmptyItemCard({ navigation, route }) {
             ...updatedItem
         }, route.params?.item._id)
         .then((item_) => {
-            alert("Success!");
-            goHome();
+            //alert("Success!");
         }).catch((error) => {
             console.log(error);
         });
     }
+    goHome();
     //navigation.goBack();
   }
 
@@ -250,7 +252,6 @@ export default function EmptyItemCard({ navigation, route }) {
             setItemType(item.itemType);
         }
       
-        setIsExpanded(false);
         setTitle(item.title);
         setIcon(item.icon.toString());
         if (item.description) {
@@ -277,21 +278,36 @@ export default function EmptyItemCard({ navigation, route }) {
                 <Ionicons name={"arrow-back-outline"} size={SIZES.large} style={styles.icon}/> 
             </TouchableOpacity>
             {favicon && (
-              <TouchableOpacity style={{alignConten: "center"}}
-                // onPress={(newFavicon) => (
-                //   pickImage(),
-                //   setFavicon(newFavicon)
-                // )}
-              >
-                <Image
-                  source={favicon ? { uri: favicon.uri } : defaultImage}
-                  style={[styles.border, { width: 140, height: 140}]}
-                />
-              </TouchableOpacity>
+                <>
+                <TouchableOpacity style={{alignConten: "center"}} onPress={() => setModalVisible(true)}
+                    // onPress={(newFavicon) => (
+                    //   pickImage(),
+                    //   setFavicon(newFavicon)
+                    // )}
+                >
+                    <Image
+                    source={favicon ? { uri: favicon.uri } : defaultImage}
+                    style={[styles.border, { width: 140, height: 140}]}
+                    />
+                </TouchableOpacity>
+                <Modal
+                    visible={modalVisible}
+                    transparent={true}
+                    onRequestClose={() => setModalVisible(false)}
+                >
+                    <TouchableOpacity style={styles.modalContainer} onPress={() => setModalVisible(false)}>
+                        <Image
+                        source={favicon ? { uri: favicon.uri } : defaultImage}
+                        style={styles.fullImage}
+                        resizeMode="contain" // or "cover" depending on your preference
+                        />
+                    </TouchableOpacity>
+                </Modal>
+                </>
             )}
             <TouchableOpacity style={[styles.button]}
                 onPress={() => {
-                    navigation.navigate("Item", {"item": route.params?.item});
+                    navigation.navigate("EditItem", {"item": route.params?.item});
                 }}  
             >
                 <Ionicons name={"pencil-outline"} size={SIZES.large} style={styles.icon}/> 
@@ -342,7 +358,7 @@ export default function EmptyItemCard({ navigation, route }) {
               </View>
             </View>
           </TouchableOpacity>
-          <ExpandableView expanded={isExpanded} view={Properties} params={{"item": route.params?.item, "itemType": itemType }} vh={260} />
+          <ExpandableView expanded={isExpanded} view={Properties} params={{"item": route.params?.item, "itemType": itemType }} vh={230} />
 
           {route.params?.item.startDate && (
             <>
@@ -529,5 +545,15 @@ const styles = StyleSheet.create({
     padding: SIZES.xSmall,
     borderRadius: SIZES.xSmall,
     marginLeft: SIZES.xSmall,
-  }
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)', // semi-transparent background
+  },
+  fullImage: {
+    width: '100%',
+    height: '100%',
+  },
 });

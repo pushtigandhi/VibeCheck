@@ -78,7 +78,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
       if(!!item.category)
         setCategory(item.category);
       if(!!item.section)
-        setSection(item.section);
+        setSection(item.section.title);
       if(!!item.duration){
         const hours = Math.floor(item.duration / 60);
         const minutes = item.duration % 60;
@@ -104,9 +104,9 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
 
   function getSections() {
     const sectionTitles = directoryList._j.find(cat => cat.title === category).sections;
-    return sectionTitles.map((title, index) => ({
-      label: title,
-      value: title
+    return sectionTitles.map((section, index) => ({
+      label: section.title,
+      value: section.title
     }));
   }
 

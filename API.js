@@ -891,15 +891,16 @@ export async function GETdirectoryTEST() {
             "_id": "65dffad64102392ebb57839c",
             "title": "Backlog",
             "sections": [
-                "All"
+                {"title": "All", "view": "Default"}
             ]
         },
         {
             "title": "Cooking",
             "sections": [
-                "All",
-                "Recipes",
-                "Tips"
+                {"title": "All", "view": "Default", "_id": "235235"},
+                {"title": "Recipes", "view": "Default", "_id": "74576"},
+                {"title": "Tips", "view": "Default", "_id": "4674764674"},
+                {"title": "Meal Plan", "view": "Schedule", "_id": "3578365"}
             ],
             "_id": "65e172b61635ad960dabdc32"
         }
@@ -1023,6 +1024,31 @@ export async function DELETEtagTEST(tagID) {
 //#endregion
 
 //#region CALENDAR
+export async function GETscheduledTEST(date, state, filter={}) {
+    console.log("scheduled: " + date + " " + state);
+
+    if (state == "day") {
+        return GETtodayTEST();
+    }
+    else if (state == "week") {
+        return GETweekTEST();
+    }
+    else {
+        return GETmonthTEST();
+    }
+
+    const response = `${ITEMS_BASE_URL}/` + new URLSearchParams(filter);
+
+    const body = {
+    };
+    let items = body.items;
+    return items.map((item) => {
+        return {
+            ...item,
+        }
+    });
+}
+
 export async function GETtodayTEST(filter={}) {
     const response = `${ITEMS_BASE_URL}/` + new URLSearchParams(filter);
 
@@ -1040,7 +1066,6 @@ export async function GETtodayTEST(filter={}) {
                 "tags": [
                     "new"
                 ],
-                "servings": 3,
                 "owner": "65dffad64102392ebb57839b",
                 "duration": "30",
                 "startDate": "2024-03-12T05:15:00.000Z",
@@ -1103,6 +1128,9 @@ export async function GETtodayTEST(filter={}) {
                 "category": "Backlog",
                 "section": "All",
                 "itemType": "Recipe",
+                "servings": 3,
+                "repeat": "DAILY",
+                "priority": "HIGH",
                 "ingredients": [{"isChecked": false, "task": "first subtask", "_id": "65e134a91635ad960dab35ytsdc1c"},
                 {"isChecked": false, "task": "2 subtask", "_id": "65e134a91635ad960dabsrhjdc1c"}],
                 "instructions": [{"isChecked": false, "task": "4 subtask", "_id": "65e134a91635ad96tdku0dabdc1c"},
@@ -1721,198 +1749,229 @@ export async function GETitemsTEST(itemType, filter={}) {
 
     const response = `${ITEMS_BASE_URL}/${ext}` + new URLSearchParams(filter);
 
+    let body;
     console.log("items: " + response);
 
-    const body = {
-        "items": [
-            {
-                "_id": "65dffbe64102392ebb5783b0",
-                "title": "test item 0",
-                "category": "Backlog",
-                "section": "All",
-                "icon": "📍",
-                "tags": [
-                    "new"
-                ],
-                "notes": [],
-                "owner": "65dffad64102392ebb57839b",
-                "duration": "30",
-                "startDate": "2024-03-29T05:15:00.000Z",
-                "endDate": "2024-03-13T07:08:05.326Z",
-                "createdAt": "2024-02-29T03:37:10.111Z",
-                "updatedAt": "2024-02-29T03:37:10.111Z",
-                "__v": 0
-            },{
-                "_id": "65dffbe64102392ebb5783b1",
-                "title": "test item 1",
-                "category": "Backlog",
-                "section": "All",
-                "icon": "📍",
-                "tags": [
-                    "new"
-                ],
-                "notes": [],
-                "owner": "65dffad64102392ebb57839b",
-                "duration": "30",
-                "startDate": "2024-03-29T05:15:00.000Z",
-                "endDate": "2024-03-13T07:08:05.326Z",
-                "createdAt": "2024-02-29T03:37:10.111Z",
-                "updatedAt": "2024-02-29T03:37:10.111Z",
-                "__v": 0
-            },
-            // {
-            //     "_id": "65dffbe64102392ebb5783b3",
-            //     "title": "test item 2",
-            //     "category": "Backlog",
-            //     "section": "All",
-            //     "icon": "📍",
-            //     "tags": [
-            //         "new"
-            //     ],
-            //     "notes": [],
-            //     "owner": "65dffad64102392ebb57839b",
-            //     "duration": "30",
-            //     "startDate": "2024-03-29T05:15:00.000Z",
-            //     "endDate": "2024-03-13T07:08:05.326Z",
-            //     "createdAt": "2024-02-29T03:37:10.111Z",
-            //     "updatedAt": "2024-02-29T03:37:10.111Z",
-            //     "__v": 0
-            // },{
-            //     "_id": "65dffbe64102392ebb5783b4",
-            //     "title": "test item 3",
-            //     "category": "Backlog",
-            //     "section": "All",
-            //     "icon": "📍",
-            //     "tags": [
-            //         "new"
-            //     ],
-            //     "notes": [],
-            //     "owner": "65dffad64102392ebb57839b5",
-            //     "duration": "30",
-            //     "startDate": "2024-03-29T05:15:00.000Z",
-            //     "endDate": "2024-03-13T07:08:05.326Z",
-            //     "createdAt": "2024-02-29T03:37:10.111Z",
-            //     "updatedAt": "2024-02-29T03:37:10.111Z",
-            //     "__v": 0
-            // },{
-            //     "_id": "65dffbe64102392ebb5783b5",
-            //     "title": "test item 4",
-            //     "category": "Backlog",
-            //     "section": "All",
-            //     "icon": "📍",
-            //     "tags": [
-            //         "new"
-            //     ],
-            //     "notes": [],
-            //     "owner": "65dffad64102392ebb57839b",
-            //     "duration": "30",
-            //     "startDate": "2024-03-29T05:15:00.000Z",
-            //     "endDate": "2024-03-13T07:08:05.326Z",
-            //     "createdAt": "2024-02-29T03:37:10.111Z",
-            //     "updatedAt": "2024-02-29T03:37:10.111Z",
-            //     "__v": 0
-            // },{
-            //     "_id": "65dffbe64102392ebb5783b6",
-            //     "title": "test item 5",
-            //     "category": "Backlog",
-            //     "section": "All",
-            //     "icon": "📍",
-            //     "tags": [
-            //         "new"
-            //     ],
-            //     "notes": [],
-            //     "owner": "65dffad64102392ebb57839b",
-            //     "duration": "30",
-            //     "startDate": "2024-03-29T05:15:00.000Z",
-            //     "endDate": "2024-03-13T07:08:05.326Z",
-            //     "createdAt": "2024-02-29T03:37:10.111Z",
-            //     "updatedAt": "2024-02-29T03:37:10.111Z",
-            //     "__v": 0
-            // },{
-            //     "_id": "65dffbe64102392ebb5783b7",
-            //     "title": "test item 6",
-            //     "category": "Backlog",
-            //     "section": "All",
-            //     "icon": "📍",
-            //     "tags": [
-            //         "new"
-            //     ],
-            //     "notes": [],
-            //     "owner": "65dffad64102392ebb57839b",
-            //     "duration": "30",
-            //     "startDate": "2024-03-29T05:15:00.000Z",
-            //     "endDate": "2024-03-13T07:08:05.326Z",
-            //     "createdAt": "2024-02-29T03:37:10.111Z",
-            //     "updatedAt": "2024-02-29T03:37:10.111Z",
-            //     "__v": 0
-            // },{
-            //     "_id": "65dffbe64102392ebb5783b8",
-            //     "title": "test item 7",
-            //     "category": "Backlog",
-            //     "section": "All",
-            //     "icon": "📍",
-            //     "tags": [
-            //         "new"
-            //     ],
-            //     "notes": [],
-            //     "owner": "65dffad64102392ebb57839b",
-            //     "duration": "30",
-            //     "startDate": "2024-03-29T05:15:00.000Z",
-            //     "endDate": "2024-03-13T07:08:05.326Z",
-            //     "createdAt": "2024-02-29T03:37:10.111Z",
-            //     "updatedAt": "2024-02-29T03:37:10.111Z",
-            //     "__v": 0
-            // },
-            // {
-            //     "_id": "65dffccb4102392ebb5783b9",
-            //     "title": "test task 8",
-            //     "category": "Backlog",
-            //     "section": "All",
-            //     "icon": "📍",
-            //     "tags": [
-            //         "new"
-            //     ],
-            //     "notes": [],
-            //     "owner": "65dffad64102392ebb57839b",
-            //     "itemType": "Task",
-            //     "location": "23 locatiton",
-            //     "subtasks": [],
-            //     "duration": "20",
-            //     "startDate": "2024-03-29T08:30:00.000Z",
-            //     "endDate": "2024-03-13T07:08:05.326Z",
-            //     "createdAt": "2024-02-29T03:40:59.685Z",
-            //     "updatedAt": "2024-02-29T03:40:59.685Z",
-            //     "__v": 0
-            // },
-            // {
-            //     "_id": "65e134a91635ad960dabdc1b",
-            //     "title": "task with subtask",
-            //     "category": "Backlog",
-            //     "section": "All",
-            //     "icon": "📍",
-            //     "tags": [
-            //         "new",
-            //         "first"
-            //     ],
-            //     "notes": [],
-            //     "owner": "65dffad64102392ebb57839b",
-            //     "itemType": "Task",
-            //     "subtasks": [
-            //         {
-            //             "isChecked": false,
-            //             "task": "first subtask",
-            //             "_id": "65e134a91635ad960dabdc1c"
-            //         }
-            //     ],
-            //     "duration": "10",
-            //     "startDate": "2024-03-29T12:45:00.000Z",
-            //     "endDate": "2024-03-13T07:08:05.326Z",
-            //     "createdAt": "2024-03-01T01:51:37.332Z",
-            //     "updatedAt": "2024-03-01T01:53:24.873Z",
-            //     "__v": 0
-            // }
-        ]
-    };
+    if(!!filter.search) {
+        body = {
+            "items": [
+                {
+                    "_id": "65dffbe64102392ebb5783b0",
+                    "title": "test item 0",
+                    "category": "Backlog",
+                    "section": "All",
+                    "icon": "📍",
+                    "tags": [
+                        "new"
+                    ],
+                    "notes": [],
+                    "owner": "65dffad64102392ebb57839b",
+                    "duration": "30",
+                    "startDate": "2024-03-29T05:15:00.000Z",
+                    "endDate": "2024-03-13T07:08:05.326Z",
+                    "createdAt": "2024-02-29T03:37:10.111Z",
+                    "updatedAt": "2024-02-29T03:37:10.111Z",
+                    "__v": 0
+                },
+                
+            ]
+        };
+    }
+
+    else {
+        body = {
+            "items": [
+                {
+                    "_id": "65dffbe64102392ebb5783b0",
+                    "title": "test item 0",
+                    "category": "Backlog",
+                    "section": "All",
+                    "icon": "📍",
+                    "tags": [
+                        "new"
+                    ],
+                    "notes": [],
+                    "owner": "65dffad64102392ebb57839b",
+                    "duration": "30",
+                    "startDate": "2024-03-29T05:15:00.000Z",
+                    "endDate": "2024-03-13T07:08:05.326Z",
+                    "createdAt": "2024-02-29T03:37:10.111Z",
+                    "updatedAt": "2024-02-29T03:37:10.111Z",
+                    "__v": 0
+                },{
+                    "_id": "65dffbe64102392ebb5783b1",
+                    "title": "test item 1",
+                    "category": "Backlog",
+                    "section": "All",
+                    "icon": "📍",
+                    "tags": [
+                        "new"
+                    ],
+                    "notes": [],
+                    "owner": "65dffad64102392ebb57839b",
+                    "duration": "30",
+                    "startDate": "2024-03-29T05:15:00.000Z",
+                    "endDate": "2024-03-13T07:08:05.326Z",
+                    "createdAt": "2024-02-29T03:37:10.111Z",
+                    "updatedAt": "2024-02-29T03:37:10.111Z",
+                    "__v": 0
+                },
+                // {
+                //     "_id": "65dffbe64102392ebb5783b3",
+                //     "title": "test item 2",
+                //     "category": "Backlog",
+                //     "section": "All",
+                //     "icon": "📍",
+                //     "tags": [
+                //         "new"
+                //     ],
+                //     "notes": [],
+                //     "owner": "65dffad64102392ebb57839b",
+                //     "duration": "30",
+                //     "startDate": "2024-03-29T05:15:00.000Z",
+                //     "endDate": "2024-03-13T07:08:05.326Z",
+                //     "createdAt": "2024-02-29T03:37:10.111Z",
+                //     "updatedAt": "2024-02-29T03:37:10.111Z",
+                //     "__v": 0
+                // },{
+                //     "_id": "65dffbe64102392ebb5783b4",
+                //     "title": "test item 3",
+                //     "category": "Backlog",
+                //     "section": "All",
+                //     "icon": "📍",
+                //     "tags": [
+                //         "new"
+                //     ],
+                //     "notes": [],
+                //     "owner": "65dffad64102392ebb57839b5",
+                //     "duration": "30",
+                //     "startDate": "2024-03-29T05:15:00.000Z",
+                //     "endDate": "2024-03-13T07:08:05.326Z",
+                //     "createdAt": "2024-02-29T03:37:10.111Z",
+                //     "updatedAt": "2024-02-29T03:37:10.111Z",
+                //     "__v": 0
+                // },{
+                //     "_id": "65dffbe64102392ebb5783b5",
+                //     "title": "test item 4",
+                //     "category": "Backlog",
+                //     "section": "All",
+                //     "icon": "📍",
+                //     "tags": [
+                //         "new"
+                //     ],
+                //     "notes": [],
+                //     "owner": "65dffad64102392ebb57839b",
+                //     "duration": "30",
+                //     "startDate": "2024-03-29T05:15:00.000Z",
+                //     "endDate": "2024-03-13T07:08:05.326Z",
+                //     "createdAt": "2024-02-29T03:37:10.111Z",
+                //     "updatedAt": "2024-02-29T03:37:10.111Z",
+                //     "__v": 0
+                // },{
+                //     "_id": "65dffbe64102392ebb5783b6",
+                //     "title": "test item 5",
+                //     "category": "Backlog",
+                //     "section": "All",
+                //     "icon": "📍",
+                //     "tags": [
+                //         "new"
+                //     ],
+                //     "notes": [],
+                //     "owner": "65dffad64102392ebb57839b",
+                //     "duration": "30",
+                //     "startDate": "2024-03-29T05:15:00.000Z",
+                //     "endDate": "2024-03-13T07:08:05.326Z",
+                //     "createdAt": "2024-02-29T03:37:10.111Z",
+                //     "updatedAt": "2024-02-29T03:37:10.111Z",
+                //     "__v": 0
+                // },{
+                //     "_id": "65dffbe64102392ebb5783b7",
+                //     "title": "test item 6",
+                //     "category": "Backlog",
+                //     "section": "All",
+                //     "icon": "📍",
+                //     "tags": [
+                //         "new"
+                //     ],
+                //     "notes": [],
+                //     "owner": "65dffad64102392ebb57839b",
+                //     "duration": "30",
+                //     "startDate": "2024-03-29T05:15:00.000Z",
+                //     "endDate": "2024-03-13T07:08:05.326Z",
+                //     "createdAt": "2024-02-29T03:37:10.111Z",
+                //     "updatedAt": "2024-02-29T03:37:10.111Z",
+                //     "__v": 0
+                // },{
+                //     "_id": "65dffbe64102392ebb5783b8",
+                //     "title": "test item 7",
+                //     "category": "Backlog",
+                //     "section": "All",
+                //     "icon": "📍",
+                //     "tags": [
+                //         "new"
+                //     ],
+                //     "notes": [],
+                //     "owner": "65dffad64102392ebb57839b",
+                //     "duration": "30",
+                //     "startDate": "2024-03-29T05:15:00.000Z",
+                //     "endDate": "2024-03-13T07:08:05.326Z",
+                //     "createdAt": "2024-02-29T03:37:10.111Z",
+                //     "updatedAt": "2024-02-29T03:37:10.111Z",
+                //     "__v": 0
+                // },
+                // {
+                //     "_id": "65dffccb4102392ebb5783b9",
+                //     "title": "test task 8",
+                //     "category": "Backlog",
+                //     "section": "All",
+                //     "icon": "📍",
+                //     "tags": [
+                //         "new"
+                //     ],
+                //     "notes": [],
+                //     "owner": "65dffad64102392ebb57839b",
+                //     "itemType": "Task",
+                //     "location": "23 locatiton",
+                //     "subtasks": [],
+                //     "duration": "20",
+                //     "startDate": "2024-03-29T08:30:00.000Z",
+                //     "endDate": "2024-03-13T07:08:05.326Z",
+                //     "createdAt": "2024-02-29T03:40:59.685Z",
+                //     "updatedAt": "2024-02-29T03:40:59.685Z",
+                //     "__v": 0
+                // },
+                // {
+                //     "_id": "65e134a91635ad960dabdc1b",
+                //     "title": "task with subtask",
+                //     "category": "Backlog",
+                //     "section": "All",
+                //     "icon": "📍",
+                //     "tags": [
+                //         "new",
+                //         "first"
+                //     ],
+                //     "notes": [],
+                //     "owner": "65dffad64102392ebb57839b",
+                //     "itemType": "Task",
+                //     "subtasks": [
+                //         {
+                //             "isChecked": false,
+                //             "task": "first subtask",
+                //             "_id": "65e134a91635ad960dabdc1c"
+                //         }
+                //     ],
+                //     "duration": "10",
+                //     "startDate": "2024-03-29T12:45:00.000Z",
+                //     "endDate": "2024-03-13T07:08:05.326Z",
+                //     "createdAt": "2024-03-01T01:51:37.332Z",
+                //     "updatedAt": "2024-03-01T01:53:24.873Z",
+                //     "__v": 0
+                // }
+            ]
+        };
+    }
+
+    
     let items = body.items;
     return items.map((item) => {
         return {
