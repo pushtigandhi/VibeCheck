@@ -36,6 +36,7 @@ const GalleryView = ({items, navigation}) => (
   <FlatList
     scrollEnabled={true}
     data={items}
+    numColumns={2} 
     renderItem={({item}) => (
       <TouchableOpacity style={styles.cardContainer} key={item["_id"] + "_root"}
         onPress={() => {
