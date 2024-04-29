@@ -74,6 +74,7 @@ export const CalendarView = ({navigation, filter={}, setFilter}, isHome=false) =
         //   alert(err.message)
         // })
         getScheduledItemsFromAPI();
+        console.log(items);
       },[refreshing])
 
     return (
@@ -143,7 +144,7 @@ export const CalendarView = ({navigation, filter={}, setFilter}, isHome=false) =
                             <DailyCalendar navigation={navigation} date={selectedDate} filter={filter} refreshing={refreshing} />
                         )}
                         {state === 'week' && (
-                            <WeeklyCalendar navigation={navigation} date={selectedDate} filter={filter} refreshing={refreshing} />
+                            <WeeklyCalendar navigation={navigation} date={selectedDate} filter={filter} refreshing={refreshing} itemList={items} />
                         )}
                         {state === 'month' && (
                             <MonthlyCalendar navigation={navigation} date={selectedDate} month={selectedDate.getMonth()} filter={filter} onRefresh={onRefresh} refreshing={refreshing} />
@@ -224,5 +225,6 @@ const styles = StyleSheet.create({
         borderRadius: SIZES.small,
         ...SHADOWS.xSmall,
         shadowColor: COLORS({opacity:1}).shadow,
-      },
+    },
+    
 });

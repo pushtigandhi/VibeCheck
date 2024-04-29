@@ -9,6 +9,7 @@ const ItemType = {
 
 const ViewType = {
   Schedule: 'Schedule',
+  Checklist: 'Checklist',
   Default: 'Default'
 };
 

@@ -16,6 +16,8 @@ import EditScreen from './screens/EditScreen';
 import NewItem from './screens/NewItem';
 import ItemScreen from './screens/ItemScreen';
 import ScheduleView from './screens/views/ScheduleView';
+import ChecklistView from './screens/views/ChecklistView';
+import SelectView from './screens/SelectView';
 
 const Stack = createNativeStackNavigator();
 
@@ -43,7 +45,9 @@ export default function App() {
       <Stack.Screen name="Backlog" component={Backlog}/>
       <Stack.Screen name="EditItem" component={EditScreen}/>
       <Stack.Screen name="ItemScreen" component={ItemScreen}/>
+      <Stack.Screen name="SelectView" component={SelectView}/>
       <Stack.Screen name="ScheduleView" component={ScheduleView}/>
+      <Stack.Screen name="ChecklistView" component={ChecklistView}/>
       <Stack.Screen name="Item" component={ItemCard}/>
     </Stack.Navigator>
   </NavigationContainer>

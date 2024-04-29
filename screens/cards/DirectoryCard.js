@@ -18,6 +18,9 @@ const expandedCard = ({navigation, category, sections}) => {
             else if(section.view == ViewType.Schedule) {
               navigation.navigate("ScheduleView", {"isSection": true, "category": category, "section": section})
             }
+            else if(section.view == ViewType.Checklist) {
+              navigation.navigate("ChecklistView", {"isSection": true, "category": category, "section": section})
+            }
           }}
         >
           <Text style={styles.section} numberOfLines={1}>{section.title}</Text>

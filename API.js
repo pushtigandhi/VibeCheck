@@ -899,7 +899,7 @@ export async function GETdirectoryTEST() {
             "sections": [
                 {"title": "All", "view": "Default", "_id": "235235"},
                 {"title": "Recipes", "view": "Default", "_id": "74576"},
-                {"title": "Tips", "view": "Default", "_id": "4674764674"},
+                {"title": "Tips", "view": "Checklist", "_id": "4674764674"},
                 {"title": "Meal Plan", "view": "Schedule", "_id": "3578365"}
             ],
             "_id": "65e172b61635ad960dabdc32"

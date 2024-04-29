@@ -146,14 +146,6 @@ export default function ItemScreen ({navigation, route, scrollEnabled = true}) {
         alert(err.message)
       })
     }
-    else {
-      setTitle(route.params?.item.itemType);
-      getItemsByTypeFromAPI(route.params?.item.itemType).then((items_) => {
-        setItems(items_);
-      }).catch((err) => {
-        alert(err.message)
-      })
-    }
   }, [refreshing]) // only run once on load
 
   return (

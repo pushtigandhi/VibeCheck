@@ -1,4 +1,4 @@
-import { SafeAreaView, View, FlatList, StyleSheet, Text } from "react-native";
+import { SafeAreaView, View, FlatList, StyleSheet, Text, TouchableOpacity, Modal } from "react-native";
 import { COLORS, FONT, SIZES, SHADOWS } from "../constants";
 import { GETitems, POSTcreateItem, BASE_URL } from "../API";
 import { Ionicons } from "@expo/vector-icons";
@@ -6,10 +6,12 @@ import { useState, useEffect } from "react";
 import HomeNavigation from "./HomeNavigation";
 import { GETdirectoryTEST } from "../API";
 import DirectoryCard from "./cards/DirectoryCard"
+import SelectView from "./SelectView";
 
 export default function Directory ({navigation, scrollEnabled = true}) {
   const [categories, setCategories] = useState([]);
   const [title, setTitle] = useState("");
+  const [isDefaultExpanded, setIsDefaultExpanded] = useState(false);
 
   function createCategory() {
     const category = {
@@ -41,6 +43,8 @@ export default function Directory ({navigation, scrollEnabled = true}) {
     }
   }
 
+
+
   useEffect(() => {
     getDirectoryFromAPI().then((categories_) => {
       setCategories(categories_);
@@ -49,6 +53,10 @@ export default function Directory ({navigation, scrollEnabled = true}) {
     })
     
   }, []) // only run once on load
+
+  function onClose() {
+    setIsDefaultExpanded(false);
+  } 
 
 
   const renderCategory = ({ item }) => (
@@ -59,7 +67,20 @@ export default function Directory ({navigation, scrollEnabled = true}) {
 
   return (
     <SafeAreaView style={styles.screen}>
-      <Text style={styles.header}>Directory</Text>
+    <View style={styles.header}>
+      <Text>Directory</Text>
+      <TouchableOpacity
+        onPress={() => (setIsDefaultExpanded(true))}
+        style={[styles.row, styles.addButton]}
+      >
+        <Ionicons name={"add-circle"} size={20} style={styles.iconInverted}/>
+      </TouchableOpacity>
+    </View>
+
+    <Modal visible={isDefaultExpanded} animationType="slide" onRequestClose={onClose}>
+      <SelectView onClose={onClose} />
+    </Modal>
+      
       <FlatList
         scrollEnabled={scrollEnabled}
         data={categories}
@@ -84,6 +105,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS({opacity:1}).navy,
     borderRadius: SIZES.medium,
+    flexDirection: "row",
+    justifyContent: "space-between"
   },
   cardContainer: {
     //width: '100%',

@@ -18,39 +18,57 @@ const defaultImage = require("../../assets/icon.png");
 
 const daysOfWeek = ['SUN', 'MON', 'TUES', 'WED', 'THUR', 'FRI', 'SAT'];
 
-const ListView = ({items, navigation}) => (
-  <FlatList
-    scrollEnabled={true}
-    data={items}
-    renderItem={({item}) => (
-        <TouchableOpacity
-            onPress={() => {
-                navigation.navigate("Item", {item});
-            }}
-            key={item["_id"] + "root"} 
-            style={styles.cardsContainer}
-            >
-            <View style={{flexDirection: "row"}}>
-                <View style={styles.time}>
-                    <Text style={styles.timeLabel}>{String(new Date(item.endDate).getDate())}</Text>
-                    <Text style={styles.timeLabel}>{daysOfWeek[new Date(item.startDate).getDay()]}</Text>
-                </View>
-                <View style={{ justifyContent: "center"}}>
-                    <Text style={{ fontSize: SIZES.xLarge}}>{item.icon}</Text>
-                </View>
-                <View style={styles.dayCardContainer}>
-                <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
-                <View style={styles.row}>
-                    <Text style={styles.timeLabel}>{String(new Date(item.startDate).getHours())}:{new Date(item.startDate).getMinutes() < 10 ? String("0"+ new Date(item.startDate).getMinutes()) : String(new Date(item.startDate).getMinutes())} - {String(new Date(item.endDate).getHours())}:{new Date(item.endDate).getMinutes() < 10 ? String("0"+ new Date(item.endDate).getMinutes()) : String(new Date(item.endDate).getMinutes())}</Text>
-                </View>
-                </View>
-            </View>
+const Checklist = ({items, setFn}) => {
+    const [subtasks, setSubtasks] = useState(items);
+  
+    const unSelectAll = () => {
+      const updatedSubtasks = subtasks.map((subtask) => {
+          return { ...subtask, isChecked: false };
+      });
+      setSubtasks(updatedSubtasks);
+      setFn({"subtasks": updatedSubtasks});
+    };
+  
+    const toggleSubtask = (id) => {
+      const updatedSubtasks = subtasks.map((subtask) => {
+        if (subtask["_id"] === id) {
+          return { ...subtask, isChecked: !subtask.isChecked };
+        }
+        return subtask;
+      });
+      setSubtasks(updatedSubtasks);
+      setFn({"subtasks": updatedSubtasks}); // Indicate that changes have been made
+    };
+    
+    return (
+      <ScrollView style={styles.expandedContainer}>
+        <TouchableOpacity style={styles.addButtonIcon} >
+            <Ionicons name={"add-circle"} size={SIZES.large} style={styles.iconInverted} />
         </TouchableOpacity>
-    )}
-  /> 
-);
+        
+        {subtasks.length > 0 ? (subtasks.map(item => (
+          <TouchableOpacity style={styles.cardsContainer} key={item["_id"]} 
+            onPress={() => toggleSubtask(item["_id"])}
+          >
+            <View style={styles.row}>
+              {item.isChecked ? (
+                <Ionicons name={"checkbox-outline"} size={SIZES.large} style={styles.icon}/> 
+              ) : (
+                <Ionicons name={"square-outline"} size={SIZES.large} style={styles.icon}/>
+              )}
+              <Text style={styles.item} numberOfLines={1}>{item.task}</Text>
+            </View>
+          </TouchableOpacity>
+        ))) : (
+          <View>
+            <Text style={[styles.item, {marginRight: SIZES.small}]} numberOfLines={1}>None</Text>
+          </View>
+        )}
+      </ScrollView>
+    )
+  };
 
-export default function ScheduleView ({navigation, route, scrollEnabled = true}) {
+export default function ChecklistView ({navigation, route, scrollEnabled = true}) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [title, setTitle] = useState(null);
   const [category, setCategory] = useState(null);
@@ -67,6 +85,34 @@ export default function ScheduleView ({navigation, route, scrollEnabled = true})
 
   const [search, setSearch] = useState('');
   const [expandSearchBar, setSearchBar] = useState(false);
+
+  const [index, setIndex] = React.useState(0);
+  const [routes] = React.useState([
+    { key: 'checklist' },
+    { key: 'gallery' },
+  ]);
+  const renderScene = ({ route }) => {
+    switch (route.key) {
+      case 'checklist':
+        return <Checklist items={items} setFn={updateNewItem} />;
+    //   case 'gallery':
+    //     return <CalendarView navigation={navigation} filter={filter} setFilter={setFilter}/>;
+      default:
+        return null;
+    }
+  };
+  const renderIcon = ({ route, focused, color }) => {
+    let iconName;
+  
+    if (route.key === 'checklist') {
+      iconName = focused ? 'checkbox' : 'checkbox-outline';
+    } else if (route.key === 'gallery') {
+      iconName = focused ? 'reader' : 'reader-outline';
+    }
+  
+    // Return the icon component
+    return <Ionicons name={iconName} size={30} color={COLORS({opacity:1}).primary} />;
+  };
 
   function closeFilter() {
     //doRefresh(filter);
@@ -117,6 +163,18 @@ export default function ScheduleView ({navigation, route, scrollEnabled = true})
 
     function changeTypeOption(optionValue) {
         setTypeOptions(optionValue);
+    }
+
+    function updateNewItem(params) {
+        // if(params.subtasks) {
+        //   setUpdatedItem({... updatedItem, subtasks: params.subtasks});
+        // }
+        // if(params.ingredients) {
+        //   setUpdatedItem({... updatedItem, ingredients: params.ingredients});
+        // }
+        // if(params.instructions) {
+        //   setUpdatedItem({... updatedItem, instructions: params.instructions});
+        // }
     }
 
     useEffect(() => {
@@ -192,29 +250,18 @@ export default function ScheduleView ({navigation, route, scrollEnabled = true})
                     >
                     <Ionicons name={"funnel-outline"} size={20} style={styles.iconInverted}/>
                     </TouchableOpacity>
-                    <TouchableOpacity
-                    onPress={() => {
-                        route.params?.isSection ? 
-                        navigation.navigate("Item", {item: {"category": route.params?.category.title, "section": route.params?.section, "icon": '\u{1F4E6}', "itemType" : ItemType.Item}})
-                        : 
-                        navigation.navigate("EditItem", {item: route.params?.item})
-                    }}
-                    style={[styles.row, styles.addButton]}
-                    >
-                    <Ionicons name={"add-circle"} size={20} style={styles.iconInverted}/>
-                    </TouchableOpacity>
                 </View>
             </View>
           
-          <SingleSelectDropdown options={typeOptions} placeholder={type} setFn={changeTypeOption}
-          icon={<Ionicons name={"grid-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
+          {/* <SingleSelectDropdown options={typeOptions} placeholder={type} setFn={changeTypeOption}
+          icon={<Ionicons name={"grid-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]} />} /> */}
         </View>
         
         
         <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
           <FilterModal closeFilter={closeFilter} filter={filter} setFilter={setFilter} />
         </Modal>
-        {/* <TabView
+        <TabView
           navigationState={{ index, routes }}
           renderScene={renderScene}
           onIndexChange={setIndex}
@@ -226,7 +273,7 @@ export default function ScheduleView ({navigation, route, scrollEnabled = true})
               style={{ backgroundColor: 'white' }}
             />
           )}
-        /> */}
+        />
         <HomeNavigation size={30} iconColor={COLORS({opacity:1}).primary}/>
     </SafeAreaView>
     );
@@ -339,4 +386,14 @@ const styles = StyleSheet.create({
     ...SHADOWS.xSmall,
     shadowColor: COLORS({opacity:1}).shadow,
   },
+  addButtonIcon: {
+    height: SIZES.xxLarge,
+    margin: SIZES.xSmall,
+    backgroundColor: COLORS({opacity:0.5}).darkBlue,
+    borderRadius: SIZES.small,
+    ...SHADOWS.medium,
+    shadowColor: COLORS({opacity:1}).shadow,
+    alignItems: "center",
+    justifyContent: "center",
+},
 });
