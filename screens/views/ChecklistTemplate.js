@@ -13,8 +13,6 @@ import { CalendarView } from "../partialViews/CalendarView";
 
 const defaultImage = require("../../assets/icon.png");
 
-const daysOfWeek = ['SUN', 'MON', 'TUES', 'WED', 'THUR', 'FRI', 'SAT'];
-
 const Checklist = ({items}) => {
     const [subtasks, setSubtasks] = useState(items);
     

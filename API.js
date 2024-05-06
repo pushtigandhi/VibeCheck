@@ -324,7 +324,7 @@ export async function DELETEcontact(contactID) {
 //#endregion
 
 //#region DIRECTORY
-export async function GETdirectory() {
+export async function GETdirectory(profileID) {
     const response = await fetchWithAuth(`${DIRECTORY_BASE_URL}/${profileID}`, {
         method: 'GET',
     });
@@ -914,10 +914,7 @@ export async function GETdirectoryTEST() {
 }
 
 export async function POSTaddCategoryTEST(profileID, category) {
-    const response = await fetchWithAuthJSON(`${DIRECTORY_BASE_URL}/${profileID}`, {
-        method: 'POST',
-        body: JSON.stringify(category),
-    });
+    const response = `${DIRECTORY_BASE_URL}/${profileID}...body:` + JSON.stringify(category);
 
     console.log(response);
 

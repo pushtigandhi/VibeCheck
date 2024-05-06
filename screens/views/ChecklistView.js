@@ -3,7 +3,7 @@ import { SafeAreaView, View, FlatList, StyleSheet, Text, TextInput, TouchableOpa
     RefreshControl, ScrollView, Image, Modal } from "react-native";
 
 import HomeNavigation from "../HomeNavigation";
-import { GETitems, GETitemsTEST } from "../../API";
+import { GETitems, GETitemsTEST, PATCHcategoryTEST } from "../../API";
 import { COLORS, SIZES, SHADOWS, FONT, ItemType, ViewType } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { TabView, TabBar, ToolBar, SceneMap } from 'react-native-tab-view';
@@ -16,19 +16,8 @@ import SingleSelectDropdown from "../../components/SingleSelectDropdown";
 
 const defaultImage = require("../../assets/icon.png");
 
-const daysOfWeek = ['SUN', 'MON', 'TUES', 'WED', 'THUR', 'FRI', 'SAT'];
-
 const Checklist = ({items, setFn}) => {
     const [subtasks, setSubtasks] = useState(items);
-  
-    const unSelectAll = () => {
-      const updatedSubtasks = subtasks.map((subtask) => {
-          return { ...subtask, isChecked: false };
-      });
-      setSubtasks(updatedSubtasks);
-      setFn({"subtasks": updatedSubtasks});
-    };
-  
     const toggleSubtask = (id) => {
       const updatedSubtasks = subtasks.map((subtask) => {
         if (subtask["_id"] === id) {
@@ -39,14 +28,23 @@ const Checklist = ({items, setFn}) => {
       setSubtasks(updatedSubtasks);
       setFn({"subtasks": updatedSubtasks}); // Indicate that changes have been made
     };
+
+    const [showInput, setShowInput] = useState(false);
     
     return (
       <ScrollView style={styles.expandedContainer}>
-        <TouchableOpacity style={styles.addButtonIcon} >
+        <TouchableOpacity style={styles.addButtonIcon} onPress={() => (setShowInput(true))}>
             <Ionicons name={"add-circle"} size={SIZES.large} style={styles.iconInverted} />
         </TouchableOpacity>
+        {showInput==true && (
+          <TextInput style={styles.inputBox} 
+            placeholder="new..."
+            onSubmitEditing={(newSearch) => (setSearchBar(false), doSearch(newSearch))}
+            returnKeyType='default'
+          /> 
+        )}
         
-        {subtasks.length > 0 ? (subtasks.map(item => (
+        {subtasks.length > 0 && (subtasks.map(item => (
           <TouchableOpacity style={styles.cardsContainer} key={item["_id"]} 
             onPress={() => toggleSubtask(item["_id"])}
           >
@@ -59,11 +57,7 @@ const Checklist = ({items, setFn}) => {
               <Text style={styles.item} numberOfLines={1}>{item.task}</Text>
             </View>
           </TouchableOpacity>
-        ))) : (
-          <View>
-            <Text style={[styles.item, {marginRight: SIZES.small}]} numberOfLines={1}>None</Text>
-          </View>
-        )}
+        )))}
       </ScrollView>
     )
   };
@@ -161,44 +155,45 @@ export default function ChecklistView ({navigation, route, scrollEnabled = true}
     {label: "Month", value: "Month"}
   ];
 
-    function changeTypeOption(optionValue) {
-        setTypeOptions(optionValue);
-    }
+  function changeTypeOption(optionValue) {
+      setTypeOptions(optionValue);
+  }
 
-    function updateNewItem(params) {
-        // if(params.subtasks) {
-        //   setUpdatedItem({... updatedItem, subtasks: params.subtasks});
-        // }
-        // if(params.ingredients) {
-        //   setUpdatedItem({... updatedItem, ingredients: params.ingredients});
-        // }
-        // if(params.instructions) {
-        //   setUpdatedItem({... updatedItem, instructions: params.instructions});
-        // }
-    }
+  function updateNewItem(params) {
+      // if(params.subtasks) {
+      //   setUpdatedItem({... updatedItem, subtasks: params.subtasks});
+      // }
+      // if(params.ingredients) {
+      //   setUpdatedItem({... updatedItem, ingredients: params.ingredients});
+      // }
+      // if(params.instructions) {
+      //   setUpdatedItem({... updatedItem, instructions: params.instructions});
+      // }
+  }
 
-    useEffect(() => {
-        const indexOfTypeOption = Object.values(typeOptions).indexOf("type");
-        setTypeOptions(Object.keys(typeOptions)[indexOfTypeOption]);
+  useEffect(() => {
+      const indexOfTypeOption = Object.values(typeOptions).indexOf("type");
+      setTypeOptions(Object.keys(typeOptions)[indexOfTypeOption]);
 
-        let state = 
-        setFilter({... filter, category: route.params?.category.title, section: route.params?.section.title});
+      let state = 
+      setFilter({... filter, category: route.params?.category.title, section: route.params?.section.title});
 
-        if (route.params?.isSection) {
-            setTitle(route.params?.section.title);
-            getSectionItemsFromAPI().then((items_) => {
-              setItems(items_);
-            }).catch((err) => {
-              alert(err.message)
-            })
-        }
+      if (route.params?.isSection) {
+          setTitle(route.params?.section.title);
+          getSectionItemsFromAPI().then((items_) => {
+            setItems(items_);
+          }).catch((err) => {
+            alert(err.message)
+          })
+      }
 
-    }, [type, refreshing]); // run only once
+  }, [type, refreshing]); // run only once
 
   useEffect(() => {
     if (route.params?.isSection) {
       setFilter({... filter, category: route.params?.category.title, section: route.params?.section.title});
     }
+    setCategory(route.params?.category["_id"]);
   }, []) // only run once on load
 
 //   useEffect(() => {
@@ -220,6 +215,23 @@ export default function ChecklistView ({navigation, route, scrollEnabled = true}
 //     }
 //   }, [refreshing]) // only run once on load
 
+  async function PATCHsubtask() {
+    try {
+      let items_ = await GETtodayTEST(filter);
+      return items_;
+    } catch (error) {
+      console.log("error fetching items");
+      console.log(error);
+      return [];
+    }
+  }
+  function addNewItem() {
+    getItemsFromAPI(filter).then((items_) => {
+      setItems(items_);
+    }).catch((err) => {
+      alert(err.message)
+    })
+  }
   return (
     <SafeAreaView style={styles.screen}>
         <View style={[styles.propContainer]}>
@@ -395,5 +407,13 @@ const styles = StyleSheet.create({
     shadowColor: COLORS({opacity:1}).shadow,
     alignItems: "center",
     justifyContent: "center",
-},
+  },
+  inputBox: {
+    width: "100%",
+    fontSize: SIZES.medium, 
+    color: COLORS({opacity:1}).primary, 
+    padding: SIZES.small, 
+    borderWidth: 0.5,
+    borderRadius: SIZES.xSmall,
+  }
 });

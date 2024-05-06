@@ -1,14 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity,
+import { View, Text, TouchableOpacity, Modal,
         StyleSheet, Animated, FlatList, ScrollView } from 'react-native';
 import { COLORS, SHADOWS, FONT, SIZES, ViewType } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { Spacer } from "../../utils";
 import { ExpandableView } from "../../utils";
+import SelectView from "../SelectView";
 
 const expandedCard = ({navigation, category, sections}) => {
+  const [showAddSection, setShowAddSection] = useState(false);
+  function onClose() {
+    setShowAddSection(false);
+  } 
+
   return (
     <ScrollView style={styles.expandedContainer}>
+      <TouchableOpacity style={styles.addButtonIcon} onPress={() => (setShowAddSection(true))}>
+        <Ionicons name={"add-circle"} size={SIZES.large} style={styles.iconInverted} />
+      </TouchableOpacity>
+      <Modal visible={showAddSection} animationType="slide" onRequestClose={onClose}>
+        <SelectView onClose={onClose} />
+      </Modal>
+      
       {sections.map(section => (
         <TouchableOpacity style={styles.sectionContainer} key={section["_id"] + "_root"}
           onPress={() => {
@@ -92,6 +105,18 @@ const styles = StyleSheet.create({
   icon: {
     marginRight: SIZES.xxSmall,
     color: COLORS({opacity:0.8}).primary,
+  },
+  addButtonIcon: {
+    height: SIZES.xxLarge,
+    margin: SIZES.xSmall,
+    backgroundColor: COLORS({opacity:0.5}).secondary,
+    borderRadius: SIZES.small,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  iconInverted: {
+    color: COLORS({opacity:1}).white,
+    margin: SIZES.xxSmall,
   },
 });
 

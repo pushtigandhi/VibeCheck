@@ -1,6 +1,6 @@
-import { SafeAreaView, View, FlatList, StyleSheet, Text, TouchableOpacity, Modal } from "react-native";
+import { SafeAreaView, View, FlatList, StyleSheet, Text, TouchableOpacity, TextInput } from "react-native";
 import { COLORS, FONT, SIZES, SHADOWS } from "../constants";
-import { GETitems, POSTcreateItem, BASE_URL } from "../API";
+import { GETitems, POSTcreateItem, POSTaddCategory, BASE_URL, GETmeTEST, POSTaddCategoryTEST } from "../API";
 import { Ionicons } from "@expo/vector-icons";
 import { useState, useEffect } from "react";
 import HomeNavigation from "./HomeNavigation";
@@ -10,26 +10,47 @@ import SelectView from "./SelectView";
 
 export default function Directory ({navigation, scrollEnabled = true}) {
   const [categories, setCategories] = useState([]);
-  const [title, setTitle] = useState("");
-  const [isDefaultExpanded, setIsDefaultExpanded] = useState(false);
-
-  function createCategory() {
-    const category = {
-      title: title,
-    };
-
-    (async () => {
-      POSTaddCategory({
-        ...category,
-        _id: null
-      }).then((newCategory) => {
-        if (!!newCategory) {
-          alert("Success!");
+  const [showInput, setShowInput] = useState(false);
+  const [newCategory, setNewCategory] = useState("");
+  
+  async function getProfileID() {
+    try {
+      GETmeTEST().then((profile) => {
+        if (!!profile) {
+          console.log(profile["_id"]);
+          return profile["_id"].toString();
         } else {
           alert("Failed.");
         }
       });
-    })()
+    } catch (err) {
+      console.log("get me failed. "+err);
+    }
+  }
+
+  async function addNewCategory() {
+
+    const category = {
+      title: newCategory,
+    };
+
+    getProfileID().then((profileID) => {
+      console.log(profileID)
+      (async () => {
+        POSTaddCategoryTEST(profileID, {
+          ...category,
+          _id: null
+        }).then((newCategory) => {
+          if (!!newCategory) {
+            alert("Success!");
+          } else {
+            alert("Failed.");
+          }
+        });
+      })()
+    }).catch((err) => {
+        alert(err.message)
+    })
   }
 
   async function getDirectoryFromAPI() {
@@ -42,8 +63,6 @@ export default function Directory ({navigation, scrollEnabled = true}) {
       return [];
     }
   }
-
-
 
   useEffect(() => {
     getDirectoryFromAPI().then((categories_) => {
@@ -58,7 +77,6 @@ export default function Directory ({navigation, scrollEnabled = true}) {
     setIsDefaultExpanded(false);
   } 
 
-
   const renderCategory = ({ item }) => (
     <View key={item["_id"] + "root"} style={styles.cardContainer}>
         <DirectoryCard navigation={navigation} category={item} key={item["_id"]} sections={item.sections} />
@@ -70,16 +88,21 @@ export default function Directory ({navigation, scrollEnabled = true}) {
     <View style={styles.header}>
       <Text>Directory</Text>
       <TouchableOpacity
-        onPress={() => (setIsDefaultExpanded(true))}
+        onPress={() => (setShowInput(true))}
         style={[styles.row, styles.addButton]}
       >
         <Ionicons name={"add-circle"} size={20} style={styles.iconInverted}/>
       </TouchableOpacity>
     </View>
 
-    <Modal visible={isDefaultExpanded} animationType="slide" onRequestClose={onClose}>
-      <SelectView onClose={onClose} />
-    </Modal>
+    {showInput==true && (
+      <TextInput style={styles.inputBox} 
+        onChangeText={(newCat) => (setNewCategory(newCat))}
+        placeholder="new..."
+        onSubmitEditing={() => (addNewCategory())}
+        returnKeyType='default'
+      /> 
+    )}
       
       <FlatList
         scrollEnabled={scrollEnabled}
