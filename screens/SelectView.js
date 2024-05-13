@@ -12,7 +12,7 @@ import { ExpandableView } from "../utils";
 
 export default function SelectView({onClose}) {
 
-  const [isDefaultExpanded, setIsDefaultExpanded] = useState(false);
+  const [isDefaultExpanded, setIsDefaultExpanded] = useState(true);
   const [isScheduledExpanded, setIsScheduledExpanded] = useState(false);
   const [isChecklistExpanded, setIsChecklistExpanded] = useState(false);
   const [title, setTitle] = useState(null);
@@ -69,9 +69,10 @@ export default function SelectView({onClose}) {
 
       <TouchableOpacity
         onPress={() => {
-          setIsDefaultExpanded(!isDefaultExpanded);
+          setIsDefaultExpanded(true);
           setIsScheduledExpanded(false);
           setIsChecklistExpanded(false);
+          setViewType(df.ViewType.Default);
         }}
         style={styles.titleContainer}
       >
@@ -92,8 +93,9 @@ export default function SelectView({onClose}) {
       <TouchableOpacity
         onPress={() => {
           setIsDefaultExpanded(false);
-          setIsScheduledExpanded(!isScheduledExpanded);
+          setIsScheduledExpanded(true);
           setIsChecklistExpanded(false);
+          setViewType(df.ViewType.Schedule);
         }}
         style={styles.titleContainer}
       >
@@ -116,7 +118,8 @@ export default function SelectView({onClose}) {
           // navigation.navigate("ChecklistView", {"isSection": false});
           setIsDefaultExpanded(false);
           setIsScheduledExpanded(false);
-          setIsChecklistExpanded(!isChecklistExpanded);
+          setIsChecklistExpanded(true);
+          setViewType(df.ViewType.Checklist);
         }}
         style={styles.titleContainer}
       >

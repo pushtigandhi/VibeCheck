@@ -12,6 +12,7 @@ import { ToolBar } from "../../components/Toolbar";
 import FilterModal from "../../components/FilterModal";
 import NewItem from "../NewItem";
 import { Sidebar } from "../../components/Sidebar";
+import ScheduleScreen from "../ScheduleScreen";
 
 export const CalendarView = ({navigation, filter={}, setFilter}, isHome=false) => {
     const calendarHeight = Dimensions.get('window').height - 300;
@@ -98,7 +99,7 @@ export const CalendarView = ({navigation, filter={}, setFilter}, isHome=false) =
                         <FilterModal closeFilter={closeFilter} filter={filter} setFilter={setFilter} />
                     </Modal>
                     <Modal visible={scheduleVisible} animationType="slide" onRequestClose={closeSchedule}>
-                        <NewItem navigation={navigation} />
+                        <ScheduleScreen navigation={navigation} />
                     </Modal>
                     <View style={styles.iconRoot}>
                         <TouchableOpacity

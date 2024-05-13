@@ -11,7 +11,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import { Spacer } from "../utils";
 
-export default function FilterModal({ filter, setFilter, closeFilter }) {
+export default function FilterModal({ filter, setFilter, closeFilter, isScheduler=false }) {
     const sortOptions = [
         {label: "Date (Ascending)", value: "date"},
         {label: "Date (Descending)", value: "-date"},
@@ -64,36 +64,13 @@ export default function FilterModal({ filter, setFilter, closeFilter }) {
         minuteItem.push(<Picker.Item key={i} label={`${i}`} value={`${i}`} />);
     }
 
-   // const [tagsText, setTagsText] = useState("");
-    // const [bountyLTText, setBountyLTText] = useState("$");
-    // const [bountyGTText, setBountyGTText] = useState("$");
-
     useEffect(() => {
         const indexOfOption = Object.values(sortOptions).indexOf("startTime");
         setSortOption(Object.keys(sortOptions)[indexOfOption]);
 
         const indexOfTypeOption = Object.values(typeOptions).indexOf("itemType");
         setTypeOptions(Object.keys(typeOptions)[indexOfTypeOption]);
-
-        //     setLocation({
-        //         coords: [filter.longitude, filter.latitude],
-        //     });
-        // }
-        // setTagsText(filter.tags?.join(" ") || "");
-        // setDuration((filter.radius !== undefined ? filter.radius / 1000 : 25 )); // convert to km, default in m
     }, []); // run only once
-
-    // function onChangeTags(text) {
-    //     let tags = text.split(/\s+|,/)
-    //         .map((tag) => tag.trim())
-    //         .filter((tag) => tag !== "");
-        
-    //     setFilter({
-    //         ...filter,
-    //         tags: tags
-    //     })
-    //     setTagsText(text);
-    // }
 
     function changeSortOption(optionValue) {
         //setFilter({... filter, "sortBy": optionValue});
@@ -173,19 +150,6 @@ export default function FilterModal({ filter, setFilter, closeFilter }) {
         }
     }
 
-    // search?: string;
-    // tags?: [string];
-    // category?: string;
-    // section?: string;
-    // startgt: Date;
-    // startlt: Date;
-    // endgt: Date;
-    // endlt: Date;
-    // priority?: string;
-    // durationlt: number;
-    // durationgt: number;
-    // author?: string;
-    // sortBy?: string;
     useEffect(() => {
         if(filter.sortBy) {
             setSortOption(filter.sortBy);
@@ -198,9 +162,11 @@ export default function FilterModal({ filter, setFilter, closeFilter }) {
         }
         if(filter.startDate) {
             setStartDate(filter.startDate);
+            setShowStartDate(true);
         }
         if(filter.endDate) {
             setEndDate(filter.endDate);
+            setShowEndDate(true);
         }
         if(filter.repeat) {
             setRepeat(filter.repeat);
@@ -245,8 +211,9 @@ export default function FilterModal({ filter, setFilter, closeFilter }) {
                     </TouchableOpacity>
                 )}
                 {showStartDate == true && (
-                    <View style={styles.row}>
-                        <Text style={{color: COLORS({opacity:0.8}).secondary, fontSize: SIZES.large, marginLeft: SIZES.small}}>Start Date: </Text>
+                    <View style={[styles.row, styles.property]}>
+                        <Ionicons name={"calendar-outline"} size={25} style={styles.icon} />
+
                       <DateTimePicker
                         value={startDate}
                         mode={"date"}
@@ -258,16 +225,18 @@ export default function FilterModal({ filter, setFilter, closeFilter }) {
                             updateFilter({"startDate": currentDate});
                         }}
                       />
-                      <TouchableOpacity style={[styles.row, styles.removeButton]}
-                            onPress={() => (
-                            setStartDate(new Date()),
-                            updateFilter({"startDate": "x"}), 
-                            setShowStartDate(false)
-                            )}
-                        >
-                            <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
-                            <Text style={{color: COLORS({opacity:1}).white}}>Remove</Text>
-                        </TouchableOpacity>
+                        {!isScheduler && (
+                            <TouchableOpacity style={[styles.row, styles.removeButton]}
+                                onPress={() => (
+                                setStartDate(new Date()),
+                                updateFilter({"startDate": "x"}), 
+                                setShowStartDate(false)
+                                )}
+                            >
+                                <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
+                                <Text style={{color: COLORS({opacity:1}).white}}>Remove</Text>
+                            </TouchableOpacity>
+                        )}
                     </View>
                 )}
                 {showEndDate == false && (
@@ -276,9 +245,9 @@ export default function FilterModal({ filter, setFilter, closeFilter }) {
                     </TouchableOpacity>
                 )}
                 {showEndDate == true && (
-                    <View style={[styles.row, {marginTop: SIZES.small}]}>
-                        <Text style={{color: COLORS({opacity:0.8}).secondary, fontSize: SIZES.large, marginLeft: SIZES.small}}>End Date: </Text>
-
+                    <View style={[styles.row, styles.property]}>
+                        <Ionicons name={"calendar-outline"} size={25} style={styles.icon} />
+                        
                         <DateTimePicker
                             value={endDate}
                             mode={"date"}
@@ -290,16 +259,18 @@ export default function FilterModal({ filter, setFilter, closeFilter }) {
                                 updateFilter({"endDate": currentDate});
                             }}
                         />
-                        <TouchableOpacity style={[styles.row, styles.removeButton]}
-                            onPress={() => (
-                            setEndDate(new Date()),
-                            updateFilter({"endDate": "x"}), 
-                            setShowEndDate(false)
-                            )}
-                        >
-                            <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
-                            <Text style={{color: COLORS({opacity:1}).white}}>Remove</Text>
-                        </TouchableOpacity>
+                        {!isScheduler && (
+                            <TouchableOpacity style={[styles.row, styles.removeButton]}
+                                onPress={() => (
+                                setEndDate(new Date()),
+                                updateFilter({"endDate": "x"}), 
+                                setShowEndDate(false)
+                                )}
+                            >
+                                <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
+                                <Text style={{color: COLORS({opacity:1}).white}}>Remove</Text>
+                            </TouchableOpacity>
+                        )}
                     </View>
                 )}
                 <View style={[styles.row, styles.property]}>

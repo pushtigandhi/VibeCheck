@@ -3,7 +3,6 @@ import { View, Text, TextInput, TouchableOpacity, Image,
         StyleSheet, Animated, FlatList, SafeAreaView } from 'react-native';
 
 import { COLORS, SHADOWS, FONT, SIZES } from "../constants";
-import { ExpandableView, Spacer } from '../utils';
 import Layout from "../_layout";
 import { Ionicons } from "@expo/vector-icons";
 import { PropertyCard } from "./cards/PropertyCards";

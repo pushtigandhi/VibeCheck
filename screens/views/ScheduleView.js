@@ -3,8 +3,8 @@ import { SafeAreaView, View, FlatList, StyleSheet, Text, TextInput, TouchableOpa
     RefreshControl, ScrollView, Image, Modal } from "react-native";
 
 import HomeNavigation from "../HomeNavigation";
-import { GETitems, GETitemsTEST } from "../../API";
-import { COLORS, SIZES, SHADOWS, FONT, ItemType, ViewType } from "../../constants";
+import { GETitems, GETitemsTEST, GETscheduledTEST } from "../../API";
+import { COLORS, SIZES, SHADOWS, FONT, ItemState, ViewState } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { TabView, TabBar, ToolBar, SceneMap } from 'react-native-tab-view';
 import FilterModal from "../../components/FilterModal";
@@ -51,19 +51,17 @@ const ListView = ({items, navigation}) => (
 );
 
 export default function ScheduleView ({navigation, route, scrollEnabled = true}) {
-  const [isExpanded, setIsExpanded] = useState(false);
   const [title, setTitle] = useState(null);
-  const [category, setCategory] = useState(null);
-  const [section, setSection] = useState(null);
-
-  const [state, setState] = useState("day");
   
   const [items, setItems] = useState([]);
+  const [itemstate, setItemState] = useState("Item");
   const [filter, setFilter] = useState({});
   const [filterVisible, setFilterVisible] = useState(false);
 
   const [refreshing, setRefreshing] = useState(false);
   const [refreshCalendar, setRefreshCalendar] = useState(false);
+
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const [search, setSearch] = useState('');
   const [expandSearchBar, setSearchBar] = useState(false);
@@ -72,6 +70,9 @@ export default function ScheduleView ({navigation, route, scrollEnabled = true})
     //doRefresh(filter);
     setRefreshing(!refreshing);
     setFilterVisible(false);
+    if (filter.itemState && filter.itemState != "All") {
+      setItemState(filter.itemState);
+    }
   }
 
   function doSearch() {
@@ -79,20 +80,9 @@ export default function ScheduleView ({navigation, route, scrollEnabled = true})
     setSearchBar(false);
   }
 
-  async function getSectionItemsFromAPI() {
+  async function getItemsByStateFromAPI() {
     try {
-      let items_ = await GETitemsTEST(ItemType.Scheduled, filter);
-      return items_;
-    } catch (error) {
-      console.log("error fetching items");
-      console.log(error);
-      return [];
-    }
-  }
-
-  async function getItemsByTypeFromAPI({itemType}) {
-    try {
-      let items_ = await GETitemsTEST(itemType, filter);
+      let items_ = await GETscheduledTEST(selectedDate, state, filter);
       return items_;
     } catch (error) {
       console.log("error fetching items");
@@ -103,64 +93,36 @@ export default function ScheduleView ({navigation, route, scrollEnabled = true})
 
   const onRefresh = React.useCallback((updatedDate, state) => {
     setSelectedDate(updatedDate);
-    setState(state);
   });
 
-  const [type, setTypeOptions] = useState("All");
+  const [state, setStateOptions] = useState("All");
 
-  const typeOptions = [
+  const stateOptions = [
     {label: "All", value: "All"},
     {label: "Day", value: "Day"},
     {label: "Week", value: "Week"},
     {label: "Month", value: "Month"}
   ];
 
-    function changeTypeOption(optionValue) {
-        setTypeOptions(optionValue);
-    }
-
-    useEffect(() => {
-        const indexOfTypeOption = Object.values(typeOptions).indexOf("type");
-        setTypeOptions(Object.keys(typeOptions)[indexOfTypeOption]);
-
-        let state = 
-        setFilter({... filter, category: route.params?.category.title, section: route.params?.section.title});
-
-        if (route.params?.isSection) {
-            setTitle(route.params?.section.title);
-            getSectionItemsFromAPI().then((items_) => {
-              setItems(items_);
-            }).catch((err) => {
-              alert(err.message)
-            })
-        }
-
-    }, [type, refreshing]); // run only once
+  function changeStateOption(optionValue) {
+      setStateOptions(optionValue);
+  }
 
   useEffect(() => {
-    if (route.params?.isSection) {
-      setFilter({... filter, category: route.params?.category.title, section: route.params?.section.title});
-    }
-  }, []) // only run once on load
+    const indexOfStateOption = Object.values(stateOptions).indexOf("state");
+    setStateOptions(Object.keys(stateOptions)[indexOfStateOption]);
 
-//   useEffect(() => {
-//     if (route.params?.isSection) {
-//       setTitle(route.params?.section.title);
-//       getSectionItemsFromAPI().then((items_) => {
-//         setItems(items_);
-//       }).catch((err) => {
-//         alert(err.message)
-//       })
-//     }
-//     else {
-//       setTitle(route.params?.item.itemType);
-//       getItemsByTypeFromAPI(route.params?.item.itemType).then((items_) => {
-//         setItems(items_);
-//       }).catch((err) => {
-//         alert(err.message)
-//       })
-//     }
-//   }, [refreshing]) // only run once on load
+    getItemsByStateFromAPI().then((items_) => {
+      setItems(items_);
+    }).catch((err) => {
+      alert(err.message)
+    })
+  }, [state, refreshing]); // run only once
+
+  useEffect(() => {
+    setFilter({... filter, category: route.params?.category.title, section: route.params?.section.title});
+    setTitle(route.params?.section.title);
+  }, []) // only run once on load
 
   return (
     <SafeAreaView style={styles.screen}>
@@ -179,7 +141,7 @@ export default function ScheduleView ({navigation, route, scrollEnabled = true})
                         <TextInput style={{width: SIZES.xxLarge*4, fontSize: SIZES.medium, color: COLORS({opacity:1}).primary}} 
                         {...(search ? { defaultValue: search } : { placeholder: "search" })}
                         onChangeText={(newSearch) => (setSearch(newSearch))}
-                        returnKeyType='search'
+                        returnKeyState='search'
                         onSubmitEditing={() => (doSearch())}
                         />
                     )}
@@ -194,10 +156,7 @@ export default function ScheduleView ({navigation, route, scrollEnabled = true})
                     </TouchableOpacity>
                     <TouchableOpacity
                     onPress={() => {
-                        route.params?.isSection ? 
-                        navigation.navigate("Item", {item: {"category": route.params?.category.title, "section": route.params?.section, "icon": '\u{1F4E6}', "itemType" : ItemType.Item}})
-                        : 
-                        navigation.navigate("EditItem", {item: route.params?.item})
+                        navigation.navigate("Item", {item: {"category": route.params?.category.title, "section": route.params?.section, "icon": '\u{1F4E6}', "itemState" : ItemState.Item}})
                     }}
                     style={[styles.row, styles.addButton]}
                     >
@@ -206,12 +165,12 @@ export default function ScheduleView ({navigation, route, scrollEnabled = true})
                 </View>
             </View>
           
-          <SingleSelectDropdown options={typeOptions} placeholder={type} setFn={changeTypeOption}
+          <SingleSelectDropdown options={stateOptions} placeholder={state} setFn={changeStateOption}
           icon={<Ionicons name={"grid-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
         </View>
         
         
-        <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
+        <Modal visible={filterVisible} animationState="slide" onRequestClose={closeFilter}>
           <FilterModal closeFilter={closeFilter} filter={filter} setFilter={setFilter} />
         </Modal>
         {/* <TabView

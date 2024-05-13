@@ -8,9 +8,6 @@ import { COLORS, SIZES, SHADOWS, FONT, ItemType, ViewType } from "../../constant
 import { Ionicons } from "@expo/vector-icons";
 import { TabView, TabBar, ToolBar, SceneMap } from 'react-native-tab-view';
 
-import { CalendarView } from "../partialViews/CalendarView";
-
-
 const defaultImage = require("../../assets/icon.png");
 
 const daysOfWeek = ['SUN', 'MON', 'TUES', 'WED', 'THUR', 'FRI', 'SAT'];
@@ -40,16 +37,11 @@ const Checklist = ({items}) => {
     )
   };
 
-const Notes = ({items}) => {
-    const [notes, setNotes] = useState(null);
+const Notes = () => {
 
     return (
         <ScrollView style={styles.expandedContainer}>
-            <TextInput style={styles.notes} 
-                multiline
-                {...(notes ? { defaultValue: notes } : { placeholder: "Notes" })} 
-                onChangeText={(newNotes) => setNotes(newNotes)}
-              />
+            <Text style={styles.notes}>Your notes here.</Text>
         </ScrollView>
     )
 };
@@ -86,7 +78,7 @@ export default function ChecklistTemplate ({navigation, route, scrollEnabled = t
       case 'checklist':
         return <Checklist items={items} />;
       case 'notes':
-        return <Notes items={items} />;
+        return <Notes />;
       default:
         return null;
     }
@@ -104,20 +96,6 @@ export default function ChecklistTemplate ({navigation, route, scrollEnabled = t
     return <Ionicons name={iconName} size={30} color={COLORS({opacity:1}).primary} />;
   };
 
-  const [type, setTypeOptions] = useState("All");
-
-  const typeOptions = [
-    {label: "All", value: "All"},
-    {label: "Day", value: "Day"},
-    {label: "Week", value: "Week"},
-    {label: "Month", value: "Month"}
-  ];
-    useEffect(() => {
-        const indexOfTypeOption = Object.values(typeOptions).indexOf("type");
-        setTypeOptions(Object.keys(typeOptions)[indexOfTypeOption]);
-
-    }, [type]); // run only once
-
   return (
     <SafeAreaView style={styles.screen}>
         <View style={[styles.propContainer]}>
@@ -127,9 +105,9 @@ export default function ChecklistTemplate ({navigation, route, scrollEnabled = t
                     <View style={[styles.row, styles.searchInput]} >
                         <Ionicons name={"search-outline"} size={20} style={styles.iconInverted} />
                     </View>
-                    <View style={styles.filterButtonIcon}>
+                    {/* <View style={styles.filterButtonIcon}>
                      <Ionicons name={"funnel-outline"} size={20} style={styles.iconInverted}/>
-                    </View>
+                    </View> */}
                 </View>
             </View>
         </View>

@@ -27,6 +27,7 @@ const GalleryView = ({items}) => (
   <FlatList
     scrollEnabled={true}
     data={items}
+    numColumns={2} 
     renderItem={({item}) => (
       <View style={styles.cardContainer} key={item["_id"] + "_root"} >
         <View style={styles.imageBox}>

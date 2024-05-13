@@ -5,7 +5,7 @@ import { COLORS, SIZES } from '../constants';
 import { Ionicons } from "@expo/vector-icons";
 
 
-const SingleSelectDropdown = ({ options, placeholder="Select item", defaultValue="", icon, setFn }) => {
+const SingleSelectDropdown = ({ options, placeholder="Select", defaultValue="", icon, setFn }) => {
     const [value, setValue] = useState(defaultValue);
 
     const renderItem = item => {

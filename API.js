@@ -1028,28 +1028,22 @@ export async function GETscheduledTEST(date, state, filter={}) {
     console.log("scheduled: " + date + " " + state);
 
     if (state == "day") {
-        return GETtodayTEST();
+        return GETtodayTEST(date, filter);
     }
     else if (state == "week") {
-        return GETweekTEST();
+        return GETweekTEST(date, filter);
     }
     else {
-        return GETmonthTEST();
+        return GETmonthTEST(date, filter);
     }
-
-    const response = `${ITEMS_BASE_URL}/` + new URLSearchParams(filter);
-
-    const body = {
-    };
-    let items = body.items;
-    return items.map((item) => {
-        return {
-            ...item,
-        }
-    });
 }
 
-export async function GETtodayTEST(filter={}) {
+export async function GETtodayTEST(selectedDate, filter={}) {
+    const date = new Date(selectedDate);
+
+    filter.startgt = date; 
+    filter.startlt = date;
+
     const response = `${ITEMS_BASE_URL}/` + new URLSearchParams(filter);
 
     console.log("today: " + response);
@@ -1273,7 +1267,17 @@ export async function GETtodayTEST(filter={}) {
     });
 }
 
-export async function GETweekTEST(filter={}) {
+export async function GETweekTEST(selectedDate, filter={}) {
+    const date = new Date(selectedDate);
+    const dayOfWeek = date.getDay(); // Get the day of the week (0-6, where 0 is Sunday)
+    const startOfWeek = new Date(date); // Clone the date
+    startOfWeek.setDate(date.getDate() - dayOfWeek);
+    const endOfWeek = new Date(startOfWeek); // Clone the startOfWeek
+    endOfWeek.setDate(startOfWeek.getDate() + 6); // Add 6 days to find Sunday
+
+    filter.startgt = startOfWeek; 
+    filter.startlt = endOfWeek;
+
     const response = `${ITEMS_BASE_URL}/` + new URLSearchParams(filter);
 
     console.log("week: " + response);
@@ -1517,7 +1521,14 @@ export async function GETweekTEST(filter={}) {
     return week;
 }
 
-export async function GETmonthTEST(filter={}) {
+export async function GETmonthTEST(selectedDate, filter={}) {
+    const date = new Date(selectedDate);
+    const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+    const endOfMonth = new Date(date.getFullYear(), date.getMonth()+1, 0);
+
+    filter.startgt = startOfMonth;
+    filter.startlt =  endOfMonth;
+
     const response = `${ITEMS_BASE_URL}/` + new URLSearchParams(filter);
 
     console.log("month: " + response);
@@ -1741,9 +1752,49 @@ export async function GETmonthTEST(filter={}) {
     let month = body.month;
     return month;
 }
+
 //#endregion
 
 //#region ITEMS
+
+export async function GETsectionTEST(itemType, filter={}) {
+    const ext = getURL(itemType);
+
+    const response = `${ITEMS_BASE_URL}/${ext}` + new URLSearchParams(filter);
+
+    let body;
+    console.log("items: " + response);
+
+    body = {
+        "items": [
+            {
+                "_id": "65dffbe641023aojfdi92ebb5783b0",
+                "title": "Tips",
+                "category": "Cooking",
+                "section": "Tips",
+                "icon": "📍",
+                "subtasks": [{task: "first", isChecked: false}, {task: "sec", isChecked: false}],
+                "tags": [
+                    "new"
+                ],
+                "notes": "",
+                "owner": "65dffad64102392ebb57839b",
+                "createdAt": "2024-02-29T03:37:10.111Z",
+                "updatedAt": "2024-02-29T03:37:10.111Z",
+                "__v": 0
+            },
+            
+        ]
+    };
+
+    let items = body.items;
+    return items.map((item) => {
+        return {
+            ...item,
+        }
+    });
+}
+
 export async function GETitemsTEST(itemType, filter={}) {
     const ext = getURL(itemType);
 

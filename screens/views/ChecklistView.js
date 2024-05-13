@@ -3,7 +3,7 @@ import { SafeAreaView, View, FlatList, StyleSheet, Text, TextInput, TouchableOpa
     RefreshControl, ScrollView, Image, Modal } from "react-native";
 
 import HomeNavigation from "../HomeNavigation";
-import { GETitems, GETitemsTEST } from "../../API";
+import { GETitems, GETitemsTEST, PATCHitemTEST, GETsectionTEST } from "../../API";
 import { COLORS, SIZES, SHADOWS, FONT, ItemType, ViewType } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { TabView, TabBar, ToolBar, SceneMap } from 'react-native-tab-view';
@@ -13,75 +13,79 @@ import { CalendarView } from "../partialViews/CalendarView";
 
 import SingleSelectDropdown from "../../components/SingleSelectDropdown";
 
-
 const defaultImage = require("../../assets/icon.png");
 
 const daysOfWeek = ['SUN', 'MON', 'TUES', 'WED', 'THUR', 'FRI', 'SAT'];
 
 const Checklist = ({items, setFn}) => {
-    const [subtasks, setSubtasks] = useState(items);
+  const [subtasks, setSubtasks] = useState(items);
+
+  const toggleSubtask = (id) => {
+    const updatedSubtasks = subtasks.map((subtask) => {
+      if (subtask["_id"] === id) {
+        return { ...subtask, isChecked: !subtask.isChecked };
+      }
+      return subtask;
+    });
+    setSubtasks(updatedSubtasks);
+    setFn({"subtasks": updatedSubtasks}); // Indicate that changes have been made
+  };
   
-    const unSelectAll = () => {
-      const updatedSubtasks = subtasks.map((subtask) => {
-          return { ...subtask, isChecked: false };
-      });
-      setSubtasks(updatedSubtasks);
-      setFn({"subtasks": updatedSubtasks});
-    };
-  
-    const toggleSubtask = (id) => {
-      const updatedSubtasks = subtasks.map((subtask) => {
-        if (subtask["_id"] === id) {
-          return { ...subtask, isChecked: !subtask.isChecked };
-        }
-        return subtask;
-      });
-      setSubtasks(updatedSubtasks);
-      setFn({"subtasks": updatedSubtasks}); // Indicate that changes have been made
-    };
-    
-    return (
-      <ScrollView style={styles.expandedContainer}>
-        <TouchableOpacity style={styles.addButtonIcon} >
-            <Ionicons name={"add-circle"} size={SIZES.large} style={styles.iconInverted} />
-        </TouchableOpacity>
-        
-        {subtasks.length > 0 ? (subtasks.map(item => (
-          <TouchableOpacity style={styles.cardsContainer} key={item["_id"]} 
-            onPress={() => toggleSubtask(item["_id"])}
-          >
-            <View style={styles.row}>
-              {item.isChecked ? (
-                <Ionicons name={"checkbox-outline"} size={SIZES.large} style={styles.icon}/> 
-              ) : (
-                <Ionicons name={"square-outline"} size={SIZES.large} style={styles.icon}/>
-              )}
-              <Text style={styles.item} numberOfLines={1}>{item.task}</Text>
-            </View>
-          </TouchableOpacity>
-        ))) : (
-          <View>
-            <Text style={[styles.item, {marginRight: SIZES.small}]} numberOfLines={1}>None</Text>
+  return (
+    <ScrollView style={styles.expandedContainer}>
+      <TouchableOpacity style={styles.addButtonIcon} >
+          <Ionicons name={"add-circle"} size={SIZES.large} style={styles.iconInverted} />
+      </TouchableOpacity>
+      
+      {subtasks.length > 0 ? (subtasks.map(item => (
+        <TouchableOpacity style={styles.cardsContainer} key={item["_id"]} 
+          onPress={() => toggleSubtask(item["_id"])}
+        >
+          <View style={styles.row}>
+            {item.isChecked ? (
+              <Ionicons name={"checkbox-outline"} size={SIZES.large} style={styles.icon}/> 
+            ) : (
+              <Ionicons name={"square-outline"} size={SIZES.large} style={styles.icon}/>
+            )}
+            <Text style={styles.item} numberOfLines={1}>{item.task}</Text>
           </View>
-        )}
-      </ScrollView>
-    )
+        </TouchableOpacity>
+      ))) : (
+        <View>
+          <Text style={[styles.item, {marginRight: SIZES.small}]} numberOfLines={1}>None</Text>
+        </View>
+      )}
+    </ScrollView>
+  )
+};
+
+const Notes = ({items, setFn}) => {
+  const [notes, setNotes] = useState(null);
+
+  const updateNotes = (newNotes) => {
+    setNotes(newNotes);
+    setFn({"notes": newNotes}); // Indicate that changes have been made
   };
 
+  return (
+    <ScrollView style={styles.expandedContainer}>
+      <TextInput style={styles.notes} 
+          multiline
+          {...(notes ? { defaultValue: notes } : { placeholder: "Notes" })} 
+          onChangeText={(newNotes) => updateNotes(newNotes)}
+        />
+    </ScrollView>
+  )
+};
 export default function ChecklistView ({navigation, route, scrollEnabled = true}) {
-  const [isExpanded, setIsExpanded] = useState(false);
   const [title, setTitle] = useState(null);
-  const [category, setCategory] = useState(null);
-  const [section, setSection] = useState(null);
-
-  const [state, setState] = useState("day");
   
-  const [items, setItems] = useState([]);
-  const [filter, setFilter] = useState({});
-  const [filterVisible, setFilterVisible] = useState(false);
+  const [item, setItems] = useState({});
+  const [itemtype, setItemType] = useState("Item");
+
+  const [updatedItem, setUpdatedItem] = useState([]);
 
   const [refreshing, setRefreshing] = useState(false);
-  const [refreshCalendar, setRefreshCalendar] = useState(false);
 
   const [search, setSearch] = useState('');
   const [expandSearchBar, setSearchBar] = useState(false);
@@ -89,14 +93,15 @@ export default function ChecklistView ({navigation, route, scrollEnabled = true}
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
     { key: 'checklist' },
-    { key: 'gallery' },
+    { key: 'notes' },
   ]);
   const renderScene = ({ route }) => {
     switch (route.key) {
       case 'checklist':
-        return <Checklist items={items} setFn={updateNewItem} />;
-    //   case 'gallery':
-    //     return <CalendarView navigation={navigation} filter={filter} setFilter={setFilter}/>;
+        //return <Checklist items={item.subtasks} setFn={updateNewItem} />;
+      case 'notes':
+        // return <Notes items={item} setFn={updateNewItem} />;
+        break;
       default:
         return null;
     }
@@ -106,7 +111,7 @@ export default function ChecklistView ({navigation, route, scrollEnabled = true}
   
     if (route.key === 'checklist') {
       iconName = focused ? 'checkbox' : 'checkbox-outline';
-    } else if (route.key === 'gallery') {
+    } else if (route.key === 'notes') {
       iconName = focused ? 'reader' : 'reader-outline';
     }
   
@@ -114,20 +119,20 @@ export default function ChecklistView ({navigation, route, scrollEnabled = true}
     return <Ionicons name={iconName} size={30} color={COLORS({opacity:1}).primary} />;
   };
 
-  function closeFilter() {
-    //doRefresh(filter);
-    setRefreshing(!refreshing);
-    setFilterVisible(false);
-  }
-
   function doSearch() {
-    console.log(search);
     setSearchBar(false);
+    setRefreshing(!refreshing);
   }
 
-  async function getSectionItemsFromAPI() {
+  function updateNewItem(params) {
+    if(params.subtasks) {
+      setUpdatedItem({... updatedItem, subtasks: params.subtasks});
+    }
+  }
+  
+  async function getSectionDetails(filter={}) {
     try {
-      let items_ = await GETitemsTEST(ItemType.Scheduled, filter);
+      let items_ = await GETsectionTEST(itemtype, filter);
       return items_;
     } catch (error) {
       console.log("error fetching items");
@@ -135,90 +140,30 @@ export default function ChecklistView ({navigation, route, scrollEnabled = true}
       return [];
     }
   }
-
-  async function getItemsByTypeFromAPI({itemType}) {
-    try {
-      let items_ = await GETitemsTEST(itemType, filter);
-      return items_;
-    } catch (error) {
-      console.log("error fetching items");
-      console.log(error);
-      return [];
-    }
-  }
-
-  const onRefresh = React.useCallback((updatedDate, state) => {
-    setSelectedDate(updatedDate);
-    setState(state);
-  });
-
-  const [type, setTypeOptions] = useState("All");
-
-  const typeOptions = [
-    {label: "All", value: "All"},
-    {label: "Day", value: "Day"},
-    {label: "Week", value: "Week"},
-    {label: "Month", value: "Month"}
-  ];
-
-    function changeTypeOption(optionValue) {
-        setTypeOptions(optionValue);
-    }
-
-    function updateNewItem(params) {
-        // if(params.subtasks) {
-        //   setUpdatedItem({... updatedItem, subtasks: params.subtasks});
-        // }
-        // if(params.ingredients) {
-        //   setUpdatedItem({... updatedItem, ingredients: params.ingredients});
-        // }
-        // if(params.instructions) {
-        //   setUpdatedItem({... updatedItem, instructions: params.instructions});
-        // }
-    }
-
-    useEffect(() => {
-        const indexOfTypeOption = Object.values(typeOptions).indexOf("type");
-        setTypeOptions(Object.keys(typeOptions)[indexOfTypeOption]);
-
-        let state = 
-        setFilter({... filter, category: route.params?.category.title, section: route.params?.section.title});
-
-        if (route.params?.isSection) {
-            setTitle(route.params?.section.title);
-            getSectionItemsFromAPI().then((items_) => {
-              setItems(items_);
-            }).catch((err) => {
-              alert(err.message)
-            })
-        }
-
-    }, [type, refreshing]); // run only once
-
+  
   useEffect(() => {
-    if (route.params?.isSection) {
-      setFilter({... filter, category: route.params?.category.title, section: route.params?.section.title});
-    }
-  }, []) // only run once on load
+    setTitle(route.params?.section.title);
+    getSectionDetails({category: route.params?.category.title, section: route.params?.section.title}).then((items_) => {
+      setItems(items_[0]);
+    }).catch((err) => {
+      alert(err.message)
+    });
 
-//   useEffect(() => {
-//     if (route.params?.isSection) {
-//       setTitle(route.params?.section.title);
-//       getSectionItemsFromAPI().then((items_) => {
-//         setItems(items_);
-//       }).catch((err) => {
-//         alert(err.message)
-//       })
-//     }
-//     else {
-//       setTitle(route.params?.item.itemType);
-//       getItemsByTypeFromAPI(route.params?.item.itemType).then((items_) => {
-//         setItems(items_);
-//       }).catch((err) => {
-//         alert(err.message)
-//       })
-//     }
-//   }, [refreshing]) // only run once on load
+    console.log(item.notes);
+  }, [])
+
+  // useEffect(() => {
+  //   setFilter({... filter, category: route.params?.category.title, section: route.params?.section.title});
+  //   // PATCHitemTEST(itemtype, {
+  //   //     ...updatedItem
+  //   //   }, item["_id"])
+  //   //   .then((item_) => {
+  //   //       setRefreshing(false);
+  //   // }).catch((error) => {
+  //   //     console.log(error);
+  //   //     setRefreshing(false);
+  //   // });
+  // }, [updatedItem]);
 
   return (
     <SafeAreaView style={styles.screen}>
@@ -233,34 +178,16 @@ export default function ChecklistView ({navigation, route, scrollEnabled = true}
                     }}
                     >
                     <Ionicons name={"search-outline"} size={20} style={styles.iconInverted} />
-                    {expandSearchBar && (
-                        <TextInput style={{width: SIZES.xxLarge*4, fontSize: SIZES.medium, color: COLORS({opacity:1}).primary}} 
+                      <TextInput style={{width: SIZES.xxLarge*4, fontSize: SIZES.medium, color: COLORS({opacity:1}).primary}} 
                         {...(search ? { defaultValue: search } : { placeholder: "search" })}
                         onChangeText={(newSearch) => (setSearch(newSearch))}
                         returnKeyType='search'
                         onSubmitEditing={() => (doSearch())}
-                        />
-                    )}
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                    onPress={() => {
-                        setFilterVisible(true);
-                    }}
-                    style={styles.filterButtonIcon}
-                    >
-                    <Ionicons name={"funnel-outline"} size={20} style={styles.iconInverted}/>
+                      />
                     </TouchableOpacity>
                 </View>
             </View>
-          
-          {/* <SingleSelectDropdown options={typeOptions} placeholder={type} setFn={changeTypeOption}
-          icon={<Ionicons name={"grid-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]} />} /> */}
         </View>
-        
-        
-        <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
-          <FilterModal closeFilter={closeFilter} filter={filter} setFilter={setFilter} />
-        </Modal>
         <TabView
           navigationState={{ index, routes }}
           renderScene={renderScene}
@@ -345,7 +272,7 @@ const styles = StyleSheet.create({
   },
   propContainer: {
     paddingHorizontal: SIZES.large,
-    paddingBottom: SIZES.medium,
+    paddingBottom: SIZES.xSmall,
     borderColor: COLORS({opacity:0.5}).primary,
     borderBottomWidth: 1,
     borderRadius: SIZES.medium,

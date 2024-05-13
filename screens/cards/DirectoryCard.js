@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity,
         StyleSheet, Animated, FlatList, ScrollView } from 'react-native';
 import { COLORS, SHADOWS, FONT, SIZES, ViewType } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
-import { Spacer } from "../../utils";
 import { ExpandableView } from "../../utils";
 
 const expandedCard = ({navigation, category, sections}) => {
@@ -16,10 +15,10 @@ const expandedCard = ({navigation, category, sections}) => {
               navigation.navigate("ItemScreen", {"isSection": true, "category": category, "section": section})
             }
             else if(section.view == ViewType.Schedule) {
-              navigation.navigate("ScheduleView", {"isSection": true, "category": category, "section": section})
+              navigation.navigate("ScheduleView", {"category": category, "section": section})
             }
             else if(section.view == ViewType.Checklist) {
-              navigation.navigate("ChecklistView", {"isSection": true, "category": category, "section": section})
+              navigation.navigate("ChecklistView", {"category": category, "section": section})
             }
           }}
         >
