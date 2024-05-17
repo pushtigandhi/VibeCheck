@@ -3,7 +3,7 @@ import { SafeAreaView, View, FlatList, StyleSheet, Text, TextInput, TouchableOpa
     RefreshControl, ScrollView, Image, Modal } from "react-native";
 
 import HomeNavigation from "../HomeNavigation";
-import { GETitems, GETitemsTEST, PATCHitemTEST, GETsectionTEST } from "../../API";
+import { GETitems, GETitemsTEST, PATCHitemTEST, GETsectionTEST, PATCHcategoryTEST } from "../../API";
 import { COLORS, SIZES, SHADOWS, FONT, ItemType, ViewType } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { TabView, TabBar, ToolBar, SceneMap } from 'react-native-tab-view';
@@ -14,8 +14,6 @@ import { CalendarView } from "../partialViews/CalendarView";
 import SingleSelectDropdown from "../../components/SingleSelectDropdown";
 
 const defaultImage = require("../../assets/icon.png");
-
-const daysOfWeek = ['SUN', 'MON', 'TUES', 'WED', 'THUR', 'FRI', 'SAT'];
 
 const Checklist = ({items, setFn}) => {
   const [subtasks, setSubtasks] = useState(items);
@@ -58,6 +56,50 @@ const Checklist = ({items, setFn}) => {
     </ScrollView>
   )
 };
+    const [subtasks, setSubtasks] = useState(items);
+    const toggleSubtask = (id) => {
+      const updatedSubtasks = subtasks.map((subtask) => {
+        if (subtask["_id"] === id) {
+          return { ...subtask, isChecked: !subtask.isChecked };
+        }
+        return subtask;
+      });
+      setSubtasks(updatedSubtasks);
+      setFn({"subtasks": updatedSubtasks}); // Indicate that changes have been made
+    };
+
+    const [showInput, setShowInput] = useState(false);
+    
+    return (
+      <ScrollView style={styles.expandedContainer}>
+        <TouchableOpacity style={styles.addButtonIcon} onPress={() => (setShowInput(true))}>
+            <Ionicons name={"add-circle"} size={SIZES.large} style={styles.iconInverted} />
+        </TouchableOpacity>
+        {showInput==true && (
+          <TextInput style={styles.inputBox} 
+            placeholder="new..."
+            onSubmitEditing={(newSearch) => (setSearchBar(false), doSearch(newSearch))}
+            returnKeyType='default'
+          /> 
+        )}
+        
+        {subtasks.length > 0 && (subtasks.map(item => (
+          <TouchableOpacity style={styles.cardsContainer} key={item["_id"]} 
+            onPress={() => toggleSubtask(item["_id"])}
+          >
+            <View style={styles.row}>
+              {item.isChecked ? (
+                <Ionicons name={"checkbox-outline"} size={SIZES.large} style={styles.icon}/> 
+              ) : (
+                <Ionicons name={"square-outline"} size={SIZES.large} style={styles.icon}/>
+              )}
+              <Text style={styles.item} numberOfLines={1}>{item.task}</Text>
+            </View>
+          </TouchableOpacity>
+        )))}
+      </ScrollView>
+    )
+  };
 
 const Notes = ({items, setFn}) => {
   const [notes, setNotes] = useState(null);
@@ -140,6 +182,53 @@ export default function ChecklistView ({navigation, route, scrollEnabled = true}
       return [];
     }
   }
+
+  const onRefresh = React.useCallback((updatedDate, state) => {
+    setSelectedDate(updatedDate);
+    setState(state);
+  });
+
+  const [type, setTypeOptions] = useState("All");
+
+  const typeOptions = [
+    {label: "All", value: "All"},
+    {label: "Day", value: "Day"},
+    {label: "Week", value: "Week"},
+    {label: "Month", value: "Month"}
+  ];
+
+  function changeTypeOption(optionValue) {
+      setTypeOptions(optionValue);
+  }
+
+  function updateNewItem(params) {
+      // if(params.subtasks) {
+      //   setUpdatedItem({... updatedItem, subtasks: params.subtasks});
+      // }
+      // if(params.ingredients) {
+      //   setUpdatedItem({... updatedItem, ingredients: params.ingredients});
+      // }
+      // if(params.instructions) {
+      //   setUpdatedItem({... updatedItem, instructions: params.instructions});
+      // }
+  }
+
+  useEffect(() => {
+      const indexOfTypeOption = Object.values(typeOptions).indexOf("type");
+      setTypeOptions(Object.keys(typeOptions)[indexOfTypeOption]);
+
+      let state = 
+      setFilter({... filter, category: route.params?.category.title, section: route.params?.section.title});
+
+      if (route.params?.isSection) {
+          setTitle(route.params?.section.title);
+          getSectionItemsFromAPI().then((items_) => {
+            setItems(items_);
+          }).catch((err) => {
+            alert(err.message)
+          })
+      }
+  }
   
   useEffect(() => {
     setTitle(route.params?.section.title);
@@ -151,6 +240,7 @@ export default function ChecklistView ({navigation, route, scrollEnabled = true}
 
     console.log(item.notes);
   }, [])
+  }, [type, refreshing]); // run only once
 
   // useEffect(() => {
   //   setFilter({... filter, category: route.params?.category.title, section: route.params?.section.title});
@@ -164,7 +254,49 @@ export default function ChecklistView ({navigation, route, scrollEnabled = true}
   //   //     setRefreshing(false);
   //   // });
   // }, [updatedItem]);
+  useEffect(() => {
+    if (route.params?.isSection) {
+      setFilter({... filter, category: route.params?.category.title, section: route.params?.section.title});
+    }
+    setCategory(route.params?.category["_id"]);
+  }, []) // only run once on load
 
+//   useEffect(() => {
+//     if (route.params?.isSection) {
+//       setTitle(route.params?.section.title);
+//       getSectionItemsFromAPI().then((items_) => {
+//         setItems(items_);
+//       }).catch((err) => {
+//         alert(err.message)
+//       })
+//     }
+//     else {
+//       setTitle(route.params?.item.itemType);
+//       getItemsByTypeFromAPI(route.params?.item.itemType).then((items_) => {
+//         setItems(items_);
+//       }).catch((err) => {
+//         alert(err.message)
+//       })
+//     }
+//   }, [refreshing]) // only run once on load
+
+  async function PATCHsubtask() {
+    try {
+      let items_ = await GETtodayTEST(filter);
+      return items_;
+    } catch (error) {
+      console.log("error fetching items");
+      console.log(error);
+      return [];
+    }
+  }
+  function addNewItem() {
+    getItemsFromAPI(filter).then((items_) => {
+      setItems(items_);
+    }).catch((err) => {
+      alert(err.message)
+    })
+  }
   return (
     <SafeAreaView style={styles.screen}>
         <View style={[styles.propContainer]}>
@@ -322,5 +454,13 @@ const styles = StyleSheet.create({
     shadowColor: COLORS({opacity:1}).shadow,
     alignItems: "center",
     justifyContent: "center",
-},
+  },
+  inputBox: {
+    width: "100%",
+    fontSize: SIZES.medium, 
+    color: COLORS({opacity:1}).primary, 
+    padding: SIZES.small, 
+    borderWidth: 0.5,
+    borderRadius: SIZES.xSmall,
+  }
 });

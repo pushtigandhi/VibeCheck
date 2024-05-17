@@ -10,8 +10,6 @@ import { TabView, TabBar, ToolBar, SceneMap } from 'react-native-tab-view';
 
 const defaultImage = require("../../assets/icon.png");
 
-const daysOfWeek = ['SUN', 'MON', 'TUES', 'WED', 'THUR', 'FRI', 'SAT'];
-
 const Checklist = ({items}) => {
     const [subtasks, setSubtasks] = useState(items);
     
