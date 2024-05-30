@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
         marginTop: SIZES.xxSmall,
     },
     profileButton: {
-      borderColor: COLORS({opacity:1}).darkBlue,
+      borderColor: COLORS({opacity:1}).primary,
       borderRadius: 100,
       marginHorizontal: SIZES.medium,
       height: 75,
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     },
     intention: {
         borderWidth: 1,
-        borderColor: COLORS({opacity:1}).darkBlue,
+        borderColor: COLORS({opacity:1}).primary,
         borderRadius: SIZES.xxSmall,
         height: 75,
         marginRight: SIZES.medium,
@@ -203,19 +203,19 @@ const styles = StyleSheet.create({
         //height: SIZES.xSmall,
     },
     icon: {
-        color: COLORS({opacity:1}).darkBlue,
+        color: COLORS({opacity:1}).primary,
         margin: 5,
     },
     tabActive: {
         padding: SIZES.xxSmall,
-        backgroundColor: COLORS({opacity:1}).darkBlue,
+        backgroundColor: COLORS({opacity:1}).primary,
         margin: 10,
         color: COLORS({opacity: 1}).white,
         fontWeight: "bold",
     },
     tabInactive: {
         padding: SIZES.xxSmall,
-        backgroundColor: COLORS({opacity:0.5}).darkBlue,
+        backgroundColor: COLORS({opacity:0.5}).primary,
         margin: 10,
         color: COLORS({opacity: 1}).white,
         fontWeight: "normal",

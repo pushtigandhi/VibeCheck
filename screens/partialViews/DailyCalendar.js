@@ -10,7 +10,7 @@ export const DailyCalendar = ({navigation, date, filter, refreshing}) => {
 
   async function getItemsFromAPI(filter={}) {
     try {
-      let items_ = await GETtodayTEST(filter);
+      let items_ = await GETtodayTEST(today, filter);
       return items_;
     } catch (error) {
       console.log("error fetching items");
@@ -30,7 +30,7 @@ export const DailyCalendar = ({navigation, date, filter, refreshing}) => {
   const renderItem = ({ item }) => (
     <TouchableOpacity
       onPress={() => {
-          navigation.navigate("Item", {item});
+        navigation.navigate("Item", {"item": item});
       }}
       key={item["_id"] + "root"} 
       style={styles.cardsContainer}

@@ -147,13 +147,13 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     padding: SIZES.medium,
-    borderColor: COLORS({opacity:0.5}).darkBlue,
+    borderColor: COLORS({opacity:0.5}).primary,
     borderBottomWidth: 1,
   },
   sectionContainer: {
     margin: SIZES.xSmall,
     padding: SIZES.xSmall,
-    backgroundColor: COLORS({opacity:0.5}).darkBlue,
+    backgroundColor: COLORS({opacity:0.5}).primary,
     borderRadius: SIZES.small,
     ...SHADOWS.medium,
     shadowColor: COLORS({opacity:1}).shadow,
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: SIZES.large,
     fontFamily: FONT.regular,
-    color: COLORS({opacity:1}).darkBlue,
+    color: COLORS({opacity:1}).primary,
   },
   section: {
     fontSize: SIZES.medium,
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: SIZES.xxSmall,
-    color: COLORS({opacity:0.8}).darkBlue,
+    color: COLORS({opacity:0.8}).primary,
   },
   label:{
     fontSize: SIZES.large,
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
       padding: SIZES.medium,
       margin: SIZES.medium,
       borderWidth: 1,
-      borderColor: COLORS({opacity:0.5}).darkBlue,
+      borderColor: COLORS({opacity:0.5}).primary,
       borderRadius: SIZES.medium,
   },
   imageBox: {
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
     margin: SIZES.Small,
   },
   icon: {
-    color: COLORS({opacity:0.8}).darkBlue,
+    color: COLORS({opacity:0.8}).primary,
   },
   iconInverted: {
     color: COLORS({opacity:0.8}).white,

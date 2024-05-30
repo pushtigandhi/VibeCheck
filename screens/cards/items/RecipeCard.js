@@ -158,6 +158,8 @@ const RecipeCard = ({item, setFn, isEditable=true}) => {
       <ExpandableView expanded={isIngredientsExpanded} view={expandedIngredients} 
         params={{"originalIngredients": item.ingredients, "setFn": setFn, "isEditable": isEditable, "unSelect": unSelectIngredients, "setUnSelect": setUnSelectIngredients}} vh={300} />
       
+      <View style={styles.divider}/>
+
       <View style={[styles.row, styles.propContainer, {justifyContent: "space-between"}]}>
         <TouchableOpacity style={[styles.row, {flex: 2}]}
           onPress={() => {
@@ -181,6 +183,7 @@ const RecipeCard = ({item, setFn, isEditable=true}) => {
       </View>
       <ExpandableView expanded={isInstructionsExpanded} view={expandedInstructions} 
         params={{"originalInstructions": item.instructions, "setFn": setFn, "isEditable": isEditable, "unSelect": unSelectInstructions, "setUnSelect": setUnSelectInstructions}} vh={300} />
+      
     </View>
   )
 };
@@ -191,16 +194,16 @@ const styles = StyleSheet.create({
     borderRadius: SIZES.medium/2,
   },
   label: {
-    fontSize: SIZES.large,
-    fontFamily: FONT.regular,
-    color: COLORS({opacity:1}).darkBlue,
+    fontSize: SIZES.medium,
+   // fontFamily: FONT.regular,
+    color: COLORS({opacity:1}).primary,
   },
   iconInverted: {
     color: COLORS({opacity:1}).white,
   },
   icon: {
     //marginRight: SIZES.xxSmall,
-    color: COLORS({opacity:0.8}).darkBlue,
+    color: COLORS({opacity:0.8}).primary,
   },
   row: {
     flexDirection: "row",
@@ -220,7 +223,7 @@ const styles = StyleSheet.create({
   addButtonIcon: {
     height: SIZES.xxLarge,
     margin: SIZES.xSmall,
-    backgroundColor: COLORS({opacity:0.5}).darkBlue,
+    backgroundColor: COLORS({opacity:0.5}).primary,
     borderRadius: SIZES.small,
     // ...SHADOWS.medium,
     // shadowColor: COLORS({opacity:1}).shadow,
@@ -228,17 +231,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   item: {
-    fontSize: SIZES.mlarge,
+    fontSize: SIZES.large,
     fontFamily: FONT.regular,
-    color: COLORS({opacity:1}).darkBlue,
+    fontWeight: '200',
+    color: COLORS({opacity:1}).primary,
   },
   propContainer: {
     flex: 1,
-    padding: SIZES.medium,
-    borderColor: COLORS({opacity:0.5}).darkBlue,
-    borderBottomWidth: 1,
-    borderRadius: SIZES.medium,
-    marginHorizontal: SIZES.medium,
+    paddingVertical: SIZES.xxSmall,
+    marginHorizontal: SIZES.xLarge,
   },
   subtaskContainer: {
     margin: SIZES.xxSmall,
@@ -255,6 +256,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: SIZES.xxSmall,
+  },
+  divider: {
+    paddingHorizontal: SIZES.medium,
+    paddingBottom: SIZES.xSmall,
+    borderBottomWidth: 1,
+    borderColor: COLORS({opacity:0.7}).primary,
+    marginBottom: SIZES.xSmall,
+    marginHorizontal: SIZES.xLarge,
   },
 });
 

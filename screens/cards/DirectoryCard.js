@@ -74,6 +74,7 @@ const styles = StyleSheet.create({
   },
   sectionContainer: {
     margin: SIZES.tiny,
+    marginBottom: SIZES.xxSmall,
     padding: SIZES.xSmall,
     backgroundColor: COLORS({opacity:0.5}).primary,
     borderRadius: SIZES.xSmall,

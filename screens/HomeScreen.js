@@ -4,6 +4,8 @@ import { View, TouchableOpacity, Text, TextInput, Keyboard, Modal,
 import { COLORS, FONT, SIZES, SHADOWS } from "../constants";
 import HomeNavigation from "./HomeNavigation";
 
+import { Spacer } from '../utils';
+
 import { DailyCalendar } from "./partialViews/DailyCalendar";
 import { WeeklyCalendar } from "./partialViews/WeeklyCalendar";
 import { MonthlyCalendar } from "./partialViews/MonthlyCalendar";
@@ -88,7 +90,7 @@ export default function HomeScreen ({ navigation, route }) {
         <SafeAreaView style={styles.screen}>
             <View style={[styles.row, {flex: 0, height: 75}]}>
                 <TouchableOpacity style={styles.profileButton}>
-                    <Ionicons name={"person"} size={SIZES.xxLarge} style={{color: COLORS({opacity:1}).darkBlue}}/>
+                    <Ionicons name={"person"} size={SIZES.xxLarge} style={{color: COLORS({opacity:1}).primary}}/>
                 </TouchableOpacity>
                 <TouchableWithoutFeedback onPress={dismissKeyboard}>
                     <TextInput style={styles.intention} />
@@ -182,7 +184,7 @@ const styles = StyleSheet.create({
         marginTop: SIZES.xxSmall,
     },
     profileButton: {
-      borderColor: COLORS({opacity:1}).darkBlue,
+      borderColor: COLORS({opacity:1}).primary,
       borderRadius: 100,
       marginHorizontal: SIZES.medium,
       height: 75,
@@ -194,7 +196,7 @@ const styles = StyleSheet.create({
     },
     intention: {
         borderWidth: 1,
-        borderColor: COLORS({opacity:1}).darkBlue,
+        borderColor: COLORS({opacity:1}).primary,
         borderRadius: SIZES.xxSmall,
         height: 75,
         marginRight: SIZES.medium,
@@ -218,19 +220,19 @@ const styles = StyleSheet.create({
         //height: SIZES.xSmall,
     },
     icon: {
-        color: COLORS({opacity:1}).darkBlue,
+        color: COLORS({opacity:1}).primary,
         margin: 5,
     },
     tabActive: {
         padding: SIZES.xxSmall,
-        backgroundColor: COLORS({opacity:1}).darkBlue,
+        backgroundColor: COLORS({opacity:1}).primary,
         margin: 10,
         color: COLORS({opacity: 1}).white,
         fontWeight: "bold",
     },
     tabInactive: {
         padding: SIZES.xxSmall,
-        backgroundColor: COLORS({opacity:0.5}).darkBlue,
+        backgroundColor: COLORS({opacity:0.5}).primary,
         margin: 10,
         color: COLORS({opacity: 1}).white,
         fontWeight: "normal",

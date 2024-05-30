@@ -4,7 +4,6 @@ const COLORS = ({ opacity = 1 }) => ({
   tertiary: `rgba(125, 170, 255, ${opacity})`,
 
   navy: `rgba(43, 96, 197, ${opacity})`,
-  darkBlue: `rgba(35, 73, 146, ${opacity})`,
   indigo: `rgba(13, 6, 48, ${opacity})`,
   shadow: `rgba(13, 6, 48, ${opacity})`,
 
@@ -28,14 +27,10 @@ const FONT = {
 };
 
 const SIZES = {
-  one: 1, 
-  tiny: 2.5,
   xxSmall: 5,
   xSmall: 10,
   small: 12,
-  smedium: 14,
   medium: 16,
-  mlarge: 18,
   large: 20,
   xLarge: 24,
   xxLarge: 32,

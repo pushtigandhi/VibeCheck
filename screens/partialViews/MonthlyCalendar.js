@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     borderRightWidth: 0.5,
     borderColor: COLORS({ opacity: 1 }).white,
     borderBottomWidth: 0.5,
-    backgroundColor: COLORS({ opacity: 0.8 }).darkBlue,
+    backgroundColor: COLORS({ opacity: 0.8 }).primary,
   },
   content: {
     alignContent: "center",

@@ -1,7 +1,5 @@
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { Search } from "./Search";
-import { Typography } from "./Typography";
 import { View, TouchableOpacity, StyleSheet, Text, TextInput, RefreshControl } from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS, SIZES, SHADOWS } from "../constants";

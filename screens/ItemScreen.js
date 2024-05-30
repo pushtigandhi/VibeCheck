@@ -303,4 +303,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     margin: SIZES.Small,
   },
+  label: {
+    paddingVertical: SIZES.xxSmall,
+    marginHorizontal: SIZES.xLarge,
+  }
 });

@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   titleContainer: {
     width: '100%',
     padding: SIZES.medium,
-    borderColor: COLORS({opacity:0.5}).darkBlue,
+    borderColor: COLORS({opacity:0.5}).primary,
     borderBottomWidth: 1,
     borderBottomLeftRadius: SIZES.xLarge,
     borderBottomRightRadius: SIZES.xLarge,
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   company: {
     fontSize: SIZES.small,
     //fontFamily: "DMRegular",
-    color: COLORS({opacity:1}).darkBlue,
+    color: COLORS({opacity:1}).primary,
     textTransform: "capitalize",
   },
   expandedContainer: {
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: SIZES.xxSmall,
-    color: COLORS({opacity:0.8}).darkBlue,
+    color: COLORS({opacity:0.8}).primary,
   },
   contactImage: {
     width: SIZES.xxLarge+5,
@@ -114,9 +114,9 @@ const styles = StyleSheet.create({
     marginRight: SIZES.xxSmall,
   },
   property:{
-    fontSize: SIZES.smedium,
+    fontSize: SIZES.small,
     //fontFamily: FONT.regular,
-    color: COLORS({opacity:0.8}).darkBlue,
+    color: COLORS({opacity:0.8}).primary,
     margin: SIZES.xSmall,
     padding: SIZES.xSmall,
     marginRight: SIZES.xxSmall,
@@ -124,17 +124,17 @@ const styles = StyleSheet.create({
     borderRadius: SIZES.small,
   },
   label:{
-    fontSize: SIZES.smedium,
+    fontSize: SIZES.small,
     //fontFamily: FONT.regular,
     color: COLORS({opacity:1}).navy,
     padding: SIZES.xxSmall,
     marginBottom: 2,
   },
   value: {
-    fontSize: SIZES.smedium,
+    fontSize: SIZES.small,
     //fontFamily: FONT.regular,
     padding: SIZES.xxSmall,
-    color: COLORS({opacity:1}).darkBlue,
+    color: COLORS({opacity:1}).primary,
   },
 });
 

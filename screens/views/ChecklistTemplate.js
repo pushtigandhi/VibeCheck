@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
   addButtonIcon: {
     height: SIZES.xxLarge,
     margin: SIZES.xSmall,
-    backgroundColor: COLORS({opacity:0.5}).darkBlue,
+    backgroundColor: COLORS({opacity:0.5}).primary,
     borderRadius: SIZES.small,
     ...SHADOWS.medium,
     shadowColor: COLORS({opacity:1}).shadow,

@@ -187,194 +187,200 @@ export default function FilterModal({ filter, setFilter, closeFilter, isSchedule
     return (
         <View style={styles.container}>
             <View style={[styles.row, styles.header]}>
-                <TouchableOpacity onPress={resetFilter} style={[styles.button, {backgroundColor: COLORS({opacity:1}).tertiary, width: SIZES.xLarge * 4}]} >
-                    <Text style={styles.headerText}>Reset</Text>
-                </TouchableOpacity>
+                {isScheduler == false && (
+                    <TouchableOpacity onPress={resetFilter} style={[styles.button, {backgroundColor: COLORS({opacity:1}).tertiary, width: SIZES.xLarge * 4}]} >
+                        <Text style={styles.headerText}>Reset</Text>
+                    </TouchableOpacity>
+                )}
+                
                 <TouchableOpacity onPress={onClose} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightRed, width: SIZES.xLarge * 2}]} > 
                     <Ionicons name={"close-outline"} size={SIZES.xLarge} style={styles.iconInverted}/> 
                 </TouchableOpacity>
             </View>
             <ScrollView>
-                <Text style={styles.sortText}>Sort by:</Text>
-                <SingleSelectDropdown options={sortOptions} placeholder={"Date (Ascending)"} setFn={changeSortOption}
-                    icon={<Ionicons name={"swap-vertical-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
-
+                {isScheduler==false && (
+                    <>
+                        <Text style={styles.sortText}>Sort by:</Text>
+                        <SingleSelectDropdown options={sortOptions} placeholder={"Date (Ascending)"} setFn={changeSortOption}
+                            icon={<Ionicons name={"swap-vertical-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
+                    </>
+                )}
+                
                 <Text style={styles.sortText}>Item type:</Text>
                 <SingleSelectDropdown options={typeOptions} placeholder={"All"} setFn={changeTypeOption}
                     icon={<Ionicons name={"grid-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
 
                 <PropertyCard item={filter} itemType={itemType} setFn={updateFilter} isFilter={true} />
-                
-                {showStartDate == false && (
-                    <TouchableOpacity style={[styles.row, styles.filterDate]} onPress={()=>(setShowStartDate(true), updateFilter({"startDate": startDate}))}>
-                    <Text style={{color: COLORS({opacity:0.8}).white, fontSize: SIZES.medium}}>Filter Start Date</Text>
-                    </TouchableOpacity>
-                )}
-                {showStartDate == true && (
-                    <View style={[styles.row, styles.property]}>
-                        <Ionicons name={"calendar-outline"} size={25} style={styles.icon} />
+                {isScheduler==false && (
+                    <>
+                        {showStartDate == false && (
+                            <TouchableOpacity style={[styles.row, styles.filterDate]} onPress={()=>(setShowStartDate(true), updateFilter({"startDate": startDate}))}>
+                            <Text style={{color: COLORS({opacity:0.8}).white, fontSize: SIZES.medium}}>Filter Start Date</Text>
+                            </TouchableOpacity>
+                        )}
+                        {showStartDate == true && (
+                            <View style={[styles.row, { margin: SIZES.xSmall }]}>
+                                <Ionicons name={"calendar-outline"} size={25} style={styles.icon} />
 
-                      <DateTimePicker
-                        value={startDate}
-                        mode={"date"}
-                        is24Hour={true}
-                        display="default"
-                        onChange={(event, selectedDate) => {
-                            const currentDate = selectedDate || startDate;
-                            setStartDate(currentDate);
-                            updateFilter({"startDate": currentDate});
-                        }}
-                      />
-                        {!isScheduler && (
-                            <TouchableOpacity style={[styles.row, styles.removeButton]}
-                                onPress={() => (
-                                setStartDate(new Date()),
-                                updateFilter({"startDate": "x"}), 
-                                setShowStartDate(false)
-                                )}
-                            >
-                                <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
-                                <Text style={{color: COLORS({opacity:1}).white}}>Remove</Text>
+                                <DateTimePicker
+                                    value={startDate}
+                                    mode={"date"}
+                                    is24Hour={true}
+                                    display="default"
+                                    onChange={(event, selectedDate) => {
+                                        const currentDate = selectedDate || startDate;
+                                        setStartDate(currentDate);
+                                        updateFilter({"startDate": currentDate});
+                                    }}
+                                />
+                                
+                                <TouchableOpacity style={[styles.row, styles.removeButton]}
+                                    onPress={() => (
+                                    setStartDate(new Date()),
+                                    updateFilter({"startDate": "x"}), 
+                                    setShowStartDate(false)
+                                    )}
+                                >
+                                    <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
+                                    <Text style={{color: COLORS({opacity:1}).white}}>Remove</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                        {showEndDate == false && (
+                            <TouchableOpacity style={[styles.row, styles.filterDate]} onPress={()=>(setShowEndDate(true), updateFilter({"endDate": endDate}))}>
+                            <Text style={{color: COLORS({opacity:0.8}).white, fontSize: SIZES.medium}}>Filter End Date</Text>
                             </TouchableOpacity>
                         )}
-                    </View>
+                        {showEndDate == true && (
+                            <View style={[styles.row, { margin: SIZES.xSmall }]}>
+                                <Ionicons name={"calendar-outline"} size={25} style={styles.icon} />
+                                
+                                <DateTimePicker
+                                    value={endDate}
+                                    mode={"date"}
+                                    is24Hour={true}
+                                    display="default"
+                                    onChange={(event, selectedDate) => {
+                                        const currentDate = selectedDate || endDate;
+                                        setEndDate(currentDate);
+                                        updateFilter({"endDate": currentDate});
+                                    }}
+                                />
+                                <TouchableOpacity style={[styles.row, styles.removeButton]}
+                                    onPress={() => (
+                                    setEndDate(new Date()),
+                                    updateFilter({"endDate": "x"}), 
+                                    setShowEndDate(false)
+                                    )}
+                                >
+                                    <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
+                                    <Text style={{color: COLORS({opacity:1}).white}}>Remove</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )} 
+                    </>
                 )}
-                {showEndDate == false && (
-                    <TouchableOpacity style={[styles.row, styles.filterDate]} onPress={()=>(setShowEndDate(true), updateFilter({"endDate": endDate}))}>
-                    <Text style={{color: COLORS({opacity:0.8}).white, fontSize: SIZES.medium}}>Filter End Date</Text>
-                    </TouchableOpacity>
-                )}
-                {showEndDate == true && (
-                    <View style={[styles.row, styles.property]}>
-                        <Ionicons name={"calendar-outline"} size={25} style={styles.icon} />
-                        
-                        <DateTimePicker
-                            value={endDate}
-                            mode={"date"}
-                            is24Hour={true}
-                            display="default"
-                            onChange={(event, selectedDate) => {
-                                const currentDate = selectedDate || endDate;
-                                setEndDate(currentDate);
-                                updateFilter({"endDate": currentDate});
-                            }}
-                        />
-                        {!isScheduler && (
-                            <TouchableOpacity style={[styles.row, styles.removeButton]}
-                                onPress={() => (
-                                setEndDate(new Date()),
-                                updateFilter({"endDate": "x"}), 
-                                setShowEndDate(false)
+                {isScheduler==false && (
+                    <View style={[styles.row, { margin: SIZES.xSmall }]}>
+                        <Ionicons name={"timer-outline"} size={25} style={[styles.icon]}/>    
+                        {hourPickerVisible ? (
+                            <>
+                            <Picker
+                                selectedValue={hour}
+                                onValueChange={(newHour) => (
+                                setHour(newHour),
+                                toggleHourPicker(),
+                                //setDuration(newHour*60 + minute),
+                                updateFilter({"duration": Number(newHour * 60) + Number(minute)})
                                 )}
-                            >
-                                <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
-                                <Text style={{color: COLORS({opacity:1}).white}}>Remove</Text>
+                                style={styles.picker}>
+                                {hourItem}
+                            </Picker>
+                            <Spacer size={30} />
+                            </>
+                        ) : (
+                            <TouchableOpacity onPress={toggleHourPicker} style={styles.duration}>
+                            <Text style={{fontSize: SIZES.medium}}>{hour}</Text>
                             </TouchableOpacity>
                         )}
+                        <Text style={[styles.property, { margin: SIZES.xSmall }]}>Hours</Text>
+                        {minutePickerVisible ? (
+                            <View>
+                            <Picker
+                                selectedValue={minute}
+                                onValueChange={(newMinute) => (
+                                setMinute(newMinute),
+                                toggleMinutePicker(),
+                                //setDuration(hour*60 + newMinute),
+                                updateFilter({"duration": Number(hour * 60) + Number(newMinute)})
+                                )}
+                                style={styles.picker}>
+                                {minuteItem}
+                            </Picker>
+                            <Spacer size={30} />
+                            </View>
+                        ) : (
+                            <TouchableOpacity onPress={toggleMinutePicker} style={styles.duration}>
+                            <Text style={{fontSize: SIZES.medium}}>{minute}</Text>
+                            </TouchableOpacity>
+                        )}
+                        <Text style={[styles.property, { margin: SIZES.xSmall }]}>Minutes</Text>
                     </View>
                 )}
-                <View style={[styles.row, styles.property]}>
-                    <Ionicons name={"timer-outline"} size={25} style={[styles.icon]}/>    
-                    {hourPickerVisible ? (
-                        <>
-                        <Picker
-                            selectedValue={hour}
-                            onValueChange={(newHour) => (
-                            setHour(newHour),
-                            toggleHourPicker(),
-                            //setDuration(newHour*60 + minute),
-                            updateFilter({"duration": Number(newHour * 60) + Number(minute)})
+                
+
+                {(showStartDate == true && isScheduler==false) && (
+                    <View style={[styles.row, { margin: SIZES.xSmall }]}>
+                        <Ionicons name={"repeat-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
+                        <TouchableOpacity style={[styles.row, styles.box, repeat === 'ONCE' ? styles.selectedBox:styles.unselectedBox]}
+                            onPress={() => (
+                            setRepeat("ONCE"),
+                            updateFilter({"repeat": "ONCE"})
                             )}
-                            style={styles.picker}>
-                            {hourItem}
-                        </Picker>
-                        <Spacer size={30} />
-                        </>
-                    ) : (
-                        <TouchableOpacity onPress={toggleHourPicker} style={styles.duration}>
-                        <Text style={{fontSize: SIZES.medium}}>{hour}</Text>
+                        >
+                        <Text style={[styles.property, repeat === 'ONCE' ? styles.selectedText:styles.unselectedText]}>Once</Text>
                         </TouchableOpacity>
-                    )}
-                    <Text style={styles.property}>Hours</Text>
-                    {minutePickerVisible ? (
-                        <View>
-                        <Picker
-                            selectedValue={minute}
-                            onValueChange={(newMinute) => (
-                            setMinute(newMinute),
-                            toggleMinutePicker(),
-                            //setDuration(hour*60 + newMinute),
-                            updateFilter({"duration": Number(hour * 60) + Number(newMinute)})
+                        <TouchableOpacity style={[styles.row, styles.box, repeat === 'DAILY' ? styles.selectedBox:styles.unselectedBox]}
+                            onPress={() => (
+                            setRepeat("DAILY"),
+                            updateFilter({"repeat": "DAILY"})
                             )}
-                            style={styles.picker}>
-                            {minuteItem}
-                        </Picker>
-                        <Spacer size={30} />
-                        </View>
-                    ) : (
-                        <TouchableOpacity onPress={toggleMinutePicker} style={styles.duration}>
-                        <Text style={{fontSize: SIZES.medium}}>{minute}</Text>
+                        >
+                        <Text style={[styles.property, repeat === 'DAILY' ? styles.selectedText:styles.unselectedText]}>Daily</Text>
                         </TouchableOpacity>
-                    )}
-                    <Text style={styles.property}>Minutes</Text>
-                </View>
-                <View style={[styles.row, styles.property]}>
-                    <Ionicons name={"repeat-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
-                    <TouchableOpacity style={[styles.row, styles.box, repeat === 'x' ? styles.selectedBox:styles.unselectedBox]}
-                        onPress={() => (
-                        setRepeat("x"),
-                        updateFilter({"repeat": "x"})
-                        )}
-                    >
-                        <Text style={[styles.property, repeat === 'x' ? styles.selectedText:styles.unselectedText]}>x</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.row, styles.box, repeat === 'ONCE' ? styles.selectedBox:styles.unselectedBox]}
-                        onPress={() => (
-                        setRepeat("ONCE"),
-                        updateFilter({"repeat": "ONCE"})
-                        )}
-                    >
-                    <Text style={[styles.property, repeat === 'ONCE' ? styles.selectedText:styles.unselectedText]}>Once</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.row, styles.box, repeat === 'DAILY' ? styles.selectedBox:styles.unselectedBox]}
-                        onPress={() => (
-                        setRepeat("DAILY"),
-                        updateFilter({"repeat": "DAILY"})
-                        )}
-                    >
-                    <Text style={[styles.property, repeat === 'DAILY' ? styles.selectedText:styles.unselectedText]}>Daily</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.row, styles.box, repeat === 'WEEKLY' ? styles.selectedBox:styles.unselectedBox]}
-                        onPress={() => (
-                        setRepeat("WEEKLY"),
-                        updateFilter({"repeat": "WEEKLY"})
-                        )}
-                    >
-                        <Text style={[styles.property, repeat === 'WEEKLY' ? styles.selectedText:styles.unselectedText]}>Weekly</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.row, styles.box, repeat === 'MONTHLY' ? styles.selectedBox:styles.unselectedBox]}
-                        onPress={() => (
-                        setRepeat("MONTHLY"),
-                        updateFilter({"repeat": "MONTHLY"})
-                        )}
-                    >
-                        <Text style={[styles.property, repeat === 'MONTHLY' ? styles.selectedText:styles.unselectedText]}>Monthly</Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={[styles.row, styles.property]}>
+                        <TouchableOpacity style={[styles.row, styles.box, repeat === 'WEEKLY' ? styles.selectedBox:styles.unselectedBox]}
+                            onPress={() => (
+                            setRepeat("WEEKLY"),
+                            updateFilter({"repeat": "WEEKLY"})
+                            )}
+                        >
+                            <Text style={[styles.property, repeat === 'WEEKLY' ? styles.selectedText:styles.unselectedText]}>Weekly</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.row, styles.box, repeat === 'MONTHLY' ? styles.selectedBox:styles.unselectedBox]}
+                            onPress={() => (
+                            setRepeat("MONTHLY"),
+                            updateFilter({"repeat": "MONTHLY"})
+                            )}
+                        >
+                            <Text style={[styles.property, repeat === 'MONTHLY' ? styles.selectedText:styles.unselectedText]}>Monthly</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.row, styles.removeButton]}
+                            onPress={() => (
+                                setRepeat("x"),
+                                updateFilter({"repeat": "x"})
+                            )}
+                        >
+                            <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
+                        </TouchableOpacity>
+                    </View>
+                )}
+                
+                <View style={[styles.row, { margin: SIZES.xSmall }]}>
                     {(itemType === ItemType.Recipe) ? (
                         <Ionicons name={"star-half-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
                     ) : (
                         <Ionicons name={"alert-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
                     )}
-                    <TouchableOpacity style={[styles.row, styles.box, priority === 'x' ? styles.selectedBox:styles.unselectedBox]}
-                        onPress={() => (
-                            setPriority("x"),
-                        updateFilter({"priority": "x"})
-                        )}
-                    >
-                        <Ionicons name={"close-outline"} size={20} style={[priority === 'x' ? styles.iconInverse:styles.icon]} />
-                    </TouchableOpacity>
                     <TouchableOpacity style={[styles.row, styles.box, priority === 'LOW' ? styles.selectedBox:styles.unselectedBox]}
                         onPress={() => (
                         setPriority("LOW"),
@@ -402,10 +408,18 @@ export default function FilterModal({ filter, setFilter, closeFilter, isSchedule
                         <Ionicons name={"star-outline"} size={20} style={[priority === 'HIGH' ? styles.iconInverse:styles.icon]} />
                         <Ionicons name={"star-outline"} size={20} style={[priority === 'HIGH' ? styles.iconInverse:styles.icon]} />
                     </TouchableOpacity>
+                    <TouchableOpacity style={[styles.row, styles.removeButton]}
+                        onPress={() => (
+                            setPriority("x"),
+                            updateFilter({"priority": "x"})
+                        )}
+                    >
+                        <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
+                    </TouchableOpacity>
                 </View>
                 {(itemType === ItemType.Recipe) && (
-                    <View style={[styles.row, styles.property]}>
-                        <Ionicons name={"restaurant-outline"} size={25} style={[styles.icon]}/>    
+                    <View style={[styles.row, { margin: SIZES.xSmall }]}>
+                        <Ionicons name={"restaurant-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
                         <TextInput keyboardType="numeric"
                         onChangeText={(serving_) => (
                             setServing(serving_),
@@ -515,7 +529,7 @@ const styles = StyleSheet.create({
         // fontSize: SIZES.medium,
         // fontFamily: FONT.regular,
         color: COLORS({opacity:0.8}).secondary,
-        margin: SIZES.xSmall,
+        //margin: SIZES.xSmall,
     },
     icon: {
         //margin: SIZES.xxSmall,
@@ -528,8 +542,8 @@ const styles = StyleSheet.create({
     box: {
         borderWidth: 0.5,
         borderColor: COLORS({opacity:1}).primary,
-        borderRadius: SIZES.small,
-        padding: SIZES.tiny,
+        borderRadius: SIZES.xxSmall,
+        padding: SIZES.small, 
         alignItems: 'center',
         justifyContent: 'center',
         marginRight: SIZES.xxSmall,
@@ -567,7 +581,7 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS({opacity:1}).lightRed, 
         padding: SIZES.small, 
         borderRadius: SIZES.xxSmall,
-        marginLeft: SIZES.small,
+        marginLeft: SIZES.xxSmall,
         alignItems: 'center',
     },
     duration: {

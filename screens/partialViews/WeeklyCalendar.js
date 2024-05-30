@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { ToolBar } from "../../components/Toolbar";
-import { SolidBars } from "../../assets/icons/SolidBars";
-import { CalendarWeek } from "../../assets/icons/CalendarWeek";
-import { PlusCircle } from "../../assets/icons/PlusCircle";
 //import { CalendarDaySmall } from "../../components/CalendarDaySmall";
 import { Spacer } from "../../utils/index";
 import {Calendar, LocaleConfig} from 'react-native-calendars';

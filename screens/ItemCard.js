@@ -46,17 +46,23 @@ const Properties = ({ item = null, itemType }) => {
   
     return (
       <SafeAreaView style={styles.infoContainer}>
-        <View style={[styles.row, styles.property]}>
+        <View style={[styles.row, styles.property, {marginVertical: SIZES.xxSmall}]}>
             <Ionicons name={"folder-open-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />
             <Text style={[styles.property, {marginLeft: SIZES.small}]}>{category}</Text>
         </View>
-        <View style={[styles.row, styles.property]}>
+        
+        <View style={styles.divider}/>
+
+        <View style={[styles.row, styles.property, {marginVertical: SIZES.xxSmall}]}>
             <Ionicons name={"bookmark-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />
             <Text style={[styles.property, {marginLeft: SIZES.small}]}>{section}</Text>
         </View>
 
         {item.duration && (
-            <View style={[styles.row, styles.property, {marginBottom: SIZES.xxSmall}]}>
+          <>
+            <View style={styles.divider}/>
+
+            <View style={[styles.row, styles.property, {marginVertical: SIZES.xxSmall}]}>
                 <Ionicons name={"timer-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]}/>    
             
               <View style={styles.duration}>
@@ -70,11 +76,16 @@ const Properties = ({ item = null, itemType }) => {
               </View>
             
                 <Text style={styles.property}>Minutes</Text>
-          </View>
+            </View>
+          </>
         )}
 
+
         {priority && (
-            <View style={[styles.row, styles.property, {marginBottom: SIZES.xxSmall}]}>
+          <>
+            <View style={styles.divider}/>
+            
+            <View style={[styles.row, styles.property, {marginVertical: SIZES.xxSmall}]}>
             {(itemType === ItemType.Recipe) ? (
                 <Ionicons name={"star-half-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
             ) : (
@@ -99,97 +110,25 @@ const Properties = ({ item = null, itemType }) => {
                 </View>
             )}
             </View>
+          </>
         )}
-        
+
         {serving && (
-            <View style={[styles.row, styles.property, {marginBottom: SIZES.xxSmall}]}>
-                <Ionicons name={"restaurant-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />
-                <Text style={[styles.property, styles.box, {marginLeft: SIZES.small}]}>{serving}</Text>
+          <>
+            <View style={styles.divider}/>
+
+            <View style={[styles.row, styles.property, {marginVertical: SIZES.xxSmall}]}>
+              <Ionicons name={"restaurant-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />
+              <Text style={[styles.property, styles.box, {marginLeft: SIZES.small}]}>{serving}</Text>
             </View>
+          </>
         )}
 
-      </SafeAreaView>
-    )
-};
-
-const Scheduler = ({ item = null }) => {
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
-    const [repeat, setRepeat] = useState(null);
-  
-    const size = 25;
-  
-    useEffect(() => {
-      if (item) {
-        if(!!item.startDate){
-          const parsedDate = new Date(item.startDate);
-          setStartDate(parsedDate);
-        }
-        if(!!item.endDate){
-          const parsedDate = new Date(item.endDate);
-          setEndDate(parsedDate);
-        }
-        if(!!item.repeat){
-          setRepeat(item.repeat);
-        }
-      }
-    }, []); // Update category and section when item changes
-  
-    return (
-      <SafeAreaView style={styles.infoContainer}>
-        {startDate && (
-            <View style={styles.row}>
-                <Text style={{color: COLORS({opacity:0.8}).secondary, fontSize: SIZES.medium, marginLeft: SIZES.small}}>Start Date: </Text>
-                
-                <DateTimePicker
-                    value={startDate}
-                    mode={"date"}
-                    is24Hour={true}
-                    display="default"
-                    disabled={true}
-                />
-                <DateTimePicker
-                    value={startDate}
-                    mode={"time"}
-                    is24Hour={true}
-                    display="default"
-                    disabled={true}
-                />
-            </View>
-        )}
-        {endDate && (
-            <View style={[styles.row, {marginTop: SIZES.small}]}>
-                <Text style={{color: COLORS({opacity:0.8}).secondary, fontSize: SIZES.medium, marginLeft: SIZES.small}}>End Date: </Text>
-
-                <DateTimePicker
-                    value={endDate}
-                    mode={"date"}
-                    is24Hour={true}
-                    display="default"
-                    disabled={true}
-                />
-                <DateTimePicker
-                    value={endDate}
-                    mode={"time"}
-                    is24Hour={true}
-                    display="default"
-                    disabled={true}
-                />
-            </View>
-        )}
-  
-        {repeat && (
-            <View style={[styles.row, styles.property]}>
-                <Ionicons name={"repeat-outline"} size={25} style={[styles.icon, {margin: SIZES.xSmall}]}/>
-                <Text style={[styles.box, styles.selectedText]}>{repeat}</Text>
-            </View>
-        )}
       </SafeAreaView>
     )
 };
 
 export default function ItemCard({ navigation, route }) {
-  const [disableSave, setDisableSave] = useState(true);
 
   const [itemType, setItemType] = useState('');
 
@@ -199,9 +138,7 @@ export default function ItemCard({ navigation, route }) {
   const [icon, setIcon] = useState(null);
   const [notes, setNotes] = useState(null);
   const [location, setLocation] = useState('');
-  const [tags, setTags] = useState([]);
 
-  const [showScheduler, setShowScheduler] = useState(true);
   const [isExpanded, setIsExpanded] = useState(true);
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -267,10 +204,8 @@ export default function ItemCard({ navigation, route }) {
   }, [route.params?.item]); // Update category and section when item changes
 
   return (
-    <KeyboardAvoidingView
-      behavior="padding"
-      style={styles.container}>
-      <SafeAreaView>
+   
+      <SafeAreaView style={styles.container}>
       <GestureHandlerRootView>
         <ScrollView scrollEnabled={true}>
           <View style={styles.imageBox}>
@@ -279,7 +214,7 @@ export default function ItemCard({ navigation, route }) {
             </TouchableOpacity>
             {favicon && (
                 <>
-                <TouchableOpacity style={{alignConten: "center"}} onPress={() => setModalVisible(true)}
+                <TouchableOpacity style={{alignContent: "center"}} onPress={() => setModalVisible(true)}
                     // onPress={(newFavicon) => (
                     //   pickImage(),
                     //   setFavicon(newFavicon)
@@ -307,7 +242,7 @@ export default function ItemCard({ navigation, route }) {
             )}
             <TouchableOpacity style={[styles.button]}
                 onPress={() => {
-                    navigation.navigate("EditItem", {"item": route.params?.item});
+                    //navigation.navigate("EditItem", {"item": route.params?.item});
                 }}  
             >
                 <Ionicons name={"pencil-outline"} size={SIZES.large} style={styles.icon}/> 
@@ -338,6 +273,8 @@ export default function ItemCard({ navigation, route }) {
             </View>
           )}
 
+          <View style={styles.divider}/>
+
           <TouchableOpacity
               onPress={() => {
                   setIsExpanded(!isExpanded);
@@ -358,61 +295,47 @@ export default function ItemCard({ navigation, route }) {
               </View>
             </View>
           </TouchableOpacity>
-          <ExpandableView expanded={isExpanded} view={Properties} params={{"item": route.params?.item, "itemType": itemType }} vh={230} />
 
-          {route.params?.item.startDate && (
-            <>
-                <TouchableOpacity
-                    onPress={() => {
-                        setShowScheduler(!showScheduler);
-                        }}
-                    style={styles.propContainer}
-                >
-                    <View style={[styles.row, {justifyContent: "space-between"}]}>
-                    <View style={styles.row}>
-                        <Ionicons name={"calendar-outline"} size={SIZES.xLarge} style={styles.icon}/> 
-                        <Text style={styles.label} numberOfLines={1}>Schedule</Text>
-                    </View>
-                    <View>
-                        {showScheduler ? (
-                            <Ionicons name="chevron-up-outline" size={SIZES.xLarge} style={styles.icon}/>
-                        ) : (
-                            <Ionicons name="chevron-down-outline" size={SIZES.xLarge} style={styles.icon}/>
-                        )}
-                    </View>
-                    </View>
-                </TouchableOpacity>
-                <ExpandableView expanded={showScheduler} view={Scheduler} params={{"item": route.params?.item}} vh={180} />
-            </>
-          )} 
+          {isExpanded && (
+            <Properties itemType={itemType} item={route.params?.item} />
+          )}
           
-
+          <View style={styles.divider}/>
+          
           {itemType === ItemType.Event && (
-            <CollaboratorCard item={route.params?.item} setFn={updateNewItem} isEditable={false} />
+            <>
+              <CollaboratorCard item={route.params?.item} setFn={updateNewItem} isEditable={false} />
+              <View style={styles.divider}/>
+            </>
           )}
 
           {(itemType === ItemType.Task || itemType === ItemType.Event) && (
-            <TaskCard item={route.params?.item} setFn={updateNewItem} isEditable={false} />
+            <>
+              <TaskCard item={route.params?.item} setFn={updateNewItem} isEditable={false} />
+              <View style={styles.divider}/>
+            </>
           )}
 
           {itemType === ItemType.Recipe && (
-            <RecipeCard item={route.params?.item} setFn={updateNewItem} isEditable={false} />
+            <>
+              <RecipeCard item={route.params?.item} setFn={updateNewItem} isEditable={false} />
+              <View style={styles.divider}/>
+            </>
           )}
 
           {notes && (
             <>
-                <View style={[styles.row, styles.divider, {marginTop: SIZES.xSmall}]}>
-                    <Ionicons name={"document-outline"} size={SIZES.xLarge} style={styles.icon}/>
-                    <Text style={styles.property}>Notes</Text>
-                </View>
-                <Text style={styles.notes}>{notes}</Text>
+              <View style={[styles.row, styles.heading, {marginTop: SIZES.xSmall}]}>
+                  <Ionicons name={"document-outline"} size={SIZES.xLarge} style={styles.icon}/>
+                  <Text style={styles.label}>Notes</Text>
+              </View>
+              <Text style={styles.notes}>{notes}</Text>
             </>
           )}
 
         </ScrollView>
       </GestureHandlerRootView>
       </SafeAreaView>
-    </KeyboardAvoidingView>
   )
 };
 
@@ -429,23 +352,24 @@ const styles = StyleSheet.create({
       padding: SIZES.medium,
       margin: SIZES.medium,
       borderWidth: 1,
-      borderColor: COLORS({opacity:0.5}).darkBlue,
+      borderColor: COLORS({opacity:0.5}).primary,
       borderRadius: SIZES.medium,
   },
   description:{
       padding: SIZES.medium,
       marginHorizontal: SIZES.medium,
+      marginBottom: SIZES.medium,
       borderWidth: 1,
-      borderColor: COLORS({opacity:0.5}).darkBlue,
+      borderColor: COLORS({opacity:0.5}).primary,
       borderRadius: SIZES.medium,
   },
   notes:{
     fontSize: SIZES.medium,
-    color: COLORS({opacity:0.9}).darkBlue,
+    color: COLORS({opacity:0.9}).primary,
     padding: SIZES.medium,
     margin: SIZES.medium,
     borderWidth: 1,
-    borderColor: COLORS({opacity:0.5}).darkBlue,
+    borderColor: COLORS({opacity:0.5}).primary,
     borderRadius: SIZES.medium,
   },
   property: {
@@ -453,17 +377,15 @@ const styles = StyleSheet.create({
     color: COLORS({opacity:0.9}).primary
   },
   propContainer: {
-    width: '90%',
-    padding: SIZES.medium,
-    borderColor: COLORS({opacity:0.5}).darkBlue,
-    borderBottomWidth: 1,
-    borderRadius: SIZES.medium,
-    marginHorizontal: SIZES.medium,
+    flex: 1,
+    paddingVertical: SIZES.xxSmall,
+    marginHorizontal: SIZES.xLarge,
   },
   label: {
-    fontSize: SIZES.large,
+    paddingVertical: SIZES.xxSmall,
+    fontSize: SIZES.medium,
     fontFamily: FONT.regular,
-    color: COLORS({opacity:1}).darkBlue,
+    color: COLORS({opacity:1}).primary,
   },
   expandedContainer: {
     margin: SIZES.medium,
@@ -486,7 +408,7 @@ const styles = StyleSheet.create({
     borderRadius: SIZES.medium
   },
   icon: {
-    color: COLORS({opacity:0.8}).darkBlue,
+    color: COLORS({opacity:0.8}).primary,
   },
   iconInverted: {
     color: COLORS({opacity:0.8}).white,
@@ -505,25 +427,26 @@ const styles = StyleSheet.create({
   addButtonIcon: {
     height: SIZES.xxLarge,
     margin: SIZES.xSmall,
-    backgroundColor: COLORS({opacity:0.5}).darkBlue,
+    backgroundColor: COLORS({opacity:0.5}).primary,
     borderRadius: SIZES.small,
     alignItems: "center",
     justifyContent: "center",
   },
   divider: {
     paddingHorizontal: SIZES.medium,
-    paddingBottom: SIZES.xSmall,
     borderBottomWidth: 1,
     borderColor: COLORS({opacity:0.7}).primary,
     marginBottom: SIZES.tiny,
     marginHorizontal: SIZES.xLarge,
   },
   infoContainer: {
-    margin: SIZES.medium,
+    marginHorizontal: SIZES.medium,
+    marginBottom: SIZES.medium,
+    padding: SIZES.small,
     backgroundColor: COLORS({opacity:1}).lightWhite,
     borderRadius: SIZES.medium/2,
-    ...SHADOWS.medium,
-    shadowColor: COLORS({opacity:1}).shadow,
+    borderWidth: 1,
+    borderColor: COLORS({opacity:1}).primary,
   },
   box: {
     borderWidth: 1,
@@ -556,4 +479,8 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  heading: {
+    paddingHorizontal: SIZES.medium,
+    marginHorizontal: SIZES.xLarge,
+  }
 });

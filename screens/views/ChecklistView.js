@@ -29,44 +29,33 @@ const Checklist = ({items, setFn}) => {
     setFn({"subtasks": updatedSubtasks}); // Indicate that changes have been made
   };
   
-  return (
-    <ScrollView style={styles.expandedContainer}>
-      <TouchableOpacity style={styles.addButtonIcon} >
-          <Ionicons name={"add-circle"} size={SIZES.large} style={styles.iconInverted} />
-      </TouchableOpacity>
+//   return (
+//     <ScrollView style={styles.expandedContainer}>
+//       <TouchableOpacity style={styles.addButtonIcon} >
+//           <Ionicons name={"add-circle"} size={SIZES.large} style={styles.iconInverted} />
+//       </TouchableOpacity>
       
-      {subtasks.length > 0 ? (subtasks.map(item => (
-        <TouchableOpacity style={styles.cardsContainer} key={item["_id"]} 
-          onPress={() => toggleSubtask(item["_id"])}
-        >
-          <View style={styles.row}>
-            {item.isChecked ? (
-              <Ionicons name={"checkbox-outline"} size={SIZES.large} style={styles.icon}/> 
-            ) : (
-              <Ionicons name={"square-outline"} size={SIZES.large} style={styles.icon}/>
-            )}
-            <Text style={styles.item} numberOfLines={1}>{item.task}</Text>
-          </View>
-        </TouchableOpacity>
-      ))) : (
-        <View>
-          <Text style={[styles.item, {marginRight: SIZES.small}]} numberOfLines={1}>None</Text>
-        </View>
-      )}
-    </ScrollView>
-  )
-};
-    const [subtasks, setSubtasks] = useState(items);
-    const toggleSubtask = (id) => {
-      const updatedSubtasks = subtasks.map((subtask) => {
-        if (subtask["_id"] === id) {
-          return { ...subtask, isChecked: !subtask.isChecked };
-        }
-        return subtask;
-      });
-      setSubtasks(updatedSubtasks);
-      setFn({"subtasks": updatedSubtasks}); // Indicate that changes have been made
-    };
+//       {subtasks.length > 0 ? (subtasks.map(item => (
+//         <TouchableOpacity style={styles.cardsContainer} key={item["_id"]} 
+//           onPress={() => toggleSubtask(item["_id"])}
+//         >
+//           <View style={styles.row}>
+//             {item.isChecked ? (
+//               <Ionicons name={"checkbox-outline"} size={SIZES.large} style={styles.icon}/> 
+//             ) : (
+//               <Ionicons name={"square-outline"} size={SIZES.large} style={styles.icon}/>
+//             )}
+//             <Text style={styles.item} numberOfLines={1}>{item.task}</Text>
+//           </View>
+//         </TouchableOpacity>
+//       ))) : (
+//         <View>
+//           <Text style={[styles.item, {marginRight: SIZES.small}]} numberOfLines={1}>None</Text>
+//         </View>
+//       )}
+//     </ScrollView>
+//   )
+// };
 
     const [showInput, setShowInput] = useState(false);
     
@@ -188,19 +177,6 @@ export default function ChecklistView ({navigation, route, scrollEnabled = true}
     setState(state);
   });
 
-  const [type, setTypeOptions] = useState("All");
-
-  const typeOptions = [
-    {label: "All", value: "All"},
-    {label: "Day", value: "Day"},
-    {label: "Week", value: "Week"},
-    {label: "Month", value: "Month"}
-  ];
-
-  function changeTypeOption(optionValue) {
-      setTypeOptions(optionValue);
-  }
-
   function updateNewItem(params) {
       // if(params.subtasks) {
       //   setUpdatedItem({... updatedItem, subtasks: params.subtasks});
@@ -214,9 +190,6 @@ export default function ChecklistView ({navigation, route, scrollEnabled = true}
   }
 
   useEffect(() => {
-      const indexOfTypeOption = Object.values(typeOptions).indexOf("type");
-      setTypeOptions(Object.keys(typeOptions)[indexOfTypeOption]);
-
       let state = 
       setFilter({... filter, category: route.params?.category.title, section: route.params?.section.title});
 
@@ -228,57 +201,7 @@ export default function ChecklistView ({navigation, route, scrollEnabled = true}
             alert(err.message)
           })
       }
-  }
-  
-  useEffect(() => {
-    setTitle(route.params?.section.title);
-    getSectionDetails({category: route.params?.category.title, section: route.params?.section.title}).then((items_) => {
-      setItems(items_[0]);
-    }).catch((err) => {
-      alert(err.message)
-    });
-
-    console.log(item.notes);
-  }, [])
-  }, [type, refreshing]); // run only once
-
-  // useEffect(() => {
-  //   setFilter({... filter, category: route.params?.category.title, section: route.params?.section.title});
-  //   // PATCHitemTEST(itemtype, {
-  //   //     ...updatedItem
-  //   //   }, item["_id"])
-  //   //   .then((item_) => {
-  //   //       setRefreshing(false);
-  //   // }).catch((error) => {
-  //   //     console.log(error);
-  //   //     setRefreshing(false);
-  //   // });
-  // }, [updatedItem]);
-  useEffect(() => {
-    if (route.params?.isSection) {
-      setFilter({... filter, category: route.params?.category.title, section: route.params?.section.title});
-    }
-    setCategory(route.params?.category["_id"]);
-  }, []) // only run once on load
-
-//   useEffect(() => {
-//     if (route.params?.isSection) {
-//       setTitle(route.params?.section.title);
-//       getSectionItemsFromAPI().then((items_) => {
-//         setItems(items_);
-//       }).catch((err) => {
-//         alert(err.message)
-//       })
-//     }
-//     else {
-//       setTitle(route.params?.item.itemType);
-//       getItemsByTypeFromAPI(route.params?.item.itemType).then((items_) => {
-//         setItems(items_);
-//       }).catch((err) => {
-//         alert(err.message)
-//       })
-//     }
-//   }, [refreshing]) // only run once on load
+  })
 
   async function PATCHsubtask() {
     try {
@@ -448,7 +371,7 @@ const styles = StyleSheet.create({
   addButtonIcon: {
     height: SIZES.xxLarge,
     margin: SIZES.xSmall,
-    backgroundColor: COLORS({opacity:0.5}).darkBlue,
+    backgroundColor: COLORS({opacity:0.5}).primary,
     borderRadius: SIZES.small,
     ...SHADOWS.medium,
     shadowColor: COLORS({opacity:1}).shadow,

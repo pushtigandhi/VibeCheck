@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image,
+import { View, Text, TextInput, TouchableOpacity, Image, Modal,
         StyleSheet, Animated, FlatList, SafeAreaView } from 'react-native';
 
 import { COLORS, SHADOWS, FONT, SIZES } from "../constants";
@@ -9,78 +9,98 @@ import { PropertyCard } from "./cards/PropertyCards";
 import HomeNavigation from "./HomeNavigation";
 import ItemCard from "./ItemCard";
 import * as df  from "../constants/default";
+import CreateNewItem from "./CreateNewItem";
 
 export default function NewItem({navigation}) {
 
-  const [isExpanded, setIsExpanded] = useState(true);
-  
+  const [item, setItem] = useState({});
+  const [showCreateNew, setShowCreateNew] = useState(false);
+
+  function closeCreateNew() {
+    setShowCreateNew(false);
+  }
+
+  function goHome() {
+    navigation.navigate('Home', { refresh: Math.random() });
+  }
+
   return (
     <SafeAreaView style={styles.infoContainer}>
+      <View style={styles.row}>
+        <TouchableOpacity onPress={() => (goHome())} style={[styles.button]} > 
+          <Ionicons name={"arrow-back-outline"} size={SIZES.large} style={styles.icon}/> 
+        </TouchableOpacity>
+        <Text style={[styles.label]}>Select Item Type</Text>
+      </View>
+      
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("EditItem", {"item": df.defaultItem});
-          //renderEmptyItem({"itemType": "Item", "item": df.defaultItem})
+            setItem(df.defaultItem);
+            setShowCreateNew(true);
         }}
         style={styles.titleContainer}
       >
       <View style={styles.row}>
-        <Text style={styles.label}>{df.ItemType.Item}</Text>
-        <Text style={{fontSize: SIZES.xLarge}}>{df.defaultItem.icon}</Text>
+          <Text style={styles.label}>{df.ItemType.Item}</Text>
+          <Text style={{fontSize: SIZES.xLarge}}>{df.defaultItem.icon}</Text>
       </View>
       </TouchableOpacity>
 
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("EditItem", {"item": df.defaultTask});
-          //navigation.navigate("ItemScreen", {"isSection": false, "item": df.defaultTask});
+            setItem(df.defaultTask);
+            setShowCreateNew(true);
         }}
         style={styles.titleContainer}
       >
       <View style={styles.row}>
-        <Text style={styles.label}>{df.ItemType.Task}</Text>
-        <Text style={{fontSize: SIZES.xLarge}}>{df.defaultTask.icon}</Text>
+          <Text style={styles.label}>{df.ItemType.Task}</Text>
+          <Text style={{fontSize: SIZES.xLarge}}>{df.defaultTask.icon}</Text>
       </View>
       </TouchableOpacity>
 
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("EditItem", {"item": df.defaultEvent});
-          //navigation.navigate("ItemScreen", {"isSection": false, "item": df.defaultEvent});
+            setItem(df.defaultEvent);
+            setShowCreateNew(true);
         }}
         style={styles.titleContainer}
       >
       <View style={styles.row}>
-        <Text style={styles.label}>{df.ItemType.Event}</Text>
-        <Text style={{fontSize: SIZES.xLarge}}>{df.defaultEvent.icon}</Text>
+          <Text style={styles.label}>{df.ItemType.Event}</Text>
+          <Text style={{fontSize: SIZES.xLarge}}>{df.defaultEvent.icon}</Text>
       </View>
       </TouchableOpacity>
 
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("EditItem", {"item": df.defaultPage});
-          //navigation.navigate("ItemScreen", {"isSection": false, "item": df.defaultPage});
+            setItem(df.defaultPage);
+            setShowCreateNew(true);
         }}
         style={styles.titleContainer}
       >
-        <View style={styles.row}>
+          <View style={styles.row}>
           <Text style={styles.label}>{df.ItemType.Page}</Text>
           <Text style={{fontSize: SIZES.xLarge}}>{df.defaultPage.icon}</Text>
-        </View>
+          </View>
       </TouchableOpacity>
 
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("EditItem", {"item": df.defaultRecipe});
-          //navigation.navigate("ItemScreen", {"isSection": false, "item": df.defaultRecipe});
+            setItem(df.defaultRecipe);
+            setShowCreateNew(true);
         }}
         style={styles.titleContainer}
       >
-        <View style={styles.row}>
+          <View style={styles.row}>
           <Text style={styles.label}>{df.ItemType.Recipe}</Text>
           <Text style={{fontSize: SIZES.xLarge}}>{df.defaultRecipe.icon}</Text>
-        </View>
+          </View>
       </TouchableOpacity>
-      <HomeNavigation style={{flex: 0}} size={SIZES.xxLarge} iconColor={COLORS({opacity:1}).primary}/> 
+
+      <Modal visible={showCreateNew} animationType="slide" onRequestClose={closeCreateNew}>
+        <CreateNewItem item={item} onClose={closeCreateNew} />
+      </Modal>
     </SafeAreaView>
   )
 };
@@ -92,13 +112,13 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     padding: SIZES.medium,
-    borderColor: COLORS({opacity:0.5}).darkBlue,
+    borderColor: COLORS({opacity:0.5}).primary,
     borderBottomWidth: 1,
   },
   sectionContainer: {
     margin: SIZES.xSmall,
     padding: SIZES.xSmall,
-    backgroundColor: COLORS({opacity:0.5}).darkBlue,
+    backgroundColor: COLORS({opacity:0.5}).primary,
     borderRadius: SIZES.small,
     ...SHADOWS.medium,
     shadowColor: COLORS({opacity:1}).shadow,
@@ -106,7 +126,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: SIZES.large,
     fontFamily: FONT.regular,
-    color: COLORS({opacity:1}).darkBlue,
+    color: COLORS({opacity:1}).primary,
   },
   section: {
     fontSize: SIZES.medium,
@@ -126,21 +146,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   icon: {
-    marginRight: SIZES.xxSmall,
-    color: COLORS({opacity:0.8}).darkBlue,
+    color: COLORS({opacity:0.8}).primary,
   },
   label:{
     fontSize: SIZES.large,
     fontFamily: FONT.regular,
-    color: COLORS({opacity:1}).navy,
+    color: COLORS({opacity:1}).primary,
     margin: SIZES.xSmall,
   },
   button: {
     height: SIZES.xLarge * 2,
+    width: SIZES.xLarge * 2,
     padding: SIZES.xSmall,
     marginHorizontal: SIZES.xSmall,
-    alignItems: "center",
+    alignContent: "center",
     justifyContent: "center",
-    borderRadius: SIZES.medium
+    borderWidth: 1,
+    borderRadius: SIZES.medium,
+    borderColor: COLORS({opacity:1}).primary,
   },
 });

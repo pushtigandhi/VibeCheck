@@ -123,7 +123,6 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
 
   return (
     <SafeAreaView style={styles.infoContainer}>
-      <ScrollView>
       {directoryList._j.length > 0 ? (
         <SingleSelectDropdown options={getCategories()} placeholder={!!category ? category : "Category"} setFn={onChangeCategory}
           icon={<Ionicons name={"folder-open-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
@@ -152,7 +151,6 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
               <Ionicons name={"timer-outline"} size={size} style={[styles.icon]}/>    
               <Text style={styles.property}>Add Duration</Text>
             </TouchableOpacity>
-            <View style={[styles.divider, {padding: 0}]}/>
           </>
         )}
         {showDuration == true && (
@@ -201,15 +199,14 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
               </TouchableOpacity>
             )}
             <Text style={styles.property}>Minutes</Text>
+            <TouchableOpacity style={[styles.row, styles.removeButton]} onPress={() => (updateNewItem({"duration": "x"}), setShowDuration(false))}>
+                <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity style={[styles.row, styles.removeButton]}
-            onPress={() => (updateNewItem({"duration": "x"}), setShowDuration(false))}
-          >
-            <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
-            <Text style={{color: COLORS({opacity:1}).white}}>Remove</Text>
-          </TouchableOpacity>
           </>
         )}
+
+      <View style={[styles.divider, {padding: 0}]}/>
 
         {(itemType === ItemType.Recipe) && (
         <>
@@ -224,23 +221,27 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
           )}
           {showServing == true && (
             <>
-            <View style={[styles.row, styles.property]}>
-              <Ionicons name={"restaurant-outline"} size={size} style={[styles.icon]}/>    
-              <TextInput keyboardType="numeric"
-                onChangeText={(serving_) => (
-                  setServing(serving_),
-                  updateNewItem({"serving": Number(serving_)})
-                )}
-                {...(serving ? { defaultValue: serving.toString() } : { placeholder: "0" })}
-              style={[styles.property, styles.box, {backgroundColor: "#FFF"}]}
-              />
+            <View style={[styles.row, styles.property, { justifyContent: "space-between" }]}>
+              <View style={styles.row}>
+                <Ionicons name={"restaurant-outline"} size={size} style={[styles.icon]}/>    
+                <TextInput keyboardType="numeric"
+                  onChangeText={(serving_) => (
+                    setServing(serving_),
+                    updateNewItem({"serving": Number(serving_)})
+                  )}
+                  {...(serving ? { defaultValue: serving.toString() } : { placeholder: "0" })}
+                style={[styles.property, styles.box, {backgroundColor: "#FFF"}]}
+                />
+              </View>
+              <>
+                <TouchableOpacity style={[styles.row, styles.removeButton]}
+                  onPress={() => (updateNewItem({"serving": "x"}), setShowServing(false))}
+                >
+                  <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
+                </TouchableOpacity>
+              </>
             </View>
-            <TouchableOpacity style={[styles.row, styles.removeButton]}
-              onPress={() => (updateNewItem({"serving": "x"}), setShowServing(false))}
-            >
-              <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
-              <Text style={{color: COLORS({opacity:1}).white}}>Remove</Text>
-            </TouchableOpacity>
+            <View style={[styles.divider, {padding: 0}]}/>
             </>
           )}
         </>
@@ -263,61 +264,58 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
         )}
         {showPriority == true && (
           <>
-          <View style={[styles.row, styles.property]}>
-            {(itemType === ItemType.Recipe) ? (
-              <Ionicons name={"star-half-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
-            ) : (
-              <Ionicons name={"alert-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
-            )}
-            <TouchableOpacity style={[styles.row, styles.box, priority === 'LOW' ? styles.selectedBox:styles.unselectedBox]}
-              onPress={() => (
-                setPriority("LOW"),
-                updateNewItem({"priority": "LOW"})
+          <View style={[styles.row, styles.property, { justifyContent: "space-between" }]}>
+            <>
+              {(itemType === ItemType.Recipe) ? (
+                <Ionicons name={"star-half-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
+              ) : (
+                <Ionicons name={"alert-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
               )}
-            >
-              <Ionicons name={"star-outline"} size={20} style={[priority === 'LOW' ? styles.iconInverse:styles.icon]} />
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.row, styles.box, priority === 'MED' ? styles.selectedBox:styles.unselectedBox]}
-              onPress={() => (
-                setPriority("MED"),
-                updateNewItem({"priority": "MED"})
-              )}
-            >
-              <Ionicons name={"star-outline"} size={20} style={[priority === 'MED' ? styles.iconInverse:styles.icon]} />
-              <Ionicons name={"star-outline"} size={20} style={[priority === 'MED' ? styles.iconInverse:styles.icon]} />
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.row, styles.box, priority === 'HIGH' ? styles.selectedBox:styles.unselectedBox]}
-              onPress={() => (
-                setPriority("HIGH"),
-                updateNewItem({"priority": "HIGH"})
-              )}
-            >
-              <Ionicons name={"star-outline"} size={20} style={[priority === 'HIGH' ? styles.iconInverse:styles.icon]} />
-              <Ionicons name={"star-outline"} size={20} style={[priority === 'HIGH' ? styles.iconInverse:styles.icon]} />
-              <Ionicons name={"star-outline"} size={20} style={[priority === 'HIGH' ? styles.iconInverse:styles.icon]} />
-            </TouchableOpacity>
+              <TouchableOpacity style={[styles.row, styles.box, priority === 'LOW' ? styles.selectedBox:styles.unselectedBox]}
+                onPress={() => (
+                  setPriority("LOW"),
+                  updateNewItem({"priority": "LOW"})
+                )}
+              >
+                <Ionicons name={"star-outline"} size={20} style={[priority === 'LOW' ? styles.iconInverse:styles.icon]} />
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.row, styles.box, priority === 'MED' ? styles.selectedBox:styles.unselectedBox]}
+                onPress={() => (
+                  setPriority("MED"),
+                  updateNewItem({"priority": "MED"})
+                )}
+              >
+                <Ionicons name={"star-outline"} size={20} style={[priority === 'MED' ? styles.iconInverse:styles.icon]} />
+                <Ionicons name={"star-outline"} size={20} style={[priority === 'MED' ? styles.iconInverse:styles.icon]} />
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.row, styles.box, priority === 'HIGH' ? styles.selectedBox:styles.unselectedBox]}
+                onPress={() => (
+                  setPriority("HIGH"),
+                  updateNewItem({"priority": "HIGH"})
+                )}
+              >
+                <Ionicons name={"star-outline"} size={20} style={[priority === 'HIGH' ? styles.iconInverse:styles.icon]} />
+                <Ionicons name={"star-outline"} size={20} style={[priority === 'HIGH' ? styles.iconInverse:styles.icon]} />
+                <Ionicons name={"star-outline"} size={20} style={[priority === 'HIGH' ? styles.iconInverse:styles.icon]} />
+              </TouchableOpacity>
+            </>
+            <>
+              <TouchableOpacity style={[styles.row, styles.removeButton]} onPress={() => (setPriority(null), updateNewItem({"priority": "x"}), setShowPriority(false))} >
+                  <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
+              </TouchableOpacity>
+            </>
           </View>
-          <TouchableOpacity style={[styles.row, styles.removeButton]}
-            onPress={() => (setPriority(null), updateNewItem({"priority": "x"}), setShowPriority(false))}
-          >
-            <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
-            <Text style={{color: COLORS({opacity:1}).white}}>Remove</Text>
-          </TouchableOpacity>
           </>
         )}
         </>
       )}
-      
-      
-     
-    </ScrollView>
     </SafeAreaView>
   )
 };
 
 const styles = StyleSheet.create({
   infoContainer: {
-    margin: SIZES.medium,
+    marginHorizontal: SIZES.medium,
     backgroundColor: COLORS({opacity:1}).lightWhite,
     borderRadius: SIZES.medium/2,
     ...SHADOWS.medium,
@@ -355,9 +353,9 @@ const styles = StyleSheet.create({
   },
   box: {
     borderWidth: 0.5,
-    borderColor: COLORS({opacity:1}).secondary,
-    borderRadius: SIZES.small,
-    padding: SIZES.tiny,
+    borderColor: COLORS({opacity:1}).primary,
+    borderRadius: SIZES.xxSmall,
+    padding: SIZES.small, 
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: SIZES.xxSmall,
@@ -404,9 +402,9 @@ const styles = StyleSheet.create({
   },
   removeButton: {
     backgroundColor: COLORS({opacity:1}).lightRed, 
-    paddingHorizontal: SIZES.small, 
-    paddingTop: SIZES.xSmall,
-    borderBottomLeftRadius: SIZES.xxSmall,
-    borderBottomRightRadius: SIZES.xxSmall
-  }
+    padding: SIZES.small, 
+    borderRadius: SIZES.xxSmall,
+    marginHorizontal: SIZES.medium,
+    alignItems: 'center',
+  },
 });

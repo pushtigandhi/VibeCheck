@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
   header:{
     fontSize: SIZES.medium,
     //fontFamily: FONT.regular,
-    color: COLORS({opacity:0.9}).darkBlue,
+    color: COLORS({opacity:0.9}).primary,
     padding: SIZES.small,
     margin: SIZES.small,
     borderWidth: 1,

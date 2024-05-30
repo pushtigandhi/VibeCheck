@@ -691,7 +691,7 @@ export async function GETuserByHandleTEST() {
 //#endregion
 
 //#region PROFILE
-export async function GETprofileImage() {
+export async function GETprofileImageTEST() {
     const profile = {
         "profile": {
             "emailInfo": {
@@ -1049,211 +1049,102 @@ export async function GETtodayTEST(selectedDate, filter={}) {
         "items": [
             {
                 "_id": "65dffbe64102392ebb5783b0",
-                "title": "today item 0",
-                "category": "Backlog",
-                "section": "All",
-                "favicon": {"assetId": "4F79F283-507B-4320-8F94-0C7C3A443713/L0/001", "base64": null, "duration": null, "exif": null, "fileName": "IMG_1028.jpg", "fileSize": 3676591, "height": 4032, "type": "image", "uri": "file:///var/mobile/Containers/Data/Application/8FD0148E-FB7A-4CFA-8EB3-BA4B7FB68A68/Library/Caches/ExponentExperienceData/@anonymous/VibeCheck-c25b1d4f-7003-4b9f-8017-6562b5a94a07/ImagePicker/E7B586D7-1DB2-48EA-A098-44B0F036EF4F.jpg", "width": 3024},
-                "icon": "📍",
-                "tags": [
-                    "new"
-                ],
+                "category": "Backlog", 
+                "description": "Description of what the item is. ", 
+                "favicon": {"assetId": "A763AC6D-6F2C-46F2-93A6-5B8E616CC06C/L0/001", "base64": null, "duration": null, "exif": null, "fileName": "IMG_0707.jpg", "fileSize": 1536094, "height": 2002, "mimeType": "image/jpeg", "type": "image", "uri": "file:///var/mobile/Containers/Data/Application/2B539751-A0AE-44FE-B0A5-919A07440921/Library/Caches/ExponentExperienceData/@anonymous/VibeCheck-c25b1d4f-7003-4b9f-8017-6562b5a94a07/ImagePicker/4E780BC8-D48C-4176-9570-17ACAECCBADF.jpg", "width": 2002}, 
+                "icon": "📦", 
+                "notes": "Remember important info about the item. ", 
+                "section": "All", 
+                "title": "Item",
                 "owner": "65dffad64102392ebb57839b",
                 "duration": "30",
-                "startDate": "2024-03-12T05:15:00.000Z",
-                "endDate": "2024-03-13T07:08:05.326Z",
+                "startDate": "2024-03-29T10:00:00.000Z",
+                "endDate": "2024-03-29T13:08:05.326Z",
                 "repeat": "DAILY",
-                "priority": "HIGH",
                 "createdAt": "2024-02-29T03:37:10.111Z",
                 "updatedAt": "2024-02-29T03:37:10.111Z",
-                "itemType": "Task",
-                "subtasks": [
-                    {"isChecked": false, "task": "first subtask", "_id": "65e134a91635ad960dab35ytsdc1c"},
-                    {"isChecked": false, "task": "2 subtask", "_id": "65e134a91635ad960dabsrhjdc1c"},
-                    {"isChecked": false, "task": "3 subtask", "_id": "65e134a91635ad960dgkudabdc1c"},
-                    {"isChecked": false, "task": "4 subtask", "_id": "65e134a91635ad96tdku0dabdc1c"},
-                    {"isChecked": false, "task": "5 subtask", "_id": "65e134a91635ad96nhdtt0dabdc1c"}
-            ],
                 "__v": 0
-            },{
+            },
+            {
+                "category": "Backlog", 
+                "description": "Description of the task. ", 
+                "icon": "📋", 
+                "notes": "Important details about the task.", 
+                "priority": "HIGH", 
+                "section": "All", 
+                "title": "Task",
                 "_id": "65dffbe64102392ebb5783b01235436457",
-                "title": "today item 1",
-                "category": "Backlog",
-                "section": "All",
-                "icon": "📍",
-                "tags": [
-                    "new"
-                ],
-                "itemType": "Event",
+                "itemType": "Task",
                 "subtasks": [{"isChecked": false, "task": "first subtask", "_id": "65e134a91635ad960dab35ytsdc1c"},
                 {"isChecked": false, "task": "2 subtask", "_id": "65e134a91635ad960dabsrhjdc1c"}],
                 "contacts": [{"isChecked": false, "task": "4 subtask", "_id": "65e134a91635ad96tdku0dabdc1c"},
                 {"isChecked": false, "task": "5 subtask", "_id": "65e134a91635ad96nhdtt0dabdc1c"}],
-                "notes": "Hello, World!",
                 "owner": "65dffad64102392ebb57839b",
-                "duration": "30",
-                "startDate": "2024-03-29T05:15:00.000Z",
-                "endDate": "2024-03-13T07:08:05.326Z",
+                "duration": "150",
+                "startDate": "2024-03-29T14:30:00.000Z",
+                "endDate": "2024-03-13T17:00:05.326Z",
                 "createdAt": "2024-02-29T03:37:10.111Z",
                 "updatedAt": "2024-02-29T03:37:10.111Z",
                 "__v": 0
             },{
+                "category": "Backlog", 
+                "description": "Description of the event. ", 
+                "favicon": {"assetId": "89BA16EB-A861-4651-848B-33B0D9E412E5/L0/001", "base64": null, "duration": null, "exif": null, "fileName": "IMG_1345.jpg", "fileSize": 3784860, "height": 4032, "mimeType": "image/jpeg", "type": "image", "uri": "file:///var/mobile/Containers/Data/Application/2B539751-A0AE-44FE-B0A5-919A07440921/Library/Caches/ExponentExperienceData/@anonymous/VibeCheck-c25b1d4f-7003-4b9f-8017-6562b5a94a07/ImagePicker/F223FEC7-EEF1-40AE-AAA2-F16ED2247BEB.jpg", "width": 3024}, 
+                "icon": "📍", 
+                "section": "All", 
+                "title": "Event",
                 "_id": "65dffbe64102392ebb5783b056478",
-                "title": "today item 2",
-                "category": "Backlog",
-                "section": "All",
-                "icon": "📍",
-                "tags": [
-                    "new"
-                ],
+                "contacts": [],
+                "subtasks": [],
                 "owner": "65dffad64102392ebb57839b",
-                "duration": "30",
-                "itemType": "Page",
-                "startDate": "2024-03-29T05:15:00.000Z",
-                "endDate": "2024-03-13T07:08:05.326Z",
+                "duration": "60",
+                "itemType": "Event",
+                "startDate": "2024-03-29T18:15:00.000Z",
+                "endDate": "2024-03-29T19:15:05.326Z",
                 "createdAt": "2024-02-29T03:37:10.111Z",
                 "updatedAt": "2024-02-29T03:37:10.111Z",
                 "__v": 0
             },{
                 "_id": "65dffbe64102392ebb5783b0xtu",
-                "title": "today item 3",
+                "icon": '\u{1F4C4}',
+                "title": "Daily Reflection",
                 "category": "Backlog",
                 "section": "All",
-                "itemType": "Recipe",
-                "servings": 3,
+                "itemType": "Page",
                 "repeat": "DAILY",
+                "notes": "Journal prompt here.",
+                "owner": "65dffad64102392ebb57839b",
+                "startDate": "2024-03-29T20:00:00.000Z",
+                "endDate": "2024-03-13T20:30:00.326Z",
+                "createdAt": "2024-02-29T03:37:10.111Z",
+                "updatedAt": "2024-02-29T03:37:10.111Z",
+                "__v": 0
+            },{
+                "_id": "65dffbe64102392ebb5b0xtu",
+                "title": "Dinner - Recipe",
+                "category": "Cooking",
+                "section": "Recipes",
+                "favicon": {"assetId": "53493CEF-3F13-4D9C-8E4B-0C84C7E47D7C/L0/001", "base64": null, "duration": null, "exif": null, "fileName": "IMG_1124.jpg", "fileSize": 6554812, "height": 4032, "mimeType": "image/jpeg", "type": "image", "uri": "file:///var/mobile/Containers/Data/Application/2B539751-A0AE-44FE-B0A5-919A07440921/Library/Caches/ExponentExperienceData/@anonymous/VibeCheck-c25b1d4f-7003-4b9f-8017-6562b5a94a07/ImagePicker/7D7072D5-940D-4730-B4ED-47727C1578B3.jpg", "width": 3024},
+                "itemType": "Recipe",
+                "icon": '\u{1F37D}',
+                "servings": 3,
+                "repeat": "WEEKLY",
                 "priority": "HIGH",
-                "ingredients": [{"isChecked": false, "task": "first subtask", "_id": "65e134a91635ad960dab35ytsdc1c"},
-                {"isChecked": false, "task": "2 subtask", "_id": "65e134a91635ad960dabsrhjdc1c"}],
-                "instructions": [{"isChecked": false, "task": "4 subtask", "_id": "65e134a91635ad96tdku0dabdc1c"},
-                {"isChecked": false, "task": "5 subtask", "_id": "65e134a91635ad96nhdtt0dabdc1c"}],
-                "icon": "📍",
-                "tags": [
-                    "new"
+                "ingredients" : [{"isChecked": false, "task": "2 cups all puprose flour", "_id": "65e134a91635ad960dab35ytsdc1c"},
+                    {"isChecked": false, "task": "1 cup water", "_id": "65e134a91635ad960dabsrhjdc1c"},
+                    {"isChecked": false, "task": "1tbsp yeast", "_id": "65e134a91635ad960dabsrhjwew1c"},
                 ],
+                "instructions": [{"isChecked": false, "task": "Mix ingredients and knead dough", "_id": "65e134a91635ad960dab35ytsdc1c"},
+                {"isChecked": false, "task": "Rest for 30 mins", "_id": "65e134a91635ad960dabsrhjdc1c"},
+                {"isChecked": false, "task": "Separate dough into 4", "_id": "65e134a91635ad960dabsrhjwew1c"},
+                {"isChecked": false, "task": "Preheat oven to 350F", "_id": "65e134a91635ad960dab35ytsdc1c"}],
                 "owner": "65dffad64102392ebb57839b",
-                "duration": "30",
-                "startDate": "2024-03-29T05:15:00.000Z",
-                "endDate": "2024-03-13T07:08:05.326Z",
-                "createdAt": "2024-02-29T03:37:10.111Z",
-                "updatedAt": "2024-02-29T03:37:10.111Z",
-                "__v": 0
-            },{
-                "_id": "65dffbe64102392ebb5783b064s7irtu",
-                "title": "test item 4",
-                "category": "Backlog",
-                "section": "All",
-                "icon": "📍",
-                "tags": [
-                    "new"
-                ],
-                "notes": [],
-                "owner": "65dffad64102392ebb57839b",
-                "duration": "30",
-                "startDate": "2024-03-29T05:15:00.000Z",
-                "endDate": "2024-03-13T07:08:05.326Z",
-                "createdAt": "2024-02-29T03:37:10.111Z",
-                "updatedAt": "2024-02-29T03:37:10.111Z",
-                "__v": 0
-            },{
-                "_id": "65dffbe64102392ebb5783b0tux",
-                "title": "test item 5",
-                "category": "Backlog",
-                "section": "All",
-                "icon": "📍",
-                "tags": [
-                    "new"
-                ],
-                "notes": [],
-                "owner": "65dffad64102392ebb57839b",
-                "duration": "30",
-                "startDate": "2024-03-29T05:15:00.000Z",
-                "endDate": "2024-03-13T07:08:05.326Z",
-                "createdAt": "2024-02-29T03:37:10.111Z",
-                "updatedAt": "2024-02-29T03:37:10.111Z",
-                "__v": 0
-            },{
-                "_id": "65dffbe64102392ebb5783b0euz6ryixukgj",
-                "title": "test item 6",
-                "category": "Backlog",
-                "section": "All",
-                "icon": "📍",
-                "tags": [
-                    "new"
-                ],
-                "notes": [],
-                "owner": "65dffad64102392ebb57839b",
-                "duration": "30",
-                "startDate": "2024-03-29T05:15:00.000Z",
-                "endDate": "2024-03-13T07:08:05.326Z",
-                "createdAt": "2024-02-29T03:37:10.111Z",
-                "updatedAt": "2024-02-29T03:37:10.111Z",
-                "__v": 0
-            },{
-                "_id": "65dffbe641023ebb5783b0",
-                "title": "test item 7",
-                "category": "Backlog",
-                "section": "All",
-                "icon": "📍",
-                "tags": [
-                    "new"
-                ],
-                "notes": [],
-                "owner": "65dffad64102392ebb57839b",
-                "duration": "30",
-                "startDate": "2024-03-29T05:15:00.000Z",
-                "endDate": "2024-03-13T07:08:05.326Z",
+                "startDate": "2024-03-29T22:00:00.000Z",
+                "endDate": "2024-03-13T23:30:00.326Z",
                 "createdAt": "2024-02-29T03:37:10.111Z",
                 "updatedAt": "2024-02-29T03:37:10.111Z",
                 "__v": 0
             },
-            {
-                "_id": "65dffccb4102392ebb5783b9",
-                "title": "test task 8",
-                "category": "Backlog",
-                "section": "All",
-                "icon": "📍",
-                "tags": [
-                    "new"
-                ],
-                "notes": [],
-                "owner": "65dffad64102392ebb57839b",
-                "itemType": "Task",
-                "location": "23 locatiton",
-                "subtasks": [],
-                "duration": "20",
-                "startDate": "2024-03-29T08:30:00.000Z",
-                "endDate": "2024-03-13T07:08:05.326Z",
-                "createdAt": "2024-02-29T03:40:59.685Z",
-                "updatedAt": "2024-02-29T03:40:59.685Z",
-                "__v": 0
-            },
-            {
-                "_id": "65e134a91635ad960dabdc1b",
-                "title": "task with subtask",
-                "category": "Backlog",
-                "section": "All",
-                "icon": "📍",
-                "tags": [
-                    "new",
-                    "first"
-                ],
-                "notes": [],
-                "owner": "65dffad64102392ebb57839b",
-                "itemType": "Task",
-                "subtasks": [
-                    {
-                        "isChecked": false,
-                        "task": "first subtask",
-                        "_id": "65e134a91635ad960dabdc1c"
-                    }
-                ],
-                "duration": "10",
-                "startDate": "2024-03-29T12:45:00.000Z",
-                "endDate": "2024-03-13T07:08:05.326Z",
-                "createdAt": "2024-03-01T01:51:37.332Z",
-                "updatedAt": "2024-03-01T01:53:24.873Z",
-                "__v": 0
-            }
         ]
     };
     let items = body.items;
