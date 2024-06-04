@@ -3,17 +3,14 @@ import { View, Text, TextInput, TouchableOpacity, Image, TouchableWithoutFeedbac
         StyleSheet, SafeAreaView, KeyboardAvoidingView } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { COLORS, SHADOWS, FONT, SIZES } from "../constants";
-import { ExpandableView, Spacer } from '../utils';
 import { Ionicons } from "@expo/vector-icons";
-import { PropertyCard } from "./cards/PropertyCards";
 import { ItemType } from "../constants";
 import { ScrollView } from "react-native-gesture-handler";
 import CollaboratorCard from "./cards/items/CollaboratorCard";
 import TaskCard from "./cards/items/TaskCard";
 import RecipeCard from "./cards/items/RecipeCard";
 import { PATCHitemTEST } from "../API";
-import * as ImagePicker from 'expo-image-picker';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import CreateNewItem from "./CreateNewItem";
 
 import React from "react";
 
@@ -143,8 +140,12 @@ export default function ItemCard({ navigation, route }) {
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [updatedItem, setUpdatedItem] = useState({});
+  const [showCreateNew, setShowCreateNew] = useState(false);
+  function closeCreateNew() {
+    setShowCreateNew(false);
+}
 
+  const [updatedItem, setUpdatedItem] = useState({});
   function updateNewItem(params) {
     if(params.subtasks) {
       setUpdatedItem({... updatedItem, subtasks: params.subtasks});
@@ -155,10 +156,6 @@ export default function ItemCard({ navigation, route }) {
     if(params.instructions) {
       setUpdatedItem({... updatedItem, instructions: params.instructions});
     }
-  }
-
-  function goHome() {
-    navigation.navigate('Home', { refresh: Math.random() });
   }
 
   function onGoBack() {
@@ -173,8 +170,7 @@ export default function ItemCard({ navigation, route }) {
             console.log(error);
         });
     }
-    goHome();
-    //navigation.goBack();
+    navigation.goBack();
   }
 
   const onRefresh = React.useCallback(() => {
@@ -214,12 +210,7 @@ export default function ItemCard({ navigation, route }) {
             </TouchableOpacity>
             {favicon && (
                 <>
-                <TouchableOpacity style={{alignContent: "center"}} onPress={() => setModalVisible(true)}
-                    // onPress={(newFavicon) => (
-                    //   pickImage(),
-                    //   setFavicon(newFavicon)
-                    // )}
-                >
+                <TouchableOpacity style={{alignContent: "center"}} onPress={() => setModalVisible(true)}>
                     <Image
                     source={favicon ? { uri: favicon.uri } : defaultImage}
                     style={[styles.border, { width: 140, height: 140}]}
@@ -243,6 +234,7 @@ export default function ItemCard({ navigation, route }) {
             <TouchableOpacity style={[styles.button]}
                 onPress={() => {
                     //navigation.navigate("EditItem", {"item": route.params?.item});
+                    setShowCreateNew(true);
                 }}  
             >
                 <Ionicons name={"pencil-outline"} size={SIZES.large} style={styles.icon}/> 
@@ -334,6 +326,9 @@ export default function ItemCard({ navigation, route }) {
           )}
 
         </ScrollView>
+        <Modal visible={showCreateNew} animationType="slide" onRequestClose={closeCreateNew}>
+          <CreateNewItem item={route.params?.item} onClose={closeCreateNew} />
+        </Modal>
       </GestureHandlerRootView>
       </SafeAreaView>
   )
