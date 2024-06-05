@@ -1,78 +1,61 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, 
-    RefreshControl, ScrollView, Image, Modal } from "react-native";
-
-import HomeNavigation from "../HomeNavigation";
-import { GETitems, GETitemsTEST, GETscheduledTEST } from "../../API";
-import { COLORS, SIZES, SHADOWS, FONT, ItemState, ViewState } from "../../constants";
+import { SafeAreaView, View, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Image, Modal,Dimensions } from "react-native";
+import { COLORS, FONT, SIZES, SHADOWS } from "../../constants";
+import { GETitems, GETitemsTEST } from "../../API";
+import { ItemType } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
-import { TabView, TabBar, ToolBar, SceneMap } from 'react-native-tab-view';
 import FilterModal from "../../components/FilterModal";
-
+import SingleSelectDropdown from "../../components/SingleSelectDropdown";
 import { CalendarView } from "../partialViews/CalendarView";
 
-import SingleSelectDropdown from "../../components/SingleSelectDropdown";
-
-
-const defaultImage = require("../../assets/icon.png");
-
 const daysOfWeek = ['SUN', 'MON', 'TUES', 'WED', 'THUR', 'FRI', 'SAT'];
-
 const ListView = ({items, navigation}) => (
   <FlatList
     scrollEnabled={true}
     data={items}
     renderItem={({item}) => (
         <TouchableOpacity
-            onPress={() => {
-                navigation.navigate("Item", {item});
-            }}
-            key={item["_id"] + "root"} 
-            style={styles.cardsContainer}
-            >
-            <View style={{flexDirection: "row"}}>
-                <View style={styles.time}>
-                    <Text style={styles.timeLabel}>{String(new Date(item.endDate).getDate())}</Text>
-                    <Text style={styles.timeLabel}>{daysOfWeek[new Date(item.startDate).getDay()]}</Text>
-                </View>
-                <View style={{ justifyContent: "center"}}>
-                    <Text style={{ fontSize: SIZES.xLarge}}>{item.icon}</Text>
-                </View>
-                <View style={styles.dayCardContainer}>
-                <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
-                <View style={styles.row}>
-                    <Text style={styles.timeLabel}>{String(new Date(item.startDate).getHours())}:{new Date(item.startDate).getMinutes() < 10 ? String("0"+ new Date(item.startDate).getMinutes()) : String(new Date(item.startDate).getMinutes())} - {String(new Date(item.endDate).getHours())}:{new Date(item.endDate).getMinutes() < 10 ? String("0"+ new Date(item.endDate).getMinutes()) : String(new Date(item.endDate).getMinutes())}</Text>
-                </View>
-                </View>
+          onPress={() => {
+              navigation.navigate("Item", {item});
+          }}
+          key={item["_id"] + "root"} 
+          style={styles.cardsContainer}
+          >
+          <View style={{flexDirection: "row"}}>
+            <View style={styles.time}>
+                <Text style={{ fontSize: SIZES.medium}}>{String(new Date(item.endDate).getDate())}</Text>
+                <Text style={{ fontSize: SIZES.medium}}>{daysOfWeek[new Date(item.startDate).getDay()]}</Text>
             </View>
+            <View style={{ justifyContent: "center"}}>
+                <Text style={{ fontSize: SIZES.xLarge}}>{item.icon}</Text>
+            </View>
+            <View style={styles.dayCardContainer}>
+              <Text style={styles.itemTitle} numberOfLines={1}>{item.title}</Text>
+              <View style={styles.row}>
+                  <Text style={styles.timeLabel}>{String(new Date(item.startDate).getHours())}:{new Date(item.startDate).getMinutes() < 10 ? String("0"+ new Date(item.startDate).getMinutes()) : String(new Date(item.startDate).getMinutes())} - {String(new Date(item.endDate).getHours())}:{new Date(item.endDate).getMinutes() < 10 ? String("0"+ new Date(item.endDate).getMinutes()) : String(new Date(item.endDate).getMinutes())}</Text>
+              </View>
+            </View>
+          </View>
         </TouchableOpacity>
     )}
   /> 
 );
 
 export default function ScheduleView ({navigation, route, scrollEnabled = true}) {
-  const [title, setTitle] = useState(null);
+  const [title, setTitle] = useState([]);
   
-  const [items, setItems] = useState([]);
-  const [itemstate, setItemState] = useState("Item");
+  const [items, setItems] = useState(route.params?.item);
   const [filter, setFilter] = useState({});
   const [filterVisible, setFilterVisible] = useState(false);
 
   const [refreshing, setRefreshing] = useState(false);
-  const [refreshCalendar, setRefreshCalendar] = useState(false);
-
-  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const [search, setSearch] = useState('');
   const [expandSearchBar, setSearchBar] = useState(false);
 
   function closeFilter() {
-    //doRefresh(filter);
     setRefreshing(!refreshing);
     setFilterVisible(false);
-    if (filter.itemState && filter.itemState != "All") {
-      setItemState(filter.itemState);
-    }
   }
 
   function doSearch() {
@@ -80,9 +63,9 @@ export default function ScheduleView ({navigation, route, scrollEnabled = true})
     setSearchBar(false);
   }
 
-  async function getItemsByStateFromAPI() {
+  async function getSectionItemsFromAPI() {
     try {
-      let items_ = await GETscheduledTEST(selectedDate, state, filter);
+      let items_ = await GETitemsTEST(ItemType.Item, filter);
       return items_;
     } catch (error) {
       console.log("error fetching items");
@@ -91,104 +74,103 @@ export default function ScheduleView ({navigation, route, scrollEnabled = true})
     }
   }
 
-  const onRefresh = React.useCallback((updatedDate, state) => {
-    setSelectedDate(updatedDate);
-  });
-
-  const [state, setStateOptions] = useState("All");
-
-  const stateOptions = [
-    {label: "All", value: "All"},
-    {label: "Day", value: "Day"},
-    {label: "Week", value: "Week"},
-    {label: "Month", value: "Month"}
-  ];
-
-  function changeStateOption(optionValue) {
-      setStateOptions(optionValue);
-  }
-
   useEffect(() => {
-    const indexOfStateOption = Object.values(stateOptions).indexOf("state");
-    setStateOptions(Object.keys(stateOptions)[indexOfStateOption]);
-
-    getItemsByStateFromAPI().then((items_) => {
-      setItems(items_);
-    }).catch((err) => {
-      alert(err.message)
-    })
-  }, [state, refreshing]); // run only once
-
-  useEffect(() => {
-    setFilter({... filter, category: route.params?.category.title, section: route.params?.section.title});
-    setTitle(route.params?.section.title);
+    setTitle(route.params?.section);
+    setFilter({... filter, category: route.params?.category, section: route.params?.section})
   }, []) // only run once on load
+
+  // useEffect(() => {
+  //   getSectionItemsFromAPI().then((items_) => {
+  //     setItems(items_);
+  //   }).catch((err) => {
+  //     alert(err.message)
+  //   })
+  // }, [refreshing])
+
+  const [selectedTab, setSelectedTab] = useState('List');
+  const renderTab = () => {
+    switch (selectedTab) {
+      case 'List':
+        return <ListView items={items} navigation={navigation} />;
+      case 'Calendar':
+        return <CalendarView navigation={navigation} filter={filter} setFilter={setFilter} isHome={false} />;
+      default:
+        return <ListView items={items} navigation={navigation} />;
+    }
+  };
 
   return (
     <SafeAreaView style={styles.screen}>
-        <View style={[styles.propContainer]}>
-            <View style={[styles.row, {justifyContent: "space-between"}]}>
-                <Text style={styles.title}>{title}</Text>
-                <View style={styles.row}>
-                    <TouchableOpacity
-                    style={[styles.row, styles.searchInput]}
-                    onPress={() => {
-                        setSearchBar(!expandSearchBar);
-                    }}
-                    >
-                    <Ionicons name={"search-outline"} size={20} style={styles.iconInverted} />
-                    {expandSearchBar && (
-                        <TextInput style={{width: SIZES.xxLarge*4, fontSize: SIZES.medium, color: COLORS({opacity:1}).primary}} 
-                        {...(search ? { defaultValue: search } : { placeholder: "search" })}
-                        onChangeText={(newSearch) => (setSearch(newSearch))}
-                        returnKeyState='search'
-                        onSubmitEditing={() => (doSearch())}
-                        />
-                    )}
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                    onPress={() => {
-                        setFilterVisible(true);
-                    }}
-                    style={styles.filterButtonIcon}
-                    >
-                    <Ionicons name={"funnel-outline"} size={20} style={styles.iconInverted}/>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                    onPress={() => {
-                        navigation.navigate("Item", {item: {"category": route.params?.category.title, "section": route.params?.section, "icon": '\u{1F4E6}', "itemState" : ItemState.Item}})
-                    }}
-                    style={[styles.row, styles.addButton]}
-                    >
-                    <Ionicons name={"add-circle"} size={20} style={styles.iconInverted}/>
-                    </TouchableOpacity>
-                </View>
-            </View>
-          
-          <SingleSelectDropdown options={stateOptions} placeholder={state} setFn={changeStateOption}
-          icon={<Ionicons name={"grid-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
+      <View style={[styles.row, styles.propContainer, {justifyContent: "space-between"}]}>
+        <Text style={styles.title}>{title}</Text>
+        <View style={styles.row}>
+          <TouchableOpacity
+            style={[styles.row, styles.searchInput]}
+            onPress={() => {
+              setSearchBar(!expandSearchBar);
+            }}
+          >
+            <Ionicons name={"search-outline"} size={20} style={styles.iconInverted} />
+            {expandSearchBar && (
+              <TextInput style={{width: SIZES.xxLarge*4, fontSize: SIZES.medium, color: COLORS({opacity:1}).primary}} 
+                {...(search ? { defaultValue: search } : { placeholder: "search" })}
+                onChangeText={(newSearch) => (setSearch(newSearch))}
+                returnKeyType='search'
+                onSubmitEditing={() => (doSearch())}
+              />
+            )}
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              setFilterVisible(true);
+            }}
+            style={styles.filterButtonIcon}
+          >
+            <Ionicons name={"funnel-outline"} size={20} style={styles.iconInverted}/>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.row, styles.addButton]}>
+            <Ionicons name={"add-circle"} size={20} style={styles.iconInverted}/>
+          </TouchableOpacity>
         </View>
-        
-        
-        <Modal visible={filterVisible} animationState="slide" onRequestClose={closeFilter}>
-          <FilterModal closeFilter={closeFilter} filter={filter} setFilter={setFilter} />
-        </Modal>
-        {/* <TabView
-          navigationState={{ index, routes }}
-          renderScene={renderScene}
-          onIndexChange={setIndex}
-          initialLayout={{ width: 20 }}
-          renderTabBar={(props) => (
-            <TabBar
-              {...props}
-              renderIcon={renderIcon} // Pass the renderIcon function to render icons
-              style={{ backgroundColor: 'white' }}
-            />
-          )}
-        /> */}
-        <HomeNavigation size={30} iconColor={COLORS({opacity:1}).primary}/>
+      </View>
+      
+      <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
+        <FilterModal closeFilter={closeFilter} filter={filter} setFilter={setFilter} />
+      </Modal>
+
+      <View style={styles.tabContainer}>
+        <TouchableOpacity
+          style={[styles.tab, selectedTab === 'List' && styles.activeTab]}
+          onPress={() => setSelectedTab('List')}
+        >
+          {selectedTab === 'List' ? 
+            (
+              <Ionicons name={"list-circle"} size={SIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
+            ) 
+          : (
+              <Ionicons name={"list-circle-outline"} size={SIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
+            )
+          }
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tab, selectedTab === 'Calendar' && styles.activeTab]}
+          onPress={() => setSelectedTab('Calendar')}
+        >
+          {selectedTab === 'Calendar' ? 
+            (
+              <Ionicons name={"calendar"} size={SIZES.xLarge} color={COLORS({opacity:0.8}).primary} />
+            ) 
+          : (
+              <Ionicons name={"calendar-outline"} size={SIZES.xLarge} color={COLORS({opacity:0.8}).primary} />
+            )
+          }
+        </TouchableOpacity>
+      </View>
+      <View style={styles.contentContainer}>
+        {renderTab()}
+      </View>
     </SafeAreaView>
-    );
+  );
 };
 
 const styles = StyleSheet.create({
@@ -218,29 +200,10 @@ const styles = StyleSheet.create({
     borderRadius: SIZES.small,
     backgroundColor: COLORS({opacity:0.5}).secondary,
   },
-  sectionContainer: {
-    margin: SIZES.xSmall,
-    padding: SIZES.xSmall,
-    backgroundColor: COLORS({opacity:0.5}).primary,
-    borderRadius: SIZES.small,
-    ...SHADOWS.medium,
-    shadowColor: COLORS({opacity:1}).shadow,
-  },
   title: {
     fontSize: SIZES.large,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).primary,
-  },
-  section: {
-    fontSize: SIZES.medium,
-    fontFamily: FONT.regular,
-    color: COLORS({opacity:1}).white,
-  },
-  expandedContainer: {
-    paddingBottom: SIZES.medium,
-    paddingHorizontal: SIZES.medium,
-    flex: 1,
-    overflow: 'scroll',
   },
   row: {
     flexDirection: "row",
@@ -263,19 +226,18 @@ const styles = StyleSheet.create({
     borderRadius: SIZES.medium,
     backgroundColor: "#FFF"
   },
-  imageBox: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    margin: SIZES.Small,
+  cardsContainer: {
+    marginTop: SIZES.medium,
+    marginHorizontal: SIZES.small,
+    borderColor: COLORS({opacity:1}).lightGrey,// "#FFF",
+    backgroundColor: COLORS({opacity:0.1}).lightGrey,
+    borderRadius: SIZES.small,
+    borderWidth:0.51,
+    alignContent: "center"
   },
-  dayCardContainer: {
-    flex: 1,
-    padding: SIZES.xxSmall,
-    marginLeft: SIZES.xSmall,
-  },
-  title: {
-    fontSize: SIZES.large,
-    fontWeight: "200",
+  itemTitle: {
+    fontSize: SIZES.medium,
+    fontFamily: FONT.regular,
   },
   prop: {
     fontWeight: "200",
@@ -290,12 +252,26 @@ const styles = StyleSheet.create({
     fontWeight: "200",
     fontSize: SIZES.medium,
   },
-  cardsContainer: {
-    marginTop: SIZES.medium,
-    marginHorizontal: SIZES.medium,
-    backgroundColor: COLORS({opacity:1}).lightWhite,// "#FFF",
-    borderRadius: SIZES.small,
-    ...SHADOWS.xSmall,
-    shadowColor: COLORS({opacity:1}).shadow,
+  dayCardContainer: {
+    flex: 1,
+    padding: SIZES.xxSmall,
+    marginLeft: SIZES.xSmall,
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    backgroundColor:  COLORS({opacity:1}).lightWhite,
+    paddingVertical: SIZES.xxSmall,
+  },
+  tab: {
+    paddingVertical: SIZES.xxSmall,
+    paddingHorizontal: 20,
+  },
+  activeTab: {
+    borderBottomWidth: 2,
+    borderBottomColor: COLORS({opacity:0.8}).primary,
+  },
+  contentContainer: {
+    flex: 1,
   },
 });
