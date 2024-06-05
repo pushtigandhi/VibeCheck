@@ -1,68 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Image, Modal } from "react-native";
+import { SafeAreaView, View, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Image, Modal,Dimensions } from "react-native";
 import { COLORS, FONT, SIZES, SHADOWS } from "../constants";
 import HomeNavigation from "./HomeNavigation";
 import { GETitems, GETitemsTEST } from "../API";
-import { ItemType } from "../constants";
+import { ItemType, ViewType } from "../constants";
 import { Ionicons } from "@expo/vector-icons";
-import { ExpandableView } from "../utils";
-import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 import FilterModal from "../components/FilterModal";
-import MiniTools from "../components/MiniTools";
-
-
-const defaultImage = require("../assets/icon.png");
-
-const ListView = ({items, navigation}) => (
-  <FlatList
-    scrollEnabled={true}
-    data={items}
-    renderItem={({item}) => (
-      <TouchableOpacity style={styles.cardContainer} key={item["_id"] + "_root"}
-        onPress={() => {
-            navigation.navigate("Item", {item});
-        }}
-      >
-        <View style={styles.row}>
-          <Text style={{ fontSize: SIZES.regular}}>{item.icon}</Text>
-          <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
-        </View>
-      </TouchableOpacity>
-    )}
-  /> 
-);
-
-const GalleryView = ({items, navigation}) => (
-  <FlatList
-    scrollEnabled={true}
-    data={items}
-    numColumns={2} 
-    renderItem={({item}) => (
-      <TouchableOpacity style={styles.cardContainer} key={item["_id"] + "_root"}
-        onPress={() => {
-            navigation.navigate("Item", {item});
-        }}
-      >
-        <View style={styles.imageBox}>
-          <Image
-              source={item.favicon ? { uri: item.favicon.uri } : defaultImage}
-              style={[styles.border, { width: 140, height: 140}]}
-          />
-        </View>
-        <View style={styles.row}>
-          <Text style={{fontSize: SIZES.xLarge}}>{item.icon}</Text>
-          <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
-        </View>
-      </TouchableOpacity>
-    )}
-  />
-);
+import DefaultView from "./views/DefaultView";
 
 export default function ItemScreen ({navigation, route, scrollEnabled = true}) {
-  const [isExpanded, setIsExpanded] = useState(false);
   const [title, setTitle] = useState([]);
   
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState(route.params?.item);
   const [filter, setFilter] = useState({});
   const [filterVisible, setFilterVisible] = useState(false);
 
@@ -71,36 +20,7 @@ export default function ItemScreen ({navigation, route, scrollEnabled = true}) {
   const [search, setSearch] = useState('');
   const [expandSearchBar, setSearchBar] = useState(false);
 
-  const [index, setIndex] = React.useState(0);
-  const [routes] = React.useState([
-    { key: 'list' },
-    { key: 'gallery' },
-  ]);
-  const renderScene = ({ route }) => {
-    switch (route.key) {
-      case 'list':
-        return <ListView items={items} navigation={navigation} />;
-      case 'gallery':
-        return <GalleryView items={items} navigation={navigation} />;
-      default:
-        return null;
-    }
-  };
-  const renderIcon = ({ route, focused, color }) => {
-    let iconName;
-  
-    if (route.key === 'list') {
-      iconName = focused ? 'list-circle' : 'list-circle-outline';
-    } else if (route.key === 'gallery') {
-      iconName = focused ? 'image' : 'image-outline';
-    }
-  
-    // Return the icon component
-    return <Ionicons name={iconName} size={30} color={COLORS({opacity:1}).primary} />;
-  };
-
   function closeFilter() {
-    //doRefresh(filter);
     setRefreshing(!refreshing);
     setFilterVisible(false);
   }
@@ -121,37 +41,22 @@ export default function ItemScreen ({navigation, route, scrollEnabled = true}) {
     }
   }
 
-  async function getItemsByTypeFromAPI({itemType}) {
-    try {
-      let items_ = await GETitemsTEST(itemType, filter);
-      return items_;
-    } catch (error) {
-      console.log("error fetching items");
-      console.log(error);
-      return [];
-    }
-  }
-
   useEffect(() => {
-    if (route.params?.isSection) {
-      setFilter({... filter, category: route.params?.category.title, section: route.params?.section.title})
-    }
+    setTitle(route.params?.section);
+    setFilter({... filter, category: route.params?.category, section: route.params?.section})
   }, []) // only run once on load
 
-  useEffect(() => {
-    if (route.params?.isSection) {
-      setTitle(route.params?.section.title);
-      getSectionItemsFromAPI().then((items_) => {
-        setItems(items_);
-      }).catch((err) => {
-        alert(err.message)
-      })
-    }
-  }, [refreshing]) // only run once on load
+  // useEffect(() => {
+  //   getSectionItemsFromAPI().then((items_) => {
+  //     setItems(items_);
+  //   }).catch((err) => {
+  //     alert(err.message)
+  //   })
+  // }, [refreshing])
 
   return (
     <SafeAreaView style={styles.screen}>
-        <View style={[styles.row, styles.propContainer, {justifyContent: "space-between"}]}>
+         <View style={[styles.row, styles.propContainer, {justifyContent: "space-between"}]}>
           <Text style={styles.title}>{title}</Text>
           <View style={styles.row}>
             <TouchableOpacity
@@ -180,10 +85,10 @@ export default function ItemScreen ({navigation, route, scrollEnabled = true}) {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                route.params?.isSection ? 
-                  navigation.navigate("EditItem", {item: {"category": route.params?.category.title, "section": route.params?.section, "icon": '\u{1F4E6}', "itemType" : ItemType.Item}})
-                  : 
-                  navigation.navigate("EditItem", {item: route.params?.item})
+                // route.params?.isSection ? 
+                //   navigation.navigate("EditItem", {item: {"category": route.params?.category.title, "section": route.params?.section, "icon": '\u{1F4E6}', "itemType" : ItemType.Item}})
+                //   : 
+                //   navigation.navigate("EditItem", {item: route.params?.item})
               }}
               style={[styles.row, styles.addButton]}
             >
@@ -192,24 +97,11 @@ export default function ItemScreen ({navigation, route, scrollEnabled = true}) {
           </View>
         </View>
         
-        
         <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
           <FilterModal closeFilter={closeFilter} filter={filter} setFilter={setFilter} />
         </Modal>
-        <TabView
-          navigationState={{ index, routes }}
-          renderScene={renderScene}
-          onIndexChange={setIndex}
-          initialLayout={{ width: 20 }}
-          renderTabBar={(props) => (
-            <TabBar
-              {...props}
-              renderIcon={renderIcon} // Pass the renderIcon function to render icons
-              style={{ backgroundColor: 'white' }}
-            />
-          )}
-        />
-        <HomeNavigation size={30} iconColor={COLORS({opacity:1}).primary}/>
+
+        <DefaultView items={items} navigation={navigation} />
     </SafeAreaView>
     );
 };
@@ -218,18 +110,6 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: "#FFF",
-  },
-  cardContainer: {
-    //width: '95%',
-    margin: SIZES.xSmall,
-    marginBottom: SIZES.tiny,
-    backgroundColor: "#FFF",
-    ...SHADOWS.medium,
-    shadowColor: COLORS({opacity:1}).shadow,
-    padding: SIZES.medium,
-    borderColor: COLORS({opacity:0.5}).primary,
-    borderBottomWidth: 1,
-    borderRadius: SIZES.small,
   },
   filterButtonIcon: {
     height: SIZES.xxLarge,
@@ -253,14 +133,6 @@ const styles = StyleSheet.create({
     borderRadius: SIZES.small,
     backgroundColor: COLORS({opacity:0.5}).secondary,
   },
-  sectionContainer: {
-    margin: SIZES.xSmall,
-    padding: SIZES.xSmall,
-    backgroundColor: COLORS({opacity:0.5}).primary,
-    borderRadius: SIZES.small,
-    ...SHADOWS.medium,
-    shadowColor: COLORS({opacity:1}).shadow,
-  },
   title: {
     fontSize: SIZES.large,
     fontFamily: FONT.regular,
@@ -270,12 +142,6 @@ const styles = StyleSheet.create({
     fontSize: SIZES.medium,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).white,
-  },
-  expandedContainer: {
-    paddingBottom: SIZES.medium,
-    paddingHorizontal: SIZES.medium,
-    flex: 1,
-    overflow: 'scroll',
   },
   row: {
     flexDirection: "row",
@@ -298,13 +164,4 @@ const styles = StyleSheet.create({
     borderRadius: SIZES.medium,
     backgroundColor: "#FFF"
   },
-  imageBox: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    margin: SIZES.Small,
-  },
-  label: {
-    paddingVertical: SIZES.xxSmall,
-    marginHorizontal: SIZES.xLarge,
-  }
 });
