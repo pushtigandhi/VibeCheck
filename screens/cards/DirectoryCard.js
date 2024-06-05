@@ -1,16 +1,64 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Modal,
         StyleSheet, Animated, FlatList, ScrollView } from 'react-native';
-import { COLORS, SHADOWS, FONT, SIZES, ViewType } from "../../constants";
+import { COLORS, SHADOWS, FONT, SIZES, ViewType, ItemType } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { ExpandableView } from "../../utils";
 import SelectView from "../SelectView";
+import { GETitems, GETitemsTEST } from "../../API";
 
 const expandedCard = ({navigation, category, sections}) => {
   const [showAddSection, setShowAddSection] = useState(false);
+ // const [item, setItem] = useState([]);
+
+  async function getSectionItemsFromAPI(section) {
+    console.log("GEt item");
+    try {
+      let items_ = await GETitemsTEST(ItemType.Item, { category: category.title, section: section.title });
+      return items_;
+    } catch (error) {
+      console.log("error fetching item");
+      console.log(error);
+      return [];
+    }
+  }
+
+  async function onSelectSection(section) {
+    let items;
+    await getSectionItemsFromAPI(section).then((items_) => {
+      items = items_
+    }).catch((err) => {
+      alert(err.message)
+    });
+    
+    if(section.view == ViewType.Default) {
+      console.log(section.view);
+      navigation.navigate("ItemScreen", {"category": category.title, "section": section.title, "item": items})
+    }
+    else if(section.view == ViewType.Schedule) {
+      console.log(section.view);
+      navigation.navigate("ScheduleView", {"category": category.title, "section": section.title, "item": items})
+    }
+    else if(section.view == ViewType.Checklist) {
+      console.log(section.view);
+      navigation.navigate("ChecklistView", {"category": category.title, "section": section.title, "item": items[0]})
+    }
+  }
+  
   function onClose() {
     setShowAddSection(false);
-  } 
+  }
+  
+  // useEffect(() => {
+  //   async function fetchSection() {
+  //     await getSectionItemsFromAPI().then((item_) => {
+  //       setItem(item_);
+  //     }).catch((err) => {
+  //       alert(err.message)
+  //     });
+  //   }
+  //   fetchSection();
+  // }, [])
 
   return (
     <ScrollView style={styles.expandedContainer}>
@@ -24,18 +72,7 @@ const expandedCard = ({navigation, category, sections}) => {
       {sections.map(section => (
         <TouchableOpacity style={styles.sectionContainer} key={section["_id"] + "_root"}
           onPress={() => {
-            if(section.view == ViewType.Default) {
-              console.log(section.view);
-              navigation.navigate("ItemScreen", {"category": category, "section": section})
-            }
-            else if(section.view == ViewType.Schedule) {
-              console.log(section.view);
-              //navigation.navigate("ScheduleView", {"category": category, "section": section})
-            }
-            else if(section.view == ViewType.Checklist) {
-              console.log(section.view);
-              //navigation.navigate("ChecklistView", {"category": category, "section": section})
-            }
+            onSelectSection(section);
           }}
         >
           <Text style={styles.section} numberOfLines={1}>{section.title}</Text>

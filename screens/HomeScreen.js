@@ -97,77 +97,7 @@ export default function HomeScreen ({ navigation, route }) {
                 </TouchableWithoutFeedback>
             </View>
             <CalendarView navigation={navigation} filter={filter} setFilter={setFilter} isHome={true} />
-            {/* <View style={{ flex: 1, backgroundColor: 'white' }}>
-                <View style={styles.calendarContainer} refreshControl={
-                    <RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={onRefresh}
-                    />
-                }>
-                    <ToolBar mobile={true} state={state} date={selectedDate}
-                        toggleSidebar={toggleSidebar}
-                        showSidebar={showSidebar}
-                        onRefresh={onRefresh}
-                        setFilterVisible={setFilterVisible}
-                        setScheduleVisible={setScheduleVisible}
-                        doSearch={doSearch}
-                        isHome={true}
-                    />
-                    <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
-                        <FilterModal closeFilter={closeFilter} filter={filter} setFilter={setFilter} />
-                    </Modal>
-                    <Modal visible={scheduleVisible} animationType="slide" onRequestClose={closeSchedule}>
-                        <NewItem navigation={navigation} />
-                    </Modal>
-                    <View style={styles.iconRoot}>
-                        <TouchableOpacity
-                            disabled={state === "day" ? true : false} 
-                            onPress={() => {
-                                setRefreshing(!refreshing);
-                                setState("day");
-                            }}
-                            style={{flex:1}}
-                        >
-                            <Text style={state === 'day' ? styles.tabActive : styles.tabInactive} >DAY</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity 
-                            disabled={state === "week" ? true : false} 
-                            onPress={() => {
-                                setRefreshing(!refreshing);
-                                setState("week");
-                            }}
-                            style={{flex:1}}
-
-                        >
-                            <Text style={state === 'week' ? styles.tabActive : styles.tabInactive} >WEEK</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity 
-                            disabled={state === "month" ? true : false} 
-                            onPress={() => {
-                                setRefreshing(!refreshing);
-                                setState("month");
-                            }}
-                            style={{flex:1}}
-                        >
-                            <Text style={state === 'month' ? styles.tabActive : styles.tabInactive} >MONTH</Text>
-                        </TouchableOpacity>
-                    </View>
-                    {showSidebar && (
-                        <Sidebar />
-                    )}
-                    <View style={{height: calendarHeight}} >
-                        {state === 'day' && (
-                            <DailyCalendar navigation={navigation} date={selectedDate} filter={filter} refreshing={refreshing} />
-                        )}
-                        {state === 'week' && (
-                            <WeeklyCalendar navigation={navigation} date={selectedDate} filter={filter} refreshing={refreshing} />
-                        )}
-                        {state === 'month' && (
-                            <MonthlyCalendar navigation={navigation} date={selectedDate} month={selectedDate.getMonth()} filter={filter} onRefresh={onRefresh} refreshing={refreshing} />
-                        )}
-                    </View>
-                </View>
-            </View> */}
+            
             <HomeNavigation style={{flex: 0}} size={SIZES.xxLarge} iconColor={COLORS({opacity:1}).primary}/> 
         </SafeAreaView>
     );

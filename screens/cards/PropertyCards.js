@@ -1,28 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, Text, TextInput, Modal, TouchableOpacity,
-        StyleSheet, ScrollView } from 'react-native';
+import { SafeAreaView, View, Text, TextInput, Modal, TouchableOpacity, StyleSheet } from 'react-native';
 import { COLORS, SHADOWS, FONT, SIZES, ItemType } from "../../constants";
 import { Spacer } from '../../utils';
 import { Ionicons } from "@expo/vector-icons";
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import SingleSelectDropdown from "../../components/SingleSelectDropdown";
-import MultiSelectDropdown from "../../components/MultiSelectDropdown";
 
 import { directoryList } from "../../API";
 
 export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) => {
   const [category, setCategory] = useState('');
   const [section, setSection] = useState('');
-  const [tags, setTags] = useState([]);
   const [serving, setServing] = useState(null);
   const [priority, setPriority] = useState(null);
   
   const [showPriority, setShowPriority] = useState(false);
   const [showDuration, setShowDuration] = useState(false);
   const [showServing, setShowServing] = useState(false);
-
-  const [allTags, setAllTags] = useState([]);
 
   const [hourPickerVisible, setHourPickerVisible] = useState(false);
   const [minutePickerVisible, setMinutePickerVisible] = useState(false);
@@ -37,9 +31,9 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
     setMinutePickerVisible(!minutePickerVisible);
   };
 
-  function updateNewItem(params) { 
-    setFn(params);
-  };
+  // function setFn(params) { 
+  //   setFn(params);
+  // };
 
   const size = 25;
 
@@ -53,40 +47,25 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
     minuteItem.push(<Picker.Item key={i} label={`${i}`} value={`${i}`} />);
   }
 
-  async function getTagsFromAPI() {
-    try {
-        let allTags_ = await GETtags();
-        return allTags_;
-    } catch (error) {
-      console.log("error fetching tags");
-      console.log(error);
-
-        return [];
-    }
-  }
-
-  useEffect(() => {
-    // getTagsFromAPI().then((allTags_) => {
-    //   setAllTags(allTags_);
-    // }).catch((err) => {
-    //     alert(err.message)
-    // })
-  }, []); // Empty dependency array to run only once on component mount
-
   useEffect(() => {
     if (item) {
-      if(!!item.category)
+      if(!!item.category){
         setCategory(item.category);
+        setSection('All');
+      }
       if(!!item.section)
-        setSection(item.section.title);
+        setSection(item.section);
       if(!!item.duration){
         const hours = Math.floor(item.duration / 60);
         const minutes = item.duration % 60;
         setHour(hours);
         setMinute(minutes);
+        setShowDuration(true);
       }
-      if(!!item.priority)
+      if(!!item.priority){
         setPriority(item.priority);
+        setShowPriority(true);
+      }
       if(!!item.tags)
         setTags(item.tags);
     }
@@ -112,20 +91,24 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
 
   const onChangeSection = (newSection) => {
     setSection(newSection);
-    updateNewItem({"section": newSection});
+    setFn({"section": newSection});
   };
 
   const onChangeCategory = (newCategory) => {
     setCategory(newCategory);
     setSection("All");
-    updateNewItem({"category": newCategory});
+    setFn({"category": newCategory});
   };
 
   return (
     <SafeAreaView style={styles.infoContainer}>
       {directoryList._j.length > 0 ? (
-        <SingleSelectDropdown options={getCategories()} placeholder={!!category ? category : "Category"} setFn={onChangeCategory}
-          icon={<Ionicons name={"folder-open-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
+          <SingleSelectDropdown
+                options={getCategories()}
+                placeholder={!!category ? category : "Category"}
+                icon={<Ionicons name="folder-open-outline" size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />}
+                setFn={onChangeCategory}
+            />
       ) : (
         <Text>Loading categories...</Text>
       )}
@@ -137,17 +120,12 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
         <Text>Loading sections...</Text>
       ))}
 
-      {/* <MultiSelectDropdown options={allTags.map(tag => tag.title)} placeholder="Tags" setFn={setTags}
-        icon={<Ionicons name={"list-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />} /> 
-{(itemType === ItemType.Task || itemType === ItemType.Event || isFilter) && () }*/}
-
       <View style={[styles.divider, {padding: 0}]}/>
 
-      {isFilter == false && (
         <>
         {showDuration == false && (
           <>
-            <TouchableOpacity style={[styles.row, styles.property]} onPress={()=>(setShowDuration(true))}>
+            <TouchableOpacity style={[styles.row, styles.property]} onPress={()=>(setShowDuration(true), setFn({"duration": Number(hour * 60) + Number(minute)}))}>
               <Ionicons name={"timer-outline"} size={size} style={[styles.icon]}/>    
               <Text style={styles.property}>Add Duration</Text>
             </TouchableOpacity>
@@ -165,7 +143,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
                     setHour(newHour),
                     toggleHourPicker(),
                     //setDuration(newHour*60 + minute),
-                    updateNewItem({"duration": Number(newHour * 60) + Number(minute)})
+                    setFn({"duration": Number(newHour * 60) + Number(minute)})
                   )}
                   style={styles.picker}>
                   {hourItem}
@@ -186,7 +164,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
                     setMinute(newMinute),
                     toggleMinutePicker(),
                     //setDuration(hour*60 + newMinute),
-                    updateNewItem({"duration": Number(hour * 60) + Number(newMinute)})
+                    setFn({"duration": Number(hour * 60) + Number(newMinute)})
                   )}
                   style={styles.picker}>
                   {minuteItem}
@@ -199,20 +177,22 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
               </TouchableOpacity>
             )}
             <Text style={styles.property}>Minutes</Text>
-            <TouchableOpacity style={[styles.row, styles.removeButton]} onPress={() => (updateNewItem({"duration": "x"}), setShowDuration(false))}>
+            {(hourPickerVisible == false && minutePickerVisible == false) && (
+              <TouchableOpacity style={[styles.row, styles.removeButton]} onPress={() => (setFn({"duration": "x"}), setShowDuration(false))}>
                 <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
-            </TouchableOpacity>
+              </TouchableOpacity>
+            )}
           </View>
           </>
         )}
 
-      <View style={[styles.divider, {padding: 0}]}/>
+        <View style={[styles.divider, {padding: 0}]}/>
 
         {(itemType === ItemType.Recipe) && (
         <>
           {showServing == false && (
             <>
-              <TouchableOpacity style={[styles.row, styles.property]} onPress={()=>(setShowServing(true))}>
+              <TouchableOpacity style={[styles.row, styles.property]} onPress={()=>(setShowServing(true), setServing(0), setFn({"serving": Number(0)}))}>
                 <Ionicons name={"restaurant-outline"} size={size} style={[styles.icon]}/>    
                 <Text style={styles.property}>Add Servings</Text>
               </TouchableOpacity>
@@ -227,7 +207,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
                 <TextInput keyboardType="numeric"
                   onChangeText={(serving_) => (
                     setServing(serving_),
-                    updateNewItem({"serving": Number(serving_)})
+                    setFn({"serving": Number(serving_)})
                   )}
                   {...(serving ? { defaultValue: serving.toString() } : { placeholder: "0" })}
                 style={[styles.property, styles.box, {backgroundColor: "#FFF"}]}
@@ -235,7 +215,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
               </View>
               <>
                 <TouchableOpacity style={[styles.row, styles.removeButton]}
-                  onPress={() => (updateNewItem({"serving": "x"}), setShowServing(false))}
+                  onPress={() => (setFn({"serving": "x"}), setShowServing(false))}
                 >
                   <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
                 </TouchableOpacity>
@@ -248,7 +228,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
         )}
 
         {showPriority == false && (
-          <TouchableOpacity style={styles.property} onPress={()=>(setShowPriority(true))}>
+          <TouchableOpacity style={styles.property} onPress={()=>(setShowPriority(true), setPriority('LOW'), setFn({"priority": "LOW"}))}>
             {(itemType === ItemType.Recipe) ? (
               <View style={styles.row}>
                 <Ionicons name={"star-half-outline"} size={size} style={styles.icon}/>
@@ -274,7 +254,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
               <TouchableOpacity style={[styles.row, styles.box, priority === 'LOW' ? styles.selectedBox:styles.unselectedBox]}
                 onPress={() => (
                   setPriority("LOW"),
-                  updateNewItem({"priority": "LOW"})
+                  setFn({"priority": "LOW"})
                 )}
               >
                 <Ionicons name={"star-outline"} size={20} style={[priority === 'LOW' ? styles.iconInverse:styles.icon]} />
@@ -282,7 +262,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
               <TouchableOpacity style={[styles.row, styles.box, priority === 'MED' ? styles.selectedBox:styles.unselectedBox]}
                 onPress={() => (
                   setPriority("MED"),
-                  updateNewItem({"priority": "MED"})
+                  setFn({"priority": "MED"})
                 )}
               >
                 <Ionicons name={"star-outline"} size={20} style={[priority === 'MED' ? styles.iconInverse:styles.icon]} />
@@ -291,7 +271,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
               <TouchableOpacity style={[styles.row, styles.box, priority === 'HIGH' ? styles.selectedBox:styles.unselectedBox]}
                 onPress={() => (
                   setPriority("HIGH"),
-                  updateNewItem({"priority": "HIGH"})
+                  setFn({"priority": "HIGH"})
                 )}
               >
                 <Ionicons name={"star-outline"} size={20} style={[priority === 'HIGH' ? styles.iconInverse:styles.icon]} />
@@ -300,7 +280,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
               </TouchableOpacity>
             </>
             <>
-              <TouchableOpacity style={[styles.row, styles.removeButton]} onPress={() => (setPriority(null), updateNewItem({"priority": "x"}), setShowPriority(false))} >
+              <TouchableOpacity style={[styles.row, styles.removeButton]} onPress={() => (setPriority(null), setFn({"priority": "x"}), setShowPriority(false))} >
                   <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
               </TouchableOpacity>
             </>
@@ -308,7 +288,6 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
           </>
         )}
         </>
-      )}
     </SafeAreaView>
   )
 };

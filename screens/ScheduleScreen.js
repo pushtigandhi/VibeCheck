@@ -7,12 +7,13 @@ import { GETitemsTEST } from "../API";
 import { Scheduler } from "../components/Scheduler";
 import * as df  from "../constants/default";
 import CreateNewItem from "./CreateNewItem";
+import FilteredResultsModal from "../components/FilteredResultsModal";
 
 const test1 = {
     "startDate": new Date(),
 }
 
-export default function ScheduleScreen ({navigation}) {
+export default function ScheduleScreen ({onClose}) {
     const [scheduleItem, setSceduleItem] = useState({});
 
     const [showFilteredResults, setShowFilteredResults] = useState(false);
@@ -21,65 +22,25 @@ export default function ScheduleScreen ({navigation}) {
 
     const [items, setItems] = useState([]);
 
-    const size = 25;
-
     const [filter, setFilter] = useState({});
-    function updateNewItem(params) { 
-        if (params.startDate) {
-            updateDuration();
-            console.log("item updated: " + params.startDate);
-        }
-        if (params.endDate) {
-            updateDuration();
-            console.log("item updated: " + params.endDate);
-        }
-        if(params.repeat) {
-            if(params.repeat == 'x')
-            {
-              const updated = filter;
-              delete updated.repeat;
-              setFilter(updated);
-              
-            }
-            else {
-                setFilter({... filter, repeat: params.repeat});
-            }
-            console.log("item updated: " + params.repeat);
-        }
-    };
+   
     function onSelectExistingItem() {
-        if(showFilteredResults) {
-            setShowFilteredResults(false);
-        }
+        console.log("select existing");
+        setShowFilteredResults(false);
         setFilterVisible(true);
     }
 
-    async function getItemsFromAPI(filter={}) {
-        try {
-          let items_ = await GETitemsTEST(ItemType.Item, filter);
-          return items_;
-        } catch (error) {
-          console.log("error fetching items");
-          console.log(error);
-          return [];
-        }
-      }
+    const doSearch = React.useCallback(() => {
+        console.log("doing searching");
+        console.log(filter);
+        setFilterVisible(false);
+        setShowFilteredResults(true);
+    }, []);
 
-    const onRefresh = React.useCallback(() => {
-        if (!filterVisible) {
-            console.log("get filtered items ");
-            getItemsFromAPI(filter).then((items_) => {
-                setItems(items_);
-            }).catch((err) => {
-                alert(err.message)
-            })
-            setShowFilteredResults(true);
-        }
-        else {
-            //setShowFilteredResults(false);
-            console.log("refresh: " + filterVisible);
-        }
-    }, [filterVisible]);
+    const [filterVisible, setFilterVisible] = useState(false);
+    function closeFilter() {
+        setFilterVisible(false);
+    }
 
     function closeFilteredResults() {
         setShowFilteredResults(false);
@@ -89,34 +50,9 @@ export default function ScheduleScreen ({navigation}) {
         setShowCreateNew(false);
     }
 
-    const [filterVisible, setFilterVisible] = useState(false);
-    function closeFilter() {
-        setFilterVisible(false);
-        onRefresh();
-    }
-
     function goHome() {
-        navigation.navigate('Home', { refresh: Math.random() });
+        onClose(false);
     }
-
-    const renderItem = ({ item }) => (
-        <TouchableOpacity
-          onPress={() => {
-            //console.log(item);
-           // navigation.navigate("Item");
-           onRefresh();
-            setShowFilteredResults(false);
-
-          }}
-          key={item["_id"] + "root"} 
-          style={styles.cardsContainer}
-        >
-          <View style={[{flexDirection: "row", justifyContent: "center"}]}>
-              <Text style={{ fontSize: SIZES.xLarge}}>{item.icon}</Text>
-              <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
-          </View>
-        </TouchableOpacity>
-    );
 
     return(
         <SafeAreaView style={styles.screen}>
@@ -133,10 +69,6 @@ export default function ScheduleScreen ({navigation}) {
                             <Text style={styles.buttonText}>Select An Existing Item</Text>
                         </TouchableOpacity>
                     </View>
-                    <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
-                        <FilterModal closeFilter={closeFilter} filter={filter} setFilter={setFilter} isScheduler={true} />
-                    </Modal>
-
                     <View style={{ height: SIZES.xxLarge * 2,}}>
                         <TouchableOpacity onPress={() => {setShowSelectType(true)}} style={[styles.button, {backgroundColor: COLORS({opacity:1}).yellow}]}>
                             <Text style={styles.buttonText}>Create New</Text>
@@ -144,24 +76,12 @@ export default function ScheduleScreen ({navigation}) {
                     </View>
                 </View>
             )}
+            <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
+                <FilterModal closeFilter={closeFilter} filter={filter} setFilter={setFilter} doSearch={doSearch} isScheduler={true} />
+            </Modal>
 
             <Modal visible={showFilteredResults} animationType="slide" onRequestClose={closeFilteredResults}>
-                <SafeAreaView>
-                <View style={[styles.row, styles.header]}>
-                    <TouchableOpacity onPress={() => {onSelectExistingItem()}} style={styles.searchButton} >
-                        <Text style={styles.searchButtonText}>Update</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => {closeFilteredResults()}} style={[styles.searchButton, { backgroundColor: COLORS({opacity:1}).lightRed }]}  > 
-                        <Ionicons name={"close-outline"} size={SIZES.xLarge} style={styles.iconInverted}/> 
-                    </TouchableOpacity>
-                </View>
-                    <FlatList
-                        data={items}
-                        renderItem={renderItem}
-                        keyExtractor={(item) => item["_id"]} 
-                        style={styles.calendarView}
-                    />
-                </SafeAreaView>
+                <FilteredResultsModal filter={filter} onUpdate={onSelectExistingItem} onClose={closeFilteredResults} />
             </Modal>
 
             {showSelectType === true && (

@@ -11,12 +11,12 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import { Spacer } from "../utils";
 
-export default function FilterModal({ filter, setFilter, closeFilter, isScheduler=false }) {
+export default function FilterModal({ filter, setFilter, closeFilter, doSearch, isScheduler=false }) {
     const sortOptions = [
+        {label: "Time (Ascending)", value: "time"},
+        {label: "Time (Descending)", value: "-time"},
         {label: "Date (Ascending)", value: "date"},
         {label: "Date (Descending)", value: "-date"},
-        {label: "Time (Ascending)", value: "time"},
-        {label: "Time (Descending)", value: "-time"}
     ];
 
     const typeOptions = [
@@ -27,8 +27,8 @@ export default function FilterModal({ filter, setFilter, closeFilter, isSchedule
         {label: "Recipe", value: "Recipe"}
     ];
 
-    const [sortOption, setSortOption] = useState("Start Time (Ascending)");
-    const [itemType, setTypeOptions] = useState("All");
+    const [sortOption, setSortOption] = useState("time");
+    const [itemType, setTypeOption] = useState("Item");
 
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
@@ -36,59 +36,26 @@ export default function FilterModal({ filter, setFilter, closeFilter, isSchedule
     const [showStartDate, setShowStartDate] = useState(false);
     const [showEndDate, setShowEndDate] = useState(false);
 
-    const [serving, setServing] = useState(null);
-    const [priority, setPriority] = useState("x");
-
     const [updatedFilter, setUpdatedFilter] = useState({});
 
-    const [hourPickerVisible, setHourPickerVisible] = useState(false);
-    const [minutePickerVisible, setMinutePickerVisible] = useState(false);
-    const [hour, setHour] = useState(0);
-    const [minute, setMinute] = useState(0);
-
-    const toggleHourPicker = () => {
-        setHourPickerVisible(!hourPickerVisible);
-    };
-
-    const toggleMinutePicker = () => {
-        setMinutePickerVisible(!minutePickerVisible);
-    };
-
-    // Generate picker items
-    const hourItem = [];
-    for (let i = 0; i <= 12; i++) {
-        hourItem.push(<Picker.Item key={i} label={`${i}`} value={`${i}`} />);
-    }
-    const minuteItem = [];
-    for (let i = 0; i <= 55; i += 5) {
-        minuteItem.push(<Picker.Item key={i} label={`${i}`} value={`${i}`} />);
-    }
-
-    useEffect(() => {
-        const indexOfOption = Object.values(sortOptions).indexOf("startTime");
-        setSortOption(Object.keys(sortOptions)[indexOfOption]);
-
-        const indexOfTypeOption = Object.values(typeOptions).indexOf("itemType");
-        setTypeOptions(Object.keys(typeOptions)[indexOfTypeOption]);
-    }, []); // run only once
-
     function changeSortOption(optionValue) {
-        //setFilter({... filter, "sortBy": optionValue});
+        setUpdatedFilter({... updatedFilter, "sortBy": optionValue});
         setSortOption(optionValue);
     }
 
     function changeTypeOption(optionValue) {
-        //setFilter({... filter, "itemType": optionValue});
-        setTypeOptions(optionValue);
+        setUpdatedFilter({... updatedFilter, "itemType": optionValue});
+        setTypeOption(optionValue);
     }
+    
 
     function onClose() {
-        closeFilter();
+        closeFilter(false);
     }
 
     function onSearch() {
         setFilter(updatedFilter);
-        closeFilter();
+        doSearch();
     }
 
     function resetFilter() {
@@ -142,6 +109,18 @@ export default function FilterModal({ filter, setFilter, closeFilter, isSchedule
                 setUpdatedFilter({... updatedFilter, repeat: params.repeat});
             }
         }
+        if(params.priority) {
+            if(params.priority == 'x')
+            {
+              const updated = updatedFilter;
+              delete updated.priority;
+              setUpdatedFilter(updated);
+              
+            }
+            else {
+                setUpdatedFilter({... updatedFilter, priority: params.priority});
+            }
+        }
         if(params.servings) {
             setUpdatedFilter({... updatedFilter, servings: params.servings});
         }
@@ -151,14 +130,13 @@ export default function FilterModal({ filter, setFilter, closeFilter, isSchedule
     }
 
     useEffect(() => {
+        console.log("filterModal");
+        console.log(filter);
+        if(filter.itemType) {
+            setTypeOption(filter.itemType);
+        }
         if(filter.sortBy) {
             setSortOption(filter.sortBy);
-        }
-        if(filter.duration) {
-            const hours = Math.floor(filter.duration / 60);
-            const minutes = filter.duration % 60;
-            setHour(hours);
-            setMinute(minutes);
         }
         if(filter.startDate) {
             setStartDate(filter.startDate);
@@ -171,19 +149,8 @@ export default function FilterModal({ filter, setFilter, closeFilter, isSchedule
         if(filter.repeat) {
             setRepeat(filter.repeat);
         }
-        if(filter.priority) {
-            setPriority(filter.priority);
-        }
-        if(filter.servings) {
-            setServing(filter.servings);
-        }
     }, []);
 
-    useEffect(() => {
-        setUpdatedFilter({... updatedFilter, "sortBy": sortOption});
-        setUpdatedFilter({... updatedFilter, "itemType": itemType});
-    }, [itemType, sortOption]);
-   
     return (
         <View style={styles.container}>
             <View style={[styles.row, styles.header]}>
@@ -194,14 +161,14 @@ export default function FilterModal({ filter, setFilter, closeFilter, isSchedule
                 )}
                 
                 <TouchableOpacity onPress={onClose} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightRed, width: SIZES.xLarge * 2}]} > 
-                    <Ionicons name={"close-outline"} size={SIZES.xLarge} style={styles.iconInverted}/> 
+                    <Ionicons name={"close-outline"} size={SIZES.xLarge} style={styles.iconInverse}/> 
                 </TouchableOpacity>
             </View>
             <ScrollView>
                 {isScheduler==false && (
                     <>
                         <Text style={styles.sortText}>Sort by:</Text>
-                        <SingleSelectDropdown options={sortOptions} placeholder={"Date (Ascending)"} setFn={changeSortOption}
+                        <SingleSelectDropdown options={sortOptions} placeholder={"Time (Ascending)"} setFn={changeSortOption}
                             icon={<Ionicons name={"swap-vertical-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
                     </>
                 )}
@@ -211,6 +178,7 @@ export default function FilterModal({ filter, setFilter, closeFilter, isSchedule
                     icon={<Ionicons name={"grid-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
 
                 <PropertyCard item={filter} itemType={itemType} setFn={updateFilter} isFilter={true} />
+
                 {isScheduler==false && (
                     <>
                         {showStartDate == false && (
@@ -280,7 +248,7 @@ export default function FilterModal({ filter, setFilter, closeFilter, isSchedule
                         )} 
                     </>
                 )}
-                {isScheduler==false && (
+                {/* {isScheduler==false && (
                     <View style={[styles.row, { margin: SIZES.xSmall }]}>
                         <Ionicons name={"timer-outline"} size={25} style={[styles.icon]}/>    
                         {hourPickerVisible ? (
@@ -326,7 +294,7 @@ export default function FilterModal({ filter, setFilter, closeFilter, isSchedule
                         )}
                         <Text style={[styles.property, { margin: SIZES.xSmall }]}>Minutes</Text>
                     </View>
-                )}
+                )} */}
                 
 
                 {(showStartDate == true && isScheduler==false) && (
@@ -375,7 +343,7 @@ export default function FilterModal({ filter, setFilter, closeFilter, isSchedule
                     </View>
                 )}
                 
-                <View style={[styles.row, { margin: SIZES.xSmall }]}>
+                {/* <View style={[styles.row, { margin: SIZES.xSmall }]}>
                     {(itemType === ItemType.Recipe) ? (
                         <Ionicons name={"star-half-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
                     ) : (
@@ -429,7 +397,7 @@ export default function FilterModal({ filter, setFilter, closeFilter, isSchedule
                         style={[styles.property, styles.box, {backgroundColor: "#FFF"}]}
                         />
                     </View>
-                )}
+                )} */}
                 
                 <TouchableOpacity
                     style={styles.searchButton}

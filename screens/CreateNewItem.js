@@ -3,88 +3,38 @@ import { ScrollView, Text, View, StyleSheet, TouchableOpacity, TextInput, Image,
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { COLORS, FONT, SIZES, SHADOWS, ItemType } from "../constants";
 import React, { useEffect, useState } from "react";
-import Slider from '@react-native-community/slider';
-import SwitchSelector from "react-native-switch-selector";
-import SingleSelectDropdown from "../components/SingleSelectDropdown";
 import { PropertyCard } from "../screens/cards/PropertyCards";
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { Picker } from '@react-native-picker/picker';
-import { Spacer } from "../utils";
-import { SafeAreaView } from "react-native-safe-area-context";
 import CollaboratorCard from "./cards/items/CollaboratorCard";
 import TaskCard from "./cards/items/TaskCard";
 import RecipeCard from "./cards/items/RecipeCard";
 import * as ImagePicker from 'expo-image-picker';
 
+import { PATCHitemTEST } from "../API";
+
 const defaultImage = require("../assets/icon.png");
 
 export default function CreateNewItem({ item = null, onClose }) {
-    const [itemType, setItemType] = useState('');
+    const [itemType, setItemType] = useState(ItemType.Item);
     
     const [title, setTitle] = useState("Untitled");
     const [description, setDescription] = useState(null);
     const [favicon, setFavicon] = useState(null);
     const [icon, setIcon] = useState('');
     const [notes, setNotes] = useState(null);
-    const [category, setCategory] = useState('');
-    const [section, setSection] = useState('');
-    const [serving, setServing] = useState(null);
-    const [priority, setPriority] = useState("x");
     const [location, setLocation] = useState('');
 
     const [tags, setTags] = useState([]);
   
     const [showDesc, setShowDesc] = useState(false);
     const [showLocation, setShowLocation] = useState(false);
-    const [showScheduler, setShowScheduler] = useState(false);
     const [showNotes, setShowNotes] = useState(false);
     
     const [updatedItem, setUpdatedItem] = useState({});
   
     const [isExpanded, setIsExpanded] = useState(true);
+    const [isNew, setIsNew] = useState(true);
 
     const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
-
-    const [refreshing, setRefreshing] = useState(false);
-    
-    const [updatedFilter, setUpdatedFilter] = useState({});
-
-    // useEffect(() => {
-    //     const indexOfTypeOption = Object.values(typeOptions).indexOf("itemType");
-    //     setTypeOptions(Object.keys(typeOptions)[indexOfTypeOption]);
-    // }, []); // run only once
-
-    // function changeTypeOption(optionValue) {
-    //     setTypeOptions(optionValue);
-    // }
-
-    // function updateFilter(params) {
-    //     if(params.category) {
-    //         setUpdatedFilter({... updatedFilter, category: params.category});
-    //     }
-    //     if(params.section) {
-    //         setUpdatedFilter({... updatedFilter, section: params.section});
-    //     }
-    //     if(params.servings) {
-    //         setUpdatedFilter({... updatedFilter, servings: params.servings});
-    //     }
-    //     if(params.location) {
-    //         setUpdatedFilter({... updatedFilter, location: params.location});
-    //     }
-    // }
-
-    // useEffect(() => {
-    //     if(filter.priority) {
-    //         setPriority(filter.priority);
-    //     }
-    //     if(filter.servings) {
-    //         setServing(filter.servings);
-    //     }
-    // }, []);
-
-    // useEffect(() => {
-    //     setUpdatedFilter({... updatedFilter, "itemType": itemType});
-    // }, [itemType]);
 
     const pickImage = async () => {
         let pickerResult = await ImagePicker.launchImageLibraryAsync({
@@ -105,23 +55,23 @@ export default function CreateNewItem({ item = null, onClose }) {
 
     function updateNewItem(params) {
         if(params.category) {
-          setCategory(params.category);
+          setUpdatedItem({... updatedItem, category: params.category});
         }
         if(params.section) {
-          setSection(params.section);
+            setUpdatedItem({... updatedItem, section: params.section});
         }
-        // if(params.duration) {
-        //   if(params.duration == 'x')
-        //   {
-        //     const updated = updatedItem;
-        //     delete updated.duration;
-        //     setUpdatedItem(updated);
+        if(params.duration) {
+          if(params.duration == 'x')
+          {
+            const updated = updatedItem;
+            delete updated.duration;
+            setUpdatedItem(updated);
             
-        //   }
-        //   else {
-        //     setUpdatedItem({... updatedItem, priority: params.duration});
-        //   }
-        // }
+          }
+          else {
+            setUpdatedItem({... updatedItem, duration: params.duration});
+          }
+        }
         if(params.priority) {
           if(params.priority == 'x')
           {
@@ -134,18 +84,6 @@ export default function CreateNewItem({ item = null, onClose }) {
             setUpdatedItem({... updatedItem, priority: params.priority});
           }
         }
-        // if(params.repeat) {
-        //   if(params.repeat == 'x')
-        //   {
-        //     const updated = updatedItem;
-        //     delete updated.repeat;
-        //     setUpdatedItem(updated);
-            
-        //   }
-        //   else {
-        //     setUpdatedItem({... updatedItem, repeat: params.repeat});
-        //   }
-        // }
         // if(params.tags) {
         //   setUpdatedItem({... updatedItem, "tags": params.tags});
         // }
@@ -171,36 +109,24 @@ export default function CreateNewItem({ item = null, onClose }) {
           }
         }
     }
+    
 
     function onSave() {
-        let item = {
-          title: title,
-          category: category,
-          section: section,
-          icon: icon,
-        };
-    
-        if (description) {
-          item.description = description;
-        } if (favicon) {
-          item.favicon = favicon;
-        } if (notes) {
-          item.notes = notes;
-        } if (location) {
-          item.location = location;
-        } if (updatedItem.repeat) {
-          item.repeat = updatedItem.repeat;
-        } if (updatedItem.priority) {
-          item.priority = updatedItem.priority;
-        } if (updatedItem.ingredients) {
-          item.ingredients = updatedItem.ingredients;
-        } if (updatedItem.instructions) {
-          item.instructions = updatedItem.instructions;
-        } if (updatedItem.servings) {
-          item.servings = updatedItem.servings;
-        } 
+        if(isNew){
+            console.log("New: " + updatedItem);
 
-        console.log(item);
+        } else {
+            console.log("Edit: " + updatedItem);
+
+            PATCHitemTEST(itemType, {
+                ...updatedItem
+            }, item._id)
+            .then((item_) => {
+                //alert("Success!");
+            }).catch((error) => {
+                console.log(error);
+            });
+        }
     };
 
     useEffect(() => {
@@ -215,24 +141,27 @@ export default function CreateNewItem({ item = null, onClose }) {
         })
     
         if (item) {
-            setItemType(item.itemType);
-          setCategory(item.category);
-          setSection(item.section);
+            if(item.ItemType)
+                setItemType(item.itemType);
           setIcon(item.icon.toString());
-          console.log("item: " +item.itemType + " " + item.category  + " " +item.section);
+          console.log("item: " + itemType + " " + item.category  + " " +item.section);
           if (item["_id"]) {
-            setIsExpanded(false);
+            setIsNew(false);
             setTitle(item.title);
             if (item.description) {
               setDescription(item.description);
+              setShowDesc(true);
             } if (item.favicon) {
               setFavicon(item.favicon);
             } if (item.notes) {
               setNotes(item.notes);
+              setShowNotes(true);
             } if (item.location) {
               setLocation(item.location);
+              setShowLocation(true);
             }
           }
+          setUpdatedItem({... item});
         }
     }, [item]); // Update category and section when item changes
    
@@ -350,7 +279,7 @@ export default function CreateNewItem({ item = null, onClose }) {
             {isExpanded && (
                 <>
                     <View style={styles.divider}/>
-                    <PropertyCard itemType={itemType} item={item} setFn={updateNewItem}/>
+                    <PropertyCard itemType={itemType} item={updatedItem} setFn={updateNewItem}/>
                 </>
             )}
 

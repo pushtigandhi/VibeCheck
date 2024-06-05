@@ -5,6 +5,7 @@ import { View, Text, TextInput, TouchableOpacity, Image, Modal,
 import { COLORS, SHADOWS, FONT, SIZES } from "../constants";
 import { Ionicons } from "@expo/vector-icons";
 import * as df  from "../constants/default";
+import DefaultView from "./views/DefaultView";
 import DefaultTemplate from "./views/DefaultTemplate";
 import ScheduleTemplate from "./views/ScheduleTemplate";
 import ChecklistTemplate from "./views/ChecklistTemplate";
@@ -15,9 +16,8 @@ export default function SelectView({onClose}) {
   const [isDefaultExpanded, setIsDefaultExpanded] = useState(true);
   const [isScheduledExpanded, setIsScheduledExpanded] = useState(false);
   const [isChecklistExpanded, setIsChecklistExpanded] = useState(false);
-  const [title, setTitle] = useState(null);
+  const [title, setTitle] = useState('New');
   const [viewType, setViewType] = useState(null);
-  const [disableSave, setDisableSave] = useState(true);
 
   function close() {
     setIsDefaultExpanded(false);
@@ -50,18 +50,15 @@ export default function SelectView({onClose}) {
           <Ionicons name={"close-outline"} size={SIZES.xxLarge} style={styles.iconInverted}/> 
         </TouchableOpacity>
       
-        <TouchableOpacity onPress={doRefresh} style={[styles.button, {backgroundColor: disableSave ? COLORS({opacity:0.7}).lightGreen : COLORS({opacity:1}).lightGreen}]} disabled={disableSave} >
+        <TouchableOpacity onPress={doRefresh} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightGreen}]} >
           <Ionicons name={"checkmark-outline"} size={SIZES.xxLarge} style={styles.iconInverted}/> 
         </TouchableOpacity>
       </View>
 
       <View style={[styles.row, styles.title]}>
         <TextInput style={{width: "100%", fontSize: SIZES.xLarge, color: COLORS({opacity:0.9}).primary}}
-          {...(title ? { defaultValue: title } : { placeholder: "Title" })}
-          onChangeText={(newTitle) => (
-            setTitle(newTitle),
-            newTitle ? setDisableSave(false) : setDisableSave(true)
-          )}
+          defaultValue={ title }
+          onChangeText={ setTitle }
         />
       </View>
 
@@ -87,8 +84,8 @@ export default function SelectView({onClose}) {
           </View>
         </View>
       </TouchableOpacity>
-
-      <ExpandableView expanded={isDefaultExpanded} view={DefaultTemplate} params={{ "close": close }} vh={300} />
+      
+      <ExpandableView expanded={isDefaultExpanded} view={DefaultTemplate} vh={300} />
 
       <TouchableOpacity
         onPress={() => {
@@ -111,7 +108,7 @@ export default function SelectView({onClose}) {
         </View>
       </TouchableOpacity>
 
-      <ExpandableView expanded={isScheduledExpanded} view={ScheduleTemplate} params={{ "close": close }} vh={300} />
+      {/* <ExpandableView expanded={isScheduledExpanded} view={ScheduleTemplate} params={{ "close": close }} vh={300} /> */}
 
       <TouchableOpacity
         onPress={() => {
@@ -134,7 +131,7 @@ export default function SelectView({onClose}) {
           </View>
         </View>
       </TouchableOpacity>
-      <ExpandableView expanded={isChecklistExpanded} view={ChecklistTemplate} params={{ "close": close }} vh={300} />
+      {/* <ExpandableView expanded={isChecklistExpanded} view={ChecklistTemplate} params={{ "close": close }} vh={300} /> */}
 
     </SafeAreaView>
   )

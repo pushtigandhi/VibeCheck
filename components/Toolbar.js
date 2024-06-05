@@ -18,12 +18,14 @@ export const ToolBar = ({
   setFilterVisible,
   setScheduleVisible,
   doSearch,
-  isHome = false
+  isHome = false, 
+  navigation
 }) => {
 
   const [selected, setSelected] = useState('');
   const [formattedDate, setFormattedDate] = useState(null);
   const [showDatePicker, toggleShowDatePicker] = useState(false);
+  const [expandSearchBar, setSearchBar] = useState(false);
 
   useEffect(() => {
     toggleShowDatePicker(false);
@@ -95,11 +97,40 @@ export const ToolBar = ({
       
       {isHome && (
         <View style={[styles.row, styles.rightContent]}>
-          <MiniTools setFilterVisible={setFilterVisible} doSearch={doSearch} route={setScheduleVisible} />
+          <TouchableOpacity
+              style={[styles.row, styles.searchButtonIcon]}
+              onPress={() => {
+              setSearchBar(!expandSearchBar);
+              }}
+          >
+              <Ionicons name={"search-outline"} size={20} style={styles.iconInverted} />
+          </TouchableOpacity>
+          <TouchableOpacity
+              onPress={() => {
+              setFilterVisible(true);
+              }}
+              style={styles.filterButtonIcon}
+          >
+              <Ionicons name={"funnel-outline"} size={20} style={styles.iconInverted}/>
+          </TouchableOpacity>
+          <TouchableOpacity
+              onPress={() => {setScheduleVisible(true);}}
+              style={[styles.row, styles.addButtonIcon]}
+          >
+              <Ionicons name={"add-circle"} size={20} style={styles.iconInverted}/>
+          </TouchableOpacity>
         </View>
       )}
       
     </View>
+    {expandSearchBar && (
+      <TextInput style={styles.searchInput} 
+          placeholder="search"
+          onSubmitEditing={(newSearch) => (setSearchBar(false), doSearch(newSearch))}
+          returnKeyType='search'
+      /> 
+    )} 
+
     {showDatePicker && (
       <Calendar
         onDayPress={day => {
@@ -124,107 +155,90 @@ ToolBar.propTypes = {
 };
 
 const styles = StyleSheet.create({
-    row: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        //alignItems: "baseline",
-    },
-    toolBar: {
-      //alignItems: 'space-between',
-      backgroundColor: '#ffffff',
-      borderBottomWidth: 1,
-      borderBottomColor: COLORS({opacity:1}).primary,
-      display: 'flex',
-      flex: 'row',
-      justifyContent: 'space-between',
-      //position: 'relative',
-      height: 50,
-    },
-    leftContent: {
-      alignItems: 'center',
-      display: 'flex',
-      flex: 0,
-      width: 100,
-    },
-    instanceNode2: {
-      flex: 0,
-    },
-    span: {
-      //fontWeight: '500',
-      fontSize: 16,
-      color: COLORS({opacity:1}).primary,
-    },
-    textWrapper2: {
-      //fontFamily: 'Inter, Helvetica',
-    },
-    class6: {
-      color: '#333333',
-      //fontFamily: 'Inter, Helvetica',
-      fontWeight: '400',
-      whiteSpace: 'nowrap',
-    },
-    iconFontAwesome2: {
-      height: 16,
-      width: 16,
-    },
-    rightContent: {
-      alignItems: 'center',
-      display: 'flex',
-      flex: 0,
-      gap: 16,
-    },
-    mobileFalse: {
-      padding: 16,
-    },
-    mobileTrue: {
-      padding: 8,
-    },
-    mobileFalseLeftContent: {
-      gap: 16,
-    },
-    mobileTrueLeftContent: {
-      gap: 8,
-    },
-    mobileFalseTypography2: {
-      fontSize: 30,
-    },
-    mobileTrueTypography2: {
-      fontSize: 16,
-    },
-    addButtonIcon: {
-      height: SIZES.xxLarge,
-      width: SIZES.xxLarge,
-      borderRadius: SIZES.xxSmall,
-      backgroundColor: COLORS({opacity:1}).primary,
-      marginRight: SIZES.xxSmall,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    filterButtonIcon: {
-      height: SIZES.xxLarge,
-      width: SIZES.xxLarge,
-      borderRadius: SIZES.xxSmall,
-      backgroundColor: COLORS({opacity:0.7}).primary,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    icon: {
-      color: COLORS({opacity:1}).primary,
-      margin: SIZES.xxSmall,
-    },
-    iconInverted: {
-      color: COLORS({opacity:1}).white,
-      margin: SIZES.xxSmall,
-    },
-    calendar: {
-      textDayFontSize: SIZES.medium,
-      dayTextColor: COLORS({opacity:1}).secondary,
-      selectedDayTextColor: COLORS({opacity:1}).lightWhite,
-      selectedDotColor: COLORS({opacity:1}).primary,
-      todayTextColor: COLORS({opacity:1}).lightWhite,
-      todayBackgroundColor: COLORS({opacity:0.8}).primary,
-      arrowColor: COLORS({opacity:1}).primary,
-      monthTextColor: COLORS({opacity:1}).primary,
-      textSectionTitleColor: COLORS({opacity:0.8}).primary,
+  row: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      //alignItems: "baseline",
   },
-  });
+  toolBar: {
+    //alignItems: 'space-between',
+    backgroundColor: '#ffffff',
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS({opacity:1}).primary,
+    display: 'flex',
+    flex: 'row',
+    justifyContent: 'space-between',
+    //position: 'relative',
+    height: 50,
+  },
+  leftContent: {
+    alignItems: 'center',
+    display: 'flex',
+    flex: 0,
+    width: 100,
+  },
+  span: {
+    //fontWeight: '500',
+    fontSize: 16,
+    color: COLORS({opacity:1}).primary,
+  },
+  rightContent: {
+    alignItems: 'center',
+    display: 'flex',
+    flex: 0,
+    gap: 16,
+  },
+  addButtonIcon: {
+    height: SIZES.xxLarge,
+    width: SIZES.xxLarge,
+    borderRadius: SIZES.xxSmall,
+    backgroundColor: COLORS({opacity:1}).primary,
+    marginRight: SIZES.xxSmall,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  filterButtonIcon: {
+    height: SIZES.xxLarge,
+    width: SIZES.xxLarge,
+    borderRadius: SIZES.xxSmall,
+    backgroundColor: COLORS({opacity:0.7}).primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  searchButtonIcon: {
+    height: SIZES.xxLarge,
+    width: SIZES.xxLarge,
+    borderRadius: SIZES.xxSmall,
+    backgroundColor: COLORS({opacity:0.5}).secondary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  searchInput: {
+    fontSize: SIZES.medium, 
+    color: COLORS({opacity:1}).primary,
+    borderWidth: 1, 
+    borderRadius: SIZES.xxSmall,
+    padding: SIZES.xxSmall,
+    marginTop: SIZES.xxSmall,
+    borderColor: COLORS({opacity:0.5}).primary,
+  },
+  icon: {
+    color: COLORS({opacity:1}).primary,
+    margin: SIZES.xxSmall,
+  },
+  iconInverted: {
+    color: COLORS({opacity:1}).white,
+    margin: SIZES.xxSmall,
+  },
+  calendar: {
+    textDayFontSize: SIZES.medium,
+    dayTextColor: COLORS({opacity:1}).secondary,
+    selectedDayTextColor: COLORS({opacity:1}).lightWhite,
+    selectedDotColor: COLORS({opacity:1}).primary,
+    todayTextColor: COLORS({opacity:1}).lightWhite,
+    todayBackgroundColor: COLORS({opacity:0.8}).primary,
+    arrowColor: COLORS({opacity:1}).primary,
+    monthTextColor: COLORS({opacity:1}).primary,
+    textSectionTitleColor: COLORS({opacity:0.8}).primary,
+  },
+});

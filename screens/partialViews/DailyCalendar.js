@@ -74,10 +74,11 @@ export const DailyCalendar = ({navigation, date, filter, refreshing}) => {
 const styles = StyleSheet.create({
   cardsContainer: {
     marginBottom: SIZES.medium,
-    backgroundColor: COLORS({opacity:1}).lightWhite,// "#FFF",
+    borderColor: COLORS({opacity:1}).lightGrey,
+    backgroundColor: COLORS({opacity:0.1}).lightGrey,
     borderRadius: SIZES.small,
-    ...SHADOWS.xSmall,
-    shadowColor: COLORS({opacity:1}).shadow,
+    borderWidth:0.51,
+    alignContent: "center"
   },
   row: {
     flexDirection: "row",
@@ -89,8 +90,8 @@ const styles = StyleSheet.create({
     marginLeft: SIZES.xSmall,
   },
   title: {
-    fontSize: SIZES.large,
-    fontWeight: "200",
+    fontSize: SIZES.medium,
+    fontFamily: FONT.regular,
   },
   prop: {
     fontWeight: "200",
