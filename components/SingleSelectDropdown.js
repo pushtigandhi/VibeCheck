@@ -4,7 +4,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { COLORS, SIZES } from '../constants';
 import { Ionicons } from '@expo/vector-icons';
 
-const SingleSelectDropdown = ({ options, placeholder = "Select", icon, setFn }) => {
+const SingleSelectDropdown = ({ options, placeholder = "Select", icon, setFn, isDisabled=false }) => {
     const [value, setValue] = useState(null);
 
     const renderItem = (item) => {
@@ -38,6 +38,7 @@ const SingleSelectDropdown = ({ options, placeholder = "Select", icon, setFn }) 
             }}
             renderLeftIcon={() => icon}
             renderItem={renderItem}
+            disable={isDisabled}
         />
     );
 };

@@ -217,37 +217,31 @@ export default function ScheduleView ({navigation, route, scrollEnabled = true})
     <SafeAreaView style={styles.screen}>
       <View style={[styles.row, styles.propContainer, {justifyContent: "space-between"}]}>
         <Text style={styles.title}>{title}</Text>
-        <View style={styles.row}>
-          <TouchableOpacity
-            style={[styles.row, styles.searchInput]}
-            onPress={() => {
-              setSearchBar(!expandSearchBar);
-            }}
-          >
-            <Ionicons name={"search-outline"} size={20} style={styles.iconInverted} />
-            {expandSearchBar && (
-              <TextInput style={{width: SIZES.xxLarge*4, fontSize: SIZES.medium, color: COLORS({opacity:1}).primary}} 
-                {...(search ? { defaultValue: search } : { placeholder: "search" })}
-                onChangeText={(newSearch) => (setSearch(newSearch))}
-                returnKeyType='search'
-                onSubmitEditing={() => (doSearch())}
-              />
-            )}
-          </TouchableOpacity>
-          <TouchableOpacity
+        <TouchableOpacity
+          style={[styles.row, styles.searchInput]}
+          onPress={() => {
+            setSearchBar(!expandSearchBar);
+          }}
+        >
+          <Ionicons name={"search-outline"} size={20} style={styles.iconInverted} />
+          {expandSearchBar && (
+            <TextInput style={{width: SIZES.xxLarge*4, fontSize: SIZES.medium, color: COLORS({opacity:1}).primary}} 
+              {...(search ? { defaultValue: search } : { placeholder: "search" })}
+              onChangeText={(newSearch) => (setSearch(newSearch))}
+              returnKeyType='search'
+              onSubmitEditing={() => (doSearch())}
+            />
+          )}
+        </TouchableOpacity>
+      </View>
+      {/* <TouchableOpacity
             onPress={() => {
               setFilterVisible(true);
             }}
             style={styles.filterButtonIcon}
           >
             <Ionicons name={"funnel-outline"} size={20} style={styles.iconInverted}/>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.row, styles.addButton]}>
-            <Ionicons name={"add-circle"} size={20} style={styles.iconInverted}/>
-          </TouchableOpacity>
-        </View>
-      </View>
-      
+          </TouchableOpacity> */}
       <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
         <FilterModal closeFilter={closeFilter} filter={filter} setFilter={setFilter} />
       </Modal>
@@ -309,7 +303,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   searchInput: {
-    marginRight: SIZES.small,
+    //marginRight: SIZES.small,
     borderRadius: SIZES.small,
     width: SIZES.xxLarge,
     height: SIZES.xxLarge,
@@ -379,7 +373,7 @@ const styles = StyleSheet.create({
   },
   tab: {
     paddingVertical: SIZES.xxSmall,
-    paddingHorizontal: 20,
+    paddingHorizontal: SIZES.large,
   },
   activeTab: {
     borderBottomWidth: 2,

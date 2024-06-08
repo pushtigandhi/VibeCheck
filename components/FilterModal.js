@@ -11,7 +11,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import { Spacer } from "../utils";
 
-export default function FilterModal({ filter, setFilter, closeFilter, doSearch, isScheduler=false }) {
+export default function FilterModal({ filter, setFilter, closeFilter, doSearch, isScheduler=false, isSection=false }) {
     const sortOptions = [
         {label: "Time (Ascending)", value: "time"},
         {label: "Time (Descending)", value: "-time"},
@@ -165,19 +165,13 @@ export default function FilterModal({ filter, setFilter, closeFilter, doSearch, 
                 </TouchableOpacity>
             </View>
             <ScrollView>
-                {isScheduler==false && (
-                    <>
-                        <Text style={styles.sortText}>Sort by:</Text>
-                        <SingleSelectDropdown options={sortOptions} placeholder={"Time (Ascending)"} setFn={changeSortOption}
-                            icon={<Ionicons name={"swap-vertical-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
-                    </>
-                )}
+                
                 
                 <Text style={styles.sortText}>Item type:</Text>
                 <SingleSelectDropdown options={typeOptions} placeholder={"All"} setFn={changeTypeOption}
                     icon={<Ionicons name={"grid-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
 
-                <PropertyCard item={filter} itemType={itemType} setFn={updateFilter} isFilter={true} />
+                <PropertyCard item={filter} itemType={itemType} setFn={updateFilter} isSection={isSection} />
 
                 {isScheduler==false && (
                     <>
@@ -297,7 +291,7 @@ export default function FilterModal({ filter, setFilter, closeFilter, doSearch, 
                 )} */}
                 
 
-                {(showStartDate == true && isScheduler==false) && (
+                {isScheduler==false && (showStartDate == true || showEndDate == true) && (
                     <View style={[styles.row, { margin: SIZES.xSmall }]}>
                         <Ionicons name={"repeat-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
                         <TouchableOpacity style={[styles.row, styles.box, repeat === 'ONCE' ? styles.selectedBox:styles.unselectedBox]}
@@ -341,6 +335,14 @@ export default function FilterModal({ filter, setFilter, closeFilter, doSearch, 
                             <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
                         </TouchableOpacity>
                     </View>
+                )}
+
+                {isScheduler==false && (showStartDate == true || showEndDate == true) && (
+                    <>
+                        <Text style={styles.sortText}>Sort by:</Text>
+                        <SingleSelectDropdown options={sortOptions} placeholder={"Time (Ascending)"} setFn={changeSortOption}
+                            icon={<Ionicons name={"swap-vertical-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
+                    </>
                 )}
                 
                 {/* <View style={[styles.row, { margin: SIZES.xSmall }]}>
@@ -402,8 +404,7 @@ export default function FilterModal({ filter, setFilter, closeFilter, doSearch, 
                 <TouchableOpacity
                     style={styles.searchButton}
                     onPress={(onSearch)}
-                    //underlayColor='white'
-                    >
+                >
                     <Text style={styles.searchButtonText}>Search</Text>
                 </TouchableOpacity>
             </ScrollView>

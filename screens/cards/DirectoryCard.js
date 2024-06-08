@@ -9,7 +9,6 @@ import { GETitems, GETitemsTEST } from "../../API";
 
 const expandedCard = ({navigation, category, sections}) => {
   const [showAddSection, setShowAddSection] = useState(false);
- // const [item, setItem] = useState([]);
 
   async function getSectionItemsFromAPI(section) {
     console.log("GEt item");
@@ -33,7 +32,7 @@ const expandedCard = ({navigation, category, sections}) => {
     
     if(section.view == ViewType.Default) {
       console.log(section.view);
-      navigation.navigate("ItemScreen", {"category": category.title, "section": section.title, "item": items})
+      navigation.navigate("DefaultView", {"category": category.title, "section": section.title, "item": items})
     }
     else if(section.view == ViewType.Schedule) {
       console.log(section.view);

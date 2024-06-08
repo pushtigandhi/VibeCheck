@@ -1083,7 +1083,7 @@ export async function GETtodayTEST(selectedDate, filter={}) {
                 "owner": "65dffad64102392ebb57839b",
                 "duration": "150",
                 "startDate": "2024-03-29T14:30:00.000Z",
-                "endDate": "2024-03-13T17:00:05.326Z",
+                "endDate": "2024-03-29T17:00:05.326Z",
                 "createdAt": "2024-02-29T03:37:10.111Z",
                 "updatedAt": "2024-02-29T03:37:10.111Z",
                 "__v": 0
@@ -1757,7 +1757,7 @@ export async function GETitemsTEST(itemType, filter={}) {
                     "owner": "65dffad64102392ebb57839b",
                     "duration": "150",
                     "startDate": "2024-03-29T14:30:00.000Z",
-                    "endDate": "2024-03-13T17:00:05.326Z",
+                    "endDate": "2024-03-29T15:30:00.000Z",
                     "createdAt": "2024-02-29T03:37:10.111Z",
                     "updatedAt": "2024-02-29T03:37:10.111Z",
                     "__v": 0

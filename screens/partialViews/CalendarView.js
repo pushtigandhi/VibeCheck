@@ -94,7 +94,7 @@ export const CalendarView = ({navigation, filter={}, setFilter, isHome=false}) =
                     <FilterModal closeFilter={closeFilter} doSearch={closeFilter} filter={filter} setFilter={setFilter} />
                 </Modal>
                 <Modal visible={scheduleVisible} animationType="slide" onRequestClose={closeSchedule}>
-                    <ScheduleScreen onClose={setScheduleVisible} />
+                    <ScheduleScreen navigation={navigation} onClose={setScheduleVisible} />
                 </Modal>
                 <View style={styles.iconRoot}>
                     <TouchableOpacity

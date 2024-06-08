@@ -8,26 +8,31 @@ import { Scheduler } from "../components/Scheduler";
 import * as df  from "../constants/default";
 import CreateNewItem from "./CreateNewItem";
 import FilteredResultsModal from "../components/FilteredResultsModal";
+import NewItem from "./NewItem";
 
 const test1 = {
     "startDate": new Date(),
 }
 
-export default function ScheduleScreen ({onClose}) {
+export default function ScheduleScreen ({navigation, onClose}) {
     const [scheduleItem, setSceduleItem] = useState({});
+    const [item, setItem] = useState({});
 
     const [showFilteredResults, setShowFilteredResults] = useState(false);
     const [showSelectType, setShowSelectType] = useState(false);
     const [showCreateNew, setShowCreateNew] = useState(false);
 
-    const [items, setItems] = useState([]);
-
     const [filter, setFilter] = useState({});
-   
+
     function onSelectExistingItem() {
         console.log("select existing");
         setShowFilteredResults(false);
         setFilterVisible(true);
+    }
+    function onItemSelected(item_) {
+        console.log(item_);
+        setItem(item_);
+        setShowCreateNew(true);
     }
 
     const doSearch = React.useCallback(() => {
@@ -50,111 +55,46 @@ export default function ScheduleScreen ({onClose}) {
         setShowCreateNew(false);
     }
 
+    function closeSelectType() {
+        setShowSelectType(false);
+    }
+
     function goHome() {
         onClose(false);
     }
 
     return(
         <SafeAreaView style={styles.screen}>
-            <TouchableOpacity onPress={() => (goHome())} style={[styles.homeButton]} > 
-                <Ionicons name={"arrow-back-outline"} size={SIZES.large} style={styles.icon}/> 
+            <TouchableOpacity onPress={() => (goHome())} style={[styles.homeButton]} >
+                <Ionicons name={"arrow-back-outline"} size={SIZES.large} style={styles.icon}/>
             </TouchableOpacity>
-
-            <Scheduler />
-
-            {showSelectType === false && (
-                <View styles={styles.infoContainer}>
-                    <View style={{ height: SIZES.xxLarge * 2,}}>
-                        <TouchableOpacity onPress={() => {onSelectExistingItem()}} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lavendar}]}>
-                            <Text style={styles.buttonText}>Select An Existing Item</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={{ height: SIZES.xxLarge * 2,}}>
-                        <TouchableOpacity onPress={() => {setShowSelectType(true)}} style={[styles.button, {backgroundColor: COLORS({opacity:1}).yellow}]}>
-                            <Text style={styles.buttonText}>Create New</Text>
-                        </TouchableOpacity>
-                    </View>
+            <View styles={styles.infoContainer}>
+                <View style={{ height: SIZES.xxLarge * 2,}}>
+                    <TouchableOpacity onPress={() => {onSelectExistingItem()}} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lavendar}]}>
+                        <Text style={styles.buttonText}>Select An Existing Item</Text>
+                    </TouchableOpacity>
                 </View>
-            )}
+                <View style={{ height: SIZES.xxLarge * 2,}}>
+                    <TouchableOpacity onPress={() => setShowSelectType(true)} style={[styles.button, {backgroundColor: COLORS({opacity:1}).yellow}]}>
+                        <Text style={styles.buttonText}>Create New</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+
             <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
                 <FilterModal closeFilter={closeFilter} filter={filter} setFilter={setFilter} doSearch={doSearch} isScheduler={true} />
             </Modal>
 
             <Modal visible={showFilteredResults} animationType="slide" onRequestClose={closeFilteredResults}>
-                <FilteredResultsModal filter={filter} onUpdate={onSelectExistingItem} onClose={closeFilteredResults} />
+                <FilteredResultsModal filter={filter} onUpdate={onSelectExistingItem} onClose={closeFilteredResults} onItemSelected={onItemSelected} setFn={setShowFilteredResults} />
             </Modal>
 
-            {showSelectType === true && (
-                <View styles={styles.infoContainer}>
-                    <TouchableOpacity
-                        onPress={() => {
-                            setSceduleItem(df.defaultItem);
-                            setShowCreateNew(true);
-                        }}
-                        style={styles.titleContainer}
-                    >
-                    <View style={styles.row}>
-                        <Text style={styles.label}>{df.ItemType.Item}</Text>
-                        <Text style={{fontSize: SIZES.xLarge}}>{df.defaultItem.icon}</Text>
-                    </View>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        onPress={() => {
-                            setSceduleItem(df.defaultTask);
-                            setShowCreateNew(true);
-                        }}
-                        style={styles.titleContainer}
-                    >
-                    <View style={styles.row}>
-                        <Text style={styles.label}>{df.ItemType.Task}</Text>
-                        <Text style={{fontSize: SIZES.xLarge}}>{df.defaultTask.icon}</Text>
-                    </View>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        onPress={() => {
-                            setSceduleItem(df.defaultEvent);
-                            setShowCreateNew(true);
-                        }}
-                        style={styles.titleContainer}
-                    >
-                    <View style={styles.row}>
-                        <Text style={styles.label}>{df.ItemType.Event}</Text>
-                        <Text style={{fontSize: SIZES.xLarge}}>{df.defaultEvent.icon}</Text>
-                    </View>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        onPress={() => {
-                            setSceduleItem(df.defaultPage);
-                            setShowCreateNew(true);
-                        }}
-                        style={styles.titleContainer}
-                    >
-                        <View style={styles.row}>
-                        <Text style={styles.label}>{df.ItemType.Page}</Text>
-                        <Text style={{fontSize: SIZES.xLarge}}>{df.defaultPage.icon}</Text>
-                        </View>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        onPress={() => {
-                            setSceduleItem(df.defaultRecipe);
-                            setShowCreateNew(true);
-                        }}
-                        style={styles.titleContainer}
-                    >
-                        <View style={styles.row}>
-                        <Text style={styles.label}>{df.ItemType.Recipe}</Text>
-                        <Text style={{fontSize: SIZES.xLarge}}>{df.defaultRecipe.icon}</Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-            )}
+            <Modal visible={showSelectType} animationType="slide" onRequestClose={closeSelectType}>
+                <NewItem navigation={navigation} isScheduler={true} onBack={closeSelectType} />
+            </Modal>
 
             <Modal visible={showCreateNew} animationType="slide" onRequestClose={closeCreateNew}>
-                <CreateNewItem item={scheduleItem} onClose={closeCreateNew} />
+                <CreateNewItem item={item} onClose={closeCreateNew} isScheduler={true} />
             </Modal>
 
         </SafeAreaView>

@@ -23,44 +23,76 @@ const Properties = ({ item = null, itemType }) => {
     const [serving, setServing] = useState(null);
     const [hour, setHour] = useState(0);
     const [minute, setMinute] = useState(0);
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
   
     const size = 25;
   
     useEffect(() => {
-        setCategory(item.category);
-        setSection(item.section);
-        if (item.priority) {
-            setPriority(item.priority);
-        } if(item.duration){
-            const hours = Math.floor(item.duration / 60);
-            const minutes = item.duration % 60;
-            setHour(hours);
-            setMinute(minutes);
-        } if(item.servings){
-            setServing(item.servings.toString());
-        }
+      setCategory(item.category);
+      setSection(item.section);
+      if(item.priority) {
+          setPriority(item.priority);
+      } if(item.duration){
+          const hours = Math.floor(item.duration / 60);
+          const minutes = item.duration % 60;
+          setHour(hours);
+          setMinute(minutes);
+      } if(item.servings){
+          setServing(item.servings.toString());
+      } if(item.startDate){
+        setStartDate(item.startDate);
+      } if(item.endDate){
+        setEndDate(item.endDate);
+      }
     }, []); // Update category and section when item changes
   
     return (
       <SafeAreaView style={styles.infoContainer}>
         <View style={[styles.row, styles.property, {marginVertical: SIZES.xxSmall}]}>
-            <Ionicons name={"folder-open-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />
-            <Text style={[styles.property, {marginLeft: SIZES.small}]}>{category}</Text>
+          <Ionicons name={"folder-open-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />
+          <Text style={[styles.property, {marginLeft: SIZES.small}]}>{category}</Text>
         </View>
         
         <View style={styles.divider}/>
 
         <View style={[styles.row, styles.property, {marginVertical: SIZES.xxSmall}]}>
-            <Ionicons name={"bookmark-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />
-            <Text style={[styles.property, {marginLeft: SIZES.small}]}>{section}</Text>
+          <Ionicons name={"bookmark-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />
+          <Text style={[styles.property, {marginLeft: SIZES.small}]}>{section}</Text>
         </View>
+
+        {startDate && (
+          <>
+            <View style={styles.divider}/>
+
+            <View style={[styles.row, styles.property, {marginVertical: SIZES.xxSmall}]}>
+              <Ionicons name={"calendar-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />
+              <Text style={[styles.property, {marginLeft: SIZES.small}]}>{new Date(startDate).toDateString()}</Text>
+            </View>
+
+            <View style={styles.divider}/>
+
+            <View style={[styles.row, styles.property, {marginVertical: SIZES.xxSmall}]}>
+              <Ionicons name={"alarm-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />
+              <Text style={[styles.property, {marginLeft: SIZES.small}]}>{String(new Date(item.startDate).getHours())}:{new Date(item.startDate).getMinutes() < 10 ? String("0"+ new Date(item.startDate).getMinutes()) : String(new Date(item.startDate).getMinutes())} - {String(new Date(item.endDate).getHours())}:{new Date(item.endDate).getMinutes() < 10 ? String("0"+ new Date(item.endDate).getMinutes()) : String(new Date(item.endDate).getMinutes())}</Text>
+            </View>
+          </>
+        )}
+        {/* {endDate && (
+          <>
+            <View style={styles.divider}/>
+           
+            <View style={[styles.row, styles.property, {marginVertical: SIZES.xxSmall}]}>
+            </View>
+          </>
+        )} */}
 
         {item.duration && (
           <>
             <View style={styles.divider}/>
 
-            <View style={[styles.row, styles.property, {marginVertical: SIZES.xxSmall}]}>
-                <Ionicons name={"timer-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]}/>    
+            <View style={[styles.row, styles.property, {marginVertical: SIZES.xxSmall}]}>  
+              <Ionicons name={"timer-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]}/>    
             
               <View style={styles.duration}>
                 <Text style={{fontSize: SIZES.medium}}>{hour}</Text>
@@ -71,41 +103,40 @@ const Properties = ({ item = null, itemType }) => {
               <View style={styles.duration}>
                 <Text style={{fontSize: SIZES.medium}}>{minute}</Text>
               </View>
-            
-                <Text style={styles.property}>Minutes</Text>
+              
+              <Text style={styles.property}>Minutes</Text>
             </View>
           </>
         )}
-
 
         {priority && (
           <>
             <View style={styles.divider}/>
             
             <View style={[styles.row, styles.property, {marginVertical: SIZES.xxSmall}]}>
-            {(itemType === ItemType.Recipe) ? (
+              {(itemType === ItemType.Recipe) ? (
                 <Ionicons name={"star-half-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
-            ) : (
+              ) : (
                 <Ionicons name={"alert-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
-            )}
-            {priority === 'LOW' && (
+              )}
+              {priority === 'LOW' && (
                 <View style={[styles.row, styles.box]}>
-                    <Ionicons name={"star-outline"} size={15} style={styles.icon} />
+                  <Ionicons name={"star-outline"} size={15} style={styles.icon} />
                 </View>
-            )}
-            {priority === 'MED' && (
+              )}
+              {priority === 'MED' && (
                 <View style={[styles.row, styles.box]}>
-                    <Ionicons name={"star-outline"} size={15} style={styles.icon} />
-                    <Ionicons name={"star-outline"} size={15} style={styles.icon} />
+                  <Ionicons name={"star-outline"} size={15} style={styles.icon} />
+                  <Ionicons name={"star-outline"} size={15} style={styles.icon} />
                 </View>
-            )}
-            {priority === 'HIGH' && (
+              ) }
+              {priority === 'HIGH' && (
                 <View style={[styles.row, styles.box]}>
-                    <Ionicons name={"star-outline"} size={15} style={styles.icon} />
-                    <Ionicons name={"star-outline"} size={15} style={styles.icon} />
-                    <Ionicons name={"star-outline"} size={15} style={styles.icon} />
+                  <Ionicons name={"star-outline"} size={15} style={styles.icon} />
+                  <Ionicons name={"star-outline"} size={15} style={styles.icon} />
+                  <Ionicons name={"star-outline"} size={15} style={styles.icon} />
                 </View>
-            )}
+              )}
             </View>
           </>
         )}
@@ -135,6 +166,7 @@ export default function ItemCard({ navigation, route }) {
   const [icon, setIcon] = useState(null);
   const [notes, setNotes] = useState(null);
   const [location, setLocation] = useState('');
+  const [isScheduler, setIsScheduler] = useState(false);
 
   const [isExpanded, setIsExpanded] = useState(true);
 
@@ -179,23 +211,25 @@ export default function ItemCard({ navigation, route }) {
 
   useEffect(() => {
     if (route.params?.item) {
-        const { item } = route.params;
+      const { item } = route.params;
 
-        if(item.itemType) {
-            setItemType(item.itemType);
-        }
-      
-        setTitle(item.title);
-        setIcon(item.icon.toString());
-        if (item.description) {
-            setDescription(item.description);
-        } if (item.favicon) {
-            setFavicon(item.favicon);
-        } if (item.notes) {
-            setNotes(item.notes);
-        } if (item.location) {
-            setLocation(item.location);
-        }
+      if(item.itemType) {
+        setItemType(item.itemType);
+      }
+    
+      setTitle(item.title);
+      setIcon(item.icon.toString());
+      if (item.description) {
+        setDescription(item.description);
+      } if (item.favicon) {
+        setFavicon(item.favicon);
+      } if (item.notes) {
+        setNotes(item.notes);
+      } if (item.location) {
+        setLocation(item.location);
+      } if (item.startDate) {
+        setIsScheduler(true);
+      }
     }
   }, [route.params?.item]); // Update category and section when item changes
 
@@ -243,18 +277,18 @@ export default function ItemCard({ navigation, route }) {
           
           <View style={[styles.row, styles.title]}>
             <Text style={{fontSize: SIZES.xLarge, marginRight: SIZES.xxSmall}}>{icon}</Text>
-            <Text style={{width: "100%", fontSize: SIZES.xLarge, color: COLORS({opacity:0.9}).primary}}>
-                {title}
+            <Text style={{width: "100%", fontSize: SIZES.xLarge}}>
+              {title}
             </Text>
           </View>
 
 
           {description && (
             <View style={[styles.row, styles.description]}>
-                <Ionicons name={"menu-outline"} size={SIZES.xLarge} style={[styles.icon, {marginRight: SIZES.xxSmall}]}/>
-                <Text style={{width: "100%", fontSize: SIZES.medium, color: COLORS({opacity:0.9}).primary}}>
-                    {description}
-                </Text>
+              <Ionicons name={"menu-outline"} size={SIZES.xLarge} style={[styles.icon, {marginRight: SIZES.xxSmall}]}/>
+              <Text style={{width: "100%", fontSize: SIZES.medium}}>
+                {description}
+              </Text>
             </View>
           )}
 
@@ -292,7 +326,7 @@ export default function ItemCard({ navigation, route }) {
             <Properties itemType={itemType} item={route.params?.item} />
           )}
           
-          <View style={styles.divider}/>
+          <View style={styles.divider} />
           
           {itemType === ItemType.Event && (
             <>
@@ -326,8 +360,8 @@ export default function ItemCard({ navigation, route }) {
           )}
 
         </ScrollView>
-        <Modal visible={showCreateNew} animationType="slide" onRequestClose={closeCreateNew}>
-          <CreateNewItem item={route.params?.item} onClose={closeCreateNew} />
+        <Modal visible={showCreateNew} animationType="slide" onRequestClose={closeCreateNew} >
+          <CreateNewItem item={route.params?.item} onClose={closeCreateNew} isScheduler={isScheduler} />
         </Modal>
       </GestureHandlerRootView>
       </SafeAreaView>
@@ -360,7 +394,7 @@ const styles = StyleSheet.create({
   },
   notes:{
     fontSize: SIZES.medium,
-    color: COLORS({opacity:0.9}).primary,
+    //color: COLORS({opacity:0.9}).primary,
     padding: SIZES.medium,
     margin: SIZES.medium,
     borderWidth: 1,
@@ -369,7 +403,7 @@ const styles = StyleSheet.create({
   },
   property: {
     fontSize: SIZES.medium, 
-    color: COLORS({opacity:0.9}).primary
+    //color: COLORS({opacity:0.9}).primary
   },
   propContainer: {
     flex: 1,
@@ -378,7 +412,7 @@ const styles = StyleSheet.create({
   },
   label: {
     paddingVertical: SIZES.xxSmall,
-    fontSize: SIZES.medium,
+    fontSize: SIZES.large,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).primary,
   },
@@ -462,7 +496,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS({opacity:0.5}).lightGrey,
     padding: SIZES.xSmall,
     borderRadius: SIZES.xSmall,
-    marginLeft: SIZES.xSmall,
+    marginHorizontal: SIZES.xSmall,
   },
   modalContainer: {
     flex: 1,
@@ -477,5 +511,11 @@ const styles = StyleSheet.create({
   heading: {
     paddingHorizontal: SIZES.medium,
     marginHorizontal: SIZES.xLarge,
-  }
+  },
+  time: {
+    padding: SIZES.xSmall,
+    flexDirection: "column",
+    justifyContent: "space-between",
+    alignItems: "right",
+  },
 });

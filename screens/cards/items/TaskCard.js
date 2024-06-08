@@ -76,27 +76,29 @@ const TaskCard = ({item, setFn, isEditable=true}) => {
   return (
     <View style={styles.infoContainer}>
       <View style={[styles.row, styles.propContainer, {justifyContent: "space-between"}]}>
-        <TouchableOpacity style={[styles.row, {justifyContent: "space-between"}, {flex: 2}]} onPress={() => {
-          setIsSubtaskExpanded(!isSubtaskExpanded);
-        }}>
+        <View style={[styles.row, {justifyContent: "space-between"}, {flex: 2}]}>
           <View style={styles.row}>
             <Ionicons name={"checkbox-outline"} size={SIZES.xLarge} style={styles.icon}/> 
             <Text style={styles.label} numberOfLines={1}>Subtasks</Text>
           </View>
-          <View style={styles.row}>
-            
-            {isSubtaskExpanded ? (
-                <Ionicons name="chevron-up-outline" size={SIZES.xLarge} style={styles.icon}/>
-            ) : (
-                <Ionicons name="chevron-down-outline" size={SIZES.xLarge} style={styles.icon}/>
-            )}
-          </View>
-        </TouchableOpacity>
-        {item.subtasks.length > 0 && (
+
+          {item.subtasks.length > 0 && (
           <TouchableOpacity onPress={() => (setUnSelect(true))} style={[styles.box, {flex: 1}]} disabled={!isSubtaskExpanded}>
             <Text style={{fontSize: SIZES.medium, color: COLORS({opacity:1}).white}}>Unselect All</Text>
           </TouchableOpacity>
         )}
+
+          <TouchableOpacity style={styles.row} onPress={() => {
+            setIsSubtaskExpanded(!isSubtaskExpanded);
+          }}>
+            {isSubtaskExpanded ? (
+              <Ionicons name="chevron-up-outline" size={SIZES.xLarge} style={styles.icon}/>
+            ) : (
+              <Ionicons name="chevron-down-outline" size={SIZES.xLarge} style={styles.icon}/>
+            )}
+          </TouchableOpacity>
+        </View>
+        
       </View>
       <ExpandableView expanded={isSubtaskExpanded} view={expandedSubTaskCard} 
         params={{"originalSubtasks": item.subtasks, "setFn": setFn, "isEditable": isEditable, "unSelect": unSelect, "setUnSelect": setUnSelect}} vh={300} />
@@ -109,7 +111,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.lightWhite,
   },
   label: {
-    fontSize: SIZES.medium,
+    fontSize: SIZES.large,
     //fontFamily: FONT.regular,
     color: COLORS({opacity:1}).primary,
   },
@@ -146,10 +148,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   item: {
-    fontSize: SIZES.large,
+    fontSize: SIZES.medium,
     fontFamily: FONT.regular,
     fontWeight: '200',
-    color: COLORS({opacity:1}).primary,
+    //color: COLORS({opacity:1}).primary,
   },
   propContainer: {
     flex: 1,
@@ -170,7 +172,7 @@ const styles = StyleSheet.create({
     padding: SIZES.xxSmall,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: SIZES.xxSmall,
+    marginHorizontal: SIZES.large,
   },
 });
 

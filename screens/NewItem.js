@@ -1,17 +1,12 @@
 import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image, Modal,
         StyleSheet, Animated, FlatList, SafeAreaView } from 'react-native';
-
 import { COLORS, SHADOWS, FONT, SIZES } from "../constants";
-import Layout from "../_layout";
 import { Ionicons } from "@expo/vector-icons";
-import { PropertyCard } from "./cards/PropertyCards";
-import HomeNavigation from "./HomeNavigation";
-import ItemCard from "./ItemCard";
 import * as df  from "../constants/default";
 import CreateNewItem from "./CreateNewItem";
 
-export default function NewItem({navigation}) {
+export default function NewItem({navigation, onBack=null, isScheduler=false}) {
 
   const [item, setItem] = useState({});
   const [showCreateNew, setShowCreateNew] = useState(false);
@@ -21,7 +16,10 @@ export default function NewItem({navigation}) {
   }
 
   function goHome() {
-    navigation.navigate('Home', { refresh: Math.random() });
+    if(onBack)
+      onBack();
+    else
+      navigation.goBack();
   }
 
   return (
@@ -99,7 +97,7 @@ export default function NewItem({navigation}) {
       </TouchableOpacity>
 
       <Modal visible={showCreateNew} animationType="slide" onRequestClose={closeCreateNew}>
-        <CreateNewItem item={item} onClose={closeCreateNew} />
+        <CreateNewItem item={item} onClose={closeCreateNew} isScheduler={isScheduler} />
       </Modal>
     </SafeAreaView>
   )
@@ -141,8 +139,6 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: "row",
-    //justifyContent: "flex-start",
-    //justifyContent: "space-between",
     alignItems: "center",
   },
   icon: {

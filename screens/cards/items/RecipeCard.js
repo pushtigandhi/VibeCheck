@@ -135,25 +135,25 @@ const RecipeCard = ({item, setFn, isEditable=true}) => {
   return (
     <View style={styles.infoContainer}>
       <View style={[styles.row, styles.propContainer, {justifyContent: "space-between"}]}>
-        <TouchableOpacity style={[styles.row, {flex: 2}]}
-          onPress={() => {
-            setIsIngredientsExpanded(!isIngredientsExpanded);
-          }}
-        >
+        <View style={[styles.row, {flex: 2}]}>
           <Text style={styles.label} numberOfLines={1}>Ingredients</Text>
-          <View style={styles.row}>
+          {item.ingredients.length > 0 && (
+            <TouchableOpacity onPress={() => (setUnSelectIngredients(true))} style={[styles.box, {flex: 1}]} disabled={!isIngredientsExpanded}>
+              <Text style={{fontSize: SIZES.medium, color: COLORS({opacity:1}).white}}>Unselect All</Text>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity style={styles.row} 
+            onPress={() => {
+              setIsIngredientsExpanded(!isIngredientsExpanded);
+            }}
+          >
             {isIngredientsExpanded ? (
                 <Ionicons name="chevron-up-outline" size={SIZES.xLarge} style={styles.icon}/>
             ) : (
                 <Ionicons name="chevron-down-outline" size={SIZES.xLarge} style={styles.icon}/>
             )}
-          </View>
-        </TouchableOpacity>
-        {item.ingredients.length > 0 && (
-          <TouchableOpacity onPress={() => (setUnSelectIngredients(true))} style={[styles.box, {flex: 1}]} disabled={!isIngredientsExpanded}>
-            <Text style={{fontSize: SIZES.medium, color: COLORS({opacity:1}).white}}>Unselect All</Text>
           </TouchableOpacity>
-        )}
+        </View>
       </View>
       <ExpandableView expanded={isIngredientsExpanded} view={expandedIngredients} 
         params={{"originalIngredients": item.ingredients, "setFn": setFn, "isEditable": isEditable, "unSelect": unSelectIngredients, "setUnSelect": setUnSelectIngredients}} vh={300} />
@@ -161,25 +161,25 @@ const RecipeCard = ({item, setFn, isEditable=true}) => {
       <View style={styles.divider}/>
 
       <View style={[styles.row, styles.propContainer, {justifyContent: "space-between"}]}>
-        <TouchableOpacity style={[styles.row, {flex: 2}]}
-          onPress={() => {
-              setIsInstructionsExpanded(!isInstructionsExpanded);
-          }}
-        >
+        <View style={[styles.row, {flex: 2}]} >
           <Text style={styles.label} numberOfLines={1}>Instructions</Text>
-          <View style={styles.row}>
+          {item.instructions.length > 0 && (
+            <TouchableOpacity onPress={() => (setUnSelectInstructions(true))} style={[styles.box, {flex: 1}]} disabled={!isInstructionsExpanded}>
+              <Text style={{fontSize: SIZES.medium, color: COLORS({opacity:1}).white}}>Unselect All</Text>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity style={styles.row} 
+            onPress={() => {
+                setIsInstructionsExpanded(!isInstructionsExpanded);
+            }}
+          >
             {isInstructionsExpanded ? (
                 <Ionicons name="chevron-up-outline" size={SIZES.xLarge} style={styles.icon}/>
             ) : (
                 <Ionicons name="chevron-down-outline" size={SIZES.xLarge} style={styles.icon}/>
             )}
-          </View>
-        </TouchableOpacity>
-        {item.instructions.length > 0 && (
-          <TouchableOpacity onPress={() => (setUnSelectInstructions(true))} style={[styles.box, {flex: 1}]} disabled={!isInstructionsExpanded}>
-            <Text style={{fontSize: SIZES.medium, color: COLORS({opacity:1}).white}}>Unselect All</Text>
           </TouchableOpacity>
-        )}
+        </View>
       </View>
       <ExpandableView expanded={isInstructionsExpanded} view={expandedInstructions} 
         params={{"originalInstructions": item.instructions, "setFn": setFn, "isEditable": isEditable, "unSelect": unSelectInstructions, "setUnSelect": setUnSelectInstructions}} vh={300} />
@@ -231,10 +231,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   item: {
-    fontSize: SIZES.large,
+    fontSize: SIZES.medium,
     fontFamily: FONT.regular,
-    fontWeight: '200',
-    color: COLORS({opacity:1}).primary,
+    //fontWeight: '200',
+    //color: COLORS({opacity:1}).primary,
   },
   propContainer: {
     flex: 1,
@@ -252,10 +252,10 @@ const styles = StyleSheet.create({
   box: {
     backgroundColor: COLORS({opacity:1}).secondary,
     borderRadius: SIZES.xxSmall,
-    padding: SIZES.xSmall,
+    padding: SIZES.xxSmall,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: SIZES.xxSmall,
+    marginHorizontal: SIZES.large,
   },
   divider: {
     paddingHorizontal: SIZES.medium,

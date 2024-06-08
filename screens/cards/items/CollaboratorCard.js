@@ -37,26 +37,25 @@ const CollaboratorCard = ({item, setFn, isEditable=true}) => {
 
   return (
     <View style={styles.infoContainer}>
-      <TouchableOpacity
-        onPress={() => {
-          setIsContactsExpanded(!isContactsExpanded);
-        }}
-        style={styles.propContainer}
-      >
+      <View style={styles.propContainer} >
         <View style={[styles.row, {justifyContent: "space-between"}]}>
           <View style={styles.row}>
             <Ionicons name={"people-outline"} size={SIZES.xLarge} style={styles.icon} />
             <Text style={styles.label} numberOfLines={1}>Collaborators</Text>
           </View>
-          <View>
+          <TouchableOpacity
+            onPress={() => {
+              setIsContactsExpanded(!isContactsExpanded);
+            }}
+          >
             {isContactsExpanded ? (
                 <Ionicons name="chevron-up-outline" size={SIZES.xLarge} style={styles.icon}/>
             ) : (
                 <Ionicons name="chevron-down-outline" size={SIZES.xLarge} style={styles.icon}/>
             )}
-          </View>
+          </TouchableOpacity>
         </View>
-      </TouchableOpacity>
+      </View>
       <ExpandableView expanded={isContactsExpanded} view={expandedContactList} params={{"contactList": item.contacts, "setFn": setFn, "isEditable": isEditable}} vh={300} />
     </View>
   )
@@ -107,10 +106,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   item: {
-    fontSize: SIZES.large,
+    fontSize: SIZES.medium,
     fontFamily: FONT.regular,
-    fontWeight: '200',
-    color: COLORS({opacity:1}).primary,
+    //color: COLORS({opacity:1}).primary,
   },
   propContainer: {
     flex: 1,

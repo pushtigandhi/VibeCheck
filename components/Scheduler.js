@@ -8,163 +8,163 @@ const test1 = {
     "startDate": new Date(),
 }
 
-export const Scheduler = ({ item = null }) => {
+export const Scheduler = ({ item = null, setFn }) => {
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), startDate.getHours(), startDate.getMinutes() + 15));
     const [repeat, setRepeat] = useState('ONCE');
-    const [diffInDays, setDiffInDays] = useState(0);
-    const [diffInHours, setDiffInHours] = useState(0);
-    const [diffInMinutes, setDiffInMinutes] = useState(15);
-    //const [showFilteredResults, setShowFilteredResults] = useState(false);
-
-   // const [items, setItems] = useState([]);
-
-    const size = 25;
+    
+    const [diffInDays, setDiffInDays] = useState(null);
+    const [diffInHours, setDiffInHours] = useState(null);
+    const [diffInMinutes, setDiffInMinutes] = useState(null);
 
     function updateDuration() {
-        const differenceInMs = endDate - startDate;
+      const differenceInMs = endDate - startDate;
 
-        // Convert milliseconds to days, hours, and minutes
+      // Convert milliseconds to days, hours, and minutes
+      setDiffInDays(Math.floor(differenceInMs / (1000 * 60 * 60 * 24)));
+      setDiffInHours(Math.floor((differenceInMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
+      setDiffInMinutes(Math.floor((differenceInMs % (1000 * 60 * 60)) / (1000 * 60)));
+    }
+
+    useEffect(() => {
+      if (item.startDate) {
+        setStartDate(new Date(item.startDate));
+        setEndDate(new Date(item.endDate));
+        setRepeat(item.repeat);
+
+        const differenceInMs = new Date(item.endDate) - new Date(item.startDate);
+
         setDiffInDays(Math.floor(differenceInMs / (1000 * 60 * 60 * 24)));
         setDiffInHours(Math.floor((differenceInMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
         setDiffInMinutes(Math.floor((differenceInMs % (1000 * 60 * 60)) / (1000 * 60)));
-    }
-
-    function updateNewItem(params) { 
-        if (params.startDate) {
-            updateDuration();
-            console.log("item updated: " + params.startDate);
-        }
-        if (params.endDate) {
-            updateDuration();
-            console.log("item updated: " + params.endDate);
-        }
-        if(params.repeat) {
-             console.log("item updated: " + params.repeat);
-        }
-    };
+      }
+    }, [item]); 
 
     return(
       <SafeAreaView style={styles.screen}>
         <View styles={styles.infoContainer}>
-            <View style={[styles.row, styles.property, {justifyContent: "space-between"}, styles.divider]}>
-                <Text style={styles.label}>From: </Text>
-                <DateTimePicker
-                    value={startDate}
-                    mode={"date"}
-                    is24Hour={true}
-                    display="default"
-                    onChange={(event, selectedDate) => {
-                        const currentDate = selectedDate || startDate;
-                        setStartDate(currentDate);
-                        if(currentDate>endDate) {
-                            setEndDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), currentDate.getHours(), currentDate.getMinutes() + 15));
-                        }
-                        updateNewItem({"startDate": currentDate});
-                    }}
-                />
-                <DateTimePicker
-                  value={startDate}
-                  mode={"time"}
-                  is24Hour={true}
-                  display="default"
-                  minuteInterval={15}
-                  onChange={(event, selectedDate) => {
-                      const currentDate = selectedDate || startDate;
-                      setStartDate(currentDate);
-                      if(currentDate>=endDate) {
-                      setEndDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), currentDate.getHours(), currentDate.getMinutes() + 15));
-                      }
-                      updateNewItem({"startDate": currentDate});
-                  }}
-                />
-            </View>
-            <View style={[styles.row, styles.property, {justifyContent: "space-between"}, styles.divider]}>
-                <Text style={styles.label}>To: </Text>
-                <DateTimePicker
-                    value={endDate}
-                    mode={"date"}
-                    is24Hour={true}
-                    display="default"
-                    onChange={(event, selectedDate) => {
-                        const currentDate = selectedDate || endDate;
-                        if(currentDate>startDate) {
-                        setEndDate(currentDate);
-                        updateNewItem({"endDate": currentDate});
-                        }
-                        else {
-                        alert("End datetime has to be after start datetime.");
-                        }
-                    }}
-                />
-                <DateTimePicker
-                    value={endDate}
-                    mode={"time"}
-                    is24Hour={true}
-                    display="default"
-                    minuteInterval={15}
-                    onChange={(event, selectedDate) => {
-                    const currentDate = selectedDate || endDate;
-                    if(currentDate>startDate) {
-                        setEndDate(currentDate);
-                        updateNewItem({"endDate": currentDate});
-                    }
-                    else {
-                        alert("End datetime has to be after start datetime.");
-                    }
-                    }}
-                />
-            </View>
+          <View style={[styles.row, styles.property, {justifyContent: "space-between"}, styles.divider]}>
+            <Text style={styles.label}>From: </Text>
+            <DateTimePicker
+              value={startDate}
+              mode={"date"}
+              is24Hour={true}
+              display="default"
+              onChange={(event, selectedDate) => {
+                const currentDate = selectedDate || startDate;
+                setStartDate(currentDate);
+                if(currentDate>endDate) {
+                  setEndDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), currentDate.getHours(), currentDate.getMinutes() + 15));
+                }
+                updateDuration();
+                setFn({"startDate": currentDate});
+              }}
+            />
+            <DateTimePicker
+              value={startDate}
+              mode={"time"}
+              is24Hour={true}
+              display="default"
+              minuteInterval={15}
+              onChange={(event, selectedDate) => {
+                const currentDate = selectedDate || startDate;
+                setStartDate(currentDate);
+                if(currentDate>=endDate) {
+                setEndDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), currentDate.getHours(), currentDate.getMinutes() + 15));
+                }
+                updateDuration();
+                setFn({"startDate": currentDate});
+              }}
+            />
+          </View>
+          <View style={[styles.row, styles.property, {justifyContent: "space-between"}, styles.divider]}>
+            <Text style={styles.label}>To: </Text>
+            <DateTimePicker
+              value={endDate}
+              mode={"date"}
+              is24Hour={true}
+              display="default"
+              onChange={(event, selectedDate) => {
+                const currentDate = selectedDate || endDate;
+                if(currentDate>startDate) {
+                    setEndDate(currentDate);
+                    updateDuration();
+                    setFn({"endDate": currentDate});
+                }
+                else {
+                  alert("End datetime has to be after start datetime.");
+                }
+              }}
+            />
+            <DateTimePicker
+              value={endDate}
+              mode={"time"}
+              is24Hour={true}
+              display="default"
+              minuteInterval={15}
+              onChange={(event, selectedDate) => {
+              const currentDate = selectedDate || endDate;
+              if(currentDate>startDate) {
+                setEndDate(currentDate);
+                updateDuration();
+                setFn({"endDate": currentDate});
+              }
+              else {
+                alert("End datetime has to be after start datetime.");
+              }
+              }}
+            />
+          </View>
         </View>
         <View style={[styles.row, styles.property, styles.divider]}>
-            <Ionicons name={"repeat-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
-            <TouchableOpacity style={[styles.row, styles.box, repeat === 'ONCE' ? styles.selectedBox:styles.unselectedBox]}
-                onPress={() => (
-                setRepeat("ONCE"),
-                updateNewItem({"repeat": "ONCE"})
-                )}
-            >
-            <Text style={[styles.property, repeat === 'ONCE' ? styles.selectedText:styles.unselectedText]}>Once</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.row, styles.box, repeat === 'DAILY' ? styles.selectedBox:styles.unselectedBox]}
-                onPress={() => (
-                setRepeat("DAILY"),
-                updateNewItem({"repeat": "DAILY"})
-                )}
-            >
-            <Text style={[styles.property, repeat === 'DAILY' ? styles.selectedText:styles.unselectedText]}>Daily</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.row, styles.box, repeat === 'WEEKLY' ? styles.selectedBox:styles.unselectedBox]}
-                onPress={() => (
-                setRepeat("WEEKLY"),
-                updateNewItem({"repeat": "WEEKLY"})
-                )}
-            >
-                <Text style={[styles.property, repeat === 'WEEKLY' ? styles.selectedText:styles.unselectedText]}>Weekly</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.row, styles.box, repeat === 'MONTHLY' ? styles.selectedBox:styles.unselectedBox]}
+          <Ionicons name={"repeat-outline"} size={SIZES.large} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
+          <TouchableOpacity style={[styles.row, styles.box, repeat === 'ONCE' ? styles.selectedBox:styles.unselectedBox]}
+              onPress={() => (
+              setRepeat("ONCE"),
+              setFn({"repeat": "ONCE"})
+              )}
+          >
+          <Text style={[styles.property, repeat === 'ONCE' ? styles.selectedText:styles.unselectedText]}>Once</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.row, styles.box, repeat === 'DAILY' ? styles.selectedBox:styles.unselectedBox]}
+              onPress={() => (
+              setRepeat("DAILY"),
+              setFn({"repeat": "DAILY"})
+              )}
+          >
+          <Text style={[styles.property, repeat === 'DAILY' ? styles.selectedText:styles.unselectedText]}>Daily</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.row, styles.box, repeat === 'WEEKLY' ? styles.selectedBox:styles.unselectedBox]}
             onPress={() => (
-            setRepeat("MONTHLY"),
-            updateNewItem({"repeat": "MONTHLY"})
+              setRepeat("WEEKLY"),
+              setFn({"repeat": "WEEKLY"})
             )}
-            >
+          >
+              <Text style={[styles.property, repeat === 'WEEKLY' ? styles.selectedText:styles.unselectedText]}>Weekly</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.row, styles.box, repeat === 'MONTHLY' ? styles.selectedBox:styles.unselectedBox]}
+            onPress={() => (
+              setRepeat("MONTHLY"),
+              setFn({"repeat": "MONTHLY"})
+            )}
+          >
             <Text style={[styles.property, repeat === 'MONTHLY' ? styles.selectedText:styles.unselectedText]}>Monthly</Text>
-            </TouchableOpacity>
+          </TouchableOpacity>
         </View>
-        <View style={[styles.row, styles.divider, styles.property]}>
-            <Ionicons name={"timer-outline"} size={size} style={[styles.icon]}/>
-            <View style={[styles.box, styles.unselectedBox, { marginHorizontal: SIZES.xSmall }]}>
-                <Text style={[styles.property, styles.unselectedText]}>{diffInDays}</Text>
-            </View>
-            <Text style={[styles.property, styles.unselectedText]}>Days</Text>
-            <View style={[styles.box, styles.unselectedBox, { marginHorizontal: SIZES.xSmall }]}>
-                <Text style={[styles.property, styles.unselectedText]}>{diffInHours}</Text>
-            </View>
-            <Text style={[styles.property, styles.unselectedText]}>Hours</Text>
-            <View style={[styles.box, styles.unselectedBox, { marginHorizontal: SIZES.xSmall }]}>
-                <Text style={[styles.property, styles.unselectedText]}>{diffInMinutes}</Text>
-            </View>
-            <Text style={[styles.property, styles.unselectedText]}>Minutes</Text>
+        <View style={[styles.row, styles.property]}>
+          <Ionicons name={"timer-outline"} size={SIZES.large} style={[styles.icon]}/>
+          <View style={[styles.box, styles.unselectedBox, { marginHorizontal: SIZES.xSmall }]}>
+            <Text style={[styles.property, styles.unselectedText]}>{diffInDays}</Text>
+          </View>
+          <Text style={[styles.property, styles.unselectedText]}>Days</Text>
+          <View style={[styles.box, styles.unselectedBox, { marginHorizontal: SIZES.xSmall }]}>
+            <Text style={[styles.property, styles.unselectedText]}>{diffInHours}</Text>
+          </View>
+          <Text style={[styles.property, styles.unselectedText]}>Hours</Text>
+          <View style={[styles.box, styles.unselectedBox, { marginHorizontal: SIZES.xSmall }]}>
+            <Text style={[styles.property, styles.unselectedText]}>{diffInMinutes}</Text>
+          </View>
+          <Text style={[styles.property, styles.unselectedText]}>Minutes</Text>
         </View>
       </SafeAreaView>
     )
@@ -178,7 +178,6 @@ const styles = StyleSheet.create({
       backgroundColor: COLORS({opacity:1}).white,
       margin: SIZES.medium,
       marginVertical: SIZES.xxLarge*2,
-      borderRadius: SIZES.medium/2,
         ...SHADOWS.medium,
     },
     row: {

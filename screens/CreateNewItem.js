@@ -8,12 +8,12 @@ import CollaboratorCard from "./cards/items/CollaboratorCard";
 import TaskCard from "./cards/items/TaskCard";
 import RecipeCard from "./cards/items/RecipeCard";
 import * as ImagePicker from 'expo-image-picker';
-
+import { Scheduler } from "../components/Scheduler";
 import { PATCHitemTEST } from "../API";
 
 const defaultImage = require("../assets/icon.png");
 
-export default function CreateNewItem({ item = null, onClose }) {
+export default function CreateNewItem({ item = null, onClose, isScheduler=false }) {
     const [itemType, setItemType] = useState(ItemType.Item);
     
     const [title, setTitle] = useState("Untitled");
@@ -22,16 +22,16 @@ export default function CreateNewItem({ item = null, onClose }) {
     const [icon, setIcon] = useState('');
     const [notes, setNotes] = useState(null);
     const [location, setLocation] = useState('');
-
-    const [tags, setTags] = useState([]);
   
     const [showDesc, setShowDesc] = useState(false);
     const [showLocation, setShowLocation] = useState(false);
     const [showNotes, setShowNotes] = useState(false);
+    const [showScheduler, setShowScheduler] = useState(isScheduler);
     
     const [updatedItem, setUpdatedItem] = useState({});
   
     const [isExpanded, setIsExpanded] = useState(true);
+
     const [isNew, setIsNew] = useState(true);
 
     const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
@@ -60,13 +60,23 @@ export default function CreateNewItem({ item = null, onClose }) {
         if(params.section) {
             setUpdatedItem({... updatedItem, section: params.section});
         }
+        if(params.notes) {
+            if(params.notes == 'x')
+            {
+              const updated = updatedItem;
+              delete updated.notes;
+              setUpdatedItem(updated);
+            }
+            else {
+              setUpdatedItem({... updatedItem, notes: notes});
+            }
+          }
         if(params.duration) {
           if(params.duration == 'x')
           {
             const updated = updatedItem;
             delete updated.duration;
             setUpdatedItem(updated);
-            
           }
           else {
             setUpdatedItem({... updatedItem, duration: params.duration});
@@ -78,15 +88,11 @@ export default function CreateNewItem({ item = null, onClose }) {
             const updated = updatedItem;
             delete updated.priority;
             setUpdatedItem(updated);
-            
           }
           else {
             setUpdatedItem({... updatedItem, priority: params.priority});
           }
         }
-        // if(params.tags) {
-        //   setUpdatedItem({... updatedItem, "tags": params.tags});
-        // }
         if(params.subtasks) {
           setUpdatedItem({... updatedItem, subtasks: params.subtasks});
         }
@@ -102,15 +108,22 @@ export default function CreateNewItem({ item = null, onClose }) {
             const updated = updatedItem;
             delete updated.servings;
             setUpdatedItem(updated);
-            
           }
           else {
             setUpdatedItem({... updatedItem, servings: params.servings});
           }
         }
+        if (params.startDate) {
+            setUpdatedItem({... updatedItem, startDate: params.startDate});
+        }
+        if (params.endDate) {
+            setUpdatedItem({... updatedItem, endDate: params.endDate});
+        }
+        if(params.repeat) {
+            setUpdatedItem({... updatedItem, repeat: params.repeat});
+        }
     }
     
-
     function onSave() {
         if(isNew){
             console.log("New: " + updatedItem);
@@ -261,8 +274,8 @@ export default function CreateNewItem({ item = null, onClose }) {
 
             <TouchableOpacity style={[styles.row, styles.label, {justifyContent: "space-between"}]}
               onPress={() => {
-                  setIsExpanded(!isExpanded);
-                }}
+                setIsExpanded(!isExpanded);
+              }}
             >
                 <View style={styles.row}>
                     <Ionicons name={"information-circle-outline"} size={SIZES.xLarge} style={styles.icon}/> 
@@ -279,7 +292,12 @@ export default function CreateNewItem({ item = null, onClose }) {
             {isExpanded && (
                 <>
                     <View style={styles.divider}/>
-                    <PropertyCard itemType={itemType} item={updatedItem} setFn={updateNewItem}/>
+                    <PropertyCard itemType={itemType} item={updatedItem} setFn={updateNewItem} isScheduler={isScheduler} />
+                    {showScheduler && (
+                        <View style={styles.infoContainer}>
+                          <Scheduler item={item} setFn={updateNewItem} />
+                        </View>
+                    )}
                 </>
             )}
 
@@ -305,7 +323,6 @@ export default function CreateNewItem({ item = null, onClose }) {
                     <View style={styles.divider}/>
                 </>
             )}
-
 
             {(showNotes == false && itemType !== ItemType.Page) && (
                 <>
@@ -419,7 +436,6 @@ const styles = StyleSheet.create({
         borderRadius: SIZES.xSmall,
         width: 260
     },
-    
     icon: {
         //margin: SIZES.xxSmall,
         color: COLORS({opacity:0.8}).primary,
@@ -524,5 +540,13 @@ const styles = StyleSheet.create({
     property:{
         fontSize: SIZES.medium,
         color: COLORS({opacity:1}).primary,
+    },
+    infoContainer: {
+        marginHorizontal: SIZES.medium,
+        marginVertical: SIZES.small,
+        backgroundColor: COLORS({opacity:1}).lightWhite,
+        borderRadius: SIZES.medium/2,
+        ...SHADOWS.medium,
+        shadowColor: COLORS({opacity:1}).shadow,
     },
 });

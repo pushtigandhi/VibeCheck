@@ -4,7 +4,7 @@ import { COLORS, FONT, SIZES, SHADOWS, ItemType } from "../constants";
 import React, { useEffect, useState } from "react";
 import { GETitemsTEST } from "../API";
 
-export default function FilteredResultsModal({filter, onUpdate, onClose}) {
+export default function FilteredResultsModal({filter, onUpdate, onClose, onItemSelected, setFn}) {
     const [items, setItems] = useState([]);
     
     async function getItemsFromAPI(filter={}) {
@@ -41,8 +41,8 @@ export default function FilteredResultsModal({filter, onUpdate, onClose}) {
     const renderItem = ({ item }) => (
         <TouchableOpacity
           onPress={() => {
-            onRefresh();
-            setShowFilteredResults(false);
+            onItemSelected(item);
+            setFn(false);
           }}
           key={item["_id"] + "root"} 
           style={styles.cardsContainer}
@@ -99,14 +99,16 @@ const styles = StyleSheet.create({
         color: COLORS({opacity:1}).lightWhite,
     },
     cardsContainer: {
-        marginBottom: SIZES.medium,
-        marginHorizontal: SIZES.medium,
-        backgroundColor: COLORS({opacity:1}).lightGrey,// "#FFF",
-        borderRadius: SIZES.small,
-        ...SHADOWS.xSmall,
+        margin: SIZES.xSmall,
+        marginVertical: SIZES.tiny,
+        paddingHorizontal: SIZES.small,
+        paddingVertical: SIZES.xSmall,
+        backgroundColor: COLORS({opacity:1}).lightWhite,
+        ...SHADOWS.small,
         shadowColor: COLORS({opacity:1}).shadow,
-        padding: SIZES.xxSmall,
-    },
+        borderRadius: SIZES.small,
+        alignContent: "center",
+      },
     icon: {
         //margin: SIZES.xxSmall,
         color: COLORS({opacity:1}).secondary,

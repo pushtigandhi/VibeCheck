@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList, Image } from 'react-native';
+import React, { useEffect, useState } from "react";
+import { SafeAreaView, View, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Image, Modal,Dimensions } from "react-native";
+import { COLORS, FONT, SIZES, SHADOWS, ItemType, ViewType } from "../../constants";
+import { GETitems, GETitemsTEST } from "../../API";
 import { Ionicons } from "@expo/vector-icons";
-import { COLORS, FONT, SIZES, SHADOWS } from "../../constants";
+import FilterModal from "../../components/FilterModal";
 
 const ListView = ({items, navigation}) => (
   <FlatList
@@ -65,9 +67,45 @@ const GalleryView = ({items, navigation}) => (
 
 const defaultImage = require("../../assets/icon.png");
 
-const DefaultView = ({items, navigation}) => {
-  const [selectedTab, setSelectedTab] = useState('List');
+export default function DefaultView ({navigation, route, scrollEnabled = true}) {
+  const [title, setTitle] = useState([]);
+  
+  const [items, setItems] = useState(route.params?.item);
+  const [filter, setFilter] = useState({});
+  const [filterVisible, setFilterVisible] = useState(false);
 
+  const [refreshing, setRefreshing] = useState(false);
+
+  const [search, setSearch] = useState('');
+  const [expandSearchBar, setSearchBar] = useState(false);
+
+  function closeFilter() {
+    setRefreshing(!refreshing);
+    setFilterVisible(false);
+  }
+
+  function doSearch() {
+    console.log(search);
+    setSearchBar(false);
+  }
+
+  async function getSectionItemsFromAPI() {
+    try {
+      let items_ = await GETitemsTEST(ItemType.Item, filter);
+      return items_;
+    } catch (error) {
+      console.log("error fetching items");
+      console.log(error);
+      return [];
+    }
+  }
+
+  useEffect(() => {
+    setTitle(route.params?.section);
+    setFilter({... filter, category: route.params?.category, section: route.params?.section})
+  }, []) // only run once on load
+
+  const [selectedTab, setSelectedTab] = useState('List');
   const renderTab = () => {
     switch (selectedTab) {
       case 'List':
@@ -80,55 +118,154 @@ const DefaultView = ({items, navigation}) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.tabContainer}>
-        <TouchableOpacity
-          style={[styles.tab, selectedTab === 'List' && styles.activeTab]}
-          onPress={() => setSelectedTab('List')}
-        >
-          {selectedTab === 'List' ? 
-            (
-              <Ionicons name={"list-circle"} size={SIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
-            ) 
-          : (
-              <Ionicons name={"list-circle-outline"} size={SIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
-            )
-          }
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, selectedTab === 'Gallery' && styles.activeTab]}
-          onPress={() => setSelectedTab('Gallery')}
-        >
-          {selectedTab === 'Gallery' ? 
-            (
-              <Ionicons name={"image"} size={SIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
-            ) 
-          : (
-              <Ionicons name={"image-outline"} size={SIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
-            )
-          }
-        </TouchableOpacity>
+    <SafeAreaView style={styles.screen}>
+      <View style={[styles.row, styles.propContainer, {justifyContent: "space-between"}]}>
+        <Text style={styles.title}>{title}</Text>
+        <View style={styles.row}>
+          <TouchableOpacity
+            style={[styles.row, styles.searchInput]}
+            onPress={() => {
+              setSearchBar(!expandSearchBar);
+            }}
+          >
+            <Ionicons name={"search-outline"} size={20} style={styles.iconInverted} />
+            {expandSearchBar && (
+              <TextInput style={{width: SIZES.xxLarge*4, fontSize: SIZES.medium, color: COLORS({opacity:1}).primary}} 
+                {...(search ? { defaultValue: search } : { placeholder: "search" })}
+                onChangeText={(newSearch) => (setSearch(newSearch))}
+                returnKeyType='search'
+                onSubmitEditing={() => (doSearch())}
+              />
+            )}
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              setFilterVisible(true);
+            }}
+            style={styles.filterButtonIcon}
+          >
+            <Ionicons name={"funnel-outline"} size={20} style={styles.iconInverted}/>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              // route.params?.isSection ? 
+              //   navigation.navigate("EditItem", {item: {"category": route.params?.category.title, "section": route.params?.section, "icon": '\u{1F4E6}', "itemType" : ItemType.Item}})
+              //   : 
+              //   navigation.navigate("EditItem", {item: route.params?.item})
+            }}
+            style={[styles.row, styles.addButton]}
+          >
+            <Ionicons name={"add-circle"} size={20} style={styles.iconInverted}/>
+          </TouchableOpacity>
+        </View>
       </View>
-      <View style={styles.contentContainer}>
-        {renderTab()}
+        
+      <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
+        <FilterModal closeFilter={closeFilter} filter={filter} setFilter={setFilter} />
+      </Modal>
+
+      <View style={styles.container}>
+        <View style={styles.tabContainer}>
+          <TouchableOpacity
+            style={[styles.tab, selectedTab === 'List' && styles.activeTab]}
+            onPress={() => setSelectedTab('List')}
+          >
+            {selectedTab === 'List' ? 
+              (
+                <Ionicons name={"list-circle"} size={SIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
+              ) 
+            : (
+                <Ionicons name={"list-circle-outline"} size={SIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
+              )
+            }
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tab, selectedTab === 'Gallery' && styles.activeTab]}
+            onPress={() => setSelectedTab('Gallery')}
+          >
+            {selectedTab === 'Gallery' ? 
+              (
+                <Ionicons name={"image"} size={SIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
+              ) 
+            : (
+                <Ionicons name={"image-outline"} size={SIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
+              )
+            }
+          </TouchableOpacity>
+        </View>
+        <View style={styles.contentContainer}>
+          {renderTab()}
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: "#FFF",
+  },
+  filterButtonIcon: {
+    height: SIZES.xxLarge,
+    width: SIZES.xxLarge,
+    marginRight: SIZES.small,
+    borderRadius: SIZES.xxSmall,
+    backgroundColor: COLORS({opacity:0.7}).primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  addButton: {
+    height: SIZES.xxLarge,
+    borderRadius: SIZES.xxSmall,
+    //marginHorizontal: SIZES.medium,
+    backgroundColor: COLORS({opacity:0.7}).primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  searchInput: {
+    marginRight: SIZES.small,
+    borderRadius: SIZES.small,
+    backgroundColor: COLORS({opacity:0.5}).secondary,
+  },
+  title: {
+    fontSize: SIZES.large,
+    fontFamily: FONT.regular,
+    color: COLORS({opacity:1}).primary,
+  },
+  section: {
+    fontSize: SIZES.medium,
+    fontFamily: FONT.regular,
+    color: COLORS({opacity:1}).white,
+  },
+  icon: {
+    marginRight: SIZES.xxSmall,
+    color: COLORS({opacity:0.8}).primary,
+  },
+  iconInverted: {
+    color: COLORS({opacity:1}).white,
+    margin: SIZES.xxSmall,
+  },
+  propContainer: {
+    paddingHorizontal: SIZES.large,
+    paddingBottom: SIZES.medium,
+    borderColor: COLORS({opacity:0.5}).primary,
+    borderBottomWidth: 1,
+    borderRadius: SIZES.medium,
+    backgroundColor: "#FFF"
+  },
   container: {
     flex: 1,
   },
   tabContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    backgroundColor: '#f8f8f8',
-    paddingVertical: 10,
+    backgroundColor:  COLORS({opacity:1}).lightWhite,
+    paddingVertical: SIZES.xxSmall,
   },
   tab: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingVertical: SIZES.xxSmall,
+    paddingHorizontal: SIZES.large,
   },
   activeTab: {
     borderBottomWidth: 2,
@@ -168,5 +305,3 @@ const styles = StyleSheet.create({
     marginLeft: SIZES.xSmall,
   },
 });
-
-export default DefaultView;

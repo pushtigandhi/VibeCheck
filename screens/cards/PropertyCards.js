@@ -8,7 +8,7 @@ import SingleSelectDropdown from "../../components/SingleSelectDropdown";
 
 import { directoryList } from "../../API";
 
-export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) => {
+export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false, isSection=false}) => {
   const [category, setCategory] = useState('');
   const [section, setSection] = useState('');
   const [serving, setServing] = useState(null);
@@ -30,10 +30,6 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
   const toggleMinutePicker = () => {
     setMinutePickerVisible(!minutePickerVisible);
   };
-
-  // function setFn(params) { 
-  //   setFn(params);
-  // };
 
   const size = 25;
 
@@ -108,28 +104,31 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
                 placeholder={!!category ? category : "Category"}
                 icon={<Ionicons name="folder-open-outline" size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />}
                 setFn={onChangeCategory}
+                isDisabled={isSection}
             />
       ) : (
         <Text>Loading categories...</Text>
       )}
 
       {!!category && (directoryList._j.length > 0 ? (
-        <SingleSelectDropdown options={getSections()} placeholder={!!section ? section : "Section"} setFn={onChangeSection}
+        <SingleSelectDropdown options={getSections()} placeholder={!!section ? section : "Section"} setFn={onChangeSection} isDisabled={isSection}
           icon={<Ionicons name={"bookmark-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
       ) : (
         <Text>Loading sections...</Text>
       ))}
 
-      <View style={[styles.divider, {padding: 0}]}/>
-
+      <>
+      {!isScheduler && (
         <>
+        <View style={[styles.divider, {padding: 0}]}/>
+
         {showDuration == false && (
-          <>
-            <TouchableOpacity style={[styles.row, styles.property]} onPress={()=>(setShowDuration(true), setFn({"duration": Number(hour * 60) + Number(minute)}))}>
-              <Ionicons name={"timer-outline"} size={size} style={[styles.icon]}/>    
-              <Text style={styles.property}>Add Duration</Text>
-            </TouchableOpacity>
-          </>
+        <>
+          <TouchableOpacity style={[styles.row, styles.property]} onPress={()=>(setShowDuration(true), setFn({"duration": Number(hour * 60) + Number(minute)}))}>
+            <Ionicons name={"timer-outline"} size={size} style={[styles.icon]}/>    
+            <Text style={styles.property}>Add Duration</Text>
+          </TouchableOpacity>
+        </>
         )}
         {showDuration == true && (
           <>
@@ -185,109 +184,111 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
           </View>
           </>
         )}
-
-        <View style={[styles.divider, {padding: 0}]}/>
-
-        {(itemType === ItemType.Recipe) && (
-        <>
-          {showServing == false && (
-            <>
-              <TouchableOpacity style={[styles.row, styles.property]} onPress={()=>(setShowServing(true), setServing(0), setFn({"serving": Number(0)}))}>
-                <Ionicons name={"restaurant-outline"} size={size} style={[styles.icon]}/>    
-                <Text style={styles.property}>Add Servings</Text>
-              </TouchableOpacity>
-              <View style={[styles.divider, {padding: 0}]}/>
-            </>
-          )}
-          {showServing == true && (
-            <>
-            <View style={[styles.row, styles.property, { justifyContent: "space-between" }]}>
-              <View style={styles.row}>
-                <Ionicons name={"restaurant-outline"} size={size} style={[styles.icon]}/>    
-                <TextInput keyboardType="numeric"
-                  onChangeText={(serving_) => (
-                    setServing(serving_),
-                    setFn({"serving": Number(serving_)})
-                  )}
-                  {...(serving ? { defaultValue: serving.toString() } : { placeholder: "0" })}
-                style={[styles.property, styles.box, {backgroundColor: "#FFF"}]}
-                />
-              </View>
-              <>
-                <TouchableOpacity style={[styles.row, styles.removeButton]}
-                  onPress={() => (setFn({"serving": "x"}), setShowServing(false))}
-                >
-                  <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
-                </TouchableOpacity>
-              </>
-            </View>
-            <View style={[styles.divider, {padding: 0}]}/>
-            </>
-          )}
         </>
-        )}
+      )}
 
-        {showPriority == false && (
-          <TouchableOpacity style={styles.property} onPress={()=>(setShowPriority(true), setPriority('LOW'), setFn({"priority": "LOW"}))}>
-            {(itemType === ItemType.Recipe) ? (
-              <View style={styles.row}>
-                <Ionicons name={"star-half-outline"} size={size} style={styles.icon}/>
-                <Text style={styles.property}>Add Rating</Text>
-              </View>
-            ) : (
-              <View style={styles.row}>
-                <Ionicons name={"alert-outline"} size={size} style={styles.icon}/>
-                <Text style={styles.property}>Add Priority</Text>
-              </View>
-            )} 
-          </TouchableOpacity>
+      <View style={[styles.divider, {padding: 0}]}/>
+
+      {(itemType === ItemType.Recipe) && (
+      <>
+        {showServing == false && (
+          <>
+            <TouchableOpacity style={[styles.row, styles.property]} onPress={()=>(setShowServing(true), setServing(0), setFn({"serving": Number(0)}))}>
+              <Ionicons name={"restaurant-outline"} size={size} style={[styles.icon]}/>    
+              <Text style={styles.property}>Add Servings</Text>
+            </TouchableOpacity>
+            <View style={[styles.divider, {padding: 0}]}/>
+          </>
         )}
-        {showPriority == true && (
+        {showServing == true && (
           <>
           <View style={[styles.row, styles.property, { justifyContent: "space-between" }]}>
+            <View style={styles.row}>
+              <Ionicons name={"restaurant-outline"} size={size} style={[styles.icon]}/>    
+              <TextInput keyboardType="numeric"
+                onChangeText={(serving_) => (
+                  setServing(serving_),
+                  setFn({"serving": Number(serving_)})
+                )}
+                {...(serving ? { defaultValue: serving.toString() } : { placeholder: "0" })}
+              style={[styles.property, styles.box, {backgroundColor: "#FFF"}]}
+              />
+            </View>
             <>
-              {(itemType === ItemType.Recipe) ? (
-                <Ionicons name={"star-half-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
-              ) : (
-                <Ionicons name={"alert-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
-              )}
-              <TouchableOpacity style={[styles.row, styles.box, priority === 'LOW' ? styles.selectedBox:styles.unselectedBox]}
-                onPress={() => (
-                  setPriority("LOW"),
-                  setFn({"priority": "LOW"})
-                )}
+              <TouchableOpacity style={[styles.row, styles.removeButton]}
+                onPress={() => (setFn({"serving": "x"}), setShowServing(false))}
               >
-                <Ionicons name={"star-outline"} size={20} style={[priority === 'LOW' ? styles.iconInverse:styles.icon]} />
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.row, styles.box, priority === 'MED' ? styles.selectedBox:styles.unselectedBox]}
-                onPress={() => (
-                  setPriority("MED"),
-                  setFn({"priority": "MED"})
-                )}
-              >
-                <Ionicons name={"star-outline"} size={20} style={[priority === 'MED' ? styles.iconInverse:styles.icon]} />
-                <Ionicons name={"star-outline"} size={20} style={[priority === 'MED' ? styles.iconInverse:styles.icon]} />
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.row, styles.box, priority === 'HIGH' ? styles.selectedBox:styles.unselectedBox]}
-                onPress={() => (
-                  setPriority("HIGH"),
-                  setFn({"priority": "HIGH"})
-                )}
-              >
-                <Ionicons name={"star-outline"} size={20} style={[priority === 'HIGH' ? styles.iconInverse:styles.icon]} />
-                <Ionicons name={"star-outline"} size={20} style={[priority === 'HIGH' ? styles.iconInverse:styles.icon]} />
-                <Ionicons name={"star-outline"} size={20} style={[priority === 'HIGH' ? styles.iconInverse:styles.icon]} />
-              </TouchableOpacity>
-            </>
-            <>
-              <TouchableOpacity style={[styles.row, styles.removeButton]} onPress={() => (setPriority(null), setFn({"priority": "x"}), setShowPriority(false))} >
-                  <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
+                <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
               </TouchableOpacity>
             </>
           </View>
+          <View style={[styles.divider, {padding: 0}]}/>
           </>
         )}
+      </>
+      )}
+
+      {showPriority == false && (
+        <TouchableOpacity style={styles.property} onPress={()=>(setShowPriority(true), setPriority('LOW'), setFn({"priority": "LOW"}))}>
+          {(itemType === ItemType.Recipe) ? (
+            <View style={styles.row}>
+              <Ionicons name={"star-half-outline"} size={size} style={styles.icon}/>
+              <Text style={styles.property}>Add Rating</Text>
+            </View>
+          ) : (
+            <View style={styles.row}>
+              <Ionicons name={"alert-outline"} size={size} style={styles.icon}/>
+              <Text style={styles.property}>Add Priority</Text>
+            </View>
+          )} 
+        </TouchableOpacity>
+      )}
+      {showPriority == true && (
+        <>
+        <View style={[styles.row, styles.property, { justifyContent: "space-between" }]}>
+          <>
+            {(itemType === ItemType.Recipe) ? (
+              <Ionicons name={"star-half-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
+            ) : (
+              <Ionicons name={"alert-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
+            )}
+            <TouchableOpacity style={[styles.row, styles.box, priority === 'LOW' ? styles.selectedBox:styles.unselectedBox]}
+              onPress={() => (
+                setPriority("LOW"),
+                setFn({"priority": "LOW"})
+              )}
+            >
+              <Ionicons name={"star-outline"} size={20} style={[priority === 'LOW' ? styles.iconInverse:styles.icon]} />
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.row, styles.box, priority === 'MED' ? styles.selectedBox:styles.unselectedBox]}
+              onPress={() => (
+                setPriority("MED"),
+                setFn({"priority": "MED"})
+              )}
+            >
+              <Ionicons name={"star-outline"} size={20} style={[priority === 'MED' ? styles.iconInverse:styles.icon]} />
+              <Ionicons name={"star-outline"} size={20} style={[priority === 'MED' ? styles.iconInverse:styles.icon]} />
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.row, styles.box, priority === 'HIGH' ? styles.selectedBox:styles.unselectedBox]}
+              onPress={() => (
+                setPriority("HIGH"),
+                setFn({"priority": "HIGH"})
+              )}
+            >
+              <Ionicons name={"star-outline"} size={20} style={[priority === 'HIGH' ? styles.iconInverse:styles.icon]} />
+              <Ionicons name={"star-outline"} size={20} style={[priority === 'HIGH' ? styles.iconInverse:styles.icon]} />
+              <Ionicons name={"star-outline"} size={20} style={[priority === 'HIGH' ? styles.iconInverse:styles.icon]} />
+            </TouchableOpacity>
+          </>
+          <>
+            <TouchableOpacity style={[styles.row, styles.removeButton]} onPress={() => (setPriority(null), setFn({"priority": "x"}), setShowPriority(false))} >
+                <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
+            </TouchableOpacity>
+          </>
+        </View>
         </>
+      )}
+      </>
     </SafeAreaView>
   )
 };
@@ -296,7 +297,7 @@ const styles = StyleSheet.create({
   infoContainer: {
     marginHorizontal: SIZES.medium,
     backgroundColor: COLORS({opacity:1}).lightWhite,
-    borderRadius: SIZES.medium/2,
+    //borderRadius: SIZES.medium/2,
     ...SHADOWS.medium,
     shadowColor: COLORS({opacity:1}).shadow,
   },

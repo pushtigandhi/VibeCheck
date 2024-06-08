@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
   },
   tab: {
     paddingVertical: SIZES.xxSmall,
-    paddingHorizontal: 20,
+    paddingHorizontal: SIZES.large,
   },
   activeTab: {
     borderBottomWidth: 2,
