@@ -1,13 +1,8 @@
 import { useState, useEffect } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image, ScrollView,
-        StyleSheet, Animated, FlatList } from 'react-native';
-
-import { COLORS, SHADOWS, FONT, SIZES } from "../../../constants";
-import { ExpandableView, Spacer } from '../../../utils';
-import { taskProperties } from "../PropertyCards";
-import Layout from "../../../_layout";
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { COLORS, SHADOWS, FONT, SIZES } from "../../constants";
+import { ExpandableView, Spacer } from '../../utils';
 import { Ionicons } from "@expo/vector-icons";
-import { PropertyCard } from "../PropertyCards";
 
 const expandedSubTaskCard = ({originalSubtasks, setFn, isEditable, unSelect = false, setUnSelect}) => {
   const [subtasks, setSubtasks] = useState(originalSubtasks);

@@ -2,48 +2,31 @@ import { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image, TouchableWithoutFeedback, Modal,
         StyleSheet, SafeAreaView, KeyboardAvoidingView } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { COLORS, SHADOWS, FONT, SIZES } from "../constants";
+import { COLORS, SHADOWS, FONT, SIZES, ItemType } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
-import { ItemType } from "../constants";
 import { ScrollView } from "react-native-gesture-handler";
-import CollaboratorCard from "./cards/items/CollaboratorCard";
-import TaskCard from "./cards/items/TaskCard";
-import RecipeCard from "./cards/items/RecipeCard";
-import { PATCHitemTEST } from "../API";
-import CreateNewItem from "./CreateNewItem";
+import CollaboratorCard from "./CollaboratorCard";
+import TaskCard from "./TaskCard";
+import RecipeCard from "./RecipeCard";
+import { PATCHitemTEST } from "../../API";
+import CreateNewItem from "../CreateNewItem";
 
 import React from "react";
 
-const defaultImage = require("../assets/icon.png");
+const defaultImage = require("../../assets/icon.png");
 
 const Properties = ({ item = null, itemType }) => {
-    const [category, setCategory] = useState(null);
-    const [section, setSection] = useState(null);
-    const [priority, setPriority] = useState(null);
-    const [serving, setServing] = useState(null);
     const [hour, setHour] = useState(0);
     const [minute, setMinute] = useState(0);
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
   
     const size = 25;
   
     useEffect(() => {
-      setCategory(item.category);
-      setSection(item.section);
-      if(item.priority) {
-          setPriority(item.priority);
-      } if(item.duration){
-          const hours = Math.floor(item.duration / 60);
-          const minutes = item.duration % 60;
-          setHour(hours);
-          setMinute(minutes);
-      } if(item.servings){
-          setServing(item.servings.toString());
-      } if(item.startDate){
-        setStartDate(item.startDate);
-      } if(item.endDate){
-        setEndDate(item.endDate);
+      if(item.duration){
+        const hours = Math.floor(item.duration / 60);
+        const minutes = item.duration % 60;
+        setHour(hours);
+        setMinute(minutes);
       }
     }, []); // Update category and section when item changes
   
@@ -51,23 +34,23 @@ const Properties = ({ item = null, itemType }) => {
       <SafeAreaView style={styles.infoContainer}>
         <View style={[styles.row, styles.property, {marginVertical: SIZES.xxSmall}]}>
           <Ionicons name={"folder-open-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />
-          <Text style={[styles.property, {marginLeft: SIZES.small}]}>{category}</Text>
+          <Text style={[styles.property, {marginLeft: SIZES.small}]}>{item.category}</Text>
         </View>
         
         <View style={styles.divider}/>
 
         <View style={[styles.row, styles.property, {marginVertical: SIZES.xxSmall}]}>
           <Ionicons name={"bookmark-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />
-          <Text style={[styles.property, {marginLeft: SIZES.small}]}>{section}</Text>
+          <Text style={[styles.property, {marginLeft: SIZES.small}]}>{item.section}</Text>
         </View>
 
-        {startDate && (
+        {item.startDate && (
           <>
             <View style={styles.divider}/>
 
             <View style={[styles.row, styles.property, {marginVertical: SIZES.xxSmall}]}>
               <Ionicons name={"calendar-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />
-              <Text style={[styles.property, {marginLeft: SIZES.small}]}>{new Date(startDate).toDateString()}</Text>
+              <Text style={[styles.property, {marginLeft: SIZES.small}]}>{new Date(item.startDate).toDateString()}</Text>
             </View>
 
             <View style={styles.divider}/>
@@ -109,7 +92,7 @@ const Properties = ({ item = null, itemType }) => {
           </>
         )}
 
-        {priority && (
+        {item.priority && (
           <>
             <View style={styles.divider}/>
             
@@ -119,18 +102,18 @@ const Properties = ({ item = null, itemType }) => {
               ) : (
                 <Ionicons name={"alert-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
               )}
-              {priority === 'LOW' && (
+              {item.priority === 'LOW' && (
                 <View style={[styles.row, styles.box]}>
                   <Ionicons name={"star-outline"} size={15} style={styles.icon} />
                 </View>
               )}
-              {priority === 'MED' && (
+              {item.priority === 'MED' && (
                 <View style={[styles.row, styles.box]}>
                   <Ionicons name={"star-outline"} size={15} style={styles.icon} />
                   <Ionicons name={"star-outline"} size={15} style={styles.icon} />
                 </View>
               ) }
-              {priority === 'HIGH' && (
+              {item.priority === 'HIGH' && (
                 <View style={[styles.row, styles.box]}>
                   <Ionicons name={"star-outline"} size={15} style={styles.icon} />
                   <Ionicons name={"star-outline"} size={15} style={styles.icon} />
@@ -141,13 +124,28 @@ const Properties = ({ item = null, itemType }) => {
           </>
         )}
 
-        {serving && (
+        {item.servings && (
           <>
             <View style={styles.divider}/>
 
             <View style={[styles.row, styles.property, {marginVertical: SIZES.xxSmall}]}>
               <Ionicons name={"restaurant-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />
-              <Text style={[styles.property, styles.box, {marginLeft: SIZES.small}]}>{serving}</Text>
+              <Text style={[styles.property, styles.box, {marginLeft: SIZES.small}]}>{item.servings}</Text>
+            </View>
+          </>
+        )}
+
+        {item.tags && item.tags.length > 0 && (
+          <>
+            <View style={styles.divider}/>
+
+            <View style={styles.row}>
+              <Text style={[styles.icon, {margin: SIZES.xxSmall, marginLeft: SIZES.small, fontSize: SIZES.xLarge}]}>#</Text>
+              {item.tags.map(tag => (
+                <View style={styles.tag}>
+                  <Text style={styles.property} numberOfLines={1}>{tag}</Text>
+                </View>
+              ))}
             </View>
           </>
         )}
@@ -351,7 +349,7 @@ export default function ItemCard({ navigation, route }) {
 
           {notes && (
             <>
-              <View style={[styles.row, styles.heading, {marginTop: SIZES.xSmall}]}>
+              <View style={[styles.row, {marginTop: SIZES.xSmall, marginLeft: SIZES.xLarge}]}>
                   <Ionicons name={"document-outline"} size={SIZES.xLarge} style={styles.icon}/>
                   <Text style={styles.label}>Notes</Text>
               </View>
@@ -517,5 +515,17 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "space-between",
     alignItems: "right",
+  },
+  tag: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: COLORS({opacity:1}).lightWhite,
+    borderWidth:0.5,
+    borderColor: COLORS({opacity:1}).primary,
+    borderRadius: SIZES.xxSmall,
+    marginVertical: SIZES.xxSmall,
+    marginRight: SIZES.small,
+    paddingHorizontal: SIZES.small,
+    paddingVertical: SIZES.xxSmall,
   },
 });

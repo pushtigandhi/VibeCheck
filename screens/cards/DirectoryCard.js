@@ -146,8 +146,6 @@ const styles = StyleSheet.create({
     paddingBottom: SIZES.medium,
     paddingHorizontal: SIZES.medium,
     marginHorizontal: SIZES.medium,
-    borderBottomLeftRadius: SIZES.xLarge,
-    borderBottomRightRadius: SIZES.xLarge,
     flex: 1,
     overflow: 'scroll',
   },

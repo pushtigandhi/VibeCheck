@@ -1,13 +1,9 @@
 import { useState, useEffect } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image,
-        StyleSheet, Animated, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-import { COLORS, SHADOWS, FONT, SIZES } from "../../../constants";
-import { ExpandableView, Spacer } from '../../../utils';
-import { taskProperties } from "../PropertyCards";
-import Layout from "../../../_layout";
+import { COLORS, SHADOWS, FONT, SIZES } from "../../constants";
+import { ExpandableView, Spacer } from '../../utils';
 import { Ionicons } from "@expo/vector-icons";
-import { PropertyCard } from "../PropertyCards";
 
 const expandedIngredients = ({originalIngredients, setFn, isEditable, unSelect = false, setUnSelect}) => {
   const [ingredients, setIngredients] = useState(originalIngredients);

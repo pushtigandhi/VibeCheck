@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
 import { MultiSelect } from 'react-native-element-dropdown';
 import { COLORS, SIZES } from '../constants';
 import { Ionicons } from "@expo/vector-icons";
 
-const MultiSelectDropdown = ({ options, placeholder="Select items", icon, setFn }) => {
+const MultiSelectDropdown = ({ options, placeholder="Select items", icon, setFn, current=[] }) => {
   const [selected, setSelected] = useState([]);
+
+  useEffect(() => {
+    setSelected(current);
+  }, [])
 
   const renderItem = item => {
     return (
@@ -56,7 +60,7 @@ const MultiSelectDropdown = ({ options, placeholder="Select items", icon, setFn 
 export default MultiSelectDropdown;
 
 const styles = StyleSheet.create({
-  container: { padding: 16 },
+  container: { padding: SIZES.small },
   dropdown: {
     height: 40,
     backgroundColor: COLORS({opacity:1}).lightWhite,
@@ -104,19 +108,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     fontSize: SIZES.small,
     backgroundColor: COLORS({opacity:1}).lightWhite,
-    shadowColor: '#000',
-    marginTop: 8,
-    marginRight: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
-
-    elevation: 2,
+    borderWidth:0.5,
+    borderColor: COLORS({opacity:1}).primary,
+    borderRadius: SIZES.xxSmall,
+    marginVertical: SIZES.xxSmall,
+    marginRight: SIZES.small,
+    paddingHorizontal: SIZES.small,
+    paddingVertical: SIZES.xxSmall,
   },
   textSelectedStyle: {
     marginRight: 5,

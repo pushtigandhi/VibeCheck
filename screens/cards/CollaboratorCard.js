@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import { COLORS, SHADOWS, FONT, SIZES } from "../../../constants";
-import { ExpandableView, Spacer } from '../../../utils'
+import { COLORS, SHADOWS, FONT, SIZES } from "../../constants";
+import { ExpandableView, Spacer } from '../../utils'
 import { Ionicons } from "@expo/vector-icons";
 
 const expandedContactList = ({contactList, setFn, isEditable}) => {

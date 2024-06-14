@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, FlatList, StyleSheet, Text, TextInput } from "react-native";
+import { SafeAreaView, View, FlatList, StyleSheet, TextInput } from "react-native";
 import { COLORS, FONT, SIZES } from "../constants";
 import HomeNavigation from "./HomeNavigation";
 import { GETitems, GETitemsTEST } from "../API";
@@ -88,10 +88,10 @@ const styles = StyleSheet.create({
     fontSize: SIZES.medium,
     color: COLORS({opacity:0.9}).primary,
     padding: SIZES.small,
-    margin: SIZES.small,
+    margin: SIZES.xSmall,
     borderWidth: 1,
     borderColor: COLORS({opacity:1}).primary,
-    borderRadius: SIZES.medium,
+    borderRadius: SIZES.small,
   },
   row: {
     flexDirection: "row",

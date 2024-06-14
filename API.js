@@ -524,7 +524,7 @@ const getURL= (itemType) => {
 export async function GETitems(itemType, filter={}) {
     const ext = getURL(itemType);
 
-    const response = await fetchWithAuth(`${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "?" : "") +  new URLSearchParams(filter), {
+    const response = await fetchWithAuth(`${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "&" : "") +  new URLSearchParams(filter), {
         method: 'GET',
     });
     try {
@@ -583,7 +583,7 @@ export async function PATCHitem(itemType, newItem, itemID) {
     }
 }
 
-export async function DELETEitem(itemID) {
+export async function DELETEitem(itemType, itemID) {
     const ext = getURL(itemType);
     
     const response = await fetchWithAuth(`${ITEMS_BASE_URL}/${itemID}${ext}`, {
@@ -817,9 +817,7 @@ export async function PATCHupdateProfileTEST(data) {
 //#region CONTACTS
 export async function GETcontactsTEST() {
 
-    const response = await fetchWithAuth(CONTACTS_BASE_URL, {
-        method: 'GET',
-    });
+    const response =CONTACTS_BASE_URL;
 
     console.log(response);
 
@@ -1042,9 +1040,11 @@ export async function GETtodayTEST(selectedDate, filter={}) {
     filter.startgt = date; 
     filter.startlt = date;
 
-    const response = `${ITEMS_BASE_URL}/` + new URLSearchParams(filter);
+    const ext = getURL(!!filter.itemType ? filter.itemType : ItemType.Item);
 
-    //console.log("today: " + response);
+    const response = `${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "&" : "") + new URLSearchParams(filter);
+
+    console.log("today: " + response);
 
     const body = {
         "items": [
@@ -1057,6 +1057,9 @@ export async function GETtodayTEST(selectedDate, filter={}) {
                 "notes": "Remember important info about the item. ", 
                 "section": "All", 
                 "title": "Item",
+                "tags": [
+                    "work"
+                ],
                 "owner": "65dffad64102392ebb57839b",
                 "duration": "30",
                 "startDate": "2024-03-29T10:00:00.000Z",
@@ -1076,7 +1079,7 @@ export async function GETtodayTEST(selectedDate, filter={}) {
                 "title": "Task",
                 "_id": "65dffbe64102392ebb5783b01235436457",
                 "itemType": "Task",
-                "subtasks": [{"isChecked": false, "task": "first subtask", "_id": "65e134a91635ad960dab35ytsdc1c"},
+                "subtasks": [{"isChecked": false, "task": "first subtask", "_id": "65e134a91635ad960dabcas35ytsdc1c"},
                 {"isChecked": false, "task": "2 subtask", "_id": "65e134a91635ad960dabsrhjdc1c"}],
                 "contacts": [{"isChecked": false, "task": "4 subtask", "_id": "65e134a91635ad96tdku0dabdc1c"},
                 {"isChecked": false, "task": "5 subtask", "_id": "65e134a91635ad96nhdtt0dabdc1c"}],
@@ -1135,10 +1138,10 @@ export async function GETtodayTEST(selectedDate, filter={}) {
                     {"isChecked": false, "task": "1 cup water", "_id": "65e134a91635ad960dabsrhjdc1c"},
                     {"isChecked": false, "task": "1tbsp yeast", "_id": "65e134a91635ad960dabsrhjwew1c"},
                 ],
-                "instructions": [{"isChecked": false, "task": "Mix ingredients and knead dough", "_id": "65e134a91635ad960dab35ytsdc1c"},
+                "instructions": [{"isChecked": false, "task": "Mix ingredients and knead dough the", "_id": "65e134a91635ad960asadab35ytsdc1c"},
                 {"isChecked": false, "task": "Rest for 30 mins", "_id": "65e134a91635ad960dabsrhjdc1c"},
                 {"isChecked": false, "task": "Separate dough into 4", "_id": "65e134a91635ad960dabsrhjwew1c"},
-                {"isChecked": false, "task": "Preheat oven to 350F", "_id": "65e134a91635ad960dab35ytsdc1c"}],
+                {"isChecked": false, "task": "Preheat oven to 350F", "_id": "65e134a91635ad960dab3asc5ytsdc1c"}],
                 "owner": "65dffad64102392ebb57839b",
                 "startDate": "2024-03-29T22:00:00.000Z",
                 "endDate": "2024-03-13T23:30:00.326Z",
@@ -1167,7 +1170,9 @@ export async function GETweekTEST(selectedDate, filter={}) {
     filter.startgt = startOfWeek; 
     filter.startlt = endOfWeek;
 
-    const response = `${ITEMS_BASE_URL}/` + new URLSearchParams(filter);
+    const ext = getURL(!!filter.itemType ? filter.itemType : ItemType.Item);
+
+    const response = `${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "&" : "") + new URLSearchParams(filter);
 
     console.log("week: " + response);
 
@@ -1418,7 +1423,9 @@ export async function GETmonthTEST(selectedDate, filter={}) {
     filter.startgt = startOfMonth;
     filter.startlt =  endOfMonth;
 
-    const response = `${ITEMS_BASE_URL}/` + new URLSearchParams(filter);
+    const ext = getURL(!!filter.itemType ? filter.itemType : ItemType.Item);
+
+    const response = `${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "&" : "") + new URLSearchParams(filter);
 
     console.log("month: " + response);
 
@@ -1687,11 +1694,10 @@ export async function GETsectionTEST(itemType, filter={}) {
 export async function GETitemsTEST(itemType, filter={}) {
     const ext = getURL(itemType);
 
-    const response = `${ITEMS_BASE_URL}/${ext}` + new URLSearchParams(filter);
+    const response = `${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "&" : "") + new URLSearchParams(filter);
 
     console.log(response);
     let body;
-    console.log("items: " + response);
 
     if(!!filter.search) {
         body = {
@@ -1748,10 +1754,13 @@ export async function GETitemsTEST(itemType, filter={}) {
                     "priority": "HIGH", 
                     "section": "All", 
                     "title": "Task",
+                    "tags": [
+                        "new"
+                    ],
                     "_id": "65dffbe64102392ebb5783b01235436457",
                     "itemType": "Task",
-                    "subtasks": [{"isChecked": false, "task": "first subtask", "_id": "65e134a91635ad960dab35ytsdc1dsc"},
-                    {"isChecked": false, "task": "2 subtask", "_id": "65e134a91635ad960dabsrhjdc1c"}],
+                    "subtasks": [{"isChecked": false, "task": "first item", "_id": "65e134a91635ad960dab35ytsdc1dsc"},
+                    {"isChecked": false, "task": "another item", "_id": "65e134a91635ad960dabsrhjdc1c"}],
                     "contacts": [{"isChecked": false, "task": "4 subtask", "_id": "65e134a91635afdgfd96tdku0dabdc1c"},
                     {"isChecked": false, "task": "5 subtask", "_id": "65e134a91635ad96nhdtt0dfgdabdc1c"}],
                     "owner": "65dffad64102392ebb57839b",
@@ -1863,12 +1872,10 @@ export async function PATCHitemTEST(itemType, newItem, itemID) {
     return body.item;
 }
 
-export async function DELETEitemTEST(itemID) {
+export async function DELETEitemTEST(itemType, itemID) {
     const ext = getURL(itemType);
     
-    const response = await fetchWithAuth(`${ITEMS_BASE_URL}/${itemID}${ext}`, {
-        method: "DELETE",
-    });
+    const response = `${ITEMS_BASE_URL}/${itemID}${ext}`;
 
     console.log(response);
 

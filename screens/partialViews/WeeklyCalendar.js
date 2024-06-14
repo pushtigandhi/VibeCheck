@@ -29,11 +29,11 @@ export const WeeklyCalendar = ({navigation, date, filter, refreshing, itemList})
   }
 
   useEffect(() => {
-    // getItemsFromAPI(filter).then((items_) => {
-    //   setItems(items_);
-    // }).catch((err) => {
-    //   alert(err.message)
-    // })
+    getItemsFromAPI(filter).then((items_) => {
+      setItems(items_);
+    }).catch((err) => {
+      alert(err.message)
+    })
     setItems(itemList);
     console.log("week: " +itemList);
 
@@ -82,15 +82,14 @@ export const WeeklyCalendar = ({navigation, date, filter, refreshing, itemList})
 
 const styles = StyleSheet.create({
   cardsContainer: {
-    //marginBottom: SIZES.medium,
-    backgroundColor: COLORS({opacity:1}).lightWhite,// "#FFF",
-    borderRadius: SIZES.xSmall,
-    ...SHADOWS.xSmall,
-    shadowColor: COLORS({opacity:1}).shadow,
+    borderColor: COLORS({opacity:1}).lightGrey,
+    backgroundColor: COLORS({opacity:0.1}).lightGrey,
+    borderWidth: 0.51,
+    borderRadius: SIZES.xxSmall,
     width: 100, //slotWidth - SIZES.xSmall,
     height: slotHeight - SIZES.xSmall, 
     padding: SIZES.tiny,
-    marginHorizontal: SIZES.tiny,
+    marginHorizontal: SIZES.xxSmall,
     alignItems: "center",
     justifyContent: "center",
   },

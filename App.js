@@ -10,7 +10,7 @@ import VibeCheck from './screens/VibeCheck';
 import Backlog from './screens/Backlog';
 import Login from './screens/LoginScreen';
 
-import ItemCard from './screens/ItemCard';
+import ItemCard from './screens/cards/ItemCard';
 import { useFonts } from 'expo-font';
 import NewItem from './screens/NewItem';
 import DefaultView from './screens/views/DefaultView';

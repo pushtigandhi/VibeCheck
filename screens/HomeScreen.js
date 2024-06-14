@@ -18,7 +18,6 @@ import { ItemType } from "../constants";
 
 import { Dimensions } from 'react-native';
 
-import { Sidebar } from "../components/Sidebar";
 import { GETdirectoryTEST, doOnStart } from "../API";
 
 //import { directoryList } from "../API";
@@ -30,58 +29,14 @@ import NewItem from "./NewItem";
 import { CalendarView } from "./partialViews/CalendarView";
 
 export default function HomeScreen ({ navigation, route }) {
-    const calendarHeight = Dimensions.get('window').height - 300;
-    const [selectedDate, setSelectedDate] = useState(new Date());
     const [filter, setFilter] = useState({});
-    const [filterVisible, setFilterVisible] = useState(false);
-    const [scheduleVisible, setScheduleVisible] = useState(false);
-
-    const [items, setItems] = useState([]);
-
-    const active = "class";
-    const mobile = true;
-
     const [state, setState] = useState("day");
-
     const [refreshing, setRefreshing] = useState(false);
-    const [showSidebar, toggleShowSidebar] = useState(false);
-
-
-    const onRefresh = React.useCallback((updatedDate, state) => {
-        setSelectedDate(updatedDate);
-        setState(state);
-    });
-
-    const toggleSidebar = React.useCallback(() => {
-        setRefreshing(true);
-        if (!showSidebar) { 
-            toggleShowSidebar(true);
-            setRefreshing(false);
-        }
-        else { 
-            toggleShowSidebar(false);
-            setRefreshing(false);
-        }
-    });
 
     const dismissKeyboard = () => {
         Keyboard.dismiss();
     };
-
-    function closeFilter() {
-        setRefreshing(!refreshing);
-        setFilterVisible(false);
-    }
-    function closeSchedule() {
-        setRefreshing(!refreshing);
-        setScheduleVisible(false);
-    }
     
-    function doSearch({search}) {
-        console.log(search);
-       // setSearchBar(false);
-    }
-
     useEffect(() => {
         doOnStart();
     }, [])

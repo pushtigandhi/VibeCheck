@@ -8,7 +8,6 @@ import { ItemType } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import FilterModal from "../../components/FilterModal";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import TaskCard from "../cards/items/TaskCard";
 
 const defaultImage = require("../../assets/icon.png");
 const Checklist = ({item, setFn}) => {

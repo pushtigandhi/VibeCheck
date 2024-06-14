@@ -79,14 +79,6 @@ export default function ScheduleView ({navigation, route, scrollEnabled = true})
     setFilter({... filter, category: route.params?.category, section: route.params?.section})
   }, []) // only run once on load
 
-  // useEffect(() => {
-  //   getSectionItemsFromAPI().then((items_) => {
-  //     setItems(items_);
-  //   }).catch((err) => {
-  //     alert(err.message)
-  //   })
-  // }, [refreshing])
-
   const [selectedTab, setSelectedTab] = useState('List');
   const renderTab = () => {
     switch (selectedTab) {

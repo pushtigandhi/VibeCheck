@@ -9,7 +9,7 @@ const BacklogCard = ({navigation, item}) => {
     <View style={styles.cardContainer}>
       <TouchableOpacity
         onPress={() => {
-            navigation.navigate("EditItem", {item});
+            navigation.navigate("Item", {item});
           }}
           style={styles.titleContainer}
       >
@@ -31,10 +31,8 @@ const styles = StyleSheet.create({
     shadowColor: COLORS({opacity:1}).shadow,
   },
   titleContainer: {
-    width: '100%',
+    flex:1,
     padding: SIZES.medium,
-    borderColor: COLORS({opacity:0.5}).primary,
-    borderBottomWidth: 1,
     borderBottomLeftRadius: SIZES.xLarge,
     borderBottomRightRadius: SIZES.xLarge,
   },

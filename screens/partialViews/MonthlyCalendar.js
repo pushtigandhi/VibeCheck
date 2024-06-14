@@ -82,7 +82,7 @@ export const MonthlyCalendar = ({navigation, date, month, onRefresh, filter, ref
               </TouchableOpacity>
             ))}
             {!!items[day] && items[day].length > 2 && (
-              <TouchableOpacity onPress={() => (onRefresh(new Date(date.getFullYear(), date.getMonth(), Number(day)+1), "day"))}>
+              <TouchableOpacity onPress={() => (onRefresh(new Date(date.getFullYear(), date.getMonth(), Number(day)), "day"))}>
                 <Text style={{fontSize: SIZES.xSmall, marginTop: SIZES.tiny}}>Show All</Text>
               </TouchableOpacity>
             )}  

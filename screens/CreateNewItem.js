@@ -1,21 +1,19 @@
 import { Ionicons } from "@expo/vector-icons";
-import { ScrollView, Text, View, StyleSheet, TouchableOpacity, TextInput, Image, KeyboardAvoidingView } from 'react-native';
+import { ScrollView, Text, View, StyleSheet, TouchableOpacity, TextInput, Image, KeyboardAvoidingView, Alert } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { COLORS, FONT, SIZES, SHADOWS, ItemType } from "../constants";
 import React, { useEffect, useState } from "react";
 import { PropertyCard } from "../screens/cards/PropertyCards";
-import CollaboratorCard from "./cards/items/CollaboratorCard";
-import TaskCard from "./cards/items/TaskCard";
-import RecipeCard from "./cards/items/RecipeCard";
+import CollaboratorCard from "./cards/CollaboratorCard";
+import TaskCard from "./cards/TaskCard";
+import RecipeCard from "./cards/RecipeCard";
 import * as ImagePicker from 'expo-image-picker';
 import { Scheduler } from "../components/Scheduler";
-import { PATCHitemTEST } from "../API";
+import { PATCHitemTEST, DELETEitemTEST } from "../API";
 
 const defaultImage = require("../assets/icon.png");
 
 export default function CreateNewItem({ item = null, onClose, isScheduler=false }) {
-    const [itemType, setItemType] = useState(ItemType.Item);
-    
     const [title, setTitle] = useState("Untitled");
     const [description, setDescription] = useState(null);
     const [favicon, setFavicon] = useState(null);
@@ -131,7 +129,7 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
         } else {
             console.log("Edit: " + updatedItem);
 
-            PATCHitemTEST(itemType, {
+            PATCHitemTEST(item.itemType, {
                 ...updatedItem
             }, item._id)
             .then((item_) => {
@@ -140,6 +138,33 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
                 console.log(error);
             });
         }
+    };
+
+    function onDelete() {
+        DELETEitemTEST(item.itemType, item._id)
+        .then((item_) => {
+            //alert("Success!");
+        }).catch((error) => {
+            console.log(error);
+        });
+    };
+
+    const ConfirmCancelPrompt = () => {
+        Alert.alert(
+        "Confirm Action",
+        "Are you sure you want to proceed?",
+        [
+            {
+            text: "Cancel",
+            style: "cancel"
+            },
+            {
+            text: "OK",
+            onPress: () => onDelete()
+            }
+        ],
+        { cancelable: false }
+        );
     };
 
     useEffect(() => {
@@ -154,10 +179,11 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
         })
     
         if (item) {
+            console.log(item.itemType);
             if(item.ItemType)
                 setItemType(item.itemType);
           setIcon(item.icon.toString());
-          console.log("item: " + itemType + " " + item.category  + " " +item.section);
+          console.log("item: " + item.itemType + " " + item.category  + " " +item.section);
           if (item["_id"]) {
             setIsNew(false);
             setTitle(item.title);
@@ -230,15 +256,15 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
                     <TouchableOpacity style={[styles.row, styles.removeButton]}
                         onPress={() => (setDescription(null), setShowDesc(false))}
                     >
-                        <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
-                        <Text style={{color: COLORS({opacity:1}).white}}>Remove</Text>
+                        <Ionicons name={"close-outline"} size={20} style={styles.icon} />
+                        <Text style={styles.unselectedText}>Remove</Text>
                     </TouchableOpacity>
                 </>
             )}
 
             <View style={styles.divider}/>
 
-            {itemType == ItemType.Event && (
+            {item.itemType == ItemType.Event && (
             <>
                 {showLocation == false && (
                     <>
@@ -262,8 +288,8 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
                     <TouchableOpacity style={[styles.row, styles.removeButton, {marginTop: SIZES.xxSmall}]}
                         onPress={() => (setShowLocation(false))}
                     >
-                        <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
-                        <Text style={{color: COLORS({opacity:1}).white}}>Remove</Text>
+                        <Ionicons name={"close-outline"} size={20} style={styles.icon} />
+                        <Text style={styles.unselectedText}>Remove</Text>
                     </TouchableOpacity>
                     
                     <View style={styles.divider}/>
@@ -292,7 +318,7 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
             {isExpanded && (
                 <>
                     <View style={styles.divider}/>
-                    <PropertyCard itemType={itemType} item={updatedItem} setFn={updateNewItem} isScheduler={isScheduler} />
+                    <PropertyCard itemType={item.itemType} item={updatedItem} setFn={updateNewItem} isScheduler={isScheduler} />
                     {showScheduler && (
                         <View style={styles.infoContainer}>
                           <Scheduler item={item} setFn={updateNewItem} />
@@ -303,28 +329,28 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
 
             <View style={styles.divider}/>
 
-            {itemType === ItemType.Event && (
+            {item.itemType === ItemType.Event && (
                 <>
                     <CollaboratorCard item={item} setFn={updateNewItem} />
                     <View style={styles.divider}/>
                 </>
             )}
 
-            {(itemType === ItemType.Task || itemType === ItemType.Event) && (
+            {(item.itemType === ItemType.Task || item.itemType === ItemType.Event) && (
                 <>
                     <TaskCard item={item} setFn={updateNewItem} />
                     <View style={styles.divider}/>
                 </>
             )}
 
-            {itemType === ItemType.Recipe && (
+            {item.itemType === ItemType.Recipe && (
                 <>
                     <RecipeCard item={item} setFn={updateNewItem} />
                     <View style={styles.divider}/>
                 </>
             )}
 
-            {(showNotes == false && itemType !== ItemType.Page) && (
+            {(showNotes == false && item.itemType !== ItemType.Page) && (
                 <>
                 <TouchableOpacity style={[styles.row, styles.label]} onPress={()=>(setShowNotes(true))}>
                     <Ionicons name={"document-outline"} size={SIZES.xLarge} style={styles.icon}/>
@@ -333,7 +359,7 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
                 <View style={styles.divider}/>
                 </>
             )}
-            {(showNotes == true || itemType === ItemType.Page) && (
+            {(showNotes == true || item.itemType === ItemType.Page) && (
                 <KeyboardAvoidingView behavior="padding" >
                 <GestureHandlerRootView>
                 <TextInput style={styles.notes} 
@@ -341,16 +367,22 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
                     {...(notes ? { defaultValue: notes } : { placeholder: "Notes" })} 
                     onChangeText={(newNotes) => setNotes(newNotes)}
                 />
-                {itemType !== ItemType.Page && (
+                {item.itemType !== ItemType.Page && (
                     <TouchableOpacity style={[styles.row, styles.removeButton]}
                         onPress={() => (setNotes(null), setShowNotes(false))}
                     >
-                        <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
-                        <Text style={{color: COLORS({opacity:1}).white}}>Remove</Text>
+                        <Ionicons name={"close-outline"} size={20} style={styles.icon} />
+                        <Text style={styles.unselectedText}>Remove</Text>
                     </TouchableOpacity>
                 )}
                 </GestureHandlerRootView>
                 </KeyboardAvoidingView>
+            )}
+
+            {!isNew && (
+                <TouchableOpacity onPress={() => ConfirmCancelPrompt()} style={[styles.removeButton, {backgroundColor: COLORS({opacity:1}).lightRed, margin: SIZES.xSmall}]}>
+                    <Text style={styles.iconInverse}>Delete</Text>
+                </TouchableOpacity>
             )}
         </ScrollView>
     );
@@ -438,7 +470,7 @@ const styles = StyleSheet.create({
     },
     icon: {
         //margin: SIZES.xxSmall,
-        color: COLORS({opacity:0.8}).primary,
+        color: COLORS({opacity:1}).secondary,
     },
     iconInverse: {
         //margin: SIZES.xxSmall,
@@ -471,7 +503,7 @@ const styles = StyleSheet.create({
         color: COLORS({opacity:1}).primary,
     },
     removeButton: {
-        backgroundColor: COLORS({opacity:1}).lightRed, 
+        backgroundColor: COLORS({opacity:0.3}).lightGrey, 
         padding: SIZES.small, 
         borderRadius: SIZES.xxSmall,
         marginHorizontal: SIZES.medium,

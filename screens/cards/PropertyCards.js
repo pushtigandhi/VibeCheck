@@ -5,8 +5,28 @@ import { Spacer } from '../../utils';
 import { Ionicons } from "@expo/vector-icons";
 import { Picker } from '@react-native-picker/picker';
 import SingleSelectDropdown from "../../components/SingleSelectDropdown";
+import MultiSelectDropdown from "../../components/MultiSelectDropdown";
 
 import { directoryList } from "../../API";
+
+const allTags = [
+  {
+    label: "work",
+    value: "work"
+  },{
+    label: "selfcare",
+    value: "selfcare"
+  },{
+    label: "school",
+    value: "school"
+  },{
+    label: "housework",
+    value: "housework"
+  },{
+    label: "hobby",
+    value: "hobby"
+  },
+]
 
 export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false, isSection=false}) => {
   const [category, setCategory] = useState('');
@@ -17,11 +37,13 @@ export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false
   const [showPriority, setShowPriority] = useState(false);
   const [showDuration, setShowDuration] = useState(false);
   const [showServing, setShowServing] = useState(false);
-
+  const [tags, setTags] = useState([]);
   const [hourPickerVisible, setHourPickerVisible] = useState(false);
   const [minutePickerVisible, setMinutePickerVisible] = useState(false);
   const [hour, setHour] = useState(0);
   const [minute, setMinute] = useState(15);
+
+  const size = 25;
 
   const toggleHourPicker = () => {
     setHourPickerVisible(!hourPickerVisible);
@@ -30,8 +52,6 @@ export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false
   const toggleMinutePicker = () => {
     setMinutePickerVisible(!minutePickerVisible);
   };
-
-  const size = 25;
 
   // Generate picker items
   const hourItem = [];
@@ -42,6 +62,26 @@ export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false
   for (let i = 0; i <= 55; i += 5) {
     minuteItem.push(<Picker.Item key={i} label={`${i}`} value={`${i}`} />);
   }
+
+  async function getTagsFromAPI() {
+    try {
+        let allTags_ = await GETtags();
+        return allTags_;
+    } catch (error) {
+      console.log("error fetching tags");
+      console.log(error);
+
+        return [];
+    }
+  }
+
+  useEffect(() => {
+    // getTagsFromAPI().then((allTags_) => {
+    //   setAllTags(allTags_);
+    // }).catch((err) => {
+    //     alert(err.message)
+    // })
+  }, []); // Empty dependency array to run only once on component mount
 
   useEffect(() => {
     if (item) {
@@ -62,8 +102,10 @@ export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false
         setPriority(item.priority);
         setShowPriority(true);
       }
-      if(!!item.tags)
+      if(!!item.tags) {
         setTags(item.tags);
+        console.log(item.tags);
+      }
     }
   }, [item]); // Update category and section when item changes
 
@@ -117,6 +159,9 @@ export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false
         <Text>Loading sections...</Text>
       ))}
 
+      <MultiSelectDropdown options={allTags} placeholder="Tags" setFn={setTags} current={tags}
+        icon={<Text style={[styles.icon, {margin: SIZES.xxSmall, fontSize: SIZES.large}]}>#</Text>} /> 
+
       <>
       {!isScheduler && (
         <>
@@ -141,7 +186,6 @@ export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false
                   onValueChange={(newHour) => (
                     setHour(newHour),
                     toggleHourPicker(),
-                    //setDuration(newHour*60 + minute),
                     setFn({"duration": Number(newHour * 60) + Number(minute)})
                   )}
                   style={styles.picker}>
@@ -162,7 +206,6 @@ export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false
                   onValueChange={(newMinute) => (
                     setMinute(newMinute),
                     toggleMinutePicker(),
-                    //setDuration(hour*60 + newMinute),
                     setFn({"duration": Number(hour * 60) + Number(newMinute)})
                   )}
                   style={styles.picker}>
@@ -178,7 +221,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false
             <Text style={styles.property}>Minutes</Text>
             {(hourPickerVisible == false && minutePickerVisible == false) && (
               <TouchableOpacity style={[styles.row, styles.removeButton]} onPress={() => (setFn({"duration": "x"}), setShowDuration(false))}>
-                <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
+                <Ionicons name={"close-outline"} size={20} style={styles.icon} />
               </TouchableOpacity>
             )}
           </View>
@@ -218,7 +261,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false
               <TouchableOpacity style={[styles.row, styles.removeButton]}
                 onPress={() => (setFn({"serving": "x"}), setShowServing(false))}
               >
-                <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
+                <Ionicons name={"close-outline"} size={20} style={styles.icon} />
               </TouchableOpacity>
             </>
           </View>
@@ -282,7 +325,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false
           </>
           <>
             <TouchableOpacity style={[styles.row, styles.removeButton]} onPress={() => (setPriority(null), setFn({"priority": "x"}), setShowPriority(false))} >
-                <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
+                <Ionicons name={"close-outline"} size={20} style={styles.icon} />
             </TouchableOpacity>
           </>
         </View>
@@ -381,7 +424,7 @@ const styles = StyleSheet.create({
     height: 150,
   },
   removeButton: {
-    backgroundColor: COLORS({opacity:1}).lightRed, 
+    backgroundColor: COLORS({opacity:0.5}).lightGrey, 
     padding: SIZES.small, 
     borderRadius: SIZES.xxSmall,
     marginHorizontal: SIZES.medium,
