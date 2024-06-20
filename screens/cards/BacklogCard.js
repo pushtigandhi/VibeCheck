@@ -2,19 +2,19 @@ import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity,
         StyleSheet, Animated, FlatList, ScrollView } from 'react-native';
 
-import { COLORS, SHADOWS, FONT, SIZES } from "../../constants";
+import { COLORS, SHADOWS, FONT, textSIZES, viewSIZES } from "../../constants";
 
 const BacklogCard = ({navigation, item}) => {
   return (
     <View style={styles.cardContainer}>
       <TouchableOpacity
         onPress={() => {
-            navigation.navigate("EditItem", {item});
+            navigation.navigate("Item", {item});
           }}
           style={styles.titleContainer}
       >
         <View style={styles.row}>
-          <Text style={{ fontSize: SIZES.regular}}>{item.icon}</Text>
+          <Text style={{ fontSize: textSIZES.regular}}>{item.icon}</Text>
           <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
         </View>
       </TouchableOpacity>
@@ -24,35 +24,33 @@ const BacklogCard = ({navigation, item}) => {
 
 const styles = StyleSheet.create({
   cardContainer: {
-    margin: SIZES.xSmall,
+    margin: textSIZES.xSmall,
     backgroundColor: COLORS({opacity:1}).white,
-    borderRadius: SIZES.xSmall,
+    borderRadius: textSIZES.xSmall,
     ...SHADOWS.medium,
     shadowColor: COLORS({opacity:1}).shadow,
   },
   titleContainer: {
-    width: '100%',
-    padding: SIZES.medium,
-    borderColor: COLORS({opacity:0.5}).primary,
-    borderBottomWidth: 1,
-    borderBottomLeftRadius: SIZES.xLarge,
-    borderBottomRightRadius: SIZES.xLarge,
+    flex:1,
+    padding: textSIZES.small,
+    borderBottomLeftRadius: textSIZES.xLarge,
+    borderBottomRightRadius: textSIZES.xLarge,
   },
   sectionContainer: {
-    margin: SIZES.xSmall,
-    padding: SIZES.xSmall,
+    margin: textSIZES.xSmall,
+    padding: textSIZES.xSmall,
     backgroundColor: COLORS({opacity:0.5}).primary,
-    borderRadius: SIZES.small,
+    borderRadius: textSIZES.xSmall,
     ...SHADOWS.medium,
     shadowColor: COLORS({opacity:1}).shadow,
   },
   title: {
-    fontSize: SIZES.large,
+    fontSize: textSIZES.large,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).primary,
   },
   section: {
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).white,
   },
@@ -62,7 +60,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   icon: {
-    marginRight: SIZES.xxSmall,
+    marginRight: textSIZES.xxSmall,
     color: COLORS({opacity:0.8}).primary,
   },
 });

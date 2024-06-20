@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, View, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, 
     RefreshControl, ScrollView, Image, Modal } from "react-native";
-import { COLORS, SIZES, SHADOWS, FONT, ItemType, ViewType } from "../../constants";
+import { COLORS, textSIZES, SHADOWS, FONT, ItemType, ViewType, viewSIZES } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 
 import SingleSelectDropdown from "../../components/SingleSelectDropdown";
@@ -20,7 +20,7 @@ const ListView = ({items, navigation}) => (
                     <Text style={styles.timeLabel}>{daysOfWeek[new Date(item.startDate).getDay()]}</Text>
                 </View>
                 <View style={{ justifyContent: "center"}}>
-                    <Text style={{ fontSize: SIZES.xLarge}}>{item.icon}</Text>
+                    <Text style={{ fontSize: textSIZES.xLarge}}>{item.icon}</Text>
                 </View>
                 <View style={styles.dayCardContainer}>
                     <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
@@ -66,7 +66,7 @@ export default function ScheduleTemplate ({navigation, route, scrollEnabled = tr
                         <Ionicons name={"search-outline"} size={20} style={styles.iconInverted} />
                     </View>
                     <View style={styles.filterButtonIcon} >
-                        <Ionicons name={"funnel-outline"} size={20} style={styles.iconInverted}/>
+                        <Ionicons name={"options-outline"} size={20} style={styles.iconInverted}/>
                     </View>
                     <View style={[styles.row, styles.addButton]} >
                         <Ionicons name={"add-circle"} size={20} style={styles.iconInverted}/>
@@ -75,7 +75,7 @@ export default function ScheduleTemplate ({navigation, route, scrollEnabled = tr
             </View>
           
           <SingleSelectDropdown options={typeOptions} placeholder={type} setFn={changeTypeOption}
-            icon={<Ionicons name={"grid-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
+            icon={<Ionicons name={"grid-outline"} size={25} style={[styles.icon, {margin: textSIZES.xxSmall}]} />} />
         </View>
     </SafeAreaView>
     );
@@ -85,56 +85,56 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: "#FFF",
-    marginVertical: SIZES.xxLarge,
-    marginHorizontal: SIZES.small,
-    padding: SIZES.small,
+    marginVertical: textSIZES.xxLarge,
+    marginHorizontal: textSIZES.xSmall,
+    padding: textSIZES.xSmall,
     borderWidth: 1, 
     borderColor: COLORS({opacity:1}).primary,
-    borderRadius: SIZES.xxSmall,
+    borderRadius: textSIZES.xxSmall,
   },
   filterButtonIcon: {
-    height: SIZES.xxLarge,
-    width: SIZES.xxLarge,
-    marginRight: SIZES.small,
-    borderRadius: SIZES.xxSmall,
+    height: textSIZES.xxLarge,
+    width: textSIZES.xxLarge,
+    marginRight: textSIZES.xSmall,
+    borderRadius: textSIZES.xxSmall,
     backgroundColor: COLORS({opacity:0.7}).primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   addButton: {
-    height: SIZES.xxLarge,
-    borderRadius: SIZES.xxSmall,
-    //marginHorizontal: SIZES.medium,
+    height: textSIZES.xxLarge,
+    borderRadius: textSIZES.xxSmall,
+    //marginHorizontal: textSIZES.small,
     backgroundColor: COLORS({opacity:0.7}).primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   searchInput: {
-    marginRight: SIZES.small,
-    borderRadius: SIZES.small,
+    marginRight: textSIZES.xSmall,
+    borderRadius: textSIZES.xSmall,
     backgroundColor: COLORS({opacity:0.5}).secondary,
   },
   sectionContainer: {
-    margin: SIZES.xSmall,
-    padding: SIZES.xSmall,
+    margin: textSIZES.xSmall,
+    padding: textSIZES.xSmall,
     backgroundColor: COLORS({opacity:0.5}).primary,
-    borderRadius: SIZES.small,
+    borderRadius: textSIZES.xSmall,
     ...SHADOWS.medium,
     shadowColor: COLORS({opacity:1}).shadow,
   },
   title: {
-    fontSize: SIZES.large,
+    fontSize: textSIZES.large,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).primary,
   },
   section: {
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).white,
   },
   expandedContainer: {
-    paddingBottom: SIZES.medium,
-    paddingHorizontal: SIZES.medium,
+    paddingBottom: textSIZES.small,
+    paddingHorizontal: textSIZES.small,
     flex: 1,
     overflow: 'scroll',
   },
@@ -144,49 +144,49 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   icon: {
-    marginRight: SIZES.xxSmall,
+    marginRight: textSIZES.xxSmall,
     color: COLORS({opacity:0.8}).primary,
   },
   iconInverted: {
     color: COLORS({opacity:1}).white,
-    margin: SIZES.xxSmall,
+    margin: textSIZES.xxSmall,
   },
   propContainer: {
-    paddingHorizontal: SIZES.large,
-    padding: SIZES.medium,
+    paddingHorizontal: textSIZES.large,
+    padding: textSIZES.small,
     borderColor: COLORS({opacity:0.5}).primary,
     borderBottomWidth: 1,
-    borderRadius: SIZES.medium,
+    borderRadius: textSIZES.small,
     backgroundColor: "#FFF"
   },
   imageBox: {
     flexDirection: "row",
     justifyContent: "space-between",
-    margin: SIZES.Small,
+    margin: textSIZES.Small,
   },
   dayCardContainer: {
     flex: 1,
-    padding: SIZES.xxSmall,
-    marginLeft: SIZES.xSmall,
+    padding: textSIZES.xxSmall,
+    marginLeft: textSIZES.xSmall,
   },
   prop: {
     fontWeight: "200",
   },
   time: {
-    padding: SIZES.xSmall,
+    padding: textSIZES.xSmall,
     flexDirection: "column",
     justifyContent: "space-between",
     alignItems: "right",
   },
   timeLabel: {
     fontWeight: "200",
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
   },
   cardsContainer: {
-    marginTop: SIZES.medium,
-    marginHorizontal: SIZES.medium,
+    marginTop: textSIZES.small,
+    marginHorizontal: textSIZES.small,
     backgroundColor: COLORS({opacity:1}).lightWhite,// "#FFF",
-    borderRadius: SIZES.small,
+    borderRadius: textSIZES.xSmall,
     ...SHADOWS.xSmall,
     shadowColor: COLORS({opacity:1}).shadow,
   },

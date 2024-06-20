@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { EventType } from "expo-linking";
 import {Calendar, LocaleConfig} from 'react-native-calendars';
-import { COLORS, SIZES } from "../constants";
+import { COLORS, textSIZES, viewSIZES } from "../constants";
 import { Spacer } from "../utils";
 import { View, TouchableOpacity, StyleSheet, Text, TextInput } from 'react-native';
 
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
         // flexDirection: 'column',
         // height: 1024,
         // position: 'relative',
-        width: '70%',
-        height: '100%'
+        marginHorizontal: viewSIZES.small,
+        flex: 1,
     },
 });

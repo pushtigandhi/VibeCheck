@@ -4,7 +4,7 @@ import { SafeAreaView, View, FlatList, StyleSheet, Text, TextInput, TouchableOpa
 
 import HomeNavigation from "../HomeNavigation";
 import { GETitems, GETitemsTEST } from "../../API";
-import { COLORS, SIZES, SHADOWS, FONT, ItemType, ViewType } from "../../constants";
+import { COLORS, textSIZES, SHADOWS, FONT, ItemType, ViewType, viewSIZES } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { TabView, TabBar, ToolBar, SceneMap } from 'react-native-tab-view';
 
@@ -16,16 +16,16 @@ const Checklist = ({items}) => {
     return (
       <ScrollView style={styles.expandedContainer}>
         <View style={styles.addButtonIcon} >
-            <Ionicons name={"add-circle"} size={SIZES.large} style={styles.iconInverted} />
+            <Ionicons name={"add-circle"} size={textSIZES.large} style={styles.iconInverted} />
         </View>
         
         {(subtasks.map(item => (
           <View style={styles.cardsContainer} key={item["_id"]} >
             <View style={styles.row}>
               {item.isChecked ? (
-                <Ionicons name={"checkbox-outline"} size={SIZES.large} style={styles.icon}/> 
+                <Ionicons name={"checkbox-outline"} size={textSIZES.large} style={styles.icon}/> 
               ) : (
-                <Ionicons name={"square-outline"} size={SIZES.large} style={styles.icon}/>
+                <Ionicons name={"square-outline"} size={textSIZES.large} style={styles.icon}/>
               )}
               <Text style={styles.item} numberOfLines={1}>{item.title}</Text>
             </View>
@@ -104,7 +104,7 @@ export default function ChecklistTemplate ({navigation, route, scrollEnabled = t
                         <Ionicons name={"search-outline"} size={20} style={styles.iconInverted} />
                     </View>
                     {/* <View style={styles.filterButtonIcon}>
-                     <Ionicons name={"funnel-outline"} size={20} style={styles.iconInverted}/>
+                     <Ionicons name={"options-outline"} size={20} style={styles.iconInverted}/>
                     </View> */}
                 </View>
             </View>
@@ -130,56 +130,56 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: "#FFF",
-    marginVertical: SIZES.xxLarge,
-    marginHorizontal: SIZES.small,
-    padding: SIZES.small,
+    marginVertical: textSIZES.xxLarge,
+    marginHorizontal: textSIZES.xSmall,
+    padding: textSIZES.xSmall,
     borderWidth: 1, 
     borderColor: COLORS({opacity:1}).primary,
-    borderRadius: SIZES.xxSmall,
+    borderRadius: textSIZES.xxSmall,
   },
   filterButtonIcon: {
-    height: SIZES.xxLarge,
-    width: SIZES.xxLarge,
-    marginRight: SIZES.small,
-    borderRadius: SIZES.xxSmall,
+    height: textSIZES.xxLarge,
+    width: textSIZES.xxLarge,
+    marginRight: textSIZES.xSmall,
+    borderRadius: textSIZES.xxSmall,
     backgroundColor: COLORS({opacity:0.7}).primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   addButton: {
-    height: SIZES.xxLarge,
-    borderRadius: SIZES.xxSmall,
-    //marginHorizontal: SIZES.medium,
+    height: textSIZES.xxLarge,
+    borderRadius: textSIZES.xxSmall,
+    //marginHorizontal: textSIZES.small,
     backgroundColor: COLORS({opacity:0.7}).primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   searchInput: {
-    marginRight: SIZES.small,
-    borderRadius: SIZES.small,
+    marginRight: textSIZES.xSmall,
+    borderRadius: textSIZES.xSmall,
     backgroundColor: COLORS({opacity:0.5}).secondary,
   },
   sectionContainer: {
-    margin: SIZES.xSmall,
-    padding: SIZES.xSmall,
+    margin: textSIZES.xSmall,
+    padding: textSIZES.xSmall,
     backgroundColor: COLORS({opacity:0.5}).primary,
-    borderRadius: SIZES.small,
+    borderRadius: textSIZES.xSmall,
     ...SHADOWS.medium,
     shadowColor: COLORS({opacity:1}).shadow,
   },
   title: {
-    fontSize: SIZES.large,
+    fontSize: textSIZES.large,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).primary,
   },
   section: {
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).white,
   },
   expandedContainer: {
-    paddingBottom: SIZES.medium,
-    paddingHorizontal: SIZES.medium,
+    paddingBottom: textSIZES.small,
+    paddingHorizontal: textSIZES.small,
     flex: 1,
     overflow: 'scroll',
   },
@@ -189,56 +189,56 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   icon: {
-    marginRight: SIZES.xxSmall,
+    marginRight: textSIZES.xxSmall,
     color: COLORS({opacity:0.8}).primary,
   },
   iconInverted: {
     color: COLORS({opacity:1}).white,
-    margin: SIZES.xxSmall,
+    margin: textSIZES.xxSmall,
   },
   propContainer: {
-    paddingHorizontal: SIZES.large,
-    padding: SIZES.medium,
+    paddingHorizontal: textSIZES.large,
+    padding: textSIZES.small,
     borderColor: COLORS({opacity:0.5}).primary,
     borderBottomWidth: 1,
-    borderRadius: SIZES.medium,
+    borderRadius: textSIZES.small,
     backgroundColor: "#FFF"
   },
   imageBox: {
     flexDirection: "row",
     justifyContent: "space-between",
-    margin: SIZES.Small,
+    margin: textSIZES.Small,
   },
   dayCardContainer: {
     flex: 1,
-    padding: SIZES.xxSmall,
-    marginLeft: SIZES.xSmall,
+    padding: textSIZES.xxSmall,
+    marginLeft: textSIZES.xSmall,
   },
   prop: {
     fontWeight: "200",
   },
   time: {
-    padding: SIZES.xSmall,
+    padding: textSIZES.xSmall,
     flexDirection: "column",
     justifyContent: "space-between",
     alignItems: "right",
   },
   timeLabel: {
     fontWeight: "200",
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
   },
   cardsContainer: {
-    marginTop: SIZES.medium,
-    marginHorizontal: SIZES.medium,
+    marginTop: textSIZES.small,
+    marginHorizontal: textSIZES.small,
     backgroundColor: COLORS({opacity:1}).lightWhite,// "#FFF",
-    borderRadius: SIZES.small,
+    borderRadius: textSIZES.xSmall,
     shadowColor: COLORS({opacity:1}).shadow,
   },
   addButtonIcon: {
-    height: SIZES.xxLarge,
-    margin: SIZES.xSmall,
+    height: textSIZES.xxLarge,
+    margin: textSIZES.xSmall,
     backgroundColor: COLORS({opacity:0.5}).primary,
-    borderRadius: SIZES.small,
+    borderRadius: textSIZES.xSmall,
     ...SHADOWS.medium,
     shadowColor: COLORS({opacity:1}).shadow,
     alignItems: "center",

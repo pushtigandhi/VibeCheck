@@ -1,90 +1,38 @@
 import { Ionicons } from "@expo/vector-icons";
-import { ScrollView, Text, View, StyleSheet, TouchableOpacity, TextInput, Image, KeyboardAvoidingView } from 'react-native';
+import { ScrollView, Text, View, StyleSheet, TouchableOpacity, TextInput, Image, KeyboardAvoidingView, Alert } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { COLORS, FONT, SIZES, SHADOWS, ItemType } from "../constants";
+import { COLORS, FONT, textSIZES, SHADOWS, ItemType, viewSIZES } from "../constants";
 import React, { useEffect, useState } from "react";
-import Slider from '@react-native-community/slider';
-import SwitchSelector from "react-native-switch-selector";
-import SingleSelectDropdown from "../components/SingleSelectDropdown";
 import { PropertyCard } from "../screens/cards/PropertyCards";
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { Picker } from '@react-native-picker/picker';
-import { Spacer } from "../utils";
-import { SafeAreaView } from "react-native-safe-area-context";
-import CollaboratorCard from "./cards/items/CollaboratorCard";
-import TaskCard from "./cards/items/TaskCard";
-import RecipeCard from "./cards/items/RecipeCard";
+import CollaboratorCard from "./cards/CollaboratorCard";
+import TaskCard from "./cards/TaskCard";
+import RecipeCard from "./cards/RecipeCard";
 import * as ImagePicker from 'expo-image-picker';
+import { Scheduler } from "../components/Scheduler";
+import { PATCHitemTEST, DELETEitemTEST } from "../API";
 
 const defaultImage = require("../assets/icon.png");
 
-export default function CreateNewItem({ item = null, onClose }) {
-    const [itemType, setItemType] = useState('');
-    
+export default function CreateNewItem({ item = null, onClose, isScheduler=false }) {
     const [title, setTitle] = useState("Untitled");
     const [description, setDescription] = useState(null);
     const [favicon, setFavicon] = useState(null);
     const [icon, setIcon] = useState('');
     const [notes, setNotes] = useState(null);
-    const [category, setCategory] = useState('');
-    const [section, setSection] = useState('');
-    const [serving, setServing] = useState(null);
-    const [priority, setPriority] = useState("x");
     const [location, setLocation] = useState('');
-
-    const [tags, setTags] = useState([]);
   
     const [showDesc, setShowDesc] = useState(false);
     const [showLocation, setShowLocation] = useState(false);
-    const [showScheduler, setShowScheduler] = useState(false);
     const [showNotes, setShowNotes] = useState(false);
+    const [showScheduler, setShowScheduler] = useState(isScheduler);
     
     const [updatedItem, setUpdatedItem] = useState({});
   
     const [isExpanded, setIsExpanded] = useState(true);
 
+    const [isNew, setIsNew] = useState(true);
+
     const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
-
-    const [refreshing, setRefreshing] = useState(false);
-    
-    const [updatedFilter, setUpdatedFilter] = useState({});
-
-    // useEffect(() => {
-    //     const indexOfTypeOption = Object.values(typeOptions).indexOf("itemType");
-    //     setTypeOptions(Object.keys(typeOptions)[indexOfTypeOption]);
-    // }, []); // run only once
-
-    // function changeTypeOption(optionValue) {
-    //     setTypeOptions(optionValue);
-    // }
-
-    // function updateFilter(params) {
-    //     if(params.category) {
-    //         setUpdatedFilter({... updatedFilter, category: params.category});
-    //     }
-    //     if(params.section) {
-    //         setUpdatedFilter({... updatedFilter, section: params.section});
-    //     }
-    //     if(params.servings) {
-    //         setUpdatedFilter({... updatedFilter, servings: params.servings});
-    //     }
-    //     if(params.location) {
-    //         setUpdatedFilter({... updatedFilter, location: params.location});
-    //     }
-    // }
-
-    // useEffect(() => {
-    //     if(filter.priority) {
-    //         setPriority(filter.priority);
-    //     }
-    //     if(filter.servings) {
-    //         setServing(filter.servings);
-    //     }
-    // }, []);
-
-    // useEffect(() => {
-    //     setUpdatedFilter({... updatedFilter, "itemType": itemType});
-    // }, [itemType]);
 
     const pickImage = async () => {
         let pickerResult = await ImagePicker.launchImageLibraryAsync({
@@ -105,50 +53,44 @@ export default function CreateNewItem({ item = null, onClose }) {
 
     function updateNewItem(params) {
         if(params.category) {
-          setCategory(params.category);
+          setUpdatedItem({... updatedItem, category: params.category});
         }
         if(params.section) {
-          setSection(params.section);
+            setUpdatedItem({... updatedItem, section: params.section});
         }
-        // if(params.duration) {
-        //   if(params.duration == 'x')
-        //   {
-        //     const updated = updatedItem;
-        //     delete updated.duration;
-        //     setUpdatedItem(updated);
-            
-        //   }
-        //   else {
-        //     setUpdatedItem({... updatedItem, priority: params.duration});
-        //   }
-        // }
+        if(params.notes) {
+            if(params.notes == 'x')
+            {
+              const updated = updatedItem;
+              delete updated.notes;
+              setUpdatedItem(updated);
+            }
+            else {
+              setUpdatedItem({... updatedItem, notes: notes});
+            }
+          }
+        if(params.duration) {
+          if(params.duration == 'x')
+          {
+            const updated = updatedItem;
+            delete updated.duration;
+            setUpdatedItem(updated);
+          }
+          else {
+            setUpdatedItem({... updatedItem, duration: params.duration});
+          }
+        }
         if(params.priority) {
           if(params.priority == 'x')
           {
             const updated = updatedItem;
             delete updated.priority;
             setUpdatedItem(updated);
-            
           }
           else {
             setUpdatedItem({... updatedItem, priority: params.priority});
           }
         }
-        // if(params.repeat) {
-        //   if(params.repeat == 'x')
-        //   {
-        //     const updated = updatedItem;
-        //     delete updated.repeat;
-        //     setUpdatedItem(updated);
-            
-        //   }
-        //   else {
-        //     setUpdatedItem({... updatedItem, repeat: params.repeat});
-        //   }
-        // }
-        // if(params.tags) {
-        //   setUpdatedItem({... updatedItem, "tags": params.tags});
-        // }
         if(params.subtasks) {
           setUpdatedItem({... updatedItem, subtasks: params.subtasks});
         }
@@ -164,43 +106,65 @@ export default function CreateNewItem({ item = null, onClose }) {
             const updated = updatedItem;
             delete updated.servings;
             setUpdatedItem(updated);
-            
           }
           else {
             setUpdatedItem({... updatedItem, servings: params.servings});
           }
         }
+        if (params.startDate) {
+            setUpdatedItem({... updatedItem, startDate: params.startDate});
+        }
+        if (params.endDate) {
+            setUpdatedItem({... updatedItem, endDate: params.endDate});
+        }
+        if(params.repeat) {
+            setUpdatedItem({... updatedItem, repeat: params.repeat});
+        }
     }
-
-    function onSave() {
-        let item = {
-          title: title,
-          category: category,
-          section: section,
-          icon: icon,
-        };
     
-        if (description) {
-          item.description = description;
-        } if (favicon) {
-          item.favicon = favicon;
-        } if (notes) {
-          item.notes = notes;
-        } if (location) {
-          item.location = location;
-        } if (updatedItem.repeat) {
-          item.repeat = updatedItem.repeat;
-        } if (updatedItem.priority) {
-          item.priority = updatedItem.priority;
-        } if (updatedItem.ingredients) {
-          item.ingredients = updatedItem.ingredients;
-        } if (updatedItem.instructions) {
-          item.instructions = updatedItem.instructions;
-        } if (updatedItem.servings) {
-          item.servings = updatedItem.servings;
-        } 
+    function onSave() {
+        if(isNew){
+            console.log("New: " + updatedItem);
 
-        console.log(item);
+        } else {
+            console.log("Edit: " + updatedItem);
+
+            PATCHitemTEST(item.itemType, {
+                ...updatedItem
+            }, item._id)
+            .then((item_) => {
+                //alert("Success!");
+            }).catch((error) => {
+                console.log(error);
+            });
+        }
+    };
+
+    function onDelete() {
+        DELETEitemTEST(item.itemType, item._id)
+        .then((item_) => {
+            //alert("Success!");
+        }).catch((error) => {
+            console.log(error);
+        });
+    };
+
+    const ConfirmCancelPrompt = () => {
+        Alert.alert(
+        "Confirm Action",
+        "Are you sure you want to proceed?",
+        [
+            {
+            text: "Cancel",
+            style: "cancel"
+            },
+            {
+            text: "OK",
+            onPress: () => onDelete()
+            }
+        ],
+        { cancelable: false }
+        );
     };
 
     useEffect(() => {
@@ -215,24 +179,28 @@ export default function CreateNewItem({ item = null, onClose }) {
         })
     
         if (item) {
-            setItemType(item.itemType);
-          setCategory(item.category);
-          setSection(item.section);
+            console.log(item.itemType);
+            if(item.ItemType)
+                setItemType(item.itemType);
           setIcon(item.icon.toString());
-          console.log("item: " +item.itemType + " " + item.category  + " " +item.section);
+          console.log("item: " + item.itemType + " " + item.category  + " " +item.section);
           if (item["_id"]) {
-            setIsExpanded(false);
+            setIsNew(false);
             setTitle(item.title);
             if (item.description) {
               setDescription(item.description);
+              setShowDesc(true);
             } if (item.favicon) {
               setFavicon(item.favicon);
             } if (item.notes) {
               setNotes(item.notes);
+              setShowNotes(true);
             } if (item.location) {
               setLocation(item.location);
+              setShowLocation(true);
             }
           }
+          setUpdatedItem({... item});
         }
     }, [item]); // Update category and section when item changes
    
@@ -240,7 +208,7 @@ export default function CreateNewItem({ item = null, onClose }) {
         <ScrollView style={styles.container} scrollEnabled={true}>
             <View style={styles.imageBox}>
                 <TouchableOpacity onPress={() => (onClose())} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightRed}]} > 
-                    <Ionicons name={"close-outline"} size={SIZES.xxLarge} style={styles.iconInverse}/> 
+                    <Ionicons name={"close-outline"} size={textSIZES.xxLarge} style={styles.iconInverse}/> 
                 </TouchableOpacity>
                 <TouchableOpacity style={{alignContent: "center"}}
                     onPress={(newFavicon) => (
@@ -254,13 +222,13 @@ export default function CreateNewItem({ item = null, onClose }) {
                     />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => (onSave())} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightGreen}]} >
-                    <Ionicons name={"checkmark-outline"} size={SIZES.xxLarge} style={styles.iconInverse}/> 
+                    <Ionicons name={"checkmark-outline"} size={textSIZES.xxLarge} style={styles.iconInverse}/> 
                 </TouchableOpacity>
             </View>
 
             <View style={[styles.row, styles.title]}>
-                <Text style={{fontSize: SIZES.xLarge, marginRight: SIZES.xxSmall}}>{icon}</Text>
-                <TextInput style={{width: "100%", fontSize: SIZES.xLarge, color: COLORS({opacity:0.9}).primary}} defaultValue={ title } 
+                <Text style={{fontSize: textSIZES.xLarge, marginRight: textSIZES.xxSmall}}>{icon}</Text>
+                <TextInput style={{width: "100%", fontSize: textSIZES.xLarge, color: COLORS({opacity:0.9}).primary}} defaultValue={ title } 
                     onChangeText={(newTitle) => (setTitle(newTitle))}
                 />
             </View>
@@ -269,15 +237,15 @@ export default function CreateNewItem({ item = null, onClose }) {
 
             {showDesc == false && (
                 <TouchableOpacity style={[styles.row, styles.label]} onPress={()=>(setShowDesc(true))}>
-                    <Ionicons name={"menu-outline"} size={SIZES.xLarge} style={styles.icon}/>
+                    <Ionicons name={"menu-outline"} size={textSIZES.xLarge} style={styles.icon}/>
                     <Text style={styles.property}>Add Description</Text>
                 </TouchableOpacity>
             )}
             {showDesc == true && (
                 <>
                     <View style={[styles.row, styles.description]}>
-                        <Ionicons name={"menu-outline"} size={SIZES.xLarge} style={[styles.icon, {marginRight: SIZES.xxSmall}]}/>
-                        <TextInput style={{width: "100%", fontSize: SIZES.medium, color: COLORS({opacity:0.9}).primary}}
+                        <Ionicons name={"menu-outline"} size={textSIZES.xLarge} style={[styles.icon, {marginRight: textSIZES.xxSmall}]}/>
+                        <TextInput style={{width: "100%", fontSize: textSIZES.small, color: COLORS({opacity:0.9}).primary}}
                             {...(description ? { defaultValue: description } : { placeholder: "Enter a description..." })} 
                             onChangeText={(newDescription) => (
                                 setDescription(newDescription)
@@ -288,20 +256,20 @@ export default function CreateNewItem({ item = null, onClose }) {
                     <TouchableOpacity style={[styles.row, styles.removeButton]}
                         onPress={() => (setDescription(null), setShowDesc(false))}
                     >
-                        <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
-                        <Text style={{color: COLORS({opacity:1}).white}}>Remove</Text>
+                        <Ionicons name={"close-outline"} size={20} style={styles.icon} />
+                        <Text style={styles.unselectedText}>Remove</Text>
                     </TouchableOpacity>
                 </>
             )}
 
             <View style={styles.divider}/>
 
-            {itemType == ItemType.Event && (
+            {item.itemType == ItemType.Event && (
             <>
                 {showLocation == false && (
                     <>
                     <TouchableOpacity style={[styles.row, styles.label]} onPress={()=>(setShowLocation(true))}>
-                        <Ionicons name={"location-outline"} size={SIZES.xLarge} style={styles.icon}/>
+                        <Ionicons name={"location-outline"} size={textSIZES.xLarge} style={styles.icon}/>
                         <Text style={styles.property}>Add Location</Text>
                     </TouchableOpacity>
 
@@ -311,17 +279,17 @@ export default function CreateNewItem({ item = null, onClose }) {
                 {showLocation == true && (
                     <>
                     <View style={[styles.row, styles.description]}>
-                        <Ionicons name={"location-outline"} size={SIZES.xLarge} style={[styles.icon, {marginRight: SIZES.xxSmall}]}/>
+                        <Ionicons name={"location-outline"} size={textSIZES.xLarge} style={[styles.icon, {marginRight: textSIZES.xxSmall}]}/>
                         <TextInput style={styles.location} 
                         {...(location ? { defaultValue: location.toString() } : { placeholder: "Location" })} 
                         onChangeText={(newLocation) => (setLocation(newLocation))}
                         />
                     </View>
-                    <TouchableOpacity style={[styles.row, styles.removeButton, {marginTop: SIZES.xxSmall}]}
+                    <TouchableOpacity style={[styles.row, styles.removeButton, {marginTop: textSIZES.xxSmall}]}
                         onPress={() => (setShowLocation(false))}
                     >
-                        <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
-                        <Text style={{color: COLORS({opacity:1}).white}}>Remove</Text>
+                        <Ionicons name={"close-outline"} size={20} style={styles.icon} />
+                        <Text style={styles.unselectedText}>Remove</Text>
                     </TouchableOpacity>
                     
                     <View style={styles.divider}/>
@@ -332,62 +300,66 @@ export default function CreateNewItem({ item = null, onClose }) {
 
             <TouchableOpacity style={[styles.row, styles.label, {justifyContent: "space-between"}]}
               onPress={() => {
-                  setIsExpanded(!isExpanded);
-                }}
+                setIsExpanded(!isExpanded);
+              }}
             >
                 <View style={styles.row}>
-                    <Ionicons name={"information-circle-outline"} size={SIZES.xLarge} style={styles.icon}/> 
+                    <Ionicons name={"information-circle-outline"} size={textSIZES.xLarge} style={styles.icon}/> 
                     <Text style={styles.property} numberOfLines={1}>Properties</Text>
                 </View>
                 <View>
                     {isExpanded ? (
-                        <Ionicons name="chevron-up-outline" size={SIZES.xLarge} style={styles.icon}/>
+                        <Ionicons name="chevron-up-outline" size={textSIZES.xLarge} style={styles.icon}/>
                     ) : (
-                        <Ionicons name="chevron-down-outline" size={SIZES.xLarge} style={styles.icon}/>
+                        <Ionicons name="chevron-down-outline" size={textSIZES.xLarge} style={styles.icon}/>
                     )}
                 </View>
             </TouchableOpacity>
             {isExpanded && (
                 <>
                     <View style={styles.divider}/>
-                    <PropertyCard itemType={itemType} item={item} setFn={updateNewItem}/>
+                    <PropertyCard itemType={item.itemType} item={updatedItem} setFn={updateNewItem} isScheduler={isScheduler} />
+                    {showScheduler && (
+                        <View style={styles.infoContainer}>
+                          <Scheduler item={item} setFn={updateNewItem} />
+                        </View>
+                    )}
                 </>
             )}
 
             <View style={styles.divider}/>
 
-            {itemType === ItemType.Event && (
+            {item.itemType === ItemType.Event && (
                 <>
                     <CollaboratorCard item={item} setFn={updateNewItem} />
                     <View style={styles.divider}/>
                 </>
             )}
 
-            {(itemType === ItemType.Task || itemType === ItemType.Event) && (
+            {(item.itemType === ItemType.Task || item.itemType === ItemType.Event) && (
                 <>
                     <TaskCard item={item} setFn={updateNewItem} />
                     <View style={styles.divider}/>
                 </>
             )}
 
-            {itemType === ItemType.Recipe && (
+            {item.itemType === ItemType.Recipe && (
                 <>
                     <RecipeCard item={item} setFn={updateNewItem} />
                     <View style={styles.divider}/>
                 </>
             )}
 
-
-            {(showNotes == false && itemType !== ItemType.Page) && (
+            {(showNotes == false && item.itemType !== ItemType.Page) && (
                 <>
                 <TouchableOpacity style={[styles.row, styles.label]} onPress={()=>(setShowNotes(true))}>
-                    <Ionicons name={"document-outline"} size={SIZES.xLarge} style={styles.icon}/>
+                    <Ionicons name={"document-outline"} size={textSIZES.xLarge} style={styles.icon}/>
                     <Text style={styles.property}>Add Notes</Text>
                 </TouchableOpacity>
                 <View style={styles.divider}/>
                 </>
             )}
-            {(showNotes == true || itemType === ItemType.Page) && (
+            {(showNotes == true || item.itemType === ItemType.Page) && (
                 <KeyboardAvoidingView behavior="padding" >
                 <GestureHandlerRootView>
                 <TextInput style={styles.notes} 
@@ -395,16 +367,22 @@ export default function CreateNewItem({ item = null, onClose }) {
                     {...(notes ? { defaultValue: notes } : { placeholder: "Notes" })} 
                     onChangeText={(newNotes) => setNotes(newNotes)}
                 />
-                {itemType !== ItemType.Page && (
+                {item.itemType !== ItemType.Page && (
                     <TouchableOpacity style={[styles.row, styles.removeButton]}
                         onPress={() => (setNotes(null), setShowNotes(false))}
                     >
-                        <Ionicons name={"close-outline"} size={20} style={styles.iconInverse} />
-                        <Text style={{color: COLORS({opacity:1}).white}}>Remove</Text>
+                        <Ionicons name={"close-outline"} size={20} style={styles.icon} />
+                        <Text style={styles.unselectedText}>Remove</Text>
                     </TouchableOpacity>
                 )}
                 </GestureHandlerRootView>
                 </KeyboardAvoidingView>
+            )}
+
+            {!isNew && (
+                <TouchableOpacity onPress={() => ConfirmCancelPrompt()} style={[styles.removeButton, {backgroundColor: COLORS({opacity:1}).lightRed, margin: textSIZES.xSmall}]}>
+                    <Text style={styles.iconInverse}>Delete</Text>
+                </TouchableOpacity>
             )}
         </ScrollView>
     );
@@ -423,45 +401,45 @@ const styles = StyleSheet.create({
     },
     header: {
         display: "flex",
-        marginTop: SIZES.small,
-        paddingTop: SIZES.xxLarge,
-        paddingHorizontal: SIZES.xSmall,
+        marginTop: textSIZES.xSmall,
+        paddingTop: textSIZES.xxLarge,
+        paddingHorizontal: textSIZES.xSmall,
         justifyContent: "space-between",
     },
     headerText: {
-        fontSize: SIZES.large,
+        fontSize: textSIZES.large,
         alignSelf: "center",
         color: COLORS({opacity:1}).white,
     },
     sortText: {
         fontSize: 20,
         fontWeight: "bold",
-        marginTop: SIZES.medium,
-        marginHorizontal: SIZES.medium,
+        marginTop: textSIZES.small,
+        marginHorizontal: textSIZES.small,
         color: "black",
     },
     button: {
-        height: SIZES.xxLarge * 2,
-        width: SIZES.xxLarge * 2,
-        padding: SIZES.xSmall,
-        marginHorizontal: SIZES.xSmall,
+        height: viewSIZES.xSmall,
+        width: viewSIZES.xSmall,
+        padding: textSIZES.xSmall,
+        marginHorizontal: textSIZES.xSmall,
         alignItems: "center",
         justifyContent: "center",
-        borderRadius: SIZES.medium
+        borderRadius: textSIZES.small
     },
     searchButton: {
         // marginRight: 90,
         // marginLeft: 90,
         marginHorizontal: 50,
-        marginTop: SIZES.xSmall,
+        marginTop: textSIZES.xSmall,
         marginBottom: 25,
-        paddingTop: SIZES.xSmall,
-        paddingBottom: SIZES.xSmall,
+        paddingTop: textSIZES.xSmall,
+        paddingBottom: textSIZES.xSmall,
         backgroundColor: COLORS({opacity: 1}).secondary,
-        borderRadius: SIZES.small,
+        borderRadius: textSIZES.xSmall,
     },
     searchButtonText: {
-        fontSize: SIZES.large,
+        fontSize: textSIZES.large,
         alignSelf: "center",
         color: COLORS({opacity:1}).lightWhite,
     },
@@ -484,29 +462,28 @@ const styles = StyleSheet.create({
     textInput: {
         borderColor: COLORS({opacity:1}).primary,
         backgroundColor: "white",
-        borderRadius: SIZES.xSmall,
+        borderRadius: textSIZES.xSmall,
         borderWidth: 2,
         padding: 15,
-        borderRadius: SIZES.xSmall,
+        borderRadius: textSIZES.xSmall,
         width: 260
     },
-    
     icon: {
-        //margin: SIZES.xxSmall,
-        color: COLORS({opacity:0.8}).primary,
+        //margin: textSIZES.xxSmall,
+        color: COLORS({opacity:1}).secondary,
     },
     iconInverse: {
-        //margin: SIZES.xxSmall,
+        //margin: textSIZES.xxSmall,
         color: COLORS({opacity:1}).lightWhite,
     },
     box: {
         borderWidth: 0.5,
         borderColor: COLORS({opacity:1}).primary,
-        borderRadius: SIZES.xxSmall,
-        padding: SIZES.small, 
+        borderRadius: textSIZES.xxSmall,
+        padding: textSIZES.xSmall, 
         alignItems: 'center',
         justifyContent: 'center',
-        marginRight: SIZES.xxSmall,
+        marginRight: textSIZES.xxSmall,
     },
     selectedBox: {
         backgroundColor: COLORS({opacity:1}).secondary,
@@ -521,22 +498,22 @@ const styles = StyleSheet.create({
      color: COLORS({opacity:1}).secondary,
     },
     section: {
-        fontSize: SIZES.medium,
+        fontSize: textSIZES.small,
         fontFamily: FONT.regular,
         color: COLORS({opacity:1}).primary,
     },
     removeButton: {
-        backgroundColor: COLORS({opacity:1}).lightRed, 
-        padding: SIZES.small, 
-        borderRadius: SIZES.xxSmall,
-        marginHorizontal: SIZES.medium,
+        backgroundColor: COLORS({opacity:0.3}).lightGrey, 
+        padding: textSIZES.xSmall, 
+        borderRadius: textSIZES.xxSmall,
+        marginHorizontal: textSIZES.small,
         alignItems: 'center',
     },
     duration: {
         backgroundColor: COLORS({opacity:0.5}).lightGrey,
-        padding: SIZES.xSmall,
-        borderRadius: SIZES.xSmall,
-        marginLeft: SIZES.xSmall,
+        padding: textSIZES.xSmall,
+        borderRadius: textSIZES.xSmall,
+        marginLeft: textSIZES.xSmall,
     },
     picker: {
         width: 100,
@@ -545,55 +522,63 @@ const styles = StyleSheet.create({
     imageBox: {
         flexDirection: "row",
         justifyContent: "space-between",
-        margin: SIZES.Small,
+        margin: textSIZES.Small,
     },
     border: {
         borderWidth: 1,
         borderColor: COLORS({opacity:1}).navy,
-        borderRadius: SIZES.medium
+        borderRadius: textSIZES.small
     },
     title:{
-        padding: SIZES.medium,
-        margin: SIZES.medium,
+        padding: textSIZES.small,
+        margin: textSIZES.small,
         marginBottom: 0,
         borderWidth: 1,
         borderColor: COLORS({opacity:0.5}).primary,
-        borderRadius: SIZES.medium,
+        borderRadius: textSIZES.small,
     },
     description:{
-        padding: SIZES.medium,
-        margin: SIZES.medium,
+        padding: textSIZES.small,
+        margin: textSIZES.small,
         marginTop: 0,
-        marginBottom: SIZES.xSmall,
+        marginBottom: textSIZES.xSmall,
         borderWidth: 1,
         borderColor: COLORS({opacity:0.5}).primary,
-        borderRadius: SIZES.medium,
+        borderRadius: textSIZES.small,
     },
     notes:{
-        fontSize: SIZES.medium,
+        fontSize: textSIZES.small,
         minHeight: 200,
         color: COLORS({opacity:0.9}).primary,
-        padding: SIZES.medium,
-        margin: SIZES.medium,
+        padding: textSIZES.small,
+        margin: textSIZES.small,
         marginTop: 0,
         borderWidth: 1,
         borderColor: COLORS({opacity:0.5}).primary,
-        borderRadius: SIZES.medium,
+        borderRadius: textSIZES.small,
     },
     divider: {
-        paddingHorizontal: SIZES.medium,
-        paddingBottom: SIZES.xSmall,
+        paddingHorizontal: textSIZES.small,
+        paddingBottom: textSIZES.xSmall,
         borderBottomWidth: 1,
         borderColor: COLORS({opacity:0.7}).primary,
-        marginBottom: SIZES.xSmall,
-        marginHorizontal: SIZES.xLarge,
+        marginBottom: textSIZES.xSmall,
+        marginHorizontal: textSIZES.xLarge,
     },
     label:{
-        paddingVertical: SIZES.xxSmall,
-        marginHorizontal: SIZES.xLarge,
+        paddingVertical: textSIZES.xxSmall,
+        marginHorizontal: textSIZES.xLarge,
     },
     property:{
-        fontSize: SIZES.medium,
+        fontSize: textSIZES.small,
         color: COLORS({opacity:1}).primary,
+    },
+    infoContainer: {
+        marginHorizontal: textSIZES.small,
+        marginVertical: textSIZES.xSmall,
+        backgroundColor: COLORS({opacity:1}).lightWhite,
+        borderRadius: textSIZES.small/2,
+        ...SHADOWS.medium,
+        shadowColor: COLORS({opacity:1}).shadow,
     },
 });

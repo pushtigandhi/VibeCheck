@@ -3,7 +3,7 @@ import { ToolBar } from "../../components/Toolbar";
 //import { CalendarDaySmall } from "../../components/CalendarDaySmall";
 import { Spacer } from "../../utils/index";
 import {Calendar, LocaleConfig} from 'react-native-calendars';
-import { SIZES, COLORS, FONT, SHADOWS } from "../../constants";
+import { textSIZES, viewSIZES, COLORS, FONT, SHADOWS } from "../../constants";
 import { GETitems, GETweekTEST } from "../../API";
 import { ItemType } from "../../constants";
 
@@ -29,11 +29,11 @@ export const WeeklyCalendar = ({navigation, date, filter, refreshing, itemList})
   }
 
   useEffect(() => {
-    // getItemsFromAPI(filter).then((items_) => {
-    //   setItems(items_);
-    // }).catch((err) => {
-    //   alert(err.message)
-    // })
+    getItemsFromAPI(filter).then((items_) => {
+      setItems(items_);
+    }).catch((err) => {
+      alert(err.message)
+    })
     setItems(itemList);
     console.log("week: " +itemList);
 
@@ -51,7 +51,7 @@ export const WeeklyCalendar = ({navigation, date, filter, refreshing, itemList})
       <Text style={styles.title}>{item.title}</Text>
       <View style={styles.row}>
         <View style={{ justifyContent: "center"}}>
-          <Text style={{ fontSize: SIZES.small}}>{item.icon}</Text>
+          <Text style={{ fontSize: textSIZES.xSmall}}>{item.icon}</Text>
         </View>
         <Text style={styles.timeLabel}>{String(new Date(item.startDate).getHours())}:{new Date(item.startDate).getMinutes() < 10 ? String("0"+ new Date(item.startDate).getMinutes()) : String(new Date(item.startDate).getMinutes())}</Text>
         <Text style={styles.timeLabel}>-</Text>
@@ -82,15 +82,14 @@ export const WeeklyCalendar = ({navigation, date, filter, refreshing, itemList})
 
 const styles = StyleSheet.create({
   cardsContainer: {
-    //marginBottom: SIZES.medium,
-    backgroundColor: COLORS({opacity:1}).lightWhite,// "#FFF",
-    borderRadius: SIZES.xSmall,
-    ...SHADOWS.xSmall,
-    shadowColor: COLORS({opacity:1}).shadow,
-    width: 100, //slotWidth - SIZES.xSmall,
-    height: slotHeight - SIZES.xSmall, 
-    padding: SIZES.tiny,
-    marginHorizontal: SIZES.tiny,
+    borderColor: COLORS({opacity:1}).lightGrey,
+    backgroundColor: COLORS({opacity:0.1}).lightGrey,
+    borderWidth: 0.51,
+    borderRadius: textSIZES.xxSmall,
+    width: 100, //slotWidth - textSIZES.xSmall,
+    height: slotHeight - textSIZES.xSmall, 
+    padding: textSIZES.tiny,
+    marginHorizontal: textSIZES.xxSmall,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -107,15 +106,15 @@ const styles = StyleSheet.create({
   },
   label: {
     //paddingLeft: 10,
-    width: SIZES.xLarge, //slotWidth,
+    width: textSIZES.xLarge, //slotWidth,
     height: slotHeight,
     alignItems: "center",
     justifyContent: "center",
     //borderLeftWidth: 0.5,
     borderRightWidth: 0.5,
     borderColor: COLORS({opacity:1}).lightGrey,
-    //marginHorizontal: SIZES.xSmall,
-    //padding: SIZES.xxSmall,
+    //marginHorizontal: textSIZES.xSmall,
+    //padding: textSIZES.xxSmall,
   },
   span: {
     fontWeight: 'bold',
@@ -123,16 +122,16 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: "200",
-    marginBottom: SIZES.xxSmall,
-    fontSize: SIZES.small,
+    marginBottom: textSIZES.xxSmall,
+    fontSize: textSIZES.xSmall,
   },
   time: {
-    padding: SIZES.xSmall,
+    padding: textSIZES.xSmall,
     flexDirection: "column",
     alignItems: "right",
   },
   timeLabel: {
     fontWeight: "200",
-    fontSize: SIZES.small,
+    fontSize: textSIZES.xSmall,
   }
 });

@@ -1,17 +1,12 @@
 import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image, Modal,
         StyleSheet, Animated, FlatList, SafeAreaView } from 'react-native';
-
-import { COLORS, SHADOWS, FONT, SIZES } from "../constants";
-import Layout from "../_layout";
+import { COLORS, SHADOWS, FONT, textSIZES, viewSIZES } from "../constants";
 import { Ionicons } from "@expo/vector-icons";
-import { PropertyCard } from "./cards/PropertyCards";
-import HomeNavigation from "./HomeNavigation";
-import ItemCard from "./ItemCard";
 import * as df  from "../constants/default";
 import CreateNewItem from "./CreateNewItem";
 
-export default function NewItem({navigation}) {
+export default function NewItem({navigation, onBack=null, isScheduler=false}) {
 
   const [item, setItem] = useState({});
   const [showCreateNew, setShowCreateNew] = useState(false);
@@ -21,14 +16,17 @@ export default function NewItem({navigation}) {
   }
 
   function goHome() {
-    navigation.navigate('Home', { refresh: Math.random() });
+    if(onBack)
+      onBack();
+    else
+      navigation.goBack();
   }
 
   return (
     <SafeAreaView style={styles.infoContainer}>
       <View style={styles.row}>
         <TouchableOpacity onPress={() => (goHome())} style={[styles.button]} > 
-          <Ionicons name={"arrow-back-outline"} size={SIZES.large} style={styles.icon}/> 
+          <Ionicons name={"arrow-back-outline"} size={textSIZES.large} style={styles.icon}/> 
         </TouchableOpacity>
         <Text style={[styles.label]}>Select Item Type</Text>
       </View>
@@ -42,7 +40,7 @@ export default function NewItem({navigation}) {
       >
       <View style={styles.row}>
           <Text style={styles.label}>{df.ItemType.Item}</Text>
-          <Text style={{fontSize: SIZES.xLarge}}>{df.defaultItem.icon}</Text>
+          <Text style={{fontSize: textSIZES.xLarge}}>{df.defaultItem.icon}</Text>
       </View>
       </TouchableOpacity>
 
@@ -55,7 +53,7 @@ export default function NewItem({navigation}) {
       >
       <View style={styles.row}>
           <Text style={styles.label}>{df.ItemType.Task}</Text>
-          <Text style={{fontSize: SIZES.xLarge}}>{df.defaultTask.icon}</Text>
+          <Text style={{fontSize: textSIZES.xLarge}}>{df.defaultTask.icon}</Text>
       </View>
       </TouchableOpacity>
 
@@ -68,7 +66,7 @@ export default function NewItem({navigation}) {
       >
       <View style={styles.row}>
           <Text style={styles.label}>{df.ItemType.Event}</Text>
-          <Text style={{fontSize: SIZES.xLarge}}>{df.defaultEvent.icon}</Text>
+          <Text style={{fontSize: textSIZES.xLarge}}>{df.defaultEvent.icon}</Text>
       </View>
       </TouchableOpacity>
 
@@ -81,7 +79,7 @@ export default function NewItem({navigation}) {
       >
           <View style={styles.row}>
           <Text style={styles.label}>{df.ItemType.Page}</Text>
-          <Text style={{fontSize: SIZES.xLarge}}>{df.defaultPage.icon}</Text>
+          <Text style={{fontSize: textSIZES.xLarge}}>{df.defaultPage.icon}</Text>
           </View>
       </TouchableOpacity>
 
@@ -94,12 +92,12 @@ export default function NewItem({navigation}) {
       >
           <View style={styles.row}>
           <Text style={styles.label}>{df.ItemType.Recipe}</Text>
-          <Text style={{fontSize: SIZES.xLarge}}>{df.defaultRecipe.icon}</Text>
+          <Text style={{fontSize: textSIZES.xLarge}}>{df.defaultRecipe.icon}</Text>
           </View>
       </TouchableOpacity>
 
       <Modal visible={showCreateNew} animationType="slide" onRequestClose={closeCreateNew}>
-        <CreateNewItem item={item} onClose={closeCreateNew} />
+        <CreateNewItem item={item} onClose={closeCreateNew} isScheduler={isScheduler} />
       </Modal>
     </SafeAreaView>
   )
@@ -111,58 +109,56 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS({opacity:1}).white,
   },
   titleContainer: {
-    padding: SIZES.medium,
+    padding: textSIZES.small,
     borderColor: COLORS({opacity:0.5}).primary,
     borderBottomWidth: 1,
   },
   sectionContainer: {
-    margin: SIZES.xSmall,
-    padding: SIZES.xSmall,
+    margin: textSIZES.xSmall,
+    padding: textSIZES.xSmall,
     backgroundColor: COLORS({opacity:0.5}).primary,
-    borderRadius: SIZES.small,
+    borderRadius: textSIZES.xSmall,
     ...SHADOWS.medium,
     shadowColor: COLORS({opacity:1}).shadow,
   },
   title: {
-    fontSize: SIZES.large,
+    fontSize: textSIZES.large,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).primary,
   },
   section: {
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).white,
   },
   expandedContainer: {
-    paddingBottom: SIZES.medium,
-    paddingHorizontal: SIZES.medium,
+    paddingBottom: textSIZES.small,
+    paddingHorizontal: textSIZES.small,
     flex: 1,
     overflow: 'scroll',
   },
   row: {
     flexDirection: "row",
-    //justifyContent: "flex-start",
-    //justifyContent: "space-between",
     alignItems: "center",
   },
   icon: {
     color: COLORS({opacity:0.8}).primary,
   },
   label:{
-    fontSize: SIZES.large,
+    fontSize: textSIZES.large,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).primary,
-    margin: SIZES.xSmall,
+    margin: textSIZES.xSmall,
   },
   button: {
-    height: SIZES.xLarge * 2,
-    width: SIZES.xLarge * 2,
-    padding: SIZES.xSmall,
-    marginHorizontal: SIZES.xSmall,
-    alignContent: "center",
-    justifyContent: "center",
+    height: viewSIZES.xxSmall,
+    width: viewSIZES.xxSmall,
+    padding: textSIZES.xSmall,
+    marginHorizontal: textSIZES.xSmall,
+    alignContent: 'center',
+    justifyContent: 'center',
     borderWidth: 1,
-    borderRadius: SIZES.medium,
+    borderRadius: textSIZES.small,
     borderColor: COLORS({opacity:1}).primary,
   },
 });

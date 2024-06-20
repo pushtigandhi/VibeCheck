@@ -1,112 +1,209 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Image, Modal } from "react-native";
-import { COLORS, FONT, SIZES, SHADOWS, ItemType } from "../../constants";
+import { SafeAreaView, View, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Image, Modal,Dimensions } from "react-native";
+import { COLORS, FONT, textSIZES, SHADOWS, viewSIZES } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
-import { ExpandableView } from "../../utils";
-import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 
+const defaultTestItems = [
+  {
+      "_id": "65dffbe64102392ebb5783b0",
+      "category": "Backlog", 
+      "description": "Description of what the item is. ", 
+      "favicon": {"assetId": "A763AC6D-6F2C-46F2-93A6-5B8E616CC06C/L0/001", "base64": null, "duration": null, "exif": null, "fileName": "IMG_0707.jpg", "fileSize": 1536094, "height": 2002, "mimeType": "image/jpeg", "type": "image", "uri": "file:///var/mobile/Containers/Data/Application/2B539751-A0AE-44FE-B0A5-919A07440921/Library/Caches/ExponentExperienceData/@anonymous/VibeCheck-c25b1d4f-7003-4b9f-8017-6562b5a94a07/ImagePicker/4E780BC8-D48C-4176-9570-17ACAECCBADF.jpg", "width": 2002}, 
+      "icon": "📦", 
+      "notes": "Remember important info about the item. ", 
+      "section": "All", 
+      "title": "Item",
+      "owner": "65dffad64102392ebb57839b",
+      "duration": "30",
+      "startDate": "2024-03-29T10:00:00.000Z",
+      "endDate": "2024-03-29T13:08:05.326Z",
+      "repeat": "DAILY",
+      "createdAt": "2024-02-29T03:37:10.111Z",
+      "updatedAt": "2024-02-29T03:37:10.111Z",
+      "__v": 0
+  },
+  {
+      "category": "Backlog", 
+      "description": "Description of the task. ", 
+      "icon": "📋", 
+      "notes": "Important details about the task.", 
+      "priority": "HIGH", 
+      "section": "All", 
+      "title": "Task",
+      "_id": "65dffbe64102392ebb5783b01235436457",
+      "itemType": "Task",
+      "subtasks": [{"isChecked": false, "task": "first subtask", "_id": "65e134a91635ad960dab35ytsdc1c"},
+      {"isChecked": false, "task": "2 subtask", "_id": "65e134a91635ad960dabsrhjdc1c"}],
+      "contacts": [{"isChecked": false, "task": "4 subtask", "_id": "65e134a91635ad96tdku0dabdc1c"},
+      {"isChecked": false, "task": "5 subtask", "_id": "65e134a91635ad96nhdtt0dabdc1c"}],
+      "owner": "65dffad64102392ebb57839b",
+      "duration": "150",
+      "startDate": "2024-03-29T14:30:00.000Z",
+      "endDate": "2024-03-13T17:00:05.326Z",
+      "createdAt": "2024-02-29T03:37:10.111Z",
+      "updatedAt": "2024-02-29T03:37:10.111Z",
+      "__v": 0
+  },{
+      "category": "Backlog", 
+      "description": "Description of the event. ", 
+      "favicon": {"assetId": "89BA16EB-A861-4651-848B-33B0D9E412E5/L0/001", "base64": null, "duration": null, "exif": null, "fileName": "IMG_1345.jpg", "fileSize": 3784860, "height": 4032, "mimeType": "image/jpeg", "type": "image", "uri": "file:///var/mobile/Containers/Data/Application/2B539751-A0AE-44FE-B0A5-919A07440921/Library/Caches/ExponentExperienceData/@anonymous/VibeCheck-c25b1d4f-7003-4b9f-8017-6562b5a94a07/ImagePicker/F223FEC7-EEF1-40AE-AAA2-F16ED2247BEB.jpg", "width": 3024}, 
+      "icon": "📍", 
+      "section": "All", 
+      "title": "Event",
+      "_id": "65dffbe64102392ebb5783b056478",
+      "contacts": [],
+      "subtasks": [],
+      "owner": "65dffad64102392ebb57839b",
+      "duration": "60",
+      "itemType": "Event",
+      "startDate": "2024-03-29T18:15:00.000Z",
+      "endDate": "2024-03-29T19:15:05.326Z",
+      "createdAt": "2024-02-29T03:37:10.111Z",
+      "updatedAt": "2024-02-29T03:37:10.111Z",
+      "__v": 0
+  },{
+      "_id": "65dffbe64102392ebb5783b0xtu",
+      "icon": '\u{1F4C4}',
+      "title": "Daily Reflection",
+      "category": "Backlog",
+      "section": "All",
+      "itemType": "Page",
+      "repeat": "DAILY",
+      "notes": "Journal prompt here.",
+      "owner": "65dffad64102392ebb57839b",
+      "startDate": "2024-03-29T20:00:00.000Z",
+      "endDate": "2024-03-13T20:30:00.326Z",
+      "createdAt": "2024-02-29T03:37:10.111Z",
+      "updatedAt": "2024-02-29T03:37:10.111Z",
+      "__v": 0
+  },{
+      "_id": "65dffbe64102392ebb5b0xtu",
+      "title": "Dinner - Recipe",
+      "category": "Cooking",
+      "section": "Recipes",
+      "favicon": {"assetId": "53493CEF-3F13-4D9C-8E4B-0C84C7E47D7C/L0/001", "base64": null, "duration": null, "exif": null, "fileName": "IMG_1124.jpg", "fileSize": 6554812, "height": 4032, "mimeType": "image/jpeg", "type": "image", "uri": "file:///var/mobile/Containers/Data/Application/2B539751-A0AE-44FE-B0A5-919A07440921/Library/Caches/ExponentExperienceData/@anonymous/VibeCheck-c25b1d4f-7003-4b9f-8017-6562b5a94a07/ImagePicker/7D7072D5-940D-4730-B4ED-47727C1578B3.jpg", "width": 3024},
+      "itemType": "Recipe",
+      "icon": '\u{1F37D}',
+      "servings": 3,
+      "repeat": "WEEKLY",
+      "priority": "HIGH",
+      "ingredients" : [{"isChecked": false, "task": "2 cups all puprose flour", "_id": "65e134a91635ad960dab35ytsdc1c"},
+          {"isChecked": false, "task": "1 cup water", "_id": "65e134a91635ad960dabsrhjdc1c"},
+          {"isChecked": false, "task": "1tbsp yeast", "_id": "65e134a91635ad960dabsrhjwew1c"},
+      ],
+      "instructions": [{"isChecked": false, "task": "Mix ingredients and knead dough", "_id": "65e134a91635ad960dab35ytsdc1c"},
+      {"isChecked": false, "task": "Rest for 30 mins", "_id": "65e134a91635ad960dabsrhjdc1c"},
+      {"isChecked": false, "task": "Separate dough into 4", "_id": "65e134a91635ad960dabsrhjwew1c"},
+      {"isChecked": false, "task": "Preheat oven to 350F", "_id": "65e134a91635ad960dab35ytsdc1c"}],
+      "owner": "65dffad64102392ebb57839b",
+      "startDate": "2024-03-29T22:00:00.000Z",
+      "endDate": "2024-03-13T23:30:00.326Z",
+      "createdAt": "2024-02-29T03:37:10.111Z",
+      "updatedAt": "2024-02-29T03:37:10.111Z",
+      "__v": 0
+  },
+]
 
-const defaultImage = require("../../assets/icon.png");
-
-const ListView = ({items}) => (
+const ListView = ({ items }) => (
   <FlatList
     scrollEnabled={true}
     data={items}
     renderItem={({item}) => (
-      <View style={styles.cardContainer} key={item["_id"] + "_root"} >
+      <TouchableOpacity style={styles.cardContainer} key={item["_id"] + "_root"} >
         <View style={styles.row}>
-          <Text style={{ fontSize: SIZES.regular}}>{item.icon}</Text>
+          <Text style={{ fontSize: textSIZES.regular}}>{item.icon}</Text>
           <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
         </View>
-      </View>
+      </TouchableOpacity>
     )}
   /> 
 );
 
-const GalleryView = ({items}) => (
+const GalleryView = ({ items }) => (
   <FlatList
     scrollEnabled={true}
     data={items}
     numColumns={2} 
     renderItem={({item}) => (
-      <View style={styles.cardContainer} key={item["_id"] + "_root"} >
+      <TouchableOpacity style={styles.cardContainer} key={item["_id"] + "_root"} >
         <View style={styles.imageBox}>
           <Image
               source={item.favicon ? { uri: item.favicon.uri } : defaultImage}
               style={[styles.border, { width: 140, height: 140}]}
           />
         </View>
-        <View style={styles.row}>
-          <Text style={{fontSize: SIZES.xLarge}}>{item.icon}</Text>
+        <View style={[styles.row]}>
+          <Text style={{fontSize: textSIZES.xLarge}}>{item.icon}</Text>
           <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
         </View>
-      </View>
+      </TouchableOpacity>
     )}
   />
 );
 
-export default function DefaultTemplate ({close}) {
-  const [title, setTitle] = useState("Title");
-  
-  const [items, setItems] = useState([]);
+const defaultImage = require("../../assets/icon.png");
 
-  const [index, setIndex] = React.useState(0);
-  const [routes] = React.useState([
-    { key: 'list' },
-    { key: 'gallery' },
-  ]);
-  const renderScene = ({ route }) => {
-    switch (route.key) {
-      case 'list':
-        return <ListView items={items} />;
-      case 'gallery':
-        return <GalleryView items={items} />;
+export default function DefaultTemplate () {
+  const [selectedTab, setSelectedTab] = useState('List');
+
+  const renderTab = () => {
+    switch (selectedTab) {
+      case 'List':
+        return <ListView items={defaultTestItems} />;
+      case 'Gallery':
+        return <GalleryView items={defaultTestItems} />;
       default:
-        return null;
+        return <ListView items={defaultTestItems} />;
     }
-  };
-  const renderIcon = ({ route, focused, color }) => {
-    let iconName;
-  
-    if (route.key === 'list') {
-      iconName = focused ? 'list-circle' : 'list-circle-outline';
-    } else if (route.key === 'gallery') {
-      iconName = focused ? 'image' : 'image-outline';
-    }
-  
-    // Return the icon component
-    return <Ionicons name={iconName} size={30} color={COLORS({opacity:1}).primary} />;
   };
 
   return (
     <SafeAreaView style={styles.screen}>
       <View style={[styles.row, styles.propContainer, {justifyContent: "space-between"}]}>
-        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.title}>Title</Text>
         <View style={styles.row}>
-          <View style={[styles.row, styles.searchInput]}>
+          <TouchableOpacity style={[styles.row, styles.searchInput]} >
             <Ionicons name={"search-outline"} size={20} style={styles.iconInverted} />
-          </View>
-          <View style={styles.filterButtonIcon}>
-            <Ionicons name={"funnel-outline"} size={20} style={styles.iconInverted}/>
-          </View>
-          <View style={[styles.row, styles.addButton]}>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.filterButtonIcon} >
+            <Ionicons name={"options-outline"} size={20} style={styles.iconInverted}/>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.row, styles.addButton]} >
             <Ionicons name={"add-circle"} size={20} style={styles.iconInverted}/>
-          </View>
+          </TouchableOpacity>
         </View>
       </View>
-      <TabView
-        navigationState={{ index, routes }}
-        renderScene={renderScene}
-        onIndexChange={setIndex}
-        initialLayout={{ width: 20 }}
-        renderTabBar={(props) => (
-          <TabBar
-            {...props}
-            renderIcon={renderIcon} // Pass the renderIcon function to render icons
-            style={{ backgroundColor: 'white' }}
-          />
-        )}
-      />
+      <View style={styles.tabContainer}>
+        <TouchableOpacity
+          style={[styles.tab, selectedTab === 'List' && styles.activeTab]}
+          onPress={() => setSelectedTab('List')}
+        >
+          {selectedTab === 'List' ? 
+            (
+              <Ionicons name={"list-circle"} size={textSIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
+            ) 
+          : (
+              <Ionicons name={"list-circle-outline"} size={textSIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
+            )
+          }
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tab, selectedTab === 'Gallery' && styles.activeTab]}
+          onPress={() => setSelectedTab('Gallery')}
+        >
+          {selectedTab === 'Gallery' ? 
+            (
+              <Ionicons name={"image"} size={textSIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
+            ) 
+          : (
+              <Ionicons name={"image-outline"} size={textSIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
+            )
+          }
+        </TouchableOpacity>
+      </View>
+      <View style={styles.contentContainer}>
+        {renderTab()}
+      </View>
     </SafeAreaView>
     );
 };
@@ -115,74 +212,55 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: "#FFF",
-    marginVertical: SIZES.xxLarge,
-    marginHorizontal: SIZES.small,
-    padding: SIZES.small,
-    borderWidth: 1, 
-    borderColor: COLORS({opacity:1}).primary,
-    borderRadius: SIZES.xxSmall,
   },
   cardContainer: {
-    //width: '95%',
-    margin: SIZES.xSmall,
-    marginBottom: SIZES.tiny,
+    margin: textSIZES.xSmall,
+    marginBottom: textSIZES.tiny,
     backgroundColor: "#FFF",
-    ...SHADOWS.medium,
+    ...SHADOWS.small,
     shadowColor: COLORS({opacity:1}).shadow,
-    padding: SIZES.medium,
-    borderColor: COLORS({opacity:0.5}).primary,
-    borderBottomWidth: 1,
-    borderRadius: SIZES.small,
+    padding: textSIZES.small,
+    borderRadius: textSIZES.xSmall,
   },
   filterButtonIcon: {
-    height: SIZES.xxLarge,
-    width: SIZES.xxLarge,
-    marginRight: SIZES.small,
-    borderRadius: SIZES.xxSmall,
+    height: textSIZES.xxLarge,
+    width: textSIZES.xxLarge,
+    marginRight: textSIZES.xSmall,
+    borderRadius: textSIZES.xxSmall,
     backgroundColor: COLORS({opacity:0.7}).primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   addButton: {
-    height: SIZES.xxLarge,
-    borderRadius: SIZES.xxSmall,
-    //marginHorizontal: SIZES.medium,
+    height: textSIZES.xxLarge,
+    borderRadius: textSIZES.xxSmall,
+    //marginHorizontal: textSIZES.small,
     backgroundColor: COLORS({opacity:0.7}).primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   searchInput: {
-    height: SIZES.xxLarge,
-    width: SIZES.xxLarge,
-    marginRight: SIZES.small,
-    borderRadius: SIZES.small,
+    marginRight: textSIZES.xSmall,
+    borderRadius: textSIZES.xSmall,
     backgroundColor: COLORS({opacity:0.5}).secondary,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   sectionContainer: {
-    margin: SIZES.xSmall,
-    padding: SIZES.xSmall,
+    margin: textSIZES.xSmall,
+    padding: textSIZES.xSmall,
     backgroundColor: COLORS({opacity:0.5}).primary,
-    borderRadius: SIZES.small,
+    borderRadius: textSIZES.xSmall,
     ...SHADOWS.medium,
     shadowColor: COLORS({opacity:1}).shadow,
   },
   title: {
-    fontSize: SIZES.large,
+    fontSize: textSIZES.large,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).primary,
   },
   section: {
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).white,
-  },
-  expandedContainer: {
-    paddingBottom: SIZES.medium,
-    paddingHorizontal: SIZES.medium,
-    flex: 1,
-    overflow: 'scroll',
   },
   row: {
     flexDirection: "row",
@@ -190,24 +268,42 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   icon: {
-    marginRight: SIZES.xxSmall,
+    marginRight: textSIZES.xxSmall,
     color: COLORS({opacity:0.8}).primary,
   },
   iconInverted: {
     color: COLORS({opacity:1}).white,
-    margin: SIZES.xxSmall,
+    margin: textSIZES.xxSmall,
   },
   propContainer: {
-    paddingHorizontal: SIZES.large,
-    padding: SIZES.medium,
+    paddingHorizontal: textSIZES.large,
+    paddingVertical: textSIZES.small,
     borderColor: COLORS({opacity:0.5}).primary,
     borderBottomWidth: 1,
-    borderRadius: SIZES.medium,
+    borderRadius: textSIZES.small,
     backgroundColor: "#FFF"
   },
   imageBox: {
     flexDirection: "row",
     justifyContent: "space-between",
-    margin: SIZES.Small,
+    margin: textSIZES.Small,
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    backgroundColor: '#f8f8f8',
+    paddingVertical: 10,
+  },
+  tab: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  activeTab: {
+    borderBottomWidth: 2,
+    borderBottomColor: COLORS({opacity:0.8}).primary,
+  },
+  tabText: {
+    fontSize: 16,
+    color: '#333',
   },
 });

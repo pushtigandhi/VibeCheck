@@ -3,7 +3,7 @@ import { View, Button, Animated, Platform, StyleSheet, TextInput } from 'react-n
 import PropTypes from 'prop-types';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import PhoneInput from 'react-native-phone-input';
-import { COLORS, SHADOWS, FONT, SIZES } from "../constants";
+import { COLORS, SHADOWS, FONT, textSIZES, viewSIZES } from "../constants";
 
 const ExpandableView = ({ expanded = false, view, params = {}, vh = 200 }) => {
   const [height] = useState(new Animated.Value(0));
@@ -124,10 +124,10 @@ const MyDateTimePicker = ({mode, date, onChange }) => {
       alignItems: 'center',
     },
     phoneInput: {
-      fontSize: SIZES.medium,
+      fontSize: textSIZES.small,
       //fontFamily: FONT.regular,
       backgroundColor: COLORS.lightWhite,
-      marginTop: SIZES.small / 1.5,
+      marginTop: textSIZES.xSmall / 1.5,
       width: 200,
       height: 40,
     },

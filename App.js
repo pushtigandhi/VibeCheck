@@ -10,10 +10,10 @@ import VibeCheck from './screens/VibeCheck';
 import Backlog from './screens/Backlog';
 import Login from './screens/LoginScreen';
 
-import ItemCard from './screens/ItemCard';
+import ItemCard from './screens/cards/ItemCard';
 import { useFonts } from 'expo-font';
 import NewItem from './screens/NewItem';
-import ItemScreen from './screens/ItemScreen';
+import DefaultView from './screens/views/DefaultView';
 import ScheduleView from './screens/views/ScheduleView';
 import ChecklistView from './screens/views/ChecklistView';
 import SelectView from './screens/SelectView';
@@ -42,7 +42,7 @@ export default function App() {
       <Stack.Screen name="Directory" component={Directory}/>
       <Stack.Screen name="VibeCheck" component={VibeCheck}/>
       <Stack.Screen name="Backlog" component={Backlog}/>
-      <Stack.Screen name="ItemScreen" component={ItemScreen}/>
+      <Stack.Screen name="DefaultView" component={DefaultView}/>
       <Stack.Screen name="SelectView" component={SelectView}/>
       <Stack.Screen name="ScheduleView" component={ScheduleView}/>
       <Stack.Screen name="ChecklistView" component={ChecklistView}/>

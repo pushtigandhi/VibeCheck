@@ -26,14 +26,24 @@ const FONT = {
   bold: "DMBold",
 };
 
-const SIZES = {
-  xxSmall: 5,
+const textSIZES = {
+  xxSmall: 4,
   xSmall: 10,
-  small: 12,
-  medium: 16,
-  large: 20,
-  xLarge: 24,
+  small: 16,
+  medium: 20,
+  large: 24,
+  xLarge: 28,
   xxLarge: 32,
+};
+
+const viewSIZES = {
+  xxSmall: 50,
+  xSmall: 75,
+  small: 100,
+  medium: 150,
+  large: 200,
+  xLarge: 300,
+  xxLarge: 500,
 };
 
 const SHADOWS = {
@@ -59,4 +69,4 @@ const SHADOWS = {
   },
 };
 
-export { COLORS, FONT, SIZES, SHADOWS };
+export { COLORS, FONT, SHADOWS, textSIZES, viewSIZES };

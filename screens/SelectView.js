@@ -2,9 +2,10 @@ import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image, Modal,
         StyleSheet, Animated, FlatList, SafeAreaView } from 'react-native';
 
-import { COLORS, SHADOWS, FONT, SIZES } from "../constants";
+import { COLORS, SHADOWS, FONT, textSIZES, viewSIZES } from "../constants";
 import { Ionicons } from "@expo/vector-icons";
 import * as df  from "../constants/default";
+import DefaultView from "./views/DefaultView";
 import DefaultTemplate from "./views/DefaultTemplate";
 import ScheduleTemplate from "./views/ScheduleTemplate";
 import ChecklistTemplate from "./views/ChecklistTemplate";
@@ -15,9 +16,8 @@ export default function SelectView({onClose}) {
   const [isDefaultExpanded, setIsDefaultExpanded] = useState(true);
   const [isScheduledExpanded, setIsScheduledExpanded] = useState(false);
   const [isChecklistExpanded, setIsChecklistExpanded] = useState(false);
-  const [title, setTitle] = useState(null);
+  const [title, setTitle] = useState('New');
   const [viewType, setViewType] = useState(null);
-  const [disableSave, setDisableSave] = useState(true);
 
   function close() {
     setIsDefaultExpanded(false);
@@ -47,21 +47,18 @@ export default function SelectView({onClose}) {
     <SafeAreaView style={styles.infoContainer}>
       <View style={styles.imageBox}>
         <TouchableOpacity onPress={() => (onClose())} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightRed}]} > 
-          <Ionicons name={"close-outline"} size={SIZES.xxLarge} style={styles.iconInverted}/> 
+          <Ionicons name={"close-outline"} size={textSIZES.xxLarge} style={styles.iconInverted}/> 
         </TouchableOpacity>
       
-        <TouchableOpacity onPress={doRefresh} style={[styles.button, {backgroundColor: disableSave ? COLORS({opacity:0.7}).lightGreen : COLORS({opacity:1}).lightGreen}]} disabled={disableSave} >
-          <Ionicons name={"checkmark-outline"} size={SIZES.xxLarge} style={styles.iconInverted}/> 
+        <TouchableOpacity onPress={doRefresh} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightGreen}]} >
+          <Ionicons name={"checkmark-outline"} size={textSIZES.xxLarge} style={styles.iconInverted}/> 
         </TouchableOpacity>
       </View>
 
       <View style={[styles.row, styles.title]}>
-        <TextInput style={{width: "100%", fontSize: SIZES.xLarge, color: COLORS({opacity:0.9}).primary}}
-          {...(title ? { defaultValue: title } : { placeholder: "Title" })}
-          onChangeText={(newTitle) => (
-            setTitle(newTitle),
-            newTitle ? setDisableSave(false) : setDisableSave(true)
-          )}
+        <TextInput style={{width: "100%", fontSize: textSIZES.xLarge, color: COLORS({opacity:0.9}).primary}}
+          defaultValue={ title }
+          onChangeText={ setTitle }
         />
       </View>
 
@@ -80,15 +77,15 @@ export default function SelectView({onClose}) {
           <Text style={styles.label}>{df.ViewType.Default}</Text>
           <View>
             {isDefaultExpanded ? (
-              <Ionicons name={"checkbox-outline"} size={SIZES.large} style={styles.icon}/> 
+              <Ionicons name={"checkbox-outline"} size={textSIZES.large} style={styles.icon}/> 
             ) : (
-              <Ionicons name={"square-outline"} size={SIZES.large} style={styles.icon}/>
+              <Ionicons name={"square-outline"} size={textSIZES.large} style={styles.icon}/>
             )}
           </View>
         </View>
       </TouchableOpacity>
-
-      <ExpandableView expanded={isDefaultExpanded} view={DefaultTemplate} params={{ "close": close }} vh={300} />
+      
+      <ExpandableView expanded={isDefaultExpanded} view={DefaultTemplate} vh={300} />
 
       <TouchableOpacity
         onPress={() => {
@@ -103,15 +100,15 @@ export default function SelectView({onClose}) {
           <Text style={styles.label}>{df.ViewType.Schedule}</Text>
           <View>
             {isScheduledExpanded ? (
-              <Ionicons name={"checkbox-outline"} size={SIZES.large} style={styles.icon}/> 
+              <Ionicons name={"checkbox-outline"} size={textSIZES.large} style={styles.icon}/> 
             ) : (
-              <Ionicons name={"square-outline"} size={SIZES.large} style={styles.icon}/>
+              <Ionicons name={"square-outline"} size={textSIZES.large} style={styles.icon}/>
             )}
           </View>
         </View>
       </TouchableOpacity>
 
-      <ExpandableView expanded={isScheduledExpanded} view={ScheduleTemplate} params={{ "close": close }} vh={300} />
+      {/* <ExpandableView expanded={isScheduledExpanded} view={ScheduleTemplate} params={{ "close": close }} vh={300} /> */}
 
       <TouchableOpacity
         onPress={() => {
@@ -127,14 +124,14 @@ export default function SelectView({onClose}) {
           <Text style={styles.label}>{df.ViewType.Checklist}</Text>
           <View>
             {isChecklistExpanded ? (
-              <Ionicons name={"checkbox-outline"} size={SIZES.large} style={styles.icon}/> 
+              <Ionicons name={"checkbox-outline"} size={textSIZES.large} style={styles.icon}/> 
             ) : (
-              <Ionicons name={"square-outline"} size={SIZES.large} style={styles.icon}/>
+              <Ionicons name={"square-outline"} size={textSIZES.large} style={styles.icon}/>
             )}
           </View>
         </View>
       </TouchableOpacity>
-      <ExpandableView expanded={isChecklistExpanded} view={ChecklistTemplate} params={{ "close": close }} vh={300} />
+      {/* <ExpandableView expanded={isChecklistExpanded} view={ChecklistTemplate} params={{ "close": close }} vh={300} /> */}
 
     </SafeAreaView>
   )
@@ -146,31 +143,31 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS({opacity:1}).white,
   },
   titleContainer: {
-    padding: SIZES.medium,
+    padding: textSIZES.small,
     borderColor: COLORS({opacity:0.5}).primary,
     borderBottomWidth: 1,
   },
   sectionContainer: {
-    margin: SIZES.xSmall,
-    padding: SIZES.xSmall,
+    margin: textSIZES.xSmall,
+    padding: textSIZES.xSmall,
     backgroundColor: COLORS({opacity:0.5}).primary,
-    borderRadius: SIZES.small,
+    borderRadius: textSIZES.xSmall,
     ...SHADOWS.medium,
     shadowColor: COLORS({opacity:1}).shadow,
   },
   title: {
-    fontSize: SIZES.large,
+    fontSize: textSIZES.large,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).primary,
   },
   section: {
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).white,
   },
   expandedContainer: {
-    paddingBottom: SIZES.medium,
-    paddingHorizontal: SIZES.medium,
+    paddingBottom: textSIZES.small,
+    paddingHorizontal: textSIZES.small,
     flex: 1,
     overflow: 'scroll',
   },
@@ -181,38 +178,38 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   icon: {
-    marginRight: SIZES.xxSmall,
+    marginRight: textSIZES.xxSmall,
     color: COLORS({opacity:0.8}).primary,
   },
   label:{
-    fontSize: SIZES.large,
+    fontSize: textSIZES.large,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).navy,
-    margin: SIZES.xSmall,
+    margin: textSIZES.xSmall,
   },
   // button: {
-  //   height: SIZES.xLarge * 2,
-  //   padding: SIZES.xSmall,
-  //   marginHorizontal: SIZES.xSmall,
+  //   height: viewSIZES.xxSmall,
+  //   padding: textSIZES.xSmall,
+  //   marginHorizontal: textSIZES.xSmall,
   //   alignItems: "center",
   //   justifyContent: "center",
-  //   borderRadius: SIZES.medium
+  //   borderRadius: textSIZES.small
   // },
   row: {
     flexDirection: "row",
     alignItems: "center",
   },
   title:{
-      padding: SIZES.medium,
-      margin: SIZES.medium,
+      padding: textSIZES.small,
+      margin: textSIZES.small,
       borderWidth: 1,
       borderColor: COLORS({opacity:0.5}).primary,
-      borderRadius: SIZES.medium,
+      borderRadius: textSIZES.small,
   },
   imageBox: {
     flexDirection: "row",
     justifyContent: "space-between",
-    margin: SIZES.Small,
+    margin: textSIZES.Small,
   },
   icon: {
     color: COLORS({opacity:0.8}).primary,
@@ -221,18 +218,18 @@ const styles = StyleSheet.create({
     color: COLORS({opacity:0.8}).white,
   },
   button: {
-    height: SIZES.xxLarge * 2,
-    width: SIZES.xxLarge * 2,
-    padding: SIZES.xSmall,
-    marginHorizontal: SIZES.xSmall,
+    height: viewSIZES.xSmall,
+    width: viewSIZES.xSmall,
+    padding: textSIZES.xSmall,
+    marginHorizontal: textSIZES.xSmall,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: SIZES.medium
+    borderRadius: textSIZES.small
   },
   sortText: {
     fontSize: 20,
     fontWeight: "bold",
-    marginTop: SIZES.medium,
-    marginHorizontal: SIZES.medium,
+    marginTop: textSIZES.small,
+    marginHorizontal: textSIZES.small,
   },
 });

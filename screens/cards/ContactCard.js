@@ -1,33 +1,48 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image,
         StyleSheet, ScrollView } from 'react-native';
-import { COLORS, SHADOWS, FONT, SIZES } from "../../constants";
+import { COLORS, SHADOWS, FONT, textSIZES, viewSIZES } from "../../constants";
 import { ExpandableView } from "../../utils";
 import { Ionicons } from "@expo/vector-icons";
+
+const defaultImage = require("../../assets/icon.png");
 
 const expandedCard = ({contact}) => {
   return (
     <ScrollView style={styles.expandedContainer}>
-      <View style={styles.property}>
-        <Text style={styles.label}>Phone</Text>
-        <Text style={styles.value}>{contact.phoneNumber}</Text>
-      </View>
-      <View style={styles.property}>
-        <Text style={styles.label}>Birthday</Text>
-        <Text style={styles.value}>{contact.birthday}</Text>
-      </View>
-      <View style={styles.property}>
-        <Text style={styles.label}>Address</Text>
-        <Text style={styles.value}>{contact.address}</Text>
-      </View>
-      <View style={styles.property}>
-        <Text style={styles.label}>Latest Update</Text>
-        <Text style={styles.value}>{contact.notes}</Text>
-      </View>
+      {contact.company && (
+        <View style={styles.property}>
+          <Text style={styles.label}>Company</Text>
+          <Text style={styles.value}>{contact.company}</Text>
+        </View>
+      )}
+      {contact.phoneNumber && (
+        <View style={styles.property}>
+          <Text style={styles.label}>Phone</Text>
+          <Text style={styles.value}>{contact.phoneNumber}</Text>
+        </View>
+      )}
+      {contact.birthday && (
+        <View style={styles.property}>
+          <Text style={styles.label}>Birthday</Text>
+          <Text style={styles.value}>{contact.birthday}</Text>
+        </View>
+      )}
+      {contact.address && (
+        <View style={styles.property}>
+          <Text style={styles.label}>Address</Text>
+          <Text style={styles.value}>{contact.address}</Text>
+        </View>
+      )}
+      {contact.notes && (
+        <View style={styles.property}>
+          <Text style={styles.label}>Latest Update</Text>
+          <Text style={styles.value}>{contact.notes}</Text>
+        </View>
+      )}
     </ScrollView>
   )
 };
-
 
 const ContactCard = ({contact}) => {
 
@@ -43,14 +58,14 @@ const ContactCard = ({contact}) => {
       >
         <View style={styles.row}> 
         <Image 
-            source={{ uri: 'https://t4.ftcdn.net/jpg/05/05/61/73/360_F_505617309_NN1CW7diNmGXJfMicpY9eXHKV4sqzO5H.jpg'}}
+            source={defaultImage}
             resizeMode='contain'
             style={styles.contactImage}
           />
           <View>
             <Text style={styles.title} numberOfLines={1}>{contact.name}</Text>
-            {contact.company && (
-              <Text style={styles.company} numberOfLines={1}>{contact.company}</Text>
+            {contact.handle && (
+              <Text style={styles.company} numberOfLines={1}>@{contact.handle}</Text>
             )}
           </View>
         </View>
@@ -63,38 +78,38 @@ const ContactCard = ({contact}) => {
 
 const styles = StyleSheet.create({
   cardContainer: {
-    width: '95%',
-    margin: SIZES.xSmall,
+    flex:1,
+    margin: textSIZES.xSmall,
     backgroundColor: "#FFF",
-    borderRadius: SIZES.xLarge,
+    borderRadius: textSIZES.small,
     ...SHADOWS.medium,
     shadowColor: COLORS({opacity:1}).shadow,
   },
   titleContainer: {
-    width: '100%',
-    padding: SIZES.medium,
+    flex: 1,
+    padding: textSIZES.small,
     borderColor: COLORS({opacity:0.5}).primary,
     borderBottomWidth: 1,
-    borderBottomLeftRadius: SIZES.xLarge,
-    borderBottomRightRadius: SIZES.xLarge,
+    borderBottomLeftRadius: textSIZES.small,
+    borderBottomRightRadius: textSIZES.small,
   },
   title: {
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).navy,
   },
-  company: {
-    fontSize: SIZES.small,
+  handle: {
+    fontSize: textSIZES.xSmall,
     //fontFamily: "DMRegular",
     color: COLORS({opacity:1}).primary,
     textTransform: "capitalize",
   },
   expandedContainer: {
-    margin: SIZES.xSmall,
-    paddingBottom: SIZES.medium,
-    paddingHorizontal: SIZES.medium,
+    margin: textSIZES.xSmall,
+    paddingBottom: textSIZES.small,
+    paddingHorizontal: textSIZES.xxSmall,
     flex: 1,
-    height: 200,
+    height: viewSIZES.small,
   },
   row: {
     flexDirection: "row",
@@ -102,39 +117,37 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   icon: {
-    marginRight: SIZES.xxSmall,
+    marginRight: textSIZES.xxSmall,
     color: COLORS({opacity:0.8}).primary,
   },
   contactImage: {
-    width: SIZES.xxLarge+5,
-    height: SIZES.xxLarge+5,
+    width: textSIZES.xxLarge+5,
+    height: textSIZES.xxLarge+5,
     borderWidth: 1,
-    borderRadius: SIZES.xxSmall,
+    borderRadius: textSIZES.xxSmall,
     borderColor: COLORS({opacity:1}).navy,
-    marginRight: SIZES.xxSmall,
+    marginRight: textSIZES.xxSmall,
   },
   property:{
-    fontSize: SIZES.small,
+    fontSize: textSIZES.xSmall,
     //fontFamily: FONT.regular,
     color: COLORS({opacity:0.8}).primary,
-    margin: SIZES.xSmall,
-    padding: SIZES.xSmall,
-    marginRight: SIZES.xxSmall,
+    margin: textSIZES.xxSmall,
+    padding: textSIZES.xxSmall,
     backgroundColor: COLORS({opacity:0.2}).tertiary,
-    borderRadius: SIZES.small,
+    borderRadius: textSIZES.xSmall,
   },
   label:{
-    fontSize: SIZES.small,
-    //fontFamily: FONT.regular,
-    color: COLORS({opacity:1}).navy,
-    padding: SIZES.xxSmall,
+    fontSize: textSIZES.xSmall,
+    fontFamily: FONT.regular,
+    color: COLORS({opacity:1}).secondary,
+    padding: textSIZES.xxSmall,
     marginBottom: 2,
   },
   value: {
-    fontSize: SIZES.small,
-    //fontFamily: FONT.regular,
-    padding: SIZES.xxSmall,
-    color: COLORS({opacity:1}).primary,
+    fontSize: textSIZES.xSmall,
+    fontFamily: FONT.regular,
+    padding: textSIZES.xxSmall,
   },
 });
 

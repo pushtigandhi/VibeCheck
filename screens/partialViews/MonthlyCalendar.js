@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { COLORS, SIZES } from "../../constants";
+import { COLORS, textSIZES, viewSIZES } from "../../constants";
 import { GETitems, GETmonthTEST } from "../../API";
 import { ItemType } from "../../constants";
 
@@ -71,19 +71,19 @@ export const MonthlyCalendar = ({navigation, date, month, onRefresh, filter, ref
         {emptySlotsBefore}
         {daysOfMonth.map(day => (
           <View key={day} style={styles.slot}>
-            <Text style={{color: COLORS({opacity: 1}).primary, fontSize: SIZES.xSmall}}>{day}</Text>
+            <Text style={{color: COLORS({opacity: 1}).primary, fontSize: textSIZES.xSmall}}>{day}</Text>
             {!!items[day] && items[day].slice(0, 2).map((item, index) => (
               <TouchableOpacity key={index} numberOfLines={1} style={[styles.title, {backgroundColor: "white"}]} 
                 onPress={() => {
                   navigation.navigate("Item", {item});
                 }}
               >
-                <Text style={{fontSize: SIZES.xSmall}}>{item.title}</Text>
+                <Text style={{fontSize: textSIZES.xSmall}}>{item.title}</Text>
               </TouchableOpacity>
             ))}
             {!!items[day] && items[day].length > 2 && (
-              <TouchableOpacity onPress={() => (onRefresh(new Date(date.getFullYear(), date.getMonth(), Number(day)+1), "day"))}>
-                <Text style={{fontSize: SIZES.xSmall, marginTop: SIZES.tiny}}>Show All</Text>
+              <TouchableOpacity onPress={() => (onRefresh(new Date(date.getFullYear(), date.getMonth(), Number(day)), "day"))}>
+                <Text style={{fontSize: textSIZES.xSmall, marginTop: textSIZES.tiny}}>Show All</Text>
               </TouchableOpacity>
             )}  
           </View>
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   },
   label: {
     width: slotWidth,
-    height: SIZES.xLarge,
+    height: textSIZES.xLarge,
     alignItems: "center",
     justifyContent: "center",
     borderRightWidth: 0.5,
@@ -127,14 +127,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
   },
   title: {
-    width: slotWidth-SIZES.xxSmall, 
-    height: (slotHeight-SIZES.xxLarge)/2, 
+    width: slotWidth-textSIZES.xxSmall, 
+    height: (slotHeight-textSIZES.xxLarge)/2, 
     justifyContent: 'center',
     alignItems: 'center', 
-    borderRadius: SIZES.tiny,
+    borderRadius: textSIZES.tiny,
     borderColor: COLORS({ opacity: 1 }).primary, 
     borderWidth: 0.5, 
-    marginBottom: SIZES.tiny, 
+    marginBottom: textSIZES.tiny, 
     overflow: 'hidden'
   },
   time: {

@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, FlatList } from "react-native";
+import { SafeAreaView, View, FlatList, Text, TouchableOpacity } from "react-native";
 import { StyleSheet } from "react-native";
 import ContactCard from "./cards/ContactCard";
-import { COLORS, FONT, SIZES } from "../constants";
+import { COLORS, FONT, textSIZES, viewSIZES } from "../constants";
 import HomeNavigation from "./HomeNavigation";
-import { GETcontacts } from "../API";
+import { GETcontactsTEST } from "../API";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function Contacts ({scrollEnabled = true}) {
   const [contacts, setContacts] = useState([]);
 
   async function getContactsFromAPI() {
     try {
-        let contacts_ = await GETcontacts();
+        let contacts_ = await GETcontactsTEST();
         return contacts_;
     } catch (error) {
       console.log("error fetching items");
@@ -28,14 +29,23 @@ export default function Contacts ({scrollEnabled = true}) {
     })
   }, []) // only run once on load
 
-  const renderContact = ({ contact }) => (
+  const renderContact = ({ item }) => (
     <View key={item._id + "root"} >
-        <ContactCard key={contact._id} contact={contact} />
+        <ContactCard key={item._id} contact={item} />
     </View>
   );
 
   return (
     <SafeAreaView style={styles.screen}>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Contacts</Text>
+        <TouchableOpacity
+          //onPress={() => (setShowInput(true))}
+          style={[styles.row, styles.addButton]}
+        >
+          <Ionicons name={"add-circle"} size={textSIZES.xLarge} style={styles.icon}/>
+        </TouchableOpacity>
+      </View>
       <FlatList
         scrollEnabled={scrollEnabled}
         data={contacts}
@@ -48,8 +58,23 @@ export default function Contacts ({scrollEnabled = true}) {
 
 const styles = StyleSheet.create({
   screen: {
-    height: '100%',
-    width: '100%',
+    flex:1,
     backgroundColor: COLORS({opacity:1}).lightWhite,
+  },
+  header:{
+    padding: textSIZES.xSmall,
+    marginHorizontal: textSIZES.xSmall,
+    borderWidth: 1,
+    borderColor: COLORS({opacity:1}).primary,
+    borderRadius: textSIZES.xSmall,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  headerText: {
+    fontSize: textSIZES.large,
+    color: COLORS({opacity:1}).primary,
+  },
+  icon: {
+    color: COLORS({opacity:0.8}).primary,
   },
 });

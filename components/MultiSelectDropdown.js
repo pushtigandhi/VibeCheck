@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
 import { MultiSelect } from 'react-native-element-dropdown';
-import { COLORS, SIZES } from '../constants';
+import { COLORS, textSIZES, viewSIZES } from '../constants';
 import { Ionicons } from "@expo/vector-icons";
 
-const MultiSelectDropdown = ({ options, placeholder="Select items", icon, setFn }) => {
+const MultiSelectDropdown = ({ options, placeholder="Select items", icon, setFn, current=[] }) => {
   const [selected, setSelected] = useState([]);
+
+  useEffect(() => {
+    setSelected(current);
+  }, [])
 
   const renderItem = item => {
     return (
@@ -56,12 +60,12 @@ const MultiSelectDropdown = ({ options, placeholder="Select items", icon, setFn 
 export default MultiSelectDropdown;
 
 const styles = StyleSheet.create({
-  container: { padding: 16 },
+  container: { padding: textSIZES.xSmall },
   dropdown: {
     height: 40,
     backgroundColor: COLORS({opacity:1}).lightWhite,
-    borderRadius: SIZES.small,
-    padding: SIZES.small,
+    borderRadius: textSIZES.xSmall,
+    padding: textSIZES.xSmall,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -73,11 +77,11 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   placeholderStyle: {
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
     color: COLORS({opacity:1}).navy,
   },
   selectedTextStyle: {
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
     color: COLORS({opacity:1}).navy,
   },
   iconStyle: {
@@ -102,24 +106,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    fontSize: SIZES.small,
+    fontSize: textSIZES.xSmall,
     backgroundColor: COLORS({opacity:1}).lightWhite,
-    shadowColor: '#000',
-    marginTop: 8,
-    marginRight: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
-
-    elevation: 2,
+    borderWidth:0.5,
+    borderColor: COLORS({opacity:1}).primary,
+    borderRadius: textSIZES.xxSmall,
+    marginVertical: textSIZES.xxSmall,
+    marginRight: textSIZES.xSmall,
+    paddingHorizontal: textSIZES.xSmall,
+    paddingVertical: textSIZES.xxSmall,
   },
   textSelectedStyle: {
     marginRight: 5,
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
   },
 });

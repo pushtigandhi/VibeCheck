@@ -1,22 +1,50 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, 
-    RefreshControl, ScrollView, Image, Modal } from "react-native";
-
-import HomeNavigation from "../HomeNavigation";
-import { GETitems, GETitemsTEST, PATCHitemTEST, GETsectionTEST, PATCHcategoryTEST } from "../../API";
-import { COLORS, SIZES, SHADOWS, FONT, ItemType, ViewType } from "../../constants";
+import { SafeAreaView, View, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Image, Modal,Dimensions,
+  KeyboardAvoidingView, GestureHandlerRootView, TouchableWithoutFeedback
+ } from "react-native";
+import { COLORS, FONT, textSIZES, SHADOWS, viewSIZES } from "../../constants";
+import { GETitems, GETitemsTEST } from "../../API";
+import { ItemType } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
-import { TabView, TabBar, ToolBar, SceneMap } from 'react-native-tab-view';
 import FilterModal from "../../components/FilterModal";
-
-import { CalendarView } from "../partialViews/CalendarView";
-
-import SingleSelectDropdown from "../../components/SingleSelectDropdown";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const defaultImage = require("../../assets/icon.png");
+const Checklist = ({item, setFn}) => {
+  const [subtasks, setSubtasks] = useState(item.subtasks);
 
-const Checklist = ({items, setFn}) => {
-  const [subtasks, setSubtasks] = useState(items);
+  const [showInput, setShowInput] = useState(false);
+  const [newSubtask, setNewSubtask] = useState('New');
+
+  const onSave = () => {
+    setSubtasks([... subtasks, { task: newSubtask, isChecked: false }])
+  }
+
+  async function addNewSubtask() {
+    const subtask = {
+      task: newSubtask,
+      isChecked: false
+    };
+
+    console.log(subtask);
+    // getProfileID().then((profileID) => {
+    //   console.log(profileID)
+    //   (async () => {
+    //     POSTaddCategoryTEST(profileID, {
+    //       ...category,
+    //       _id: null
+    //     }).then((newCategory) => {
+    //       if (!!newCategory) {
+    //         alert("Success!");
+    //       } else {
+    //         alert("Failed.");
+    //       }
+    //     });
+    //   })()
+    // }).catch((err) => {
+    //     alert(err.message)
+    // })
+  }
 
   const toggleSubtask = (id) => {
     const updatedSubtasks = subtasks.map((subtask) => {
@@ -29,236 +57,227 @@ const Checklist = ({items, setFn}) => {
     setFn({"subtasks": updatedSubtasks}); // Indicate that changes have been made
   };
   
-//   return (
-//     <ScrollView style={styles.expandedContainer}>
-//       <TouchableOpacity style={styles.addButtonIcon} >
-//           <Ionicons name={"add-circle"} size={SIZES.large} style={styles.iconInverted} />
-//       </TouchableOpacity>
-      
-//       {subtasks.length > 0 ? (subtasks.map(item => (
-//         <TouchableOpacity style={styles.cardsContainer} key={item["_id"]} 
-//           onPress={() => toggleSubtask(item["_id"])}
-//         >
-//           <View style={styles.row}>
-//             {item.isChecked ? (
-//               <Ionicons name={"checkbox-outline"} size={SIZES.large} style={styles.icon}/> 
-//             ) : (
-//               <Ionicons name={"square-outline"} size={SIZES.large} style={styles.icon}/>
-//             )}
-//             <Text style={styles.item} numberOfLines={1}>{item.task}</Text>
-//           </View>
-//         </TouchableOpacity>
-//       ))) : (
-//         <View>
-//           <Text style={[styles.item, {marginRight: SIZES.small}]} numberOfLines={1}>None</Text>
-//         </View>
-//       )}
-//     </ScrollView>
-//   )
-// };
-
-    const [showInput, setShowInput] = useState(false);
-    
-    return (
-      <ScrollView style={styles.expandedContainer}>
-        <TouchableOpacity style={styles.addButtonIcon} onPress={() => (setShowInput(true))}>
-            <Ionicons name={"add-circle"} size={SIZES.large} style={styles.iconInverted} />
-        </TouchableOpacity>
+  return (
+    <>
+      <TouchableOpacity style={styles.addButton} onPress={() => (setShowInput(true))}>
+          <Ionicons name={"add-circle"} size={textSIZES.large} color={COLORS({opacity:1}).white} />
+      </TouchableOpacity>
+      <ScrollView>
         {showInput==true && (
-          <TextInput style={styles.inputBox} 
-            placeholder="new..."
-            onSubmitEditing={(newSearch) => (setSearchBar(false), doSearch(newSearch))}
-            returnKeyType='default'
-          /> 
+          <View style={styles.newSection}>
+            <TextInput style={styles.inputBox}
+              value={newSubtask}
+              onChangeText={setNewSubtask}
+              returnKeyType='default'
+            /> 
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightRed, flex: 1}]} onPress={() => setShowInput(false)}>
+                <Ionicons name={"close-outline"} size={textSIZES.small} style={styles.iconInverse}/> 
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightGreen, flex: 1}]} onPress={addNewSubtask}>
+                <Ionicons name={"checkmark-outline"} size={textSIZES.small} style={styles.iconInverse}/> 
+              </TouchableOpacity>
+            </View>
+            
+          </View>
         )}
         
-        {subtasks.length > 0 && (subtasks.map(item => (
-          <TouchableOpacity style={styles.cardsContainer} key={item["_id"]} 
+        {subtasks && subtasks.length > 0 && (subtasks.map(item => (
+          <TouchableOpacity style={styles.subtaskContainer} key={item["_id"]} 
             onPress={() => toggleSubtask(item["_id"])}
           >
             <View style={styles.row}>
               {item.isChecked ? (
-                <Ionicons name={"checkbox-outline"} size={SIZES.large} style={styles.icon}/> 
+                <Ionicons name={"checkbox-outline"} size={textSIZES.xLarge} style={styles.icon}/> 
               ) : (
-                <Ionicons name={"square-outline"} size={SIZES.large} style={styles.icon}/>
+                <Ionicons name={"square-outline"} size={textSIZES.xLarge} style={styles.icon}/>
               )}
-              <Text style={styles.item} numberOfLines={1}>{item.task}</Text>
+              <Text style={styles.task} numberOfLines={1}>{item.task}</Text>
             </View>
           </TouchableOpacity>
         )))}
       </ScrollView>
-    )
-  };
-
-const Notes = ({items, setFn}) => {
-  const [notes, setNotes] = useState(null);
-
-  const updateNotes = (newNotes) => {
-    setNotes(newNotes);
-    setFn({"notes": newNotes}); // Indicate that changes have been made
-  };
-
-  return (
-    <ScrollView style={styles.expandedContainer}>
-      <TextInput style={styles.notes} 
-          multiline
-          {...(notes ? { defaultValue: notes } : { placeholder: "Notes" })} 
-          onChangeText={(newNotes) => updateNotes(newNotes)}
-        />
-    </ScrollView>
+    </>
   )
 };
-export default function ChecklistView ({navigation, route, scrollEnabled = true}) {
-  const [title, setTitle] = useState(null);
-  
-  const [item, setItems] = useState({});
-  const [itemtype, setItemType] = useState("Item");
 
-  const [updatedItem, setUpdatedItem] = useState([]);
+const Notes = ({item, setFn}) => {
+  const [notes, setNotes] = useState(null);
+  const [isEditable, setIsEditable] = useState(false);
+
+  const onSave = () => {
+    setFn({"notes": notes}); // Indicate that changes have been made
+    setIsEditable(false);
+  };
+
+  const onCancel = () => {
+    setNotes(item.notes);
+    setIsEditable(false);
+  }
+
+  useEffect(() => {
+    setNotes(item.notes);
+  }, []);
+
+  return (
+    <>
+      <View style={{flexDirection: 'row-reverse'}}>
+      {isEditable ? (
+        <>
+          <TouchableOpacity onPress={() => (onCancel())} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightRed}]} > 
+            <Ionicons name={"close-outline"} size={textSIZES.large} color={COLORS({opacity:1}).white} /> 
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => (onSave())} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightGreen}]} >
+              <Ionicons name={"checkmark-outline"} size={textSIZES.large} color={COLORS({opacity:1}).white} /> 
+          </TouchableOpacity>
+        </>
+      ):(
+        <TouchableOpacity onPress={() => (setIsEditable(true))} style={[styles.button, { backgroundColor: COLORS({opacity:1}).tertiary }]}>
+          <Ionicons name={"pencil"} size={textSIZES.large} color={COLORS({opacity:1}).white} />
+        </TouchableOpacity>
+      )}
+        
+      </View>
+      
+      <KeyboardAwareScrollView
+        style={styles.notesContainer}
+        contentContainerStyle={styles.scrollViewContent}
+        enableOnAndroid={true}
+       // extraHeight={150}  // Adjust the extra height as needed
+      >
+        <TextInput
+          style={styles.notes}
+          multiline
+          value={notes}
+          placeholder="Notes"
+          onChangeText={setNotes}
+          editable={isEditable}
+        />
+      </KeyboardAwareScrollView>
+    </>
+  )
+};
+
+export default function ScheduleView ({navigation, route, scrollEnabled = true}) {
+  const [title, setTitle] = useState([]);
+  
+  const [item, setItem] = useState(route.params?.item);
+  const [filter, setFilter] = useState({});
+  const [filterVisible, setFilterVisible] = useState(false);
 
   const [refreshing, setRefreshing] = useState(false);
 
   const [search, setSearch] = useState('');
   const [expandSearchBar, setSearchBar] = useState(false);
 
-  const [index, setIndex] = React.useState(0);
-  const [routes] = React.useState([
-    { key: 'checklist' },
-    { key: 'notes' },
-  ]);
-  const renderScene = ({ route }) => {
-    switch (route.key) {
-      case 'checklist':
-        //return <Checklist items={item.subtasks} setFn={updateNewItem} />;
-      case 'notes':
-        // return <Notes items={item} setFn={updateNewItem} />;
-        break;
-      default:
-        return null;
-    }
-  };
-  const renderIcon = ({ route, focused, color }) => {
-    let iconName;
-  
-    if (route.key === 'checklist') {
-      iconName = focused ? 'checkbox' : 'checkbox-outline';
-    } else if (route.key === 'notes') {
-      iconName = focused ? 'reader' : 'reader-outline';
-    }
-  
-    // Return the icon component
-    return <Ionicons name={iconName} size={30} color={COLORS({opacity:1}).primary} />;
-  };
+  function closeFilter() {
+    setRefreshing(!refreshing);
+    setFilterVisible(false);
+  }
 
   function doSearch() {
+    console.log(search);
     setSearchBar(false);
-    setRefreshing(!refreshing);
   }
 
   function updateNewItem(params) {
-    if(params.subtasks) {
-      setUpdatedItem({... updatedItem, subtasks: params.subtasks});
-    }
   }
-  
-  async function getSectionDetails(filter={}) {
+
+  async function getSectionItemsFromAPI() {
+    console.log("GEt item");
     try {
-      let items_ = await GETsectionTEST(itemtype, filter);
-      return items_;
+      let items = await GETitemsTEST(ItemType.Item, filter);
+      return items[0];
     } catch (error) {
-      console.log("error fetching items");
+      console.log("error fetching item");
       console.log(error);
       return [];
     }
-  }
-
-  const onRefresh = React.useCallback((updatedDate, state) => {
-    setSelectedDate(updatedDate);
-    setState(state);
-  });
-
-  function updateNewItem(params) {
-      // if(params.subtasks) {
-      //   setUpdatedItem({... updatedItem, subtasks: params.subtasks});
-      // }
-      // if(params.ingredients) {
-      //   setUpdatedItem({... updatedItem, ingredients: params.ingredients});
-      // }
-      // if(params.instructions) {
-      //   setUpdatedItem({... updatedItem, instructions: params.instructions});
-      // }
   }
 
   useEffect(() => {
-      let state = 
-      setFilter({... filter, category: route.params?.category.title, section: route.params?.section.title});
+    setTitle(route.params?.section);
+    setFilter({... filter, category: route.params?.category, section: route.params?.section});
+  }, []) // only run once on load
 
-      if (route.params?.isSection) {
-          setTitle(route.params?.section.title);
-          getSectionItemsFromAPI().then((items_) => {
-            setItems(items_);
-          }).catch((err) => {
-            alert(err.message)
-          })
-      }
-  })
-
-  async function PATCHsubtask() {
-    try {
-      let items_ = await GETtodayTEST(filter);
-      return items_;
-    } catch (error) {
-      console.log("error fetching items");
-      console.log(error);
-      return [];
+  const [selectedTab, setSelectedTab] = useState('Checkbox');
+  const renderTab = () => {
+    switch (selectedTab) {
+      case 'Checkbox':
+        return <Checklist item={item} setFn={updateNewItem} />;
+      case 'Notes':
+        return <Notes item={item} setFn={updateNewItem} />;
+      default:
+        return <Checklist item={item} setFn={updateNewItem} />;
     }
-  }
-  function addNewItem() {
-    getItemsFromAPI(filter).then((items_) => {
-      setItems(items_);
-    }).catch((err) => {
-      alert(err.message)
-    })
-  }
+  };
+
   return (
     <SafeAreaView style={styles.screen}>
-        <View style={[styles.propContainer]}>
-            <View style={[styles.row, {justifyContent: "space-between"}]}>
-                <Text style={styles.title}>{title}</Text>
-                <View style={styles.row}>
-                    <TouchableOpacity
-                    style={[styles.row, styles.searchInput]}
-                    onPress={() => {
-                        setSearchBar(!expandSearchBar);
-                    }}
-                    >
-                    <Ionicons name={"search-outline"} size={20} style={styles.iconInverted} />
-                      <TextInput style={{width: SIZES.xxLarge*4, fontSize: SIZES.medium, color: COLORS({opacity:1}).primary}} 
-                        {...(search ? { defaultValue: search } : { placeholder: "search" })}
-                        onChangeText={(newSearch) => (setSearch(newSearch))}
-                        returnKeyType='search'
-                        onSubmitEditing={() => (doSearch())}
-                      />
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </View>
-        <TabView
-          navigationState={{ index, routes }}
-          renderScene={renderScene}
-          onIndexChange={setIndex}
-          initialLayout={{ width: 20 }}
-          renderTabBar={(props) => (
-            <TabBar
-              {...props}
-              renderIcon={renderIcon} // Pass the renderIcon function to render icons
-              style={{ backgroundColor: 'white' }}
+      <View style={[styles.row, styles.propContainer, {justifyContent: "space-between"}]}>
+        <Text style={styles.title}>{title}</Text>
+        <TouchableOpacity
+          style={[styles.row, styles.searchInput]}
+          onPress={() => {
+            setSearchBar(!expandSearchBar);
+          }}
+        >
+          <Ionicons name={"search-outline"} size={20} style={styles.iconInverted} />
+          {expandSearchBar && (
+            <TextInput style={{width: textSIZES.xxLarge*4, fontSize: textSIZES.small, color: COLORS({opacity:1}).primary}} 
+              {...(search ? { defaultValue: search } : { placeholder: "search" })}
+              onChangeText={(newSearch) => (setSearch(newSearch))}
+              returnKeyType='search'
+              onSubmitEditing={() => (doSearch())}
             />
           )}
-        />
-        <HomeNavigation size={30} iconColor={COLORS({opacity:1}).primary}/>
+        </TouchableOpacity>
+      </View>
+      {/* <TouchableOpacity
+            onPress={() => {
+              setFilterVisible(true);
+            }}
+            style={styles.filterButtonIcon}
+          >
+            <Ionicons name={"options-outline"} size={20} style={styles.iconInverted}/>
+          </TouchableOpacity> */}
+      <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
+        <FilterModal closeFilter={closeFilter} filter={filter} setFilter={setFilter} />
+      </Modal>
+
+      <View style={styles.tabContainer}>
+        <TouchableOpacity
+          style={[styles.tab, selectedTab === 'Checkbox' && styles.activeTab]}
+          onPress={() => setSelectedTab('Checkbox')}
+        >
+          {selectedTab === 'Checkbox' ? 
+            (
+              <Ionicons name={"checkbox"} size={textSIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
+            ) 
+          : (
+              <Ionicons name={"checkbox-outline"} size={textSIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
+            )
+          }
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tab, selectedTab === 'Notes' && styles.activeTab]}
+          onPress={() => setSelectedTab('Notes')}
+        >
+          {selectedTab === 'Notes' ? 
+            (
+              <Ionicons name={"reader"} size={textSIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
+            ) 
+          : (
+              <Ionicons name={"reader-outline"} size={textSIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
+            )
+          }
+        </TouchableOpacity>
+      </View>
+      <View style={styles.contentContainer}>
+        {renderTab()}
+      </View>
     </SafeAreaView>
-    );
+  );
 };
 
 const styles = StyleSheet.create({
@@ -267,50 +286,32 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
   },
   filterButtonIcon: {
-    height: SIZES.xxLarge,
-    width: SIZES.xxLarge,
-    marginRight: SIZES.small,
-    borderRadius: SIZES.xxSmall,
-    backgroundColor: COLORS({opacity:0.7}).primary,
+    height: textSIZES.xxLarge,
+    width: textSIZES.xxLarge,
+    borderRadius: textSIZES.xxSmall,
+    backgroundColor: COLORS({opacity:0.7}).secondary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   addButton: {
-    height: SIZES.xxLarge,
-    borderRadius: SIZES.xxSmall,
-    //marginHorizontal: SIZES.medium,
+    height: textSIZES.xxLarge,
+    borderRadius: textSIZES.xxSmall,
+    marginHorizontal: textSIZES.small,
     backgroundColor: COLORS({opacity:0.7}).primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   searchInput: {
-    marginRight: SIZES.small,
-    borderRadius: SIZES.small,
-    backgroundColor: COLORS({opacity:0.5}).secondary,
-  },
-  sectionContainer: {
-    margin: SIZES.xSmall,
-    padding: SIZES.xSmall,
-    backgroundColor: COLORS({opacity:0.5}).primary,
-    borderRadius: SIZES.small,
-    ...SHADOWS.medium,
-    shadowColor: COLORS({opacity:1}).shadow,
+    //marginRight: textSIZES.xSmall,
+    borderRadius: textSIZES.xSmall,
+    width: textSIZES.xxLarge,
+    height: textSIZES.xxLarge,
+    backgroundColor: COLORS({opacity:0.8}).tertiary,
   },
   title: {
-    fontSize: SIZES.large,
+    fontSize: textSIZES.large,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).primary,
-  },
-  section: {
-    fontSize: SIZES.medium,
-    fontFamily: FONT.regular,
-    color: COLORS({opacity:1}).white,
-  },
-  expandedContainer: {
-    paddingBottom: SIZES.medium,
-    paddingHorizontal: SIZES.medium,
-    flex: 1,
-    overflow: 'scroll',
   },
   row: {
     flexDirection: "row",
@@ -318,72 +319,122 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   icon: {
-    marginRight: SIZES.xxSmall,
+    marginRight: textSIZES.xSmall,
     color: COLORS({opacity:0.8}).primary,
   },
   iconInverted: {
     color: COLORS({opacity:1}).white,
-    margin: SIZES.xxSmall,
+    margin: textSIZES.xxSmall,
   },
   propContainer: {
-    paddingHorizontal: SIZES.large,
-    paddingBottom: SIZES.xSmall,
+    paddingHorizontal: textSIZES.large,
+    paddingBottom: textSIZES.small,
     borderColor: COLORS({opacity:0.5}).primary,
     borderBottomWidth: 1,
-    borderRadius: SIZES.medium,
+    borderRadius: textSIZES.small,
     backgroundColor: "#FFF"
   },
-  imageBox: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    margin: SIZES.Small,
+  cardsContainer: {
+    marginTop: textSIZES.small,
+    marginHorizontal: textSIZES.small,
+    borderColor: COLORS({opacity:1}).lightGrey,// "#FFF",
+    borderRadius: textSIZES.xSmall,
+    borderWidth:0.50,
+    alignContent: "center"
   },
-  dayCardContainer: {
-    flex: 1,
-    padding: SIZES.xxSmall,
-    marginLeft: SIZES.xSmall,
-  },
-  title: {
-    fontSize: SIZES.large,
-    fontWeight: "200",
+  itemTitle: {
+    fontSize: textSIZES.small,
+    fontFamily: FONT.regular,
   },
   prop: {
     fontWeight: "200",
   },
   time: {
-    padding: SIZES.xSmall,
+    padding: textSIZES.xSmall,
     flexDirection: "column",
     justifyContent: "space-between",
     alignItems: "right",
   },
   timeLabel: {
     fontWeight: "200",
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
   },
-  cardsContainer: {
-    marginTop: SIZES.medium,
-    marginHorizontal: SIZES.medium,
-    backgroundColor: COLORS({opacity:1}).lightWhite,// "#FFF",
-    borderRadius: SIZES.small,
-    ...SHADOWS.xSmall,
-    shadowColor: COLORS({opacity:1}).shadow,
+  dayCardContainer: {
+    flex: 1,
+    padding: textSIZES.xxSmall,
+    marginLeft: textSIZES.xSmall,
   },
-  addButtonIcon: {
-    height: SIZES.xxLarge,
-    margin: SIZES.xSmall,
-    backgroundColor: COLORS({opacity:0.5}).primary,
-    borderRadius: SIZES.small,
-    ...SHADOWS.medium,
-    shadowColor: COLORS({opacity:1}).shadow,
-    alignItems: "center",
-    justifyContent: "center",
+  tabContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    backgroundColor:  COLORS({opacity:1}).lightWhite,
+    paddingVertical: textSIZES.xxSmall,
+  },
+  tab: {
+    paddingVertical: textSIZES.xxSmall,
+    paddingHorizontal: textSIZES.large,
+  },
+  activeTab: {
+    borderBottomWidth: 2,
+    borderBottomColor: COLORS({opacity:0.8}).primary,
+  },
+  contentContainer: {
+    flex: 1,
+  },
+  notesContainer: {
+    marginTop: textSIZES.xxSmall,
+  },
+  notes: {
+    padding: textSIZES.small,
+    fontSize: textSIZES.small,
+    flex:1,
+    minHeight: 500,
+    borderTopWidth: 1,
+    borderColor: COLORS({opacity:1}).tertiary
+  },
+  button: {
+    padding: textSIZES.xSmall, 
+    backgroundColor: COLORS({opacity:1}).tertiary, 
+    borderRadius: textSIZES.xSmall, 
+    marginRight: textSIZES.xxSmall,
+    alignItems: 'center',
+  },
+  newSection: {
+    margin: textSIZES.xSmall
   },
   inputBox: {
-    width: "100%",
-    fontSize: SIZES.medium, 
-    color: COLORS({opacity:1}).primary, 
-    padding: SIZES.small, 
+    margin: textSIZES.xSmall,
+    padding: textSIZES.xSmall,
     borderWidth: 0.5,
-    borderRadius: SIZES.xSmall,
-  }
+    borderRadius: textSIZES.xSmall,
+    borderColor: COLORS({opacity:1}).primary,
+    fontSize: textSIZES.small,
+  },
+  icon: {
+    marginRight: textSIZES.xxSmall,
+    color: COLORS({opacity:0.8}).indigo,
+  },
+  iconInverse: {
+      //margin: textSIZES.xxSmall,
+      color: COLORS({opacity:1}).lightWhite,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: textSIZES.xSmall,
+  },
+  subtaskContainer: {
+    margin: textSIZES.xxSmall,
+    padding: textSIZES.xSmall,
+    backgroundColor: COLORS({opacity:0.1}).lightGrey,
+    borderRadius: textSIZES.xSmall,
+    borderColor: COLORS({opacity:0.5}).lightGrey,
+    borderWidth: 1,
+  },
+  task: {
+    fontSize: textSIZES.small,
+    fontFamily: FONT.regular,
+    fontWeight: '200',
+    color: COLORS({opacity:1}).indigo,
+  },
 });

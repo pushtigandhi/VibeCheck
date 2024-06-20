@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { SIZES, COLORS, FONT, SHADOWS } from "../../constants";
+import { textSIZES, viewSIZES, COLORS, FONT, SHADOWS } from "../../constants";
 import { GETitems, GETitemsTEST, GETtodayTEST } from "../../API";
 import { ItemType } from "../../constants";
 import { View, StyleSheet, Text, ScrollView, FlatList, TouchableOpacity } from 'react-native';
@@ -41,7 +41,7 @@ export const DailyCalendar = ({navigation, date, filter, refreshing}) => {
           <Text style={styles.timeLabel}>{String(new Date(item.endDate).getHours())}:{new Date(item.endDate).getMinutes() < 10 ? String("0"+ new Date(item.endDate).getMinutes()) : String(new Date(item.endDate).getMinutes())}</Text>
         </View>
         <View style={{ justifyContent: "center"}}>
-          <Text style={{ fontSize: SIZES.xLarge}}>{item.icon}</Text>
+          <Text style={{ fontSize: textSIZES.xLarge}}>{item.icon}</Text>
         </View>
         <View style={styles.dayCardContainer}>
           <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
@@ -73,11 +73,12 @@ export const DailyCalendar = ({navigation, date, filter, refreshing}) => {
 
 const styles = StyleSheet.create({
   cardsContainer: {
-    marginBottom: SIZES.medium,
-    backgroundColor: COLORS({opacity:1}).lightWhite,// "#FFF",
-    borderRadius: SIZES.small,
-    ...SHADOWS.xSmall,
-    shadowColor: COLORS({opacity:1}).shadow,
+    marginBottom: textSIZES.small,
+    borderColor: COLORS({opacity:1}).lightGrey,
+    backgroundColor: COLORS({opacity:0.1}).lightGrey,
+    borderRadius: textSIZES.xSmall,
+    borderWidth:0.51,
+    alignContent: "center"
   },
   row: {
     flexDirection: "row",
@@ -85,24 +86,24 @@ const styles = StyleSheet.create({
   },
   dayCardContainer: {
     flex: 1,
-    padding: SIZES.xxSmall,
-    marginLeft: SIZES.xSmall,
+    padding: textSIZES.xxSmall,
+    marginLeft: textSIZES.xSmall,
   },
   title: {
-    fontSize: SIZES.large,
-    fontWeight: "200",
+    fontSize: textSIZES.small,
+    fontFamily: FONT.regular,
   },
   prop: {
     fontWeight: "200",
   },
   time: {
-    padding: SIZES.xSmall,
+    padding: textSIZES.xSmall,
     flexDirection: "column",
     justifyContent: "space-between",
     alignItems: "right",
   },
   timeLabel: {
     fontWeight: "200",
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
   }
 });

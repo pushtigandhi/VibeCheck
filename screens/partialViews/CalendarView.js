@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { SIZES, COLORS, FONT, SHADOWS } from "../../constants";
+import { textSIZES, viewSIZES, COLORS, FONT, SHADOWS } from "../../constants";
 import { GETitems, GETitemsTEST, GETtodayTEST, GETscheduledTEST } from "../../API";
 import { ItemType } from "../../constants";
 import { DailyCalendar } from "./DailyCalendar";
@@ -14,7 +14,7 @@ import NewItem from "../NewItem";
 import { Sidebar } from "../../components/Sidebar";
 import ScheduleScreen from "../ScheduleScreen";
 
-export const CalendarView = ({navigation, filter={}, setFilter}, isHome=false) => {
+export const CalendarView = ({navigation, filter={}, setFilter, isHome=false}) => {
     const calendarHeight = Dimensions.get('window').height - 300;
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [filterVisible, setFilterVisible] = useState(false);
@@ -69,90 +69,85 @@ export const CalendarView = ({navigation, filter={}, setFilter}, isHome=false) =
     }
     
     useEffect(() => {
-        // getItemsFromAPI(filter).then((items_) => {
-        //   setItems(items_);
-        // }).catch((err) => {
-        //   alert(err.message)
-        // })
         getScheduledItemsFromAPI();
-        console.log(items);
       },[refreshing])
 
     return (
-            <View style={{ flex: 1, backgroundColor: 'white' }}>
-                <View style={styles.calendarContainer} refreshControl={
-                    <RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={onRefresh}
-                    />
-                }>
-                    <ToolBar mobile={true} state={state} date={selectedDate}
-                        toggleSidebar={toggleSidebar}
-                        showSidebar={showSidebar}
-                        onRefresh={onRefresh}
-                        setFilterVisible={setFilterVisible}
-                        setScheduleVisible={setScheduleVisible}
-                        doSearch={doSearch}
-                        isHome={isHome}
-                    />
-                    <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
-                        <FilterModal closeFilter={closeFilter} filter={filter} setFilter={setFilter} />
-                    </Modal>
-                    <Modal visible={scheduleVisible} animationType="slide" onRequestClose={closeSchedule}>
-                        <ScheduleScreen navigation={navigation} />
-                    </Modal>
-                    <View style={styles.iconRoot}>
-                        <TouchableOpacity
-                            disabled={state === "day" ? true : false} 
-                            onPress={() => {
-                                setRefreshing(!refreshing);
-                                setState("day");
-                            }}
-                            style={{flex:1}}
-                        >
-                            <Text style={state === 'day' ? styles.tabActive : styles.tabInactive} >DAY</Text>
-                            {/* <Ionicons name={"ellipse"} size={10} style={state === 'day' ? styles.tabActive : styles.tabInactive} /> */}
-                        </TouchableOpacity>
-                        <TouchableOpacity 
-                            disabled={state === "week" ? true : false} 
-                            onPress={() => {
-                                setRefreshing(!refreshing);
-                                setState("week");
-                            }}
-                            style={{flex:1}}
+        <View style={{ flex: 1, backgroundColor: 'white' }}>
+            <View style={styles.calendarContainer} refreshControl={
+                <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                />
+            }>
+                <ToolBar mobile={true} state={state} date={selectedDate}
+                    toggleSidebar={toggleSidebar}
+                    showSidebar={showSidebar}
+                    onRefresh={onRefresh}
+                    setFilterVisible={setFilterVisible}
+                    setScheduleVisible={setScheduleVisible}
+                    doSearch={doSearch}
+                    isHome={isHome}
+                    navigation={navigation}
+                />
+                <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
+                    <FilterModal closeFilter={closeFilter} doSearch={closeFilter} filter={filter} setFilter={setFilter} />
+                </Modal>
+                <Modal visible={scheduleVisible} animationType="slide" onRequestClose={closeSchedule}>
+                    <ScheduleScreen navigation={navigation} onClose={setScheduleVisible} />
+                </Modal>
+                <View style={styles.iconRoot}>
+                    <TouchableOpacity
+                        disabled={state === "day" ? true : false} 
+                        onPress={() => {
+                            setRefreshing(!refreshing);
+                            setState("day");
+                        }}
+                        style={{flex:1}}
+                    >
+                        <Text style={state === 'day' ? styles.tabActive : styles.tabInactive} >DAY</Text>
+                        {/* <Ionicons name={"ellipse"} size={10} style={state === 'day' ? styles.tabActive : styles.tabInactive} /> */}
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                        disabled={state === "week" ? true : false} 
+                        onPress={() => {
+                            setRefreshing(!refreshing);
+                            setState("week");
+                        }}
+                        style={{flex:1}}
 
-                        >
-                            <Text style={state === 'week' ? styles.tabActive : styles.tabInactive} >WEEK</Text>
-                            {/* <Ionicons name={"ellipse"} size={10} style={state === 'week' ? styles.tabActive : styles.tabInactive} /> */}
-                        </TouchableOpacity>
-                        <TouchableOpacity 
-                            disabled={state === "month" ? true : false} 
-                            onPress={() => {
-                                setRefreshing(!refreshing);
-                                setState("month");
-                            }}
-                            style={{flex:1}}
-                        >
-                            <Text style={state === 'month' ? styles.tabActive : styles.tabInactive} >MONTH</Text>
-                            {/* <Ionicons name={"ellipse"} size={10} style={state === 'month' ? styles.tabActive : styles.tabInactive} /> */}
-                        </TouchableOpacity>
-                    </View>
-                    {showSidebar && (
-                        <Sidebar />
+                    >
+                        <Text style={state === 'week' ? styles.tabActive : styles.tabInactive} >WEEK</Text>
+                        {/* <Ionicons name={"ellipse"} size={10} style={state === 'week' ? styles.tabActive : styles.tabInactive} /> */}
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                        disabled={state === "month" ? true : false} 
+                        onPress={() => {
+                            setRefreshing(!refreshing);
+                            setState("month");
+                        }}
+                        style={{flex:1}}
+                    >
+                        <Text style={state === 'month' ? styles.tabActive : styles.tabInactive} >MONTH</Text>
+                        {/* <Ionicons name={"ellipse"} size={10} style={state === 'month' ? styles.tabActive : styles.tabInactive} /> */}
+                    </TouchableOpacity>
+                </View>
+                {showSidebar && (
+                    <Sidebar />
+                )}
+                <View style={{height: calendarHeight}} >
+                    {state === 'day' && (
+                        <DailyCalendar navigation={navigation} date={selectedDate} filter={filter} refreshing={refreshing} />
                     )}
-                    <View style={{height: calendarHeight}} >
-                        {state === 'day' && (
-                            <DailyCalendar navigation={navigation} date={selectedDate} filter={filter} refreshing={refreshing} />
-                        )}
-                        {state === 'week' && (
-                            <WeeklyCalendar navigation={navigation} date={selectedDate} filter={filter} refreshing={refreshing} itemList={items} />
-                        )}
-                        {state === 'month' && (
-                            <MonthlyCalendar navigation={navigation} date={selectedDate} month={selectedDate.getMonth()} filter={filter} onRefresh={onRefresh} refreshing={refreshing} />
-                        )}
-                    </View>
+                    {state === 'week' && (
+                        <WeeklyCalendar navigation={navigation} date={selectedDate} filter={filter} refreshing={refreshing} itemList={items} />
+                    )}
+                    {state === 'month' && (
+                        <MonthlyCalendar navigation={navigation} date={selectedDate} month={selectedDate.getMonth()} filter={filter} onRefresh={onRefresh} refreshing={refreshing} />
+                    )}
                 </View>
             </View>
+        </View>
     );
 };
 
@@ -163,13 +158,13 @@ const styles = StyleSheet.create({
     },
     calendarContainer: {
         top:0,
-        paddingHorizontal: SIZES.xSmall,
-        marginTop: SIZES.xxSmall,
+        paddingHorizontal: textSIZES.xSmall,
+        marginTop: textSIZES.xxSmall,
     },
     profileButton: {
       borderColor: COLORS({opacity:1}).primary,
       borderRadius: 100,
-      marginHorizontal: SIZES.medium,
+      marginHorizontal: textSIZES.small,
       height: 75,
       width: 75,
       borderWidth: 1,
@@ -180,12 +175,12 @@ const styles = StyleSheet.create({
     intention: {
         borderWidth: 1,
         borderColor: COLORS({opacity:1}).primary,
-        borderRadius: SIZES.xxSmall,
+        borderRadius: textSIZES.xxSmall,
         height: 75,
-        marginRight: SIZES.medium,
+        marginRight: textSIZES.small,
         //width: 250,
         flex: 1,
-        fontSize: SIZES.large,
+        fontSize: textSIZES.large,
         color: 'white',
     },
     row: {
@@ -200,30 +195,30 @@ const styles = StyleSheet.create({
         //flex: 0,
         flexDirection: "row",
         justifyContent: "center",
-        //height: SIZES.xSmall,
+        //height: textSIZES.xSmall,
     },
     icon: {
         color: COLORS({opacity:1}).primary,
         margin: 5,
     },
     tabActive: {
-        padding: SIZES.xxSmall,
+        padding: textSIZES.xxSmall,
         backgroundColor: COLORS({opacity:1}).primary,
         margin: 10,
         color: COLORS({opacity: 1}).white,
         fontWeight: "bold",
     },
     tabInactive: {
-        padding: SIZES.xxSmall,
+        padding: textSIZES.xxSmall,
         backgroundColor: COLORS({opacity:0.5}).primary,
         margin: 10,
         color: COLORS({opacity: 1}).white,
         fontWeight: "normal",
     },
     cardsContainer: {
-        marginBottom: SIZES.medium,
+        marginBottom: textSIZES.small,
         backgroundColor: COLORS({opacity:1}).lightWhite,// "#FFF",
-        borderRadius: SIZES.small,
+        borderRadius: textSIZES.xSmall,
         ...SHADOWS.xSmall,
         shadowColor: COLORS({opacity:1}).shadow,
     },
