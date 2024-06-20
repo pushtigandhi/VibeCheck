@@ -104,7 +104,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false
       }
       if(!!item.tags) {
         setTags(item.tags);
-        console.log(item.tags);
+        //console.log(item.tags);
       }
     }
   }, [item]); // Update category and section when item changes

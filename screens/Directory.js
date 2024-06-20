@@ -17,7 +17,7 @@ export default function Directory ({navigation, scrollEnabled = true}) {
     try {
       GETmeTEST().then((profile) => {
         if (!!profile) {
-          console.log(profile["_id"]);
+          //console.log(profile["_id"]);
           return profile["_id"].toString();
         } else {
           alert("Failed.");
@@ -33,9 +33,9 @@ export default function Directory ({navigation, scrollEnabled = true}) {
       title: newCategory,
     };
 
-    console.log(category);
+    //console.log(category);
     getProfileID().then((profileID) => {
-      console.log(profileID)
+      //console.log(profileID)
       (async () => {
         POSTaddCategoryTEST(profileID, {
           ...category,

@@ -26,7 +26,8 @@ const Checklist = ({item, setFn}) => {
       isChecked: false
     };
 
-    console.log(subtask);
+    //console.log(subtask);
+
     // getProfileID().then((profileID) => {
     //   console.log(profileID)
     //   (async () => {
@@ -176,7 +177,7 @@ export default function ScheduleView ({navigation, route, scrollEnabled = true})
   }
 
   function doSearch() {
-    console.log(search);
+    //console.log(search);
     setSearchBar(false);
   }
 
@@ -184,7 +185,7 @@ export default function ScheduleView ({navigation, route, scrollEnabled = true})
   }
 
   async function getSectionItemsFromAPI() {
-    console.log("GEt item");
+    //console.log("GEt item");
     try {
       let items = await GETitemsTEST(ItemType.Item, filter);
       return items[0];

@@ -37,7 +37,6 @@ export async function fetchWithAuth(url, options = {}) {
             };
         }
     } catch (err) {
-        console.log("JWT err");
         console.log(err);
     }
     
@@ -47,7 +46,6 @@ export async function fetchWithAuth(url, options = {}) {
         response = await fetch(url, options);
 
     } catch (error) {
-        console.log("fetchwithAuth response error");
         console.log(error);
     }
     
@@ -500,7 +498,7 @@ export async function DELETEtag(tagID) {
 //#region ITEMS
 const getURL= (itemType) => {
     let ext;
-    console.log("getURL: " + itemType);
+    //console.log("getURL: " + itemType);
     switch(itemType) {
         case ItemType.Task:
             ext = TASKS_EXT;
@@ -528,7 +526,7 @@ export async function GETitems(itemType, filter={}) {
         method: 'GET',
     });
     try {
-        console.log(response.status);
+        //console.log(response.status);
         if (response.status == 201) {
             // good, return 
             const body = await response.json();
@@ -615,7 +613,6 @@ export async function fetchWithAuthTEST(url, options = {}) {
             };
         }
     } catch (err) {
-        console.log("JWT err");
         console.log(err);
     }
     
@@ -636,7 +633,7 @@ export async function doLoginTEST(email, password) {
         })
     }
 
-    console.log(`${AUTH_BASE_URL}/login` + " " + response.body);
+    // console.log(`${AUTH_BASE_URL}/login` + " " + response.body);
 
     //await saveAuth(response);
     return { status: 200, message: "Login successful" };
@@ -683,7 +680,7 @@ export async function GETuserByHandleTEST() {
         method: 'GET',
     });
 
-    console.log(response);
+    // console.log(response);
 
     const body = {};
     return body.user;
@@ -744,7 +741,7 @@ export async function GETmeTEST() {
     //     method: 'GET',
     // });
 
-    // console.log(response);
+    // // console.log(response);
 
     const profile = {
         "profile": {
@@ -794,7 +791,7 @@ export async function GETprofileDetailsTEST(profileID) {
         method: 'GET',
     });
 
-    console.log(response);
+    // // console.log(response);
 
     const profile = {"profile": {}};
     return profile.profile;
@@ -806,7 +803,7 @@ export async function PATCHupdateProfileTEST(data) {
         body: JSON.stringify(data),
     });
 
-    console.log(response);
+    // console.log(response);
 
     const profile = {"profile": {}};
     return profile.profile;
@@ -819,7 +816,7 @@ export async function GETcontactsTEST() {
 
     const response =CONTACTS_BASE_URL;
 
-    console.log(response);
+    // console.log(response);
 
     const body = {"contacts": [{
         "name": "Test User",
@@ -841,7 +838,7 @@ export async function GETcontactByTEST(contactID) {
         method: 'GET',
     });
 
-    console.log(response);
+    // console.log(response);
 
     const body = {"contacts": {}};
     return body.contacts;
@@ -853,7 +850,7 @@ export async function POSTaddContactTEST(contact) {
         body: JSON.stringify(contact),
     });
 
-    console.log(response);
+    // console.log(response);
 
     const body = {"contacts": {}};
     return body.contacts;
@@ -868,7 +865,7 @@ export async function PATCHcontactTEST(newContact, contactID) {
         body: JSON.stringify(newItem),
     });
 
-    console.log(response);
+    // console.log(response);
 
     const editResponse = {"contacts": {}};
     return editResponse.contacts;
@@ -879,7 +876,7 @@ export async function DELETEcontactTEST(contactID) {
         method: "DELETE",
     });
 
-    console.log(response);
+    // console.log(response);
 }
 //#endregion
 
@@ -889,7 +886,7 @@ export async function GETdirectoryTEST() {
     //     method: 'GET',
     // });
 
-    // console.log(response);
+    // // console.log(response);
 
     const body = {"directory": [
         {
@@ -932,7 +929,7 @@ export async function GETdirectoryTEST() {
 export async function POSTaddCategoryTEST(profileID, category) {
     const response = `${DIRECTORY_BASE_URL}/${profileID}...body:` + JSON.stringify(category);
 
-    console.log(response);
+    // console.log(response);
 
     const body = {"directory": []};
     let directory = body.directory;
@@ -952,7 +949,7 @@ export async function PATCHcategoryTEST(newCategory, categoryID) {
         body: JSON.stringify(newCategory),
     });
 
-    console.log(response);
+    // console.log(response);
 
     const body = {"directory": []};
     let directory = body.directory;
@@ -968,7 +965,7 @@ export async function DELETEcategoryTEST(categoryID) {
         method: "DELETE",
     });
 
-    console.log(response);
+    // console.log(response);
 
     const body = {"directory": []};
     let directory = body.directory;
@@ -986,7 +983,7 @@ export async function GETtagsTEST() {
         method: 'GET',
     });
 
-    console.log(response);
+    // console.log(response);
 
     const body = {"tags": []};
     let tags = body.tags;
@@ -1003,7 +1000,7 @@ export async function POSTaddTagTEST(tag) {
         body: JSON.stringify(tag),
     });
 
-    console.log(response);
+    // console.log(response);
 
     const body = {"tag": {}};
     return body.tag;
@@ -1029,7 +1026,7 @@ export async function DELETEtagTEST(tagID) {
         method: "DELETE",
     });
 
-    console.log(response);
+    // console.log(response);
 
     const body = {"tag": {}};
     return body.tag;
@@ -1061,7 +1058,7 @@ export async function GETtodayTEST(selectedDate, filter={}) {
 
     const response = `${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "&" : "") + new URLSearchParams(filter);
 
-    console.log("today: " + response);
+    //console.log("today: " + response);
 
     const body = {
         "items": [
@@ -1191,7 +1188,7 @@ export async function GETweekTEST(selectedDate, filter={}) {
 
     const response = `${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "&" : "") + new URLSearchParams(filter);
 
-    console.log("week: " + response);
+    // console.log("week: " + response);
 
     const body = {
         "week": {
@@ -1444,7 +1441,7 @@ export async function GETmonthTEST(selectedDate, filter={}) {
 
     const response = `${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "&" : "") + new URLSearchParams(filter);
 
-    console.log("month: " + response);
+    // console.log("month: " + response);
 
     const body = {
         "month": {
@@ -1676,7 +1673,7 @@ export async function GETsectionTEST(itemType, filter={}) {
     const response = `${ITEMS_BASE_URL}/${ext}` + new URLSearchParams(filter);
 
     let body;
-    console.log("items: " + response);
+    // console.log("items: " + response);
 
     body = {
         "items": [
@@ -1713,7 +1710,7 @@ export async function GETitemsTEST(itemType, filter={}) {
 
     const response = `${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "&" : "") + new URLSearchParams(filter);
 
-    console.log(response);
+    // console.log(response);
     let body;
 
     if(!!filter.search) {
@@ -1868,7 +1865,7 @@ export async function POSTcreateItemTEST(itemType, item) {
         body: JSON.stringify(item),
     });
 
-    console.log(response);
+    // console.log(response);
 
     const body = {"item": {}};
     return body.item;
@@ -1880,10 +1877,10 @@ export async function PATCHitemTEST(itemType, newItem, itemID) {
     delete newItem._id; // remove _id from newPost
     delete newItem.id;
 
-    console.log(newItem);
+    // console.log(newItem);
     const response = `${ITEMS_BASE_URL}/${itemID}${ext}`;
 
-    console.log(response);
+    // console.log(response);
 
     const body = {"item": {}};
     return body.item;
@@ -1894,7 +1891,7 @@ export async function DELETEitemTEST(itemType, itemID) {
     
     const response = `${ITEMS_BASE_URL}/${itemID}${ext}`;
 
-    console.log(response);
+    // console.log(response);
 
     const body = {"item": {}};
     return body.item;

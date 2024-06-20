@@ -18,8 +18,7 @@ export default function FilteredResultsModal({filter, onUpdate, onClose, onItemS
         else {
             itemType = ItemType.Item;
         }
-        console.log("getting items");
-        console.log(copyFilter);
+        // console.log(copyFilter);
         try {
           let items_ = await GETitemsTEST(itemType, copyFilter);
           return items_;

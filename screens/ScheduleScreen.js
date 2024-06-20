@@ -25,19 +25,17 @@ export default function ScheduleScreen ({navigation, onClose}) {
     const [filter, setFilter] = useState({});
 
     function onSelectExistingItem() {
-        console.log("select existing");
+       // console.log("select existing");
         setShowFilteredResults(false);
         setFilterVisible(true);
     }
     function onItemSelected(item_) {
-        console.log(item_);
         setItem(item_);
         setShowCreateNew(true);
     }
 
     const doSearch = React.useCallback(() => {
-        console.log("doing searching");
-        console.log(filter);
+        //console.log(filter);
         setFilterVisible(false);
         setShowFilteredResults(true);
     }, []);

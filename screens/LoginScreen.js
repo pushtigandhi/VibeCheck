@@ -123,11 +123,11 @@ export default function Login({ navigation }) {
     }
 
     // If all validations pass, proceed with sign-up logic here
-    console.log('First Name:', firstName);
-    console.log('Last Name:', lastName);
-    console.log('Email:', email);
-    console.log('Password:', password);
-    console.log('Handle:', handle);
+    // console.log('First Name:', firstName);
+    // console.log('Last Name:', lastName);
+    // console.log('Email:', email);
+    // console.log('Password:', password);
+    // console.log('Handle:', handle);
 
     doSignup(email, password, handle, firstName, lastName, navigation)
   };

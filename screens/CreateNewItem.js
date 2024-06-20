@@ -124,10 +124,10 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
     
     function onSave() {
         if(isNew){
-            console.log("New: " + updatedItem);
+            //console.log("New: " + updatedItem);
 
         } else {
-            console.log("Edit: " + updatedItem);
+            //console.log("Edit: " + updatedItem);
 
             PATCHitemTEST(item.itemType, {
                 ...updatedItem
@@ -179,11 +179,11 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
         })
     
         if (item) {
-            console.log(item.itemType);
+            //console.log(item.itemType);
             if(item.ItemType)
                 setItemType(item.itemType);
           setIcon(item.icon.toString());
-          console.log("item: " + item.itemType + " " + item.category  + " " +item.section);
+          //console.log("item: " + item.itemType + " " + item.category  + " " +item.section);
           if (item["_id"]) {
             setIsNew(false);
             setTitle(item.title);

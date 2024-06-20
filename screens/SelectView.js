@@ -31,7 +31,8 @@ export default function SelectView({onClose}) {
       view: viewType,
     };
 
-    console.log(item);
+    //console.log(item);
+    
     // PATCHitemTEST(itemType, {
     //     ...item
     //   }, _id)

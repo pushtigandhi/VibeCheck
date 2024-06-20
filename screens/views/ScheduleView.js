@@ -59,7 +59,7 @@ export default function ScheduleView ({navigation, route, scrollEnabled = true})
   }
 
   function doSearch() {
-    console.log(search);
+    //console.log(search);
     setSearchBar(false);
   }
 
