@@ -4,7 +4,6 @@ import { View, Text, TouchableOpacity, Modal,
 import { COLORS, SHADOWS, FONT, textSIZES, ViewType, ItemType } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { ExpandableView } from "../../utils";
-import SelectView from "../SelectView";
 import { GETitems, GETitemsTEST } from "../../API";
 
 const expandedCard = ({navigation, category, sections}) => {

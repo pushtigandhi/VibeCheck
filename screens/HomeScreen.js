@@ -4,8 +4,6 @@ import { View, TouchableOpacity, Text, TextInput, Keyboard, Modal,
 import { COLORS, FONT, textSIZES, SHADOWS } from "../constants";
 import HomeNavigation from "./HomeNavigation";
 
-import { Spacer } from '../utils';
-
 import { DailyCalendar } from "./partialViews/DailyCalendar";
 import { WeeklyCalendar } from "./partialViews/WeeklyCalendar";
 import { MonthlyCalendar } from "./partialViews/MonthlyCalendar";
