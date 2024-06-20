@@ -473,8 +473,7 @@ const styles = StyleSheet.create({
     innerRoot: {
         display: "flex",
         flexDirection: "column",
-        height: "100%",
-        width: "100%",
+        flex: 1,
         paddingHorizontal: 20,
     },
     closeIcon: {

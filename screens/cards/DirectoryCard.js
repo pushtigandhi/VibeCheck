@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     borderRadius: textSIZES.xSmall,
   },
   title: {
-    fontSize: textSIZES.large,
+    fontSize: textSIZES.medium,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).primary,
   },

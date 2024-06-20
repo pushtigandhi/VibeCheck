@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
         // flexDirection: 'column',
         // height: 1024,
         // position: 'relative',
-        width: '70%',
-        height: '100%'
+        marginHorizontal: viewSIZES.small,
+        flex: 1,
     },
 });

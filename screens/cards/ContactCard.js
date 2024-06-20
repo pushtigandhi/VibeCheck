@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     shadowColor: COLORS({opacity:1}).shadow,
   },
   titleContainer: {
-    width: '100%',
+    flex: 1,
     padding: textSIZES.small,
     borderColor: COLORS({opacity:0.5}).primary,
     borderBottomWidth: 1,
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     paddingBottom: textSIZES.small,
     paddingHorizontal: textSIZES.xxSmall,
     flex: 1,
-    height: 100,
+    height: viewSIZES.small,
   },
   row: {
     flexDirection: "row",
