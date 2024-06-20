@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image, TouchableWithoutFeedback, Modal,
         StyleSheet, SafeAreaView, KeyboardAvoidingView } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { COLORS, SHADOWS, FONT, SIZES, ItemType } from "../../constants";
+import { COLORS, SHADOWS, FONT, textSIZES, ItemType, viewSIZES } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 import CollaboratorCard from "./CollaboratorCard";
@@ -32,32 +32,32 @@ const Properties = ({ item = null, itemType }) => {
   
     return (
       <SafeAreaView style={styles.infoContainer}>
-        <View style={[styles.row, styles.property, {marginVertical: SIZES.xxSmall}]}>
-          <Ionicons name={"folder-open-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />
-          <Text style={[styles.property, {marginLeft: SIZES.small}]}>{item.category}</Text>
+        <View style={[styles.row, styles.property, {marginVertical: textSIZES.xxSmall}]}>
+          <Ionicons name={"folder-open-outline"} size={size} style={[styles.icon, {margin: textSIZES.xxSmall}]} />
+          <Text style={[styles.property, {marginLeft: textSIZES.xSmall}]}>{item.category}</Text>
         </View>
         
         <View style={styles.divider}/>
 
-        <View style={[styles.row, styles.property, {marginVertical: SIZES.xxSmall}]}>
-          <Ionicons name={"bookmark-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />
-          <Text style={[styles.property, {marginLeft: SIZES.small}]}>{item.section}</Text>
+        <View style={[styles.row, styles.property, {marginVertical: textSIZES.xxSmall}]}>
+          <Ionicons name={"bookmark-outline"} size={size} style={[styles.icon, {margin: textSIZES.xxSmall}]} />
+          <Text style={[styles.property, {marginLeft: textSIZES.xSmall}]}>{item.section}</Text>
         </View>
 
         {item.startDate && (
           <>
             <View style={styles.divider}/>
 
-            <View style={[styles.row, styles.property, {marginVertical: SIZES.xxSmall}]}>
-              <Ionicons name={"calendar-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />
-              <Text style={[styles.property, {marginLeft: SIZES.small}]}>{new Date(item.startDate).toDateString()}</Text>
+            <View style={[styles.row, styles.property, {marginVertical: textSIZES.xxSmall}]}>
+              <Ionicons name={"calendar-outline"} size={size} style={[styles.icon, {margin: textSIZES.xxSmall}]} />
+              <Text style={[styles.property, {marginLeft: textSIZES.xSmall}]}>{new Date(item.startDate).toDateString()}</Text>
             </View>
 
             <View style={styles.divider}/>
 
-            <View style={[styles.row, styles.property, {marginVertical: SIZES.xxSmall}]}>
-              <Ionicons name={"alarm-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />
-              <Text style={[styles.property, {marginLeft: SIZES.small}]}>{String(new Date(item.startDate).getHours())}:{new Date(item.startDate).getMinutes() < 10 ? String("0"+ new Date(item.startDate).getMinutes()) : String(new Date(item.startDate).getMinutes())} - {String(new Date(item.endDate).getHours())}:{new Date(item.endDate).getMinutes() < 10 ? String("0"+ new Date(item.endDate).getMinutes()) : String(new Date(item.endDate).getMinutes())}</Text>
+            <View style={[styles.row, styles.property, {marginVertical: textSIZES.xxSmall}]}>
+              <Ionicons name={"alarm-outline"} size={size} style={[styles.icon, {margin: textSIZES.xxSmall}]} />
+              <Text style={[styles.property, {marginLeft: textSIZES.xSmall}]}>{String(new Date(item.startDate).getHours())}:{new Date(item.startDate).getMinutes() < 10 ? String("0"+ new Date(item.startDate).getMinutes()) : String(new Date(item.startDate).getMinutes())} - {String(new Date(item.endDate).getHours())}:{new Date(item.endDate).getMinutes() < 10 ? String("0"+ new Date(item.endDate).getMinutes()) : String(new Date(item.endDate).getMinutes())}</Text>
             </View>
           </>
         )}
@@ -65,7 +65,7 @@ const Properties = ({ item = null, itemType }) => {
           <>
             <View style={styles.divider}/>
            
-            <View style={[styles.row, styles.property, {marginVertical: SIZES.xxSmall}]}>
+            <View style={[styles.row, styles.property, {marginVertical: textSIZES.xxSmall}]}>
             </View>
           </>
         )} */}
@@ -74,17 +74,17 @@ const Properties = ({ item = null, itemType }) => {
           <>
             <View style={styles.divider}/>
 
-            <View style={[styles.row, styles.property, {marginVertical: SIZES.xxSmall}]}>  
-              <Ionicons name={"timer-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]}/>    
+            <View style={[styles.row, styles.property, {marginVertical: textSIZES.xxSmall}]}>  
+              <Ionicons name={"timer-outline"} size={size} style={[styles.icon, {margin: textSIZES.xxSmall}]}/>    
             
               <View style={styles.duration}>
-                <Text style={{fontSize: SIZES.medium}}>{hour}</Text>
+                <Text style={{fontSize: textSIZES.small}}>{hour}</Text>
               </View>
             
                 <Text style={styles.property}>Hours</Text>
             
               <View style={styles.duration}>
-                <Text style={{fontSize: SIZES.medium}}>{minute}</Text>
+                <Text style={{fontSize: textSIZES.small}}>{minute}</Text>
               </View>
               
               <Text style={styles.property}>Minutes</Text>
@@ -96,11 +96,11 @@ const Properties = ({ item = null, itemType }) => {
           <>
             <View style={styles.divider}/>
             
-            <View style={[styles.row, styles.property, {marginVertical: SIZES.xxSmall}]}>
+            <View style={[styles.row, styles.property, {marginVertical: textSIZES.xxSmall}]}>
               {(itemType === ItemType.Recipe) ? (
-                <Ionicons name={"star-half-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
+                <Ionicons name={"star-half-outline"} size={size} style={[styles.icon, {margin: textSIZES.xxSmall}]}/>
               ) : (
-                <Ionicons name={"alert-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
+                <Ionicons name={"alert-outline"} size={size} style={[styles.icon, {margin: textSIZES.xxSmall}]}/>
               )}
               {item.priority === 'LOW' && (
                 <View style={[styles.row, styles.box]}>
@@ -128,9 +128,9 @@ const Properties = ({ item = null, itemType }) => {
           <>
             <View style={styles.divider}/>
 
-            <View style={[styles.row, styles.property, {marginVertical: SIZES.xxSmall}]}>
-              <Ionicons name={"restaurant-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />
-              <Text style={[styles.property, styles.box, {marginLeft: SIZES.small}]}>{item.servings}</Text>
+            <View style={[styles.row, styles.property, {marginVertical: textSIZES.xxSmall}]}>
+              <Ionicons name={"restaurant-outline"} size={size} style={[styles.icon, {margin: textSIZES.xxSmall}]} />
+              <Text style={[styles.property, styles.box, {marginLeft: textSIZES.xSmall}]}>{item.servings}</Text>
             </View>
           </>
         )}
@@ -140,7 +140,7 @@ const Properties = ({ item = null, itemType }) => {
             <View style={styles.divider}/>
 
             <View style={styles.row}>
-              <Text style={[styles.icon, {margin: SIZES.xxSmall, marginLeft: SIZES.small, fontSize: SIZES.xLarge}]}>#</Text>
+              <Text style={[styles.icon, {margin: textSIZES.xxSmall, marginLeft: textSIZES.xSmall, fontSize: textSIZES.xLarge}]}>#</Text>
               {item.tags.map(tag => (
                 <View style={styles.tag}>
                   <Text style={styles.property} numberOfLines={1}>{tag}</Text>
@@ -238,7 +238,7 @@ export default function ItemCard({ navigation, route }) {
         <ScrollView scrollEnabled={true}>
           <View style={styles.imageBox}>
             <TouchableOpacity onPress={() => (onGoBack())} style={[styles.button]} > 
-                <Ionicons name={"arrow-back-outline"} size={SIZES.large} style={styles.icon}/> 
+                <Ionicons name={"arrow-back-outline"} size={textSIZES.large} style={styles.icon}/> 
             </TouchableOpacity>
             {favicon && (
                 <>
@@ -269,13 +269,13 @@ export default function ItemCard({ navigation, route }) {
                     setShowCreateNew(true);
                 }}  
             >
-                <Ionicons name={"pencil-outline"} size={SIZES.large} style={styles.icon}/> 
+                <Ionicons name={"pencil-outline"} size={textSIZES.large} style={styles.icon}/> 
             </TouchableOpacity>
           </View>
           
           <View style={[styles.row, styles.title]}>
-            <Text style={{fontSize: SIZES.xLarge, marginRight: SIZES.xxSmall}}>{icon}</Text>
-            <Text style={{width: "100%", fontSize: SIZES.xLarge}}>
+            <Text style={{fontSize: textSIZES.xLarge, marginRight: textSIZES.xxSmall}}>{icon}</Text>
+            <Text style={{width: "100%", fontSize: textSIZES.xLarge}}>
               {title}
             </Text>
           </View>
@@ -283,8 +283,8 @@ export default function ItemCard({ navigation, route }) {
 
           {description && (
             <View style={[styles.row, styles.description]}>
-              <Ionicons name={"menu-outline"} size={SIZES.xLarge} style={[styles.icon, {marginRight: SIZES.xxSmall}]}/>
-              <Text style={{width: "100%", fontSize: SIZES.medium}}>
+              <Ionicons name={"menu-outline"} size={textSIZES.xLarge} style={[styles.icon, {marginRight: textSIZES.xxSmall}]}/>
+              <Text style={{width: "100%", fontSize: textSIZES.small}}>
                 {description}
               </Text>
             </View>
@@ -292,7 +292,7 @@ export default function ItemCard({ navigation, route }) {
 
           {location && (
             <View style={[styles.row, styles.description]}>
-                <Ionicons name={"location-outline"} size={SIZES.xLarge} style={[styles.icon, {marginRight: SIZES.xxSmall}]}/>
+                <Ionicons name={"location-outline"} size={textSIZES.xLarge} style={[styles.icon, {marginRight: textSIZES.xxSmall}]}/>
                 <Text style={styles.location}>{location}</Text>
             </View>
           )}
@@ -307,14 +307,14 @@ export default function ItemCard({ navigation, route }) {
           >
             <View style={[styles.row, {justifyContent: "space-between"}]}>
               <View style={styles.row}>
-                <Ionicons name={"information-circle-outline"} size={SIZES.xLarge} style={styles.icon}/> 
+                <Ionicons name={"information-circle-outline"} size={textSIZES.xLarge} style={styles.icon}/> 
                 <Text style={styles.label} numberOfLines={1}>Properties</Text>
               </View>
               <View>
                 {isExpanded ? (
-                    <Ionicons name="chevron-up-outline" size={SIZES.xLarge} style={styles.icon}/>
+                    <Ionicons name="chevron-up-outline" size={textSIZES.xLarge} style={styles.icon}/>
                 ) : (
-                    <Ionicons name="chevron-down-outline" size={SIZES.xLarge} style={styles.icon}/>
+                    <Ionicons name="chevron-down-outline" size={textSIZES.xLarge} style={styles.icon}/>
                 )}
               </View>
             </View>
@@ -349,8 +349,8 @@ export default function ItemCard({ navigation, route }) {
 
           {notes && (
             <>
-              <View style={[styles.row, {marginTop: SIZES.xSmall, marginLeft: SIZES.xLarge}]}>
-                  <Ionicons name={"document-outline"} size={SIZES.xLarge} style={styles.icon}/>
+              <View style={[styles.row, {marginTop: textSIZES.xSmall, marginLeft: textSIZES.xLarge}]}>
+                  <Ionicons name={"document-outline"} size={textSIZES.xLarge} style={styles.icon}/>
                   <Text style={styles.label}>Notes</Text>
               </View>
               <Text style={styles.notes}>{notes}</Text>
@@ -376,63 +376,63 @@ const styles = StyleSheet.create({
       alignItems: "center",
   },
   title:{
-      padding: SIZES.medium,
-      margin: SIZES.medium,
+      padding: textSIZES.small,
+      margin: textSIZES.small,
       borderWidth: 1,
       borderColor: COLORS({opacity:0.5}).primary,
-      borderRadius: SIZES.medium,
+      borderRadius: textSIZES.small,
   },
   description:{
-      padding: SIZES.medium,
-      marginHorizontal: SIZES.medium,
-      marginBottom: SIZES.medium,
+      padding: textSIZES.small,
+      marginHorizontal: textSIZES.small,
+      marginBottom: textSIZES.small,
       borderWidth: 1,
       borderColor: COLORS({opacity:0.5}).primary,
-      borderRadius: SIZES.medium,
+      borderRadius: textSIZES.small,
   },
   notes:{
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
     //color: COLORS({opacity:0.9}).primary,
-    padding: SIZES.medium,
-    margin: SIZES.medium,
+    padding: textSIZES.small,
+    margin: textSIZES.small,
     borderWidth: 1,
     borderColor: COLORS({opacity:0.5}).primary,
-    borderRadius: SIZES.medium,
+    borderRadius: textSIZES.small,
   },
   property: {
-    fontSize: SIZES.medium, 
+    fontSize: textSIZES.small, 
     //color: COLORS({opacity:0.9}).primary
   },
   propContainer: {
     flex: 1,
-    paddingVertical: SIZES.xxSmall,
-    marginHorizontal: SIZES.xLarge,
+    paddingVertical: textSIZES.xxSmall,
+    marginHorizontal: textSIZES.xLarge,
   },
   label: {
-    paddingVertical: SIZES.xxSmall,
-    fontSize: SIZES.large,
+    paddingVertical: textSIZES.xxSmall,
+    fontSize: textSIZES.small,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).primary,
   },
   expandedContainer: {
-    margin: SIZES.medium,
+    margin: textSIZES.small,
     backgroundColor: COLORS({opacity:1}).lightWhite,
-    borderRadius: SIZES.medium/2,
+    borderRadius: textSIZES.small/2,
     ...SHADOWS.medium,
     shadowColor: COLORS({opacity:1}).shadow,
-    padding: SIZES.medium,
+    padding: textSIZES.small,
     flex: 1,
     overflow: 'scroll',
   },
   imageBox: {
     flexDirection: "row",
     justifyContent: "space-between",
-    margin: SIZES.Small,
+    margin: textSIZES.Small,
   },
   border: {
     borderWidth: 1,
     borderColor: COLORS({opacity:1}).navy,
-    borderRadius: SIZES.medium
+    borderRadius: textSIZES.small
   },
   icon: {
     color: COLORS({opacity:0.8}).primary,
@@ -441,48 +441,48 @@ const styles = StyleSheet.create({
     color: COLORS({opacity:0.8}).white,
   },
   button: {
-    height: SIZES.xLarge * 2,
-    width: SIZES.xLarge * 2,
-    padding: SIZES.xSmall,
-    marginHorizontal: SIZES.xSmall,
+    height: viewSIZES.xxSmall,
+    width: viewSIZES.xxSmall,
+    padding: textSIZES.xSmall,
+    marginHorizontal: textSIZES.xSmall,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1, 
     borderColor: COLORS({opacity:1}).primary,
-    borderRadius: SIZES.medium
+    borderRadius: textSIZES.small
   },
   addButtonIcon: {
-    height: SIZES.xxLarge,
-    margin: SIZES.xSmall,
+    height: textSIZES.xxLarge,
+    margin: textSIZES.xSmall,
     backgroundColor: COLORS({opacity:0.5}).primary,
-    borderRadius: SIZES.small,
+    borderRadius: textSIZES.xSmall,
     alignItems: "center",
     justifyContent: "center",
   },
   divider: {
-    paddingHorizontal: SIZES.medium,
+    paddingHorizontal: textSIZES.small,
     borderBottomWidth: 1,
     borderColor: COLORS({opacity:0.7}).primary,
-    marginBottom: SIZES.tiny,
-    marginHorizontal: SIZES.xLarge,
+    marginBottom: textSIZES.tiny,
+    marginHorizontal: textSIZES.xLarge,
   },
   infoContainer: {
-    marginHorizontal: SIZES.medium,
-    marginBottom: SIZES.medium,
-    padding: SIZES.small,
+    marginHorizontal: textSIZES.small,
+    marginBottom: textSIZES.small,
+    padding: textSIZES.xSmall,
     backgroundColor: COLORS({opacity:1}).lightWhite,
-    borderRadius: SIZES.medium/2,
+    borderRadius: textSIZES.small/2,
     borderWidth: 1,
     borderColor: COLORS({opacity:1}).primary,
   },
   box: {
     borderWidth: 1,
     borderColor: COLORS({opacity:1}).primary,
-    borderRadius: SIZES.small,
-    padding: SIZES.xSmall,
+    borderRadius: textSIZES.xSmall,
+    padding: textSIZES.xSmall,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: SIZES.xxSmall,
+    marginRight: textSIZES.xxSmall,
   },
   selectedBox: {
     backgroundColor: COLORS({opacity:1}).secondary,
@@ -492,9 +492,9 @@ const styles = StyleSheet.create({
   },
   duration: {
     backgroundColor: COLORS({opacity:0.5}).lightGrey,
-    padding: SIZES.xSmall,
-    borderRadius: SIZES.xSmall,
-    marginHorizontal: SIZES.xSmall,
+    padding: textSIZES.xSmall,
+    borderRadius: textSIZES.xSmall,
+    marginHorizontal: textSIZES.xSmall,
   },
   modalContainer: {
     flex: 1,
@@ -507,11 +507,11 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   heading: {
-    paddingHorizontal: SIZES.medium,
-    marginHorizontal: SIZES.xLarge,
+    paddingHorizontal: textSIZES.small,
+    marginHorizontal: textSIZES.xLarge,
   },
   time: {
-    padding: SIZES.xSmall,
+    padding: textSIZES.xSmall,
     flexDirection: "column",
     justifyContent: "space-between",
     alignItems: "right",
@@ -522,10 +522,10 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS({opacity:1}).lightWhite,
     borderWidth:0.5,
     borderColor: COLORS({opacity:1}).primary,
-    borderRadius: SIZES.xxSmall,
-    marginVertical: SIZES.xxSmall,
-    marginRight: SIZES.small,
-    paddingHorizontal: SIZES.small,
-    paddingVertical: SIZES.xxSmall,
+    borderRadius: textSIZES.xxSmall,
+    marginVertical: textSIZES.xxSmall,
+    marginRight: textSIZES.xSmall,
+    paddingHorizontal: textSIZES.xSmall,
+    paddingVertical: textSIZES.xxSmall,
   },
 });

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, TouchableOpacity, Text, TextInput, Keyboard, Modal,
     FlatList, RefreshControl, SafeAreaView, TouchableWithoutFeedback, StyleSheet } from 'react-native';
-import { COLORS, FONT, SIZES, SHADOWS } from "../constants";
+import { COLORS, FONT, textSIZES, SHADOWS } from "../constants";
 import HomeNavigation from "./HomeNavigation";
 
 import { Spacer } from '../utils';
@@ -22,8 +22,6 @@ import { GETdirectoryTEST, doOnStart } from "../API";
 
 //import { directoryList } from "../API";
 import FilterModal from "../components/FilterModal";
-import ScheduleItem from "./ScheduleItem";
-import MiniTools from "../components/MiniTools";
 import { refresh } from "@react-native-community/netinfo";
 import NewItem from "./NewItem";
 import { CalendarView } from "./partialViews/CalendarView";
@@ -32,6 +30,7 @@ export default function HomeScreen ({ navigation, route }) {
     const [filter, setFilter] = useState({});
     const [state, setState] = useState("day");
     const [refreshing, setRefreshing] = useState(false);
+    const [intention, setIntention] = useState('Set an intention here.');
 
     const dismissKeyboard = () => {
         Keyboard.dismiss();
@@ -45,15 +44,19 @@ export default function HomeScreen ({ navigation, route }) {
         <SafeAreaView style={styles.screen}>
             <View style={[styles.row, {flex: 0, height: 75}]}>
                 <TouchableOpacity style={styles.profileButton}>
-                    <Ionicons name={"person"} size={SIZES.xxLarge} style={{color: COLORS({opacity:1}).primary}}/>
+                    <Ionicons name={"person"} size={textSIZES.xxLarge} style={{color: COLORS({opacity:1}).primary}}/>
                 </TouchableOpacity>
                 <TouchableWithoutFeedback onPress={dismissKeyboard}>
-                    <TextInput style={styles.intention} />
+                    <TextInput style={styles.intention}
+                        value={intention}
+                        onChangeText={setIntention}
+                        returnKeyType='default'
+                    /> 
                 </TouchableWithoutFeedback>
             </View>
             <CalendarView navigation={navigation} filter={filter} setFilter={setFilter} isHome={true} />
             
-            <HomeNavigation style={{flex: 0}} size={SIZES.xxLarge} iconColor={COLORS({opacity:1}).primary}/> 
+            <HomeNavigation style={{flex: 0}} size={textSIZES.xxLarge} iconColor={COLORS({opacity:1}).primary}/> 
         </SafeAreaView>
     );
 };
@@ -65,13 +68,13 @@ const styles = StyleSheet.create({
     },
     calendarContainer: {
         top:0,
-        paddingHorizontal: SIZES.xSmall,
-        marginTop: SIZES.xxSmall,
+        paddingHorizontal: textSIZES.xSmall,
+        marginTop: textSIZES.xxSmall,
     },
     profileButton: {
       borderColor: COLORS({opacity:1}).primary,
       borderRadius: 100,
-      marginHorizontal: SIZES.medium,
+      marginHorizontal: textSIZES.small,
       height: 75,
       width: 75,
       borderWidth: 1,
@@ -82,13 +85,12 @@ const styles = StyleSheet.create({
     intention: {
         borderWidth: 1,
         borderColor: COLORS({opacity:1}).primary,
-        borderRadius: SIZES.xxSmall,
+        borderRadius: textSIZES.xxSmall,
         height: 75,
-        marginRight: SIZES.medium,
-        //width: 250,
+        marginRight: textSIZES.small,
+        padding: textSIZES.xxSmall,
         flex: 1,
-        fontSize: SIZES.large,
-        color: 'white',
+        fontSize: textSIZES.small,
     },
     row: {
         flexDirection: "row",
@@ -102,21 +104,21 @@ const styles = StyleSheet.create({
         //flex: 0,
         flexDirection: "row",
         justifyContent: "center",
-        //height: SIZES.xSmall,
+        //height: textSIZES.xSmall,
     },
     icon: {
         color: COLORS({opacity:1}).primary,
         margin: 5,
     },
     tabActive: {
-        padding: SIZES.xxSmall,
+        padding: textSIZES.xxSmall,
         backgroundColor: COLORS({opacity:1}).primary,
         margin: 10,
         color: COLORS({opacity: 1}).white,
         fontWeight: "bold",
     },
     tabInactive: {
-        padding: SIZES.xxSmall,
+        padding: textSIZES.xxSmall,
         backgroundColor: COLORS({opacity:0.5}).primary,
         margin: 10,
         color: COLORS({opacity: 1}).white,

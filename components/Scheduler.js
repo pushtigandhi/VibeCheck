@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, View, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Image, Modal, TouchableNativeFeedback } from "react-native";
-import { COLORS, FONT, SIZES, SHADOWS, ItemType } from "../constants";
+import { COLORS, FONT, textSIZES, viewSIZES, SHADOWS, ItemType } from "../constants";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -117,7 +117,7 @@ export const Scheduler = ({ item = null, setFn }) => {
           </View>
         </View>
         <View style={[styles.row, styles.property, styles.divider]}>
-          <Ionicons name={"repeat-outline"} size={SIZES.large} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
+          <Ionicons name={"repeat-outline"} size={textSIZES.large} style={[styles.icon, {margin: textSIZES.xxSmall}]}/>
           <TouchableOpacity style={[styles.row, styles.box, repeat === 'ONCE' ? styles.selectedBox:styles.unselectedBox]}
               onPress={() => (
               setRepeat("ONCE"),
@@ -152,16 +152,16 @@ export const Scheduler = ({ item = null, setFn }) => {
           </TouchableOpacity>
         </View>
         <View style={[styles.row, styles.property]}>
-          <Ionicons name={"timer-outline"} size={SIZES.large} style={[styles.icon]}/>
-          <View style={[styles.box, styles.unselectedBox, { marginHorizontal: SIZES.xxSmall }]}>
+          <Ionicons name={"timer-outline"} size={textSIZES.large} style={[styles.icon]}/>
+          <View style={[styles.box, styles.unselectedBox, { marginHorizontal: textSIZES.xxSmall }]}>
             <Text style={[styles.property, styles.unselectedText]}>{diffInDays}</Text>
           </View>
           <Text style={[styles.property, styles.unselectedText, { marginLeft: 0 }]}>Days</Text>
-          <View style={[styles.box, styles.unselectedBox, { marginHorizontal: SIZES.xxSmall }]}>
+          <View style={[styles.box, styles.unselectedBox, { marginHorizontal: textSIZES.xxSmall }]}>
             <Text style={[styles.property, styles.unselectedText]}>{diffInHours}</Text>
           </View>
           <Text style={[styles.property, styles.unselectedText, { marginLeft: 0 }]}>Hours</Text>
-          <View style={[styles.box, styles.unselectedBox, { marginHorizontal: SIZES.xxSmall }]}>
+          <View style={[styles.box, styles.unselectedBox, { marginHorizontal: textSIZES.xxSmall }]}>
             <Text style={[styles.property, styles.unselectedText]}>{diffInMinutes}</Text>
           </View>
           <Text style={[styles.property, styles.unselectedText,{ marginLeft: 0 }]}>Minutes</Text>
@@ -176,8 +176,8 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     backgroundColor: COLORS({opacity:1}).white,
-    margin: SIZES.medium,
-    marginVertical: SIZES.xxLarge*2,
+    margin: textSIZES.small,
+    marginVertical: textSIZES.xxLarge*2,
       ...SHADOWS.medium,
   },
   row: {
@@ -185,37 +185,37 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   divider: {
-    paddingBottom: SIZES.xSmall,
+    paddingBottom: textSIZES.xSmall,
     borderBottomWidth: 0.5,
     borderColor: COLORS({opacity:1}).tertiary,
   },
   label:{
     width: 50,
     color: COLORS({opacity:1}).secondary,
-    margin: SIZES.xSmall,
+    margin: textSIZES.xSmall,
   },
   property:{
-    // fontSize: SIZES.medium,
+    // fontSize: textSIZES.small,
     // fontFamily: FONT.regular,
     color: COLORS({opacity:0.8}).secondary,
-    margin: SIZES.xSmall,
+    margin: textSIZES.xSmall,
   },
   icon: {
-    //margin: SIZES.xxSmall,
+    //margin: textSIZES.xxSmall,
     color: COLORS({opacity:1}).secondary,
   },
   iconInverse: {
-    //margin: SIZES.xxSmall,
+    //margin: textSIZES.xxSmall,
     color: COLORS({opacity:1}).lightWhite,
   },
   box: {
     borderWidth: 0.5,
     borderColor: COLORS({opacity:1}).primary,
-    borderRadius: SIZES.small,
-    padding: SIZES.tiny,
+    borderRadius: textSIZES.xSmall,
+    padding: textSIZES.tiny,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: SIZES.xxSmall,
+    marginRight: textSIZES.xxSmall,
   },
   selectedBox: {
     backgroundColor: COLORS({opacity:1}).secondary,
@@ -230,43 +230,43 @@ const styles = StyleSheet.create({
     color: COLORS({opacity:1}).secondary,
   },
   title: {
-    fontSize: SIZES.large,
+    fontSize: textSIZES.large,
     fontFamily: FONT.regular,
     fontWeight: "200",
     color: COLORS({opacity:1}).primary,
   },
   section: {
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).primary,
   },
   removeButton: {
     height: 50,
     width: 50,
-    padding: SIZES.xSmall,
+    padding: textSIZES.xSmall,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: SIZES.medium,
+    borderRadius: textSIZES.small,
     backgroundColor: COLORS({opacity:1}).lightRed,
   },
   button: {
     flex: 1,
-    padding: SIZES.xSmall,
-    margin: SIZES.xSmall,
+    padding: textSIZES.xSmall,
+    margin: textSIZES.xSmall,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: SIZES.medium
+    borderRadius: textSIZES.small
   },
   buttonText: {
     color: COLORS({opacity: 1}).white,
   },
   cardsContainer: {
-      marginBottom: SIZES.medium,
-    marginHorizontal: SIZES.medium,
+      marginBottom: textSIZES.small,
+    marginHorizontal: textSIZES.small,
     backgroundColor: COLORS({opacity:1}).lightGrey,// "#FFF",
-    borderRadius: SIZES.small,
+    borderRadius: textSIZES.xSmall,
     ...SHADOWS.xSmall,
     shadowColor: COLORS({opacity:1}).shadow,
-    padding: SIZES.xxSmall,
+    padding: textSIZES.xxSmall,
   },
 });

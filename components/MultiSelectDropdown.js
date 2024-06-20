@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
 import { MultiSelect } from 'react-native-element-dropdown';
-import { COLORS, SIZES } from '../constants';
+import { COLORS, textSIZES, viewSIZES } from '../constants';
 import { Ionicons } from "@expo/vector-icons";
 
 const MultiSelectDropdown = ({ options, placeholder="Select items", icon, setFn, current=[] }) => {
@@ -60,12 +60,12 @@ const MultiSelectDropdown = ({ options, placeholder="Select items", icon, setFn,
 export default MultiSelectDropdown;
 
 const styles = StyleSheet.create({
-  container: { padding: SIZES.small },
+  container: { padding: textSIZES.xSmall },
   dropdown: {
     height: 40,
     backgroundColor: COLORS({opacity:1}).lightWhite,
-    borderRadius: SIZES.small,
-    padding: SIZES.small,
+    borderRadius: textSIZES.xSmall,
+    padding: textSIZES.xSmall,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -77,11 +77,11 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   placeholderStyle: {
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
     color: COLORS({opacity:1}).navy,
   },
   selectedTextStyle: {
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
     color: COLORS({opacity:1}).navy,
   },
   iconStyle: {
@@ -106,18 +106,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    fontSize: SIZES.small,
+    fontSize: textSIZES.xSmall,
     backgroundColor: COLORS({opacity:1}).lightWhite,
     borderWidth:0.5,
     borderColor: COLORS({opacity:1}).primary,
-    borderRadius: SIZES.xxSmall,
-    marginVertical: SIZES.xxSmall,
-    marginRight: SIZES.small,
-    paddingHorizontal: SIZES.small,
-    paddingVertical: SIZES.xxSmall,
+    borderRadius: textSIZES.xxSmall,
+    marginVertical: textSIZES.xxSmall,
+    marginRight: textSIZES.xSmall,
+    paddingHorizontal: textSIZES.xSmall,
+    paddingVertical: textSIZES.xxSmall,
   },
   textSelectedStyle: {
     marginRight: 5,
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
   },
 });

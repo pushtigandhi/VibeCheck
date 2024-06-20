@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { ScrollView, Text, View, StyleSheet, TouchableOpacity, TextInput, Image, KeyboardAvoidingView, Alert } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { COLORS, FONT, SIZES, SHADOWS, ItemType } from "../constants";
+import { COLORS, FONT, textSIZES, SHADOWS, ItemType, viewSIZES } from "../constants";
 import React, { useEffect, useState } from "react";
 import { PropertyCard } from "../screens/cards/PropertyCards";
 import CollaboratorCard from "./cards/CollaboratorCard";
@@ -208,7 +208,7 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
         <ScrollView style={styles.container} scrollEnabled={true}>
             <View style={styles.imageBox}>
                 <TouchableOpacity onPress={() => (onClose())} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightRed}]} > 
-                    <Ionicons name={"close-outline"} size={SIZES.xxLarge} style={styles.iconInverse}/> 
+                    <Ionicons name={"close-outline"} size={textSIZES.xxLarge} style={styles.iconInverse}/> 
                 </TouchableOpacity>
                 <TouchableOpacity style={{alignContent: "center"}}
                     onPress={(newFavicon) => (
@@ -222,13 +222,13 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
                     />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => (onSave())} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightGreen}]} >
-                    <Ionicons name={"checkmark-outline"} size={SIZES.xxLarge} style={styles.iconInverse}/> 
+                    <Ionicons name={"checkmark-outline"} size={textSIZES.xxLarge} style={styles.iconInverse}/> 
                 </TouchableOpacity>
             </View>
 
             <View style={[styles.row, styles.title]}>
-                <Text style={{fontSize: SIZES.xLarge, marginRight: SIZES.xxSmall}}>{icon}</Text>
-                <TextInput style={{width: "100%", fontSize: SIZES.xLarge, color: COLORS({opacity:0.9}).primary}} defaultValue={ title } 
+                <Text style={{fontSize: textSIZES.xLarge, marginRight: textSIZES.xxSmall}}>{icon}</Text>
+                <TextInput style={{width: "100%", fontSize: textSIZES.xLarge, color: COLORS({opacity:0.9}).primary}} defaultValue={ title } 
                     onChangeText={(newTitle) => (setTitle(newTitle))}
                 />
             </View>
@@ -237,15 +237,15 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
 
             {showDesc == false && (
                 <TouchableOpacity style={[styles.row, styles.label]} onPress={()=>(setShowDesc(true))}>
-                    <Ionicons name={"menu-outline"} size={SIZES.xLarge} style={styles.icon}/>
+                    <Ionicons name={"menu-outline"} size={textSIZES.xLarge} style={styles.icon}/>
                     <Text style={styles.property}>Add Description</Text>
                 </TouchableOpacity>
             )}
             {showDesc == true && (
                 <>
                     <View style={[styles.row, styles.description]}>
-                        <Ionicons name={"menu-outline"} size={SIZES.xLarge} style={[styles.icon, {marginRight: SIZES.xxSmall}]}/>
-                        <TextInput style={{width: "100%", fontSize: SIZES.medium, color: COLORS({opacity:0.9}).primary}}
+                        <Ionicons name={"menu-outline"} size={textSIZES.xLarge} style={[styles.icon, {marginRight: textSIZES.xxSmall}]}/>
+                        <TextInput style={{width: "100%", fontSize: textSIZES.small, color: COLORS({opacity:0.9}).primary}}
                             {...(description ? { defaultValue: description } : { placeholder: "Enter a description..." })} 
                             onChangeText={(newDescription) => (
                                 setDescription(newDescription)
@@ -269,7 +269,7 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
                 {showLocation == false && (
                     <>
                     <TouchableOpacity style={[styles.row, styles.label]} onPress={()=>(setShowLocation(true))}>
-                        <Ionicons name={"location-outline"} size={SIZES.xLarge} style={styles.icon}/>
+                        <Ionicons name={"location-outline"} size={textSIZES.xLarge} style={styles.icon}/>
                         <Text style={styles.property}>Add Location</Text>
                     </TouchableOpacity>
 
@@ -279,13 +279,13 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
                 {showLocation == true && (
                     <>
                     <View style={[styles.row, styles.description]}>
-                        <Ionicons name={"location-outline"} size={SIZES.xLarge} style={[styles.icon, {marginRight: SIZES.xxSmall}]}/>
+                        <Ionicons name={"location-outline"} size={textSIZES.xLarge} style={[styles.icon, {marginRight: textSIZES.xxSmall}]}/>
                         <TextInput style={styles.location} 
                         {...(location ? { defaultValue: location.toString() } : { placeholder: "Location" })} 
                         onChangeText={(newLocation) => (setLocation(newLocation))}
                         />
                     </View>
-                    <TouchableOpacity style={[styles.row, styles.removeButton, {marginTop: SIZES.xxSmall}]}
+                    <TouchableOpacity style={[styles.row, styles.removeButton, {marginTop: textSIZES.xxSmall}]}
                         onPress={() => (setShowLocation(false))}
                     >
                         <Ionicons name={"close-outline"} size={20} style={styles.icon} />
@@ -304,14 +304,14 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
               }}
             >
                 <View style={styles.row}>
-                    <Ionicons name={"information-circle-outline"} size={SIZES.xLarge} style={styles.icon}/> 
+                    <Ionicons name={"information-circle-outline"} size={textSIZES.xLarge} style={styles.icon}/> 
                     <Text style={styles.property} numberOfLines={1}>Properties</Text>
                 </View>
                 <View>
                     {isExpanded ? (
-                        <Ionicons name="chevron-up-outline" size={SIZES.xLarge} style={styles.icon}/>
+                        <Ionicons name="chevron-up-outline" size={textSIZES.xLarge} style={styles.icon}/>
                     ) : (
-                        <Ionicons name="chevron-down-outline" size={SIZES.xLarge} style={styles.icon}/>
+                        <Ionicons name="chevron-down-outline" size={textSIZES.xLarge} style={styles.icon}/>
                     )}
                 </View>
             </TouchableOpacity>
@@ -353,7 +353,7 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
             {(showNotes == false && item.itemType !== ItemType.Page) && (
                 <>
                 <TouchableOpacity style={[styles.row, styles.label]} onPress={()=>(setShowNotes(true))}>
-                    <Ionicons name={"document-outline"} size={SIZES.xLarge} style={styles.icon}/>
+                    <Ionicons name={"document-outline"} size={textSIZES.xLarge} style={styles.icon}/>
                     <Text style={styles.property}>Add Notes</Text>
                 </TouchableOpacity>
                 <View style={styles.divider}/>
@@ -380,7 +380,7 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
             )}
 
             {!isNew && (
-                <TouchableOpacity onPress={() => ConfirmCancelPrompt()} style={[styles.removeButton, {backgroundColor: COLORS({opacity:1}).lightRed, margin: SIZES.xSmall}]}>
+                <TouchableOpacity onPress={() => ConfirmCancelPrompt()} style={[styles.removeButton, {backgroundColor: COLORS({opacity:1}).lightRed, margin: textSIZES.xSmall}]}>
                     <Text style={styles.iconInverse}>Delete</Text>
                 </TouchableOpacity>
             )}
@@ -401,45 +401,45 @@ const styles = StyleSheet.create({
     },
     header: {
         display: "flex",
-        marginTop: SIZES.small,
-        paddingTop: SIZES.xxLarge,
-        paddingHorizontal: SIZES.xSmall,
+        marginTop: textSIZES.xSmall,
+        paddingTop: textSIZES.xxLarge,
+        paddingHorizontal: textSIZES.xSmall,
         justifyContent: "space-between",
     },
     headerText: {
-        fontSize: SIZES.large,
+        fontSize: textSIZES.large,
         alignSelf: "center",
         color: COLORS({opacity:1}).white,
     },
     sortText: {
         fontSize: 20,
         fontWeight: "bold",
-        marginTop: SIZES.medium,
-        marginHorizontal: SIZES.medium,
+        marginTop: textSIZES.small,
+        marginHorizontal: textSIZES.small,
         color: "black",
     },
     button: {
-        height: SIZES.xxLarge * 2,
-        width: SIZES.xxLarge * 2,
-        padding: SIZES.xSmall,
-        marginHorizontal: SIZES.xSmall,
+        height: viewSIZES.xSmall,
+        width: viewSIZES.xSmall,
+        padding: textSIZES.xSmall,
+        marginHorizontal: textSIZES.xSmall,
         alignItems: "center",
         justifyContent: "center",
-        borderRadius: SIZES.medium
+        borderRadius: textSIZES.small
     },
     searchButton: {
         // marginRight: 90,
         // marginLeft: 90,
         marginHorizontal: 50,
-        marginTop: SIZES.xSmall,
+        marginTop: textSIZES.xSmall,
         marginBottom: 25,
-        paddingTop: SIZES.xSmall,
-        paddingBottom: SIZES.xSmall,
+        paddingTop: textSIZES.xSmall,
+        paddingBottom: textSIZES.xSmall,
         backgroundColor: COLORS({opacity: 1}).secondary,
-        borderRadius: SIZES.small,
+        borderRadius: textSIZES.xSmall,
     },
     searchButtonText: {
-        fontSize: SIZES.large,
+        fontSize: textSIZES.large,
         alignSelf: "center",
         color: COLORS({opacity:1}).lightWhite,
     },
@@ -462,28 +462,28 @@ const styles = StyleSheet.create({
     textInput: {
         borderColor: COLORS({opacity:1}).primary,
         backgroundColor: "white",
-        borderRadius: SIZES.xSmall,
+        borderRadius: textSIZES.xSmall,
         borderWidth: 2,
         padding: 15,
-        borderRadius: SIZES.xSmall,
+        borderRadius: textSIZES.xSmall,
         width: 260
     },
     icon: {
-        //margin: SIZES.xxSmall,
+        //margin: textSIZES.xxSmall,
         color: COLORS({opacity:1}).secondary,
     },
     iconInverse: {
-        //margin: SIZES.xxSmall,
+        //margin: textSIZES.xxSmall,
         color: COLORS({opacity:1}).lightWhite,
     },
     box: {
         borderWidth: 0.5,
         borderColor: COLORS({opacity:1}).primary,
-        borderRadius: SIZES.xxSmall,
-        padding: SIZES.small, 
+        borderRadius: textSIZES.xxSmall,
+        padding: textSIZES.xSmall, 
         alignItems: 'center',
         justifyContent: 'center',
-        marginRight: SIZES.xxSmall,
+        marginRight: textSIZES.xxSmall,
     },
     selectedBox: {
         backgroundColor: COLORS({opacity:1}).secondary,
@@ -498,22 +498,22 @@ const styles = StyleSheet.create({
      color: COLORS({opacity:1}).secondary,
     },
     section: {
-        fontSize: SIZES.medium,
+        fontSize: textSIZES.small,
         fontFamily: FONT.regular,
         color: COLORS({opacity:1}).primary,
     },
     removeButton: {
         backgroundColor: COLORS({opacity:0.3}).lightGrey, 
-        padding: SIZES.small, 
-        borderRadius: SIZES.xxSmall,
-        marginHorizontal: SIZES.medium,
+        padding: textSIZES.xSmall, 
+        borderRadius: textSIZES.xxSmall,
+        marginHorizontal: textSIZES.small,
         alignItems: 'center',
     },
     duration: {
         backgroundColor: COLORS({opacity:0.5}).lightGrey,
-        padding: SIZES.xSmall,
-        borderRadius: SIZES.xSmall,
-        marginLeft: SIZES.xSmall,
+        padding: textSIZES.xSmall,
+        borderRadius: textSIZES.xSmall,
+        marginLeft: textSIZES.xSmall,
     },
     picker: {
         width: 100,
@@ -522,62 +522,62 @@ const styles = StyleSheet.create({
     imageBox: {
         flexDirection: "row",
         justifyContent: "space-between",
-        margin: SIZES.Small,
+        margin: textSIZES.Small,
     },
     border: {
         borderWidth: 1,
         borderColor: COLORS({opacity:1}).navy,
-        borderRadius: SIZES.medium
+        borderRadius: textSIZES.small
     },
     title:{
-        padding: SIZES.medium,
-        margin: SIZES.medium,
+        padding: textSIZES.small,
+        margin: textSIZES.small,
         marginBottom: 0,
         borderWidth: 1,
         borderColor: COLORS({opacity:0.5}).primary,
-        borderRadius: SIZES.medium,
+        borderRadius: textSIZES.small,
     },
     description:{
-        padding: SIZES.medium,
-        margin: SIZES.medium,
+        padding: textSIZES.small,
+        margin: textSIZES.small,
         marginTop: 0,
-        marginBottom: SIZES.xSmall,
+        marginBottom: textSIZES.xSmall,
         borderWidth: 1,
         borderColor: COLORS({opacity:0.5}).primary,
-        borderRadius: SIZES.medium,
+        borderRadius: textSIZES.small,
     },
     notes:{
-        fontSize: SIZES.medium,
+        fontSize: textSIZES.small,
         minHeight: 200,
         color: COLORS({opacity:0.9}).primary,
-        padding: SIZES.medium,
-        margin: SIZES.medium,
+        padding: textSIZES.small,
+        margin: textSIZES.small,
         marginTop: 0,
         borderWidth: 1,
         borderColor: COLORS({opacity:0.5}).primary,
-        borderRadius: SIZES.medium,
+        borderRadius: textSIZES.small,
     },
     divider: {
-        paddingHorizontal: SIZES.medium,
-        paddingBottom: SIZES.xSmall,
+        paddingHorizontal: textSIZES.small,
+        paddingBottom: textSIZES.xSmall,
         borderBottomWidth: 1,
         borderColor: COLORS({opacity:0.7}).primary,
-        marginBottom: SIZES.xSmall,
-        marginHorizontal: SIZES.xLarge,
+        marginBottom: textSIZES.xSmall,
+        marginHorizontal: textSIZES.xLarge,
     },
     label:{
-        paddingVertical: SIZES.xxSmall,
-        marginHorizontal: SIZES.xLarge,
+        paddingVertical: textSIZES.xxSmall,
+        marginHorizontal: textSIZES.xLarge,
     },
     property:{
-        fontSize: SIZES.medium,
+        fontSize: textSIZES.small,
         color: COLORS({opacity:1}).primary,
     },
     infoContainer: {
-        marginHorizontal: SIZES.medium,
-        marginVertical: SIZES.small,
+        marginHorizontal: textSIZES.small,
+        marginVertical: textSIZES.xSmall,
         backgroundColor: COLORS({opacity:1}).lightWhite,
-        borderRadius: SIZES.medium/2,
+        borderRadius: textSIZES.small/2,
         ...SHADOWS.medium,
         shadowColor: COLORS({opacity:1}).shadow,
     },

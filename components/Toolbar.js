@@ -2,9 +2,8 @@ import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { View, TouchableOpacity, StyleSheet, Text, TextInput, RefreshControl } from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
-import { COLORS, SIZES, SHADOWS } from "../constants";
+import { COLORS, textSIZES, viewSIZES, SHADOWS } from "../constants";
 import DateTimePicker from '@react-native-community/datetimepicker';
-import MiniTools from "./MiniTools";
 
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 
@@ -111,7 +110,7 @@ export const ToolBar = ({
               }}
               style={styles.filterButtonIcon}
           >
-              <Ionicons name={"funnel-outline"} size={20} style={styles.iconInverted}/>
+              <Ionicons name={"options-outline"} size={20} style={styles.iconInverted}/>
           </TouchableOpacity>
           <TouchableOpacity
               onPress={() => {setScheduleVisible(true);}}
@@ -189,49 +188,49 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   addButtonIcon: {
-    height: SIZES.xxLarge,
-    width: SIZES.xxLarge,
-    borderRadius: SIZES.xxSmall,
+    height: textSIZES.xxLarge,
+    width: textSIZES.xxLarge,
+    borderRadius: textSIZES.xxSmall,
     backgroundColor: COLORS({opacity:1}).primary,
-    marginRight: SIZES.xxSmall,
+    marginRight: textSIZES.xxSmall,
     alignItems: 'center',
     justifyContent: 'center',
   },
   filterButtonIcon: {
-    height: SIZES.xxLarge,
-    width: SIZES.xxLarge,
-    borderRadius: SIZES.xxSmall,
+    height: textSIZES.xxLarge,
+    width: textSIZES.xxLarge,
+    borderRadius: textSIZES.xxSmall,
     backgroundColor: COLORS({opacity:0.7}).primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   searchButtonIcon: {
-    height: SIZES.xxLarge,
-    width: SIZES.xxLarge,
-    borderRadius: SIZES.xxSmall,
+    height: textSIZES.xxLarge,
+    width: textSIZES.xxLarge,
+    borderRadius: textSIZES.xxSmall,
     backgroundColor: COLORS({opacity:0.5}).secondary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   searchInput: {
-    fontSize: SIZES.medium, 
+    fontSize: textSIZES.small, 
     color: COLORS({opacity:1}).primary,
     borderWidth: 1, 
-    borderRadius: SIZES.xxSmall,
-    padding: SIZES.xxSmall,
-    marginTop: SIZES.xxSmall,
+    borderRadius: textSIZES.xxSmall,
+    padding: textSIZES.xxSmall,
+    marginTop: textSIZES.xxSmall,
     borderColor: COLORS({opacity:0.5}).primary,
   },
   icon: {
     color: COLORS({opacity:1}).primary,
-    margin: SIZES.xxSmall,
+    margin: textSIZES.xxSmall,
   },
   iconInverted: {
     color: COLORS({opacity:1}).white,
-    margin: SIZES.xxSmall,
+    margin: textSIZES.xxSmall,
   },
   calendar: {
-    textDayFontSize: SIZES.medium,
+    textDayFontSize: textSIZES.small,
     dayTextColor: COLORS({opacity:1}).secondary,
     selectedDayTextColor: COLORS({opacity:1}).lightWhite,
     selectedDotColor: COLORS({opacity:1}).primary,

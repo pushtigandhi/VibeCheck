@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
-import { COLORS, SIZES } from '../constants';
+import { COLORS, textSIZES, viewSIZES } from '../constants';
 import { Ionicons } from '@expo/vector-icons';
 
 const SingleSelectDropdown = ({ options, placeholder = "Select", icon, setFn, isDisabled=false }) => {
@@ -47,11 +47,11 @@ export default SingleSelectDropdown;
 
 const styles = StyleSheet.create({
     dropdown: {
-        margin: SIZES.small,
+        margin: textSIZES.xSmall,
         height: 40,
         backgroundColor: COLORS({ opacity: 1 }).lightWhite,
-        borderRadius: SIZES.xSmall,
-        padding: SIZES.small,
+        borderRadius: textSIZES.xSmall,
+        padding: textSIZES.xSmall,
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
@@ -73,15 +73,15 @@ const styles = StyleSheet.create({
     },
     textItem: {
         flex: 1,
-        fontSize: SIZES.medium,
+        fontSize: textSIZES.small,
         color: COLORS({ opacity: 1 }).navy,
     },
     placeholderStyle: {
-        fontSize: SIZES.medium,
+        fontSize: textSIZES.small,
         color: COLORS({ opacity: 1 }).navy,
     },
     selectedTextStyle: {
-        fontSize: SIZES.medium,
+        fontSize: textSIZES.small,
         color: COLORS({ opacity: 1 }).navy,
     },
     iconStyle: {
@@ -91,10 +91,10 @@ const styles = StyleSheet.create({
     inputSearchStyle: {
         height: 40,
         fontSize: 16,
-        borderRadius: SIZES.small,
+        borderRadius: textSIZES.xSmall,
     },
     containerStyle: {
-        borderBottomLeftRadius: SIZES.small,
-        borderBottomRightRadius: SIZES.small,
+        borderBottomLeftRadius: textSIZES.xSmall,
+        borderBottomRightRadius: textSIZES.xSmall,
     },
 });

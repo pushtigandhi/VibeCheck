@@ -1,5 +1,5 @@
 import { SafeAreaView, View, FlatList, StyleSheet, Text, TouchableOpacity, TextInput, Modal } from "react-native";
-import { COLORS, FONT, SIZES, SHADOWS } from "../constants";
+import { COLORS, FONT, textSIZES, SHADOWS, viewSIZES } from "../constants";
 import { GETitems, POSTcreateItem, POSTaddCategory, BASE_URL, GETmeTEST, POSTaddCategoryTEST } from "../API";
 import { Ionicons } from "@expo/vector-icons";
 import { useState, useEffect } from "react";
@@ -91,7 +91,7 @@ export default function Directory ({navigation, scrollEnabled = true}) {
           onPress={() => (setShowInput(true))}
           style={[styles.row, styles.addButton]}
         >
-          <Ionicons name={"add-circle"} size={SIZES.xLarge} style={styles.icon}/>
+          <Ionicons name={"add-circle"} size={textSIZES.xLarge} style={styles.icon}/>
         </TouchableOpacity>
       </View>
 
@@ -104,10 +104,10 @@ export default function Directory ({navigation, scrollEnabled = true}) {
           /> 
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightRed}]} onPress={() => setShowInput(false)}>
-              <Ionicons name={"close-outline"} size={SIZES.medium} style={styles.iconInverse}/> 
+              <Ionicons name={"close-outline"} size={textSIZES.small} style={styles.iconInverse}/> 
             </TouchableOpacity>
             <TouchableOpacity style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightGreen}]} onPress={addNewCategory}>
-              <Ionicons name={"checkmark-outline"} size={SIZES.medium} style={styles.iconInverse}/> 
+              <Ionicons name={"checkmark-outline"} size={textSIZES.small} style={styles.iconInverse}/> 
             </TouchableOpacity>
           </View>
           
@@ -130,35 +130,35 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS({opacity:1}).white,
   },
   header:{
-    padding: SIZES.small,
-    marginHorizontal: SIZES.small,
+    padding: textSIZES.xSmall,
+    marginHorizontal: textSIZES.xSmall,
     borderWidth: 1,
     borderColor: COLORS({opacity:1}).primary,
-    borderRadius: SIZES.xSmall,
+    borderRadius: textSIZES.xSmall,
     flexDirection: "row",
     justifyContent: "space-between",
   },
   headerText: {
-    fontSize: SIZES.large,
+    fontSize: textSIZES.large,
     color: COLORS({opacity:1}).primary,
   },
   cardContainer: {
-    margin: SIZES.xxSmall,
+    margin: textSIZES.xxSmall,
     backgroundColor: "#FFF",
-    borderRadius: SIZES.small,
+    borderRadius: textSIZES.xSmall,
   },
   inputBox: {
-    margin: SIZES.small,
-    padding: SIZES.small,
+    margin: textSIZES.xSmall,
+    padding: textSIZES.xSmall,
     borderWidth: 0.5,
-    borderRadius: SIZES.xSmall,
+    borderRadius: textSIZES.xSmall,
     borderColor: COLORS({opacity:1}).primary,
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginHorizontal: SIZES.small,
+    marginHorizontal: textSIZES.xSmall,
   },
   button: {
     flex: 1,
@@ -172,10 +172,10 @@ const styles = StyleSheet.create({
     color: COLORS({opacity:0.8}).primary,
   },
   iconInverse: {
-      //margin: SIZES.xxSmall,
+      //margin: textSIZES.xxSmall,
       color: COLORS({opacity:1}).lightWhite,
   },
   newCategory: {
-    margin: SIZES.small
+    margin: textSIZES.xSmall
   },
 });

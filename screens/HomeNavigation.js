@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import { SIZES } from "../constants";
+import { textSIZES, viewSIZES } from "../constants";
 
 export default function HomeNavigation({ size, iconColor }) {
   const navigation = useNavigation();
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 50,
     position: 'absolute',
-    bottom: SIZES.xSmall,
+    bottom: textSIZES.xSmall,
     backgroundColor: 'rgba(255, 255, 255, 1)',
   },
   iconRoot: {

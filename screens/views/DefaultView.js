@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, View, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Image, Modal,Dimensions } from "react-native";
-import { COLORS, FONT, SIZES, SHADOWS, ItemType, ViewType } from "../../constants";
+import { COLORS, FONT, textSIZES, SHADOWS, ItemType, ViewType, viewSIZES } from "../../constants";
 import { GETitems, GETitemsTEST } from "../../API";
 import { Ionicons } from "@expo/vector-icons";
 import FilterModal from "../../components/FilterModal";
@@ -19,7 +19,7 @@ const ListView = ({items, navigation}) => (
       >
         <View style={{flexDirection: "row"}}>
           <View style={{ justifyContent: "center"}}>
-            <Text style={{ fontSize: SIZES.xLarge}}>{item.icon}</Text>
+            <Text style={{ fontSize: textSIZES.xLarge}}>{item.icon}</Text>
           </View>
           <View style={styles.dayCardContainer}>
             <Text style={styles.itemTitle} numberOfLines={1}>{item.title}</Text>
@@ -57,7 +57,7 @@ const GalleryView = ({items, navigation}) => (
           />
         </View>
         <View style={[styles.row]}>
-          <Text style={{fontSize: SIZES.xLarge}}>{item.icon}</Text>
+          <Text style={{fontSize: textSIZES.xLarge}}>{item.icon}</Text>
           <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
         </View>
       </TouchableOpacity>
@@ -130,7 +130,7 @@ export default function DefaultView ({navigation, route, scrollEnabled = true}) 
           >
             <Ionicons name={"search-outline"} size={20} style={styles.iconInverted} />
             {expandSearchBar && (
-              <TextInput style={{width: SIZES.xxLarge*4, fontSize: SIZES.medium, color: COLORS({opacity:1}).primary}} 
+              <TextInput style={{width: textSIZES.xxLarge*4, fontSize: textSIZES.small, color: COLORS({opacity:1}).primary}} 
                 {...(search ? { defaultValue: search } : { placeholder: "search" })}
                 onChangeText={(newSearch) => (setSearch(newSearch))}
                 returnKeyType='search'
@@ -144,7 +144,7 @@ export default function DefaultView ({navigation, route, scrollEnabled = true}) 
             }}
             style={styles.filterButtonIcon}
           >
-            <Ionicons name={"funnel-outline"} size={20} style={styles.iconInverted}/>
+            <Ionicons name={"options-outline"} size={20} style={styles.iconInverted}/>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
@@ -172,10 +172,10 @@ export default function DefaultView ({navigation, route, scrollEnabled = true}) 
           >
             {selectedTab === 'List' ? 
               (
-                <Ionicons name={"list-circle"} size={SIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
+                <Ionicons name={"list-circle"} size={textSIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
               ) 
             : (
-                <Ionicons name={"list-circle-outline"} size={SIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
+                <Ionicons name={"list-circle-outline"} size={textSIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
               )
             }
           </TouchableOpacity>
@@ -185,10 +185,10 @@ export default function DefaultView ({navigation, route, scrollEnabled = true}) 
           >
             {selectedTab === 'Gallery' ? 
               (
-                <Ionicons name={"image"} size={SIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
+                <Ionicons name={"image"} size={textSIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
               ) 
             : (
-                <Ionicons name={"image-outline"} size={SIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
+                <Ionicons name={"image-outline"} size={textSIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
               )
             }
           </TouchableOpacity>
@@ -207,51 +207,51 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
   },
   filterButtonIcon: {
-    height: SIZES.xxLarge,
-    width: SIZES.xxLarge,
-    marginRight: SIZES.small,
-    borderRadius: SIZES.xxSmall,
+    height: textSIZES.xxLarge,
+    width: textSIZES.xxLarge,
+    marginRight: textSIZES.xSmall,
+    borderRadius: textSIZES.xxSmall,
     backgroundColor: COLORS({opacity:0.7}).primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   addButton: {
-    height: SIZES.xxLarge,
-    borderRadius: SIZES.xxSmall,
-    //marginHorizontal: SIZES.medium,
+    height: textSIZES.xxLarge,
+    borderRadius: textSIZES.xxSmall,
+    //marginHorizontal: textSIZES.small,
     backgroundColor: COLORS({opacity:0.7}).primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   searchInput: {
-    marginRight: SIZES.small,
-    borderRadius: SIZES.small,
+    marginRight: textSIZES.xSmall,
+    borderRadius: textSIZES.xSmall,
     backgroundColor: COLORS({opacity:0.5}).secondary,
   },
   title: {
-    fontSize: SIZES.large,
+    fontSize: textSIZES.large,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).primary,
   },
   section: {
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).white,
   },
   icon: {
-    marginRight: SIZES.xxSmall,
+    marginRight: textSIZES.xxSmall,
     color: COLORS({opacity:0.8}).primary,
   },
   iconInverted: {
     color: COLORS({opacity:1}).white,
-    margin: SIZES.xxSmall,
+    margin: textSIZES.xxSmall,
   },
   propContainer: {
-    paddingHorizontal: SIZES.large,
-    paddingBottom: SIZES.medium,
+    paddingHorizontal: textSIZES.large,
+    paddingBottom: textSIZES.small,
     borderColor: COLORS({opacity:0.5}).primary,
     borderBottomWidth: 1,
-    borderRadius: SIZES.medium,
+    borderRadius: textSIZES.small,
     backgroundColor: "#FFF"
   },
   container: {
@@ -261,11 +261,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     backgroundColor:  COLORS({opacity:1}).lightWhite,
-    paddingVertical: SIZES.xxSmall,
+    paddingVertical: textSIZES.xxSmall,
   },
   tab: {
-    paddingVertical: SIZES.xxSmall,
-    paddingHorizontal: SIZES.large,
+    paddingVertical: textSIZES.xxSmall,
+    paddingHorizontal: textSIZES.large,
   },
   activeTab: {
     borderBottomWidth: 2,
@@ -280,21 +280,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   cardsContainer: {
-    margin: SIZES.xSmall,
-    marginBottom: SIZES.tiny,
-    paddingHorizontal: SIZES.small,
-    paddingVertical: SIZES.xSmall,
+    margin: textSIZES.xSmall,
+    marginBottom: textSIZES.tiny,
+    paddingHorizontal: textSIZES.xSmall,
+    paddingVertical: textSIZES.xSmall,
     backgroundColor: COLORS({opacity:1}).lightWhite,
     ...SHADOWS.small,
     shadowColor: COLORS({opacity:1}).shadow,
-    borderRadius: SIZES.small,
+    borderRadius: textSIZES.xSmall,
     alignContent: "center"
   },
   imageBox: {
-    margin: SIZES.Small,
+    margin: textSIZES.Small,
   },
   itemTitle: {
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
     fontFamily: FONT.regular,
   },
   prop: {
@@ -302,6 +302,6 @@ const styles = StyleSheet.create({
   },
   dayCardContainer: {
     flex: 1,
-    marginLeft: SIZES.xSmall,
+    marginLeft: textSIZES.xSmall,
   },
 });

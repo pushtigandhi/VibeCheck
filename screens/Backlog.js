@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, View, FlatList, StyleSheet, TextInput } from "react-native";
-import { COLORS, FONT, SIZES } from "../constants";
+import { COLORS, FONT, textSIZES, viewSIZES } from "../constants";
 import HomeNavigation from "./HomeNavigation";
 import { GETitems, GETitemsTEST } from "../API";
 import ContactCard from "./cards/ContactCard";
@@ -56,7 +56,7 @@ export default function Backlog ({navigation, scrollEnabled = true}) {
     <SafeAreaView style={styles.screen}>
       <View style={[styles.row, styles.header]}>
         <Ionicons name={"search-outline"} size={20} style={styles.iconInverted} />
-        <TextInput style={{flex: 1, fontSize: SIZES.medium, color: COLORS({opacity:1}).primary}} 
+        <TextInput style={{flex: 1, fontSize: textSIZES.small, color: COLORS({opacity:1}).primary}} 
           {
             ...(search ? { defaultValue: search } : { placeholder: "Backlog" })}
             onChangeText={(newSearch) => (setSearch(newSearch))}
@@ -85,13 +85,13 @@ const styles = StyleSheet.create({
   },
   header:{
     backgroundColor: COLORS({opacity:1}).lightWhite,
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
     color: COLORS({opacity:0.9}).primary,
-    padding: SIZES.small,
-    margin: SIZES.xSmall,
+    padding: textSIZES.xSmall,
+    margin: textSIZES.xSmall,
     borderWidth: 1,
     borderColor: COLORS({opacity:1}).primary,
-    borderRadius: SIZES.small,
+    borderRadius: textSIZES.xSmall,
   },
   row: {
     flexDirection: "row",

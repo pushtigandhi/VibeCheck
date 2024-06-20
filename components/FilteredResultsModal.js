@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Text, View, StyleSheet, TouchableOpacity, SafeAreaView, FlatList} from "react-native";
-import { COLORS, FONT, SIZES, SHADOWS, ItemType } from "../constants";
+import { COLORS, FONT, textSIZES, viewSIZES, SHADOWS, ItemType } from "../constants";
 import React, { useEffect, useState } from "react";
 import { GETitemsTEST } from "../API";
 
@@ -48,7 +48,7 @@ export default function FilteredResultsModal({filter, onUpdate, onClose, onItemS
           style={styles.cardsContainer}
         >
           <View style={[{flexDirection: "row", justifyContent: "center"}]}>
-              <Text style={{ fontSize: SIZES.xLarge}}>{item.icon}</Text>
+              <Text style={{ fontSize: textSIZES.xLarge}}>{item.icon}</Text>
               <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
           </View>
         </TouchableOpacity>
@@ -61,7 +61,7 @@ export default function FilteredResultsModal({filter, onUpdate, onClose, onItemS
                     <Text style={styles.searchButtonText}>Update</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {onClose()}} style={[styles.searchButton, { backgroundColor: COLORS({opacity:1}).lightRed }]}  > 
-                    <Ionicons name={"close-outline"} size={SIZES.xLarge} style={styles.iconInverse}/> 
+                    <Ionicons name={"close-outline"} size={textSIZES.xLarge} style={styles.iconInverse}/> 
                 </TouchableOpacity>
             </View>
             <FlatList
@@ -81,44 +81,44 @@ const styles = StyleSheet.create({
     },
     header: {
         display: "flex",
-        marginTop: SIZES.xSmall,
-        paddingHorizontal: SIZES.xSmall,
+        marginTop: textSIZES.xSmall,
+        paddingHorizontal: textSIZES.xSmall,
         justifyContent: "space-between",
     },
     searchButton: {
         // marginRight: 90,
         // marginLeft: 90,
         marginBottom: 25,
-        padding: SIZES.xSmall,
+        padding: textSIZES.xSmall,
         backgroundColor: COLORS({opacity: 1}).secondary,
-        borderRadius: SIZES.small,
+        borderRadius: textSIZES.xSmall,
     },
     searchButtonText: {
-        fontSize: SIZES.large,
+        fontSize: textSIZES.large,
         alignSelf: "center",
         color: COLORS({opacity:1}).lightWhite,
     },
     cardsContainer: {
-        margin: SIZES.xSmall,
-        marginVertical: SIZES.tiny,
-        paddingHorizontal: SIZES.small,
-        paddingVertical: SIZES.xSmall,
+        margin: textSIZES.xSmall,
+        marginVertical: textSIZES.tiny,
+        paddingHorizontal: textSIZES.xSmall,
+        paddingVertical: textSIZES.xSmall,
         backgroundColor: COLORS({opacity:1}).lightWhite,
         ...SHADOWS.small,
         shadowColor: COLORS({opacity:1}).shadow,
-        borderRadius: SIZES.small,
+        borderRadius: textSIZES.xSmall,
         alignContent: "center",
       },
     icon: {
-        //margin: SIZES.xxSmall,
+        //margin: textSIZES.xxSmall,
         color: COLORS({opacity:1}).secondary,
     },
     iconInverse: {
-        //margin: SIZES.xxSmall,
+        //margin: textSIZES.xxSmall,
         color: COLORS({opacity:1}).lightWhite,
     },
     title: {
-        fontSize: SIZES.large,
+        fontSize: textSIZES.large,
         fontFamily: FONT.regular,
         fontWeight: "200",
         color: COLORS({opacity:1}).primary,

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Modal,
         StyleSheet, Animated, FlatList, ScrollView } from 'react-native';
-import { COLORS, SHADOWS, FONT, SIZES, ViewType, ItemType } from "../../constants";
+import { COLORS, SHADOWS, FONT, textSIZES, ViewType, ItemType } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { ExpandableView } from "../../utils";
 import SelectView from "../SelectView";
@@ -62,7 +62,7 @@ const expandedCard = ({navigation, category, sections}) => {
   return (
     <ScrollView style={styles.expandedContainer}>
       <TouchableOpacity style={styles.addButtonIcon} onPress={() => (setShowAddSection(true))}>
-        <Ionicons name={"add-circle"} size={SIZES.large} style={styles.iconInverted} />
+        <Ionicons name={"add-circle"} size={textSIZES.large} style={styles.iconInverted} />
       </TouchableOpacity>
       {/* <Modal visible={showAddSection} animationType="slide" onRequestClose={onClose}>
         <SelectView onClose={onClose} />
@@ -116,36 +116,36 @@ const DirectoryCard = ({navigation, category, sections}) => {
 const styles = StyleSheet.create({
   titleContainer: {
    // width: '100%',
-    padding: SIZES.medium,
+    padding: textSIZES.small,
     borderColor: COLORS({opacity:0.5}).primary,
     borderBottomWidth: 1,
-    borderBottomLeftRadius: SIZES.xLarge,
-    borderBottomRightRadius: SIZES.xLarge,
+    borderBottomLeftRadius: textSIZES.xLarge,
+    borderBottomRightRadius: textSIZES.xLarge,
     flexDirection: "row",
     justifyContent: "space-between"
   },
   sectionContainer: {
-    margin: SIZES.tiny,
-    marginBottom: SIZES.xxSmall,
-    padding: SIZES.xSmall,
+    margin: textSIZES.tiny,
+    marginBottom: textSIZES.xxSmall,
+    padding: textSIZES.xSmall,
     backgroundColor: COLORS({opacity:0.5}).primary,
-    borderRadius: SIZES.xSmall,
+    borderRadius: textSIZES.xSmall,
   },
   title: {
-    fontSize: SIZES.large,
+    fontSize: textSIZES.large,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).primary,
   },
   section: {
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).white,
   },
   expandedContainer: {
     backgroundColor: COLORS({opacity:1}).lightWhite,
-    paddingBottom: SIZES.medium,
-    paddingHorizontal: SIZES.medium,
-    marginHorizontal: SIZES.medium,
+    paddingBottom: textSIZES.small,
+    paddingHorizontal: textSIZES.small,
+    marginHorizontal: textSIZES.small,
     flex: 1,
     overflow: 'scroll',
   },
@@ -155,20 +155,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   addButtonIcon: {
-    height: SIZES.xxLarge,
-    margin: SIZES.xSmall,
+    height: textSIZES.xxLarge,
+    margin: textSIZES.xSmall,
     backgroundColor: COLORS({opacity:0.5}).secondary,
-    borderRadius: SIZES.small,
+    borderRadius: textSIZES.xSmall,
     alignItems: "center",
     justifyContent: "center",
   },
   icon: {
-    marginRight: SIZES.xxSmall,
+    marginRight: textSIZES.xxSmall,
     color: COLORS({opacity:0.8}).primary,
   },
   iconInverted: {
     color: COLORS({opacity:1}).white,
-    margin: SIZES.xxSmall,
+    margin: textSIZES.xxSmall,
   },
 });
 

@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { ScrollView, Text, View, StyleSheet, TouchableOpacity, TextInput} from "react-native";
-import { COLORS, FONT, SIZES, SHADOWS, ItemType } from "../constants";
+import { COLORS, FONT, textSIZES, viewSIZES, SHADOWS, ItemType } from "../constants";
 import React, { useEffect, useState } from "react";
 import Slider from '@react-native-community/slider';
 import SwitchSelector from "react-native-switch-selector";
@@ -155,13 +155,13 @@ export default function FilterModal({ filter, setFilter, closeFilter, doSearch, 
         <View style={styles.container}>
             <View style={[styles.row, styles.header]}>
                 {isScheduler == false && (
-                    <TouchableOpacity onPress={resetFilter} style={[styles.button, {backgroundColor: COLORS({opacity:1}).tertiary, width: SIZES.xLarge * 4}]} >
+                    <TouchableOpacity onPress={resetFilter} style={[styles.button, {backgroundColor: COLORS({opacity:1}).tertiary, width: textSIZES.xLarge * 4}]} >
                         <Text style={styles.headerText}>Reset</Text>
                     </TouchableOpacity>
                 )}
                 
-                <TouchableOpacity onPress={onClose} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightRed, width: SIZES.xLarge * 2}]} > 
-                    <Ionicons name={"close-outline"} size={SIZES.xLarge} style={styles.iconInverse}/> 
+                <TouchableOpacity onPress={onClose} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightRed, width: viewSIZES.xxSmall}]} > 
+                    <Ionicons name={"close-outline"} size={textSIZES.xLarge} style={styles.iconInverse}/> 
                 </TouchableOpacity>
             </View>
             <ScrollView>
@@ -169,7 +169,7 @@ export default function FilterModal({ filter, setFilter, closeFilter, doSearch, 
                 
                 <Text style={styles.sortText}>Item type:</Text>
                 <SingleSelectDropdown options={typeOptions} placeholder={"All"} setFn={changeTypeOption}
-                    icon={<Ionicons name={"grid-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
+                    icon={<Ionicons name={"grid-outline"} size={25} style={[styles.icon, {margin: textSIZES.xxSmall}]} />} />
 
                 <PropertyCard item={filter} itemType={itemType} setFn={updateFilter} isSection={isSection} />
 
@@ -177,11 +177,11 @@ export default function FilterModal({ filter, setFilter, closeFilter, doSearch, 
                     <>
                         {showStartDate == false && (
                             <TouchableOpacity style={[styles.row, styles.filterDate]} onPress={()=>(setShowStartDate(true), updateFilter({"startDate": startDate}))}>
-                            <Text style={{color: COLORS({opacity:0.8}).white, fontSize: SIZES.medium}}>Filter Start Date</Text>
+                            <Text style={{color: COLORS({opacity:0.8}).white, fontSize: textSIZES.small}}>Filter Start Date</Text>
                             </TouchableOpacity>
                         )}
                         {showStartDate == true && (
-                            <View style={[styles.row, { margin: SIZES.xSmall }]}>
+                            <View style={[styles.row, { margin: textSIZES.xSmall }]}>
                                 <Ionicons name={"calendar-outline"} size={25} style={styles.icon} />
 
                                 <DateTimePicker
@@ -210,11 +210,11 @@ export default function FilterModal({ filter, setFilter, closeFilter, doSearch, 
                         )}
                         {showEndDate == false && (
                             <TouchableOpacity style={[styles.row, styles.filterDate]} onPress={()=>(setShowEndDate(true), updateFilter({"endDate": endDate}))}>
-                            <Text style={{color: COLORS({opacity:0.8}).white, fontSize: SIZES.medium}}>Filter End Date</Text>
+                            <Text style={{color: COLORS({opacity:0.8}).white, fontSize: textSIZES.small}}>Filter End Date</Text>
                             </TouchableOpacity>
                         )}
                         {showEndDate == true && (
-                            <View style={[styles.row, { margin: SIZES.xSmall }]}>
+                            <View style={[styles.row, { margin: textSIZES.xSmall }]}>
                                 <Ionicons name={"calendar-outline"} size={25} style={styles.icon} />
                                 
                                 <DateTimePicker
@@ -243,7 +243,7 @@ export default function FilterModal({ filter, setFilter, closeFilter, doSearch, 
                     </>
                 )}
                 {/* {isScheduler==false && (
-                    <View style={[styles.row, { margin: SIZES.xSmall }]}>
+                    <View style={[styles.row, { margin: textSIZES.xSmall }]}>
                         <Ionicons name={"timer-outline"} size={25} style={[styles.icon]}/>    
                         {hourPickerVisible ? (
                             <>
@@ -262,10 +262,10 @@ export default function FilterModal({ filter, setFilter, closeFilter, doSearch, 
                             </>
                         ) : (
                             <TouchableOpacity onPress={toggleHourPicker} style={styles.duration}>
-                            <Text style={{fontSize: SIZES.medium}}>{hour}</Text>
+                            <Text style={{fontSize: textSIZES.small}}>{hour}</Text>
                             </TouchableOpacity>
                         )}
-                        <Text style={[styles.property, { margin: SIZES.xSmall }]}>Hours</Text>
+                        <Text style={[styles.property, { margin: textSIZES.xSmall }]}>Hours</Text>
                         {minutePickerVisible ? (
                             <View>
                             <Picker
@@ -283,17 +283,17 @@ export default function FilterModal({ filter, setFilter, closeFilter, doSearch, 
                             </View>
                         ) : (
                             <TouchableOpacity onPress={toggleMinutePicker} style={styles.duration}>
-                            <Text style={{fontSize: SIZES.medium}}>{minute}</Text>
+                            <Text style={{fontSize: textSIZES.small}}>{minute}</Text>
                             </TouchableOpacity>
                         )}
-                        <Text style={[styles.property, { margin: SIZES.xSmall }]}>Minutes</Text>
+                        <Text style={[styles.property, { margin: textSIZES.xSmall }]}>Minutes</Text>
                     </View>
                 )} */}
                 
 
                 {isScheduler==false && (showStartDate == true || showEndDate == true) && (
-                    <View style={[styles.row, { margin: SIZES.xSmall }]}>
-                        <Ionicons name={"repeat-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
+                    <View style={[styles.row, { margin: textSIZES.xSmall }]}>
+                        <Ionicons name={"repeat-outline"} size={25} style={[styles.icon, {margin: textSIZES.xxSmall}]}/>
                         <TouchableOpacity style={[styles.row, styles.box, repeat === 'ONCE' ? styles.selectedBox:styles.unselectedBox]}
                             onPress={() => (
                             setRepeat("ONCE"),
@@ -341,15 +341,15 @@ export default function FilterModal({ filter, setFilter, closeFilter, doSearch, 
                     <>
                         <Text style={styles.sortText}>Sort by:</Text>
                         <SingleSelectDropdown options={sortOptions} placeholder={"Time (Ascending)"} setFn={changeSortOption}
-                            icon={<Ionicons name={"swap-vertical-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
+                            icon={<Ionicons name={"swap-vertical-outline"} size={25} style={[styles.icon, {margin: textSIZES.xxSmall}]} />} />
                     </>
                 )}
                 
-                {/* <View style={[styles.row, { margin: SIZES.xSmall }]}>
+                {/* <View style={[styles.row, { margin: textSIZES.xSmall }]}>
                     {(itemType === ItemType.Recipe) ? (
-                        <Ionicons name={"star-half-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
+                        <Ionicons name={"star-half-outline"} size={25} style={[styles.icon, {margin: textSIZES.xxSmall}]}/>
                     ) : (
-                        <Ionicons name={"alert-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
+                        <Ionicons name={"alert-outline"} size={25} style={[styles.icon, {margin: textSIZES.xxSmall}]}/>
                     )}
                     <TouchableOpacity style={[styles.row, styles.box, priority === 'LOW' ? styles.selectedBox:styles.unselectedBox]}
                         onPress={() => (
@@ -388,8 +388,8 @@ export default function FilterModal({ filter, setFilter, closeFilter, doSearch, 
                     </TouchableOpacity>
                 </View>
                 {(itemType === ItemType.Recipe) && (
-                    <View style={[styles.row, { margin: SIZES.xSmall }]}>
-                        <Ionicons name={"restaurant-outline"} size={25} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
+                    <View style={[styles.row, { margin: textSIZES.xSmall }]}>
+                        <Ionicons name={"restaurant-outline"} size={25} style={[styles.icon, {margin: textSIZES.xxSmall}]}/>
                         <TextInput keyboardType="numeric"
                         onChangeText={(serving_) => (
                             setServing(serving_),
@@ -424,43 +424,43 @@ const styles = StyleSheet.create({
     },
     header: {
         display: "flex",
-        marginTop: SIZES.small,
-        paddingTop: SIZES.xxLarge,
-        paddingHorizontal: SIZES.xSmall,
+        marginTop: textSIZES.xSmall,
+        paddingTop: textSIZES.xxLarge,
+        paddingHorizontal: textSIZES.xSmall,
         justifyContent: "space-between",
     },
     headerText: {
-        fontSize: SIZES.large,
+        fontSize: textSIZES.large,
         alignSelf: "center",
         color: COLORS({opacity:1}).white,
     },
     sortText: {
         fontSize: 20,
         fontWeight: "bold",
-        marginTop: SIZES.medium,
-        marginHorizontal: SIZES.medium,
+        marginTop: textSIZES.small,
+        marginHorizontal: textSIZES.small,
     },
     button: {
-        height: SIZES.xLarge * 2,
-        padding: SIZES.xSmall,
-        marginHorizontal: SIZES.xSmall,
+        height: viewSIZES.xxSmall,
+        padding: textSIZES.xSmall,
+        marginHorizontal: textSIZES.xSmall,
         alignItems: "center",
         justifyContent: "center",
-        borderRadius: SIZES.medium
+        borderRadius: textSIZES.small
     },
     searchButton: {
         // marginRight: 90,
         // marginLeft: 90,
         marginHorizontal: 50,
-        marginTop: SIZES.xSmall,
+        marginTop: textSIZES.xSmall,
         marginBottom: 25,
-        paddingTop: SIZES.xSmall,
-        paddingBottom: SIZES.xSmall,
+        paddingTop: textSIZES.xSmall,
+        paddingBottom: textSIZES.xSmall,
         backgroundColor: COLORS({opacity: 1}).secondary,
-        borderRadius: SIZES.small,
+        borderRadius: textSIZES.xSmall,
     },
     searchButtonText: {
-        fontSize: SIZES.large,
+        fontSize: textSIZES.large,
         alignSelf: "center",
         color: COLORS({opacity:1}).lightWhite,
     },
@@ -483,46 +483,46 @@ const styles = StyleSheet.create({
     textInput: {
         borderColor: COLORS({opacity:1}).primary,
         backgroundColor: "white",
-        borderRadius: SIZES.xSmall,
+        borderRadius: textSIZES.xSmall,
         borderWidth: 2,
         padding: 15,
-        borderRadius: SIZES.xSmall,
+        borderRadius: textSIZES.xSmall,
         width: 260
     },
     label:{
         width: 50,
         color: COLORS({opacity:1}).secondary,
-        margin: SIZES.xSmall,
+        margin: textSIZES.xSmall,
     },
     property:{
-        // fontSize: SIZES.medium,
+        // fontSize: textSIZES.small,
         // fontFamily: FONT.regular,
         color: COLORS({opacity:0.8}).secondary,
-        //margin: SIZES.xSmall,
+        //margin: textSIZES.xSmall,
     },
     icon: {
-        //margin: SIZES.xxSmall,
+        //margin: textSIZES.xxSmall,
         color: COLORS({opacity:1}).secondary,
     },
     iconInverse: {
-        //margin: SIZES.xxSmall,
+        //margin: textSIZES.xxSmall,
         color: COLORS({opacity:1}).lightWhite,
     },
     box: {
         borderWidth: 0.5,
         borderColor: COLORS({opacity:1}).primary,
-        borderRadius: SIZES.xxSmall,
-        padding: SIZES.small, 
+        borderRadius: textSIZES.xxSmall,
+        padding: textSIZES.xSmall, 
         alignItems: 'center',
         justifyContent: 'center',
-        marginRight: SIZES.xxSmall,
+        marginRight: textSIZES.xxSmall,
     },
     filterDate: {
-        marginHorizontal: SIZES.large,
-        marginVertical: SIZES.xSmall,
-        padding: SIZES.xSmall,
+        marginHorizontal: textSIZES.large,
+        marginVertical: textSIZES.xSmall,
+        padding: textSIZES.xSmall,
         backgroundColor: COLORS({opacity: 1}).tertiary,
-        borderRadius: SIZES.small,
+        borderRadius: textSIZES.xSmall,
     }, 
     selectedBox: {
         backgroundColor: COLORS({opacity:1}).secondary,
@@ -537,27 +537,27 @@ const styles = StyleSheet.create({
      color: COLORS({opacity:1}).secondary,
     },
     title: {
-        fontSize: SIZES.large,
+        fontSize: textSIZES.large,
         fontFamily: FONT.regular,
         color: COLORS({opacity:1}).primary,
     },
     section: {
-        fontSize: SIZES.medium,
+        fontSize: textSIZES.small,
         fontFamily: FONT.regular,
         color: COLORS({opacity:1}).primary,
     },
     removeButton: {
         backgroundColor: COLORS({opacity:1}).lightRed, 
-        padding: SIZES.small, 
-        borderRadius: SIZES.xxSmall,
-        marginLeft: SIZES.xxSmall,
+        padding: textSIZES.xSmall, 
+        borderRadius: textSIZES.xxSmall,
+        marginLeft: textSIZES.xxSmall,
         alignItems: 'center',
     },
     duration: {
         backgroundColor: COLORS({opacity:0.5}).lightGrey,
-        padding: SIZES.xSmall,
-        borderRadius: SIZES.xSmall,
-        marginLeft: SIZES.xSmall,
+        padding: textSIZES.xSmall,
+        borderRadius: textSIZES.xSmall,
+        marginLeft: textSIZES.xSmall,
     },
     picker: {
         width: 100,

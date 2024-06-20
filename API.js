@@ -821,7 +821,13 @@ export async function GETcontactsTEST() {
 
     console.log(response);
 
-    const body = {"contacts": []};
+    const body = {"contacts": [{
+        "name": "Test User",
+        "handle": "testuser",
+        "company": "Self",
+        "notes": "In development.",
+        "_id": "123456786564321",
+    }]};
     let contacts = body.contacts;
     return contacts.map((contact) => {
         return {
@@ -902,6 +908,17 @@ export async function GETdirectoryTEST() {
                 {"title": "Meal Plan", "view": "Schedule", "_id": "3578365"}
             ],
             "_id": "65e172b61635ad960dabdc32"
+        },
+        {
+            "title": "Explore",
+            "sections": [
+                {"title": "All", "view": "Default", "_id": "3456"},
+                {"title": "Movies", "view": "Default", "_id": "324567"},
+                {"title": "TV Shows", "view": "Default", "_id": "68675"},
+                {"title": "Books", "view": "Default", "_id": "5467"},
+                {"title": "Comics", "view": "Default", "_id": "6754"},
+            ],
+            "_id": "65e172btrfyhgjgfdad960dabdc32"
         }
     ]};
     let directory = body.directory;

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { SafeAreaView, View, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Image, Modal,Dimensions,
   KeyboardAvoidingView, GestureHandlerRootView, TouchableWithoutFeedback
  } from "react-native";
-import { COLORS, FONT, SIZES, SHADOWS } from "../../constants";
+import { COLORS, FONT, textSIZES, SHADOWS, viewSIZES } from "../../constants";
 import { GETitems, GETitemsTEST } from "../../API";
 import { ItemType } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
@@ -60,7 +60,7 @@ const Checklist = ({item, setFn}) => {
   return (
     <>
       <TouchableOpacity style={styles.addButton} onPress={() => (setShowInput(true))}>
-          <Ionicons name={"add-circle"} size={SIZES.large} color={COLORS({opacity:1}).white} />
+          <Ionicons name={"add-circle"} size={textSIZES.large} color={COLORS({opacity:1}).white} />
       </TouchableOpacity>
       <ScrollView>
         {showInput==true && (
@@ -72,10 +72,10 @@ const Checklist = ({item, setFn}) => {
             /> 
             <View style={styles.buttonContainer}>
               <TouchableOpacity style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightRed, flex: 1}]} onPress={() => setShowInput(false)}>
-                <Ionicons name={"close-outline"} size={SIZES.medium} style={styles.iconInverse}/> 
+                <Ionicons name={"close-outline"} size={textSIZES.small} style={styles.iconInverse}/> 
               </TouchableOpacity>
               <TouchableOpacity style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightGreen, flex: 1}]} onPress={addNewSubtask}>
-                <Ionicons name={"checkmark-outline"} size={SIZES.medium} style={styles.iconInverse}/> 
+                <Ionicons name={"checkmark-outline"} size={textSIZES.small} style={styles.iconInverse}/> 
               </TouchableOpacity>
             </View>
             
@@ -88,9 +88,9 @@ const Checklist = ({item, setFn}) => {
           >
             <View style={styles.row}>
               {item.isChecked ? (
-                <Ionicons name={"checkbox-outline"} size={SIZES.xLarge} style={styles.icon}/> 
+                <Ionicons name={"checkbox-outline"} size={textSIZES.xLarge} style={styles.icon}/> 
               ) : (
-                <Ionicons name={"square-outline"} size={SIZES.xLarge} style={styles.icon}/>
+                <Ionicons name={"square-outline"} size={textSIZES.xLarge} style={styles.icon}/>
               )}
               <Text style={styles.task} numberOfLines={1}>{item.task}</Text>
             </View>
@@ -125,15 +125,15 @@ const Notes = ({item, setFn}) => {
       {isEditable ? (
         <>
           <TouchableOpacity onPress={() => (onCancel())} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightRed}]} > 
-            <Ionicons name={"close-outline"} size={SIZES.large} color={COLORS({opacity:1}).white} /> 
+            <Ionicons name={"close-outline"} size={textSIZES.large} color={COLORS({opacity:1}).white} /> 
           </TouchableOpacity>
           <TouchableOpacity onPress={() => (onSave())} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightGreen}]} >
-              <Ionicons name={"checkmark-outline"} size={SIZES.large} color={COLORS({opacity:1}).white} /> 
+              <Ionicons name={"checkmark-outline"} size={textSIZES.large} color={COLORS({opacity:1}).white} /> 
           </TouchableOpacity>
         </>
       ):(
         <TouchableOpacity onPress={() => (setIsEditable(true))} style={[styles.button, { backgroundColor: COLORS({opacity:1}).tertiary }]}>
-          <Ionicons name={"pencil"} size={SIZES.large} color={COLORS({opacity:1}).white} />
+          <Ionicons name={"pencil"} size={textSIZES.large} color={COLORS({opacity:1}).white} />
         </TouchableOpacity>
       )}
         
@@ -224,7 +224,7 @@ export default function ScheduleView ({navigation, route, scrollEnabled = true})
         >
           <Ionicons name={"search-outline"} size={20} style={styles.iconInverted} />
           {expandSearchBar && (
-            <TextInput style={{width: SIZES.xxLarge*4, fontSize: SIZES.medium, color: COLORS({opacity:1}).primary}} 
+            <TextInput style={{width: textSIZES.xxLarge*4, fontSize: textSIZES.small, color: COLORS({opacity:1}).primary}} 
               {...(search ? { defaultValue: search } : { placeholder: "search" })}
               onChangeText={(newSearch) => (setSearch(newSearch))}
               returnKeyType='search'
@@ -239,7 +239,7 @@ export default function ScheduleView ({navigation, route, scrollEnabled = true})
             }}
             style={styles.filterButtonIcon}
           >
-            <Ionicons name={"funnel-outline"} size={20} style={styles.iconInverted}/>
+            <Ionicons name={"options-outline"} size={20} style={styles.iconInverted}/>
           </TouchableOpacity> */}
       <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
         <FilterModal closeFilter={closeFilter} filter={filter} setFilter={setFilter} />
@@ -252,10 +252,10 @@ export default function ScheduleView ({navigation, route, scrollEnabled = true})
         >
           {selectedTab === 'Checkbox' ? 
             (
-              <Ionicons name={"checkbox"} size={SIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
+              <Ionicons name={"checkbox"} size={textSIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
             ) 
           : (
-              <Ionicons name={"checkbox-outline"} size={SIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
+              <Ionicons name={"checkbox-outline"} size={textSIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
             )
           }
         </TouchableOpacity>
@@ -265,10 +265,10 @@ export default function ScheduleView ({navigation, route, scrollEnabled = true})
         >
           {selectedTab === 'Notes' ? 
             (
-              <Ionicons name={"reader"} size={SIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
+              <Ionicons name={"reader"} size={textSIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
             ) 
           : (
-              <Ionicons name={"reader-outline"} size={SIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
+              <Ionicons name={"reader-outline"} size={textSIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
             )
           }
         </TouchableOpacity>
@@ -286,30 +286,30 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
   },
   filterButtonIcon: {
-    height: SIZES.xxLarge,
-    width: SIZES.xxLarge,
-    borderRadius: SIZES.xxSmall,
+    height: textSIZES.xxLarge,
+    width: textSIZES.xxLarge,
+    borderRadius: textSIZES.xxSmall,
     backgroundColor: COLORS({opacity:0.7}).secondary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   addButton: {
-    height: SIZES.xxLarge,
-    borderRadius: SIZES.xxSmall,
-    marginHorizontal: SIZES.medium,
+    height: textSIZES.xxLarge,
+    borderRadius: textSIZES.xxSmall,
+    marginHorizontal: textSIZES.small,
     backgroundColor: COLORS({opacity:0.7}).primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   searchInput: {
-    //marginRight: SIZES.small,
-    borderRadius: SIZES.small,
-    width: SIZES.xxLarge,
-    height: SIZES.xxLarge,
+    //marginRight: textSIZES.xSmall,
+    borderRadius: textSIZES.xSmall,
+    width: textSIZES.xxLarge,
+    height: textSIZES.xxLarge,
     backgroundColor: COLORS({opacity:0.8}).tertiary,
   },
   title: {
-    fontSize: SIZES.large,
+    fontSize: textSIZES.large,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).primary,
   },
@@ -319,60 +319,60 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   icon: {
-    marginRight: SIZES.small,
+    marginRight: textSIZES.xSmall,
     color: COLORS({opacity:0.8}).primary,
   },
   iconInverted: {
     color: COLORS({opacity:1}).white,
-    margin: SIZES.xxSmall,
+    margin: textSIZES.xxSmall,
   },
   propContainer: {
-    paddingHorizontal: SIZES.large,
-    paddingBottom: SIZES.medium,
+    paddingHorizontal: textSIZES.large,
+    paddingBottom: textSIZES.small,
     borderColor: COLORS({opacity:0.5}).primary,
     borderBottomWidth: 1,
-    borderRadius: SIZES.medium,
+    borderRadius: textSIZES.small,
     backgroundColor: "#FFF"
   },
   cardsContainer: {
-    marginTop: SIZES.medium,
-    marginHorizontal: SIZES.medium,
+    marginTop: textSIZES.small,
+    marginHorizontal: textSIZES.small,
     borderColor: COLORS({opacity:1}).lightGrey,// "#FFF",
-    borderRadius: SIZES.small,
+    borderRadius: textSIZES.xSmall,
     borderWidth:0.50,
     alignContent: "center"
   },
   itemTitle: {
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
     fontFamily: FONT.regular,
   },
   prop: {
     fontWeight: "200",
   },
   time: {
-    padding: SIZES.xSmall,
+    padding: textSIZES.xSmall,
     flexDirection: "column",
     justifyContent: "space-between",
     alignItems: "right",
   },
   timeLabel: {
     fontWeight: "200",
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
   },
   dayCardContainer: {
     flex: 1,
-    padding: SIZES.xxSmall,
-    marginLeft: SIZES.xSmall,
+    padding: textSIZES.xxSmall,
+    marginLeft: textSIZES.xSmall,
   },
   tabContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     backgroundColor:  COLORS({opacity:1}).lightWhite,
-    paddingVertical: SIZES.xxSmall,
+    paddingVertical: textSIZES.xxSmall,
   },
   tab: {
-    paddingVertical: SIZES.xxSmall,
-    paddingHorizontal: SIZES.large,
+    paddingVertical: textSIZES.xxSmall,
+    paddingHorizontal: textSIZES.large,
   },
   activeTab: {
     borderBottomWidth: 2,
@@ -382,57 +382,57 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   notesContainer: {
-    marginTop: SIZES.xxSmall,
+    marginTop: textSIZES.xxSmall,
   },
   notes: {
-    padding: SIZES.medium,
-    fontSize: SIZES.medium,
+    padding: textSIZES.small,
+    fontSize: textSIZES.small,
     flex:1,
     minHeight: 500,
     borderTopWidth: 1,
     borderColor: COLORS({opacity:1}).tertiary
   },
   button: {
-    padding: SIZES.small, 
+    padding: textSIZES.xSmall, 
     backgroundColor: COLORS({opacity:1}).tertiary, 
-    borderRadius: SIZES.xSmall, 
-    marginRight: SIZES.xxSmall,
+    borderRadius: textSIZES.xSmall, 
+    marginRight: textSIZES.xxSmall,
     alignItems: 'center',
   },
   newSection: {
-    margin: SIZES.small
+    margin: textSIZES.xSmall
   },
   inputBox: {
-    margin: SIZES.small,
-    padding: SIZES.small,
+    margin: textSIZES.xSmall,
+    padding: textSIZES.xSmall,
     borderWidth: 0.5,
-    borderRadius: SIZES.xSmall,
+    borderRadius: textSIZES.xSmall,
     borderColor: COLORS({opacity:1}).primary,
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
   },
   icon: {
-    marginRight: SIZES.xxSmall,
+    marginRight: textSIZES.xxSmall,
     color: COLORS({opacity:0.8}).indigo,
   },
   iconInverse: {
-      //margin: SIZES.xxSmall,
+      //margin: textSIZES.xxSmall,
       color: COLORS({opacity:1}).lightWhite,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginHorizontal: SIZES.small,
+    marginHorizontal: textSIZES.xSmall,
   },
   subtaskContainer: {
-    margin: SIZES.xxSmall,
-    padding: SIZES.xSmall,
+    margin: textSIZES.xxSmall,
+    padding: textSIZES.xSmall,
     backgroundColor: COLORS({opacity:0.1}).lightGrey,
-    borderRadius: SIZES.small,
+    borderRadius: textSIZES.xSmall,
     borderColor: COLORS({opacity:0.5}).lightGrey,
     borderWidth: 1,
   },
   task: {
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
     fontFamily: FONT.regular,
     fontWeight: '200',
     color: COLORS({opacity:1}).indigo,

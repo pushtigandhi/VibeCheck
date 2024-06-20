@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, View, Text, TextInput, Modal, TouchableOpacity, StyleSheet } from 'react-native';
-import { COLORS, SHADOWS, FONT, SIZES, ItemType } from "../../constants";
+import { COLORS, SHADOWS, FONT, textSIZES, ItemType, viewSIZES } from "../../constants";
 import { Spacer } from '../../utils';
 import { Ionicons } from "@expo/vector-icons";
 import { Picker } from '@react-native-picker/picker';
@@ -144,7 +144,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false
           <SingleSelectDropdown
                 options={getCategories()}
                 placeholder={!!category ? category : "Category"}
-                icon={<Ionicons name="folder-open-outline" size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />}
+                icon={<Ionicons name="folder-open-outline" size={size} style={[styles.icon, {margin: textSIZES.xxSmall}]} />}
                 setFn={onChangeCategory}
                 isDisabled={isSection}
             />
@@ -154,13 +154,13 @@ export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false
 
       {!!category && (directoryList._j.length > 0 ? (
         <SingleSelectDropdown options={getSections()} placeholder={!!section ? section : "Section"} setFn={onChangeSection} isDisabled={isSection}
-          icon={<Ionicons name={"bookmark-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]} />} />
+          icon={<Ionicons name={"bookmark-outline"} size={size} style={[styles.icon, {margin: textSIZES.xxSmall}]} />} />
       ) : (
         <Text>Loading sections...</Text>
       ))}
 
       <MultiSelectDropdown options={allTags} placeholder="Tags" setFn={setTags} current={tags}
-        icon={<Text style={[styles.icon, {margin: SIZES.xxSmall, fontSize: SIZES.large}]}>#</Text>} /> 
+        icon={<Text style={[styles.icon, {margin: textSIZES.xxSmall, fontSize: textSIZES.large}]}>#</Text>} /> 
 
       <>
       {!isScheduler && (
@@ -195,7 +195,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false
               </>
             ) : (
               <TouchableOpacity onPress={toggleHourPicker} style={styles.duration}>
-                <Text style={{fontSize: SIZES.medium}}>{hour}</Text>
+                <Text style={{fontSize: textSIZES.small}}>{hour}</Text>
               </TouchableOpacity>
             )}
             <Text style={styles.property}>Hours</Text>
@@ -215,7 +215,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false
               </View>
             ) : (
               <TouchableOpacity onPress={toggleMinutePicker} style={styles.duration}>
-                <Text style={{fontSize: SIZES.medium}}>{minute}</Text>
+                <Text style={{fontSize: textSIZES.small}}>{minute}</Text>
               </TouchableOpacity>
             )}
             <Text style={styles.property}>Minutes</Text>
@@ -291,9 +291,9 @@ export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false
         <View style={[styles.row, styles.property, { justifyContent: "space-between" }]}>
           <>
             {(itemType === ItemType.Recipe) ? (
-              <Ionicons name={"star-half-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
+              <Ionicons name={"star-half-outline"} size={size} style={[styles.icon, {margin: textSIZES.xxSmall}]}/>
             ) : (
-              <Ionicons name={"alert-outline"} size={size} style={[styles.icon, {margin: SIZES.xxSmall}]}/>
+              <Ionicons name={"alert-outline"} size={size} style={[styles.icon, {margin: textSIZES.xxSmall}]}/>
             )}
             <TouchableOpacity style={[styles.row, styles.box, priority === 'LOW' ? styles.selectedBox:styles.unselectedBox]}
               onPress={() => (
@@ -338,9 +338,9 @@ export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false
 
 const styles = StyleSheet.create({
   infoContainer: {
-    marginHorizontal: SIZES.medium,
+    marginHorizontal: textSIZES.small,
     backgroundColor: COLORS({opacity:1}).lightWhite,
-    //borderRadius: SIZES.medium/2,
+    //borderRadius: textSIZES.small/2,
     ...SHADOWS.medium,
     shadowColor: COLORS({opacity:1}).shadow,
   },
@@ -349,39 +349,39 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   divider: {
-    //paddingBottom: SIZES.xSmall,
-    marginHorizontal: SIZES.xxSmall,
+    //paddingBottom: textSIZES.xSmall,
+    marginHorizontal: textSIZES.xxSmall,
     borderBottomWidth: 1,
     borderColor: COLORS({opacity:1}).secondary,
   },
   label:{
-    fontSize: SIZES.large,
+    fontSize: textSIZES.large,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).secondary,
-    margin: SIZES.xSmall,
+    margin: textSIZES.xSmall,
   },
   property:{
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
     fontFamily: FONT.regular,
     color: COLORS({opacity:0.8}).secondary,
-    margin: SIZES.small,
+    margin: textSIZES.xSmall,
   },
   icon: {
-    //margin: SIZES.xxSmall,
+    //margin: textSIZES.xxSmall,
     color: COLORS({opacity:1}).secondary,
   },
   iconInverse: {
-    //margin: SIZES.xxSmall,
+    //margin: textSIZES.xxSmall,
     color: COLORS({opacity:1}).lightWhite,
   },
   box: {
     borderWidth: 0.5,
     borderColor: COLORS({opacity:1}).primary,
-    borderRadius: SIZES.xxSmall,
-    padding: SIZES.small, 
+    borderRadius: textSIZES.xxSmall,
+    padding: textSIZES.xSmall, 
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: SIZES.xxSmall,
+    marginRight: textSIZES.xxSmall,
   },
   selectedBox: {
     backgroundColor: COLORS({opacity:1}).secondary,
@@ -396,28 +396,28 @@ const styles = StyleSheet.create({
     color: COLORS({opacity:1}).secondary,
   },
   sectionContainer: {
-    margin: SIZES.xSmall,
-    padding: SIZES.xSmall,
+    margin: textSIZES.xSmall,
+    padding: textSIZES.xSmall,
     backgroundColor: COLORS({opacity:0.5}).primary,
-    borderRadius: SIZES.small,
+    borderRadius: textSIZES.xSmall,
     ...SHADOWS.medium,
     shadowColor: COLORS({opacity:1}).shadow,
   },
   title: {
-    fontSize: SIZES.large,
+    fontSize: textSIZES.large,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).primary,
   },
   section: {
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).primary,
   },
   duration: {
     backgroundColor: COLORS({opacity:0.5}).lightGrey,
-    padding: SIZES.xSmall,
-    borderRadius: SIZES.xSmall,
-    marginLeft: SIZES.xSmall,
+    padding: textSIZES.xSmall,
+    borderRadius: textSIZES.xSmall,
+    marginLeft: textSIZES.xSmall,
   },
   picker: {
     width: 100,
@@ -425,9 +425,9 @@ const styles = StyleSheet.create({
   },
   removeButton: {
     backgroundColor: COLORS({opacity:0.5}).lightGrey, 
-    padding: SIZES.small, 
-    borderRadius: SIZES.xxSmall,
-    marginHorizontal: SIZES.medium,
+    padding: textSIZES.xSmall, 
+    borderRadius: textSIZES.xxSmall,
+    marginHorizontal: textSIZES.small,
     alignItems: 'center',
   },
 });

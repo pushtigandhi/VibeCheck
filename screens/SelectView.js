@@ -2,7 +2,7 @@ import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image, Modal,
         StyleSheet, Animated, FlatList, SafeAreaView } from 'react-native';
 
-import { COLORS, SHADOWS, FONT, SIZES } from "../constants";
+import { COLORS, SHADOWS, FONT, textSIZES, viewSIZES } from "../constants";
 import { Ionicons } from "@expo/vector-icons";
 import * as df  from "../constants/default";
 import DefaultView from "./views/DefaultView";
@@ -47,16 +47,16 @@ export default function SelectView({onClose}) {
     <SafeAreaView style={styles.infoContainer}>
       <View style={styles.imageBox}>
         <TouchableOpacity onPress={() => (onClose())} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightRed}]} > 
-          <Ionicons name={"close-outline"} size={SIZES.xxLarge} style={styles.iconInverted}/> 
+          <Ionicons name={"close-outline"} size={textSIZES.xxLarge} style={styles.iconInverted}/> 
         </TouchableOpacity>
       
         <TouchableOpacity onPress={doRefresh} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightGreen}]} >
-          <Ionicons name={"checkmark-outline"} size={SIZES.xxLarge} style={styles.iconInverted}/> 
+          <Ionicons name={"checkmark-outline"} size={textSIZES.xxLarge} style={styles.iconInverted}/> 
         </TouchableOpacity>
       </View>
 
       <View style={[styles.row, styles.title]}>
-        <TextInput style={{width: "100%", fontSize: SIZES.xLarge, color: COLORS({opacity:0.9}).primary}}
+        <TextInput style={{width: "100%", fontSize: textSIZES.xLarge, color: COLORS({opacity:0.9}).primary}}
           defaultValue={ title }
           onChangeText={ setTitle }
         />
@@ -77,9 +77,9 @@ export default function SelectView({onClose}) {
           <Text style={styles.label}>{df.ViewType.Default}</Text>
           <View>
             {isDefaultExpanded ? (
-              <Ionicons name={"checkbox-outline"} size={SIZES.large} style={styles.icon}/> 
+              <Ionicons name={"checkbox-outline"} size={textSIZES.large} style={styles.icon}/> 
             ) : (
-              <Ionicons name={"square-outline"} size={SIZES.large} style={styles.icon}/>
+              <Ionicons name={"square-outline"} size={textSIZES.large} style={styles.icon}/>
             )}
           </View>
         </View>
@@ -100,9 +100,9 @@ export default function SelectView({onClose}) {
           <Text style={styles.label}>{df.ViewType.Schedule}</Text>
           <View>
             {isScheduledExpanded ? (
-              <Ionicons name={"checkbox-outline"} size={SIZES.large} style={styles.icon}/> 
+              <Ionicons name={"checkbox-outline"} size={textSIZES.large} style={styles.icon}/> 
             ) : (
-              <Ionicons name={"square-outline"} size={SIZES.large} style={styles.icon}/>
+              <Ionicons name={"square-outline"} size={textSIZES.large} style={styles.icon}/>
             )}
           </View>
         </View>
@@ -124,9 +124,9 @@ export default function SelectView({onClose}) {
           <Text style={styles.label}>{df.ViewType.Checklist}</Text>
           <View>
             {isChecklistExpanded ? (
-              <Ionicons name={"checkbox-outline"} size={SIZES.large} style={styles.icon}/> 
+              <Ionicons name={"checkbox-outline"} size={textSIZES.large} style={styles.icon}/> 
             ) : (
-              <Ionicons name={"square-outline"} size={SIZES.large} style={styles.icon}/>
+              <Ionicons name={"square-outline"} size={textSIZES.large} style={styles.icon}/>
             )}
           </View>
         </View>
@@ -143,31 +143,31 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS({opacity:1}).white,
   },
   titleContainer: {
-    padding: SIZES.medium,
+    padding: textSIZES.small,
     borderColor: COLORS({opacity:0.5}).primary,
     borderBottomWidth: 1,
   },
   sectionContainer: {
-    margin: SIZES.xSmall,
-    padding: SIZES.xSmall,
+    margin: textSIZES.xSmall,
+    padding: textSIZES.xSmall,
     backgroundColor: COLORS({opacity:0.5}).primary,
-    borderRadius: SIZES.small,
+    borderRadius: textSIZES.xSmall,
     ...SHADOWS.medium,
     shadowColor: COLORS({opacity:1}).shadow,
   },
   title: {
-    fontSize: SIZES.large,
+    fontSize: textSIZES.large,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).primary,
   },
   section: {
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).white,
   },
   expandedContainer: {
-    paddingBottom: SIZES.medium,
-    paddingHorizontal: SIZES.medium,
+    paddingBottom: textSIZES.small,
+    paddingHorizontal: textSIZES.small,
     flex: 1,
     overflow: 'scroll',
   },
@@ -178,38 +178,38 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   icon: {
-    marginRight: SIZES.xxSmall,
+    marginRight: textSIZES.xxSmall,
     color: COLORS({opacity:0.8}).primary,
   },
   label:{
-    fontSize: SIZES.large,
+    fontSize: textSIZES.large,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).navy,
-    margin: SIZES.xSmall,
+    margin: textSIZES.xSmall,
   },
   // button: {
-  //   height: SIZES.xLarge * 2,
-  //   padding: SIZES.xSmall,
-  //   marginHorizontal: SIZES.xSmall,
+  //   height: viewSIZES.xxSmall,
+  //   padding: textSIZES.xSmall,
+  //   marginHorizontal: textSIZES.xSmall,
   //   alignItems: "center",
   //   justifyContent: "center",
-  //   borderRadius: SIZES.medium
+  //   borderRadius: textSIZES.small
   // },
   row: {
     flexDirection: "row",
     alignItems: "center",
   },
   title:{
-      padding: SIZES.medium,
-      margin: SIZES.medium,
+      padding: textSIZES.small,
+      margin: textSIZES.small,
       borderWidth: 1,
       borderColor: COLORS({opacity:0.5}).primary,
-      borderRadius: SIZES.medium,
+      borderRadius: textSIZES.small,
   },
   imageBox: {
     flexDirection: "row",
     justifyContent: "space-between",
-    margin: SIZES.Small,
+    margin: textSIZES.Small,
   },
   icon: {
     color: COLORS({opacity:0.8}).primary,
@@ -218,18 +218,18 @@ const styles = StyleSheet.create({
     color: COLORS({opacity:0.8}).white,
   },
   button: {
-    height: SIZES.xxLarge * 2,
-    width: SIZES.xxLarge * 2,
-    padding: SIZES.xSmall,
-    marginHorizontal: SIZES.xSmall,
+    height: viewSIZES.xSmall,
+    width: viewSIZES.xSmall,
+    padding: textSIZES.xSmall,
+    marginHorizontal: textSIZES.xSmall,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: SIZES.medium
+    borderRadius: textSIZES.small
   },
   sortText: {
     fontSize: 20,
     fontWeight: "bold",
-    marginTop: SIZES.medium,
-    marginHorizontal: SIZES.medium,
+    marginTop: textSIZES.small,
+    marginHorizontal: textSIZES.small,
   },
 });

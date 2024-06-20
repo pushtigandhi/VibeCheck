@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { SIZES, COLORS, FONT, SHADOWS } from "../../constants";
+import { textSIZES, viewSIZES, COLORS, FONT, SHADOWS } from "../../constants";
 import { GETitems, GETitemsTEST, GETtodayTEST, GETscheduledTEST } from "../../API";
 import { ItemType } from "../../constants";
 import { DailyCalendar } from "./DailyCalendar";
@@ -158,13 +158,13 @@ const styles = StyleSheet.create({
     },
     calendarContainer: {
         top:0,
-        paddingHorizontal: SIZES.xSmall,
-        marginTop: SIZES.xxSmall,
+        paddingHorizontal: textSIZES.xSmall,
+        marginTop: textSIZES.xxSmall,
     },
     profileButton: {
       borderColor: COLORS({opacity:1}).primary,
       borderRadius: 100,
-      marginHorizontal: SIZES.medium,
+      marginHorizontal: textSIZES.small,
       height: 75,
       width: 75,
       borderWidth: 1,
@@ -175,12 +175,12 @@ const styles = StyleSheet.create({
     intention: {
         borderWidth: 1,
         borderColor: COLORS({opacity:1}).primary,
-        borderRadius: SIZES.xxSmall,
+        borderRadius: textSIZES.xxSmall,
         height: 75,
-        marginRight: SIZES.medium,
+        marginRight: textSIZES.small,
         //width: 250,
         flex: 1,
-        fontSize: SIZES.large,
+        fontSize: textSIZES.large,
         color: 'white',
     },
     row: {
@@ -195,30 +195,30 @@ const styles = StyleSheet.create({
         //flex: 0,
         flexDirection: "row",
         justifyContent: "center",
-        //height: SIZES.xSmall,
+        //height: textSIZES.xSmall,
     },
     icon: {
         color: COLORS({opacity:1}).primary,
         margin: 5,
     },
     tabActive: {
-        padding: SIZES.xxSmall,
+        padding: textSIZES.xxSmall,
         backgroundColor: COLORS({opacity:1}).primary,
         margin: 10,
         color: COLORS({opacity: 1}).white,
         fontWeight: "bold",
     },
     tabInactive: {
-        padding: SIZES.xxSmall,
+        padding: textSIZES.xxSmall,
         backgroundColor: COLORS({opacity:0.5}).primary,
         margin: 10,
         color: COLORS({opacity: 1}).white,
         fontWeight: "normal",
     },
     cardsContainer: {
-        marginBottom: SIZES.medium,
+        marginBottom: textSIZES.small,
         backgroundColor: COLORS({opacity:1}).lightWhite,// "#FFF",
-        borderRadius: SIZES.small,
+        borderRadius: textSIZES.xSmall,
         ...SHADOWS.xSmall,
         shadowColor: COLORS({opacity:1}).shadow,
     },

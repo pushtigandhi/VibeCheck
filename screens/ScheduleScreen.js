@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, View, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Image, Modal, TouchableNativeFeedback } from "react-native";
-import { COLORS, FONT, SIZES, SHADOWS, ItemType } from "../constants";
+import { COLORS, FONT, textSIZES, SHADOWS, ItemType, viewSIZES } from "../constants";
 import { Ionicons } from "@expo/vector-icons";
 import FilterModal from "../components/FilterModal";
 import { GETitemsTEST } from "../API";
@@ -66,15 +66,15 @@ export default function ScheduleScreen ({navigation, onClose}) {
     return(
         <SafeAreaView style={styles.screen}>
             <TouchableOpacity onPress={() => (goHome())} style={[styles.homeButton]} >
-                <Ionicons name={"arrow-back-outline"} size={SIZES.large} style={styles.icon}/>
+                <Ionicons name={"arrow-back-outline"} size={textSIZES.large} style={styles.icon}/>
             </TouchableOpacity>
             <View styles={styles.infoContainer}>
-                <View style={{ height: SIZES.xxLarge * 2,}}>
+                <View style={{ height: viewSIZES.xSmall,}}>
                     <TouchableOpacity onPress={() => {onSelectExistingItem()}} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lavendar}]}>
                         <Text style={styles.buttonText}>Select An Existing Item</Text>
                     </TouchableOpacity>
                 </View>
-                <View style={{ height: SIZES.xxLarge * 2,}}>
+                <View style={{ height: viewSIZES.xSmall,}}>
                     <TouchableOpacity onPress={() => setShowSelectType(true)} style={[styles.button, {backgroundColor: COLORS({opacity:1}).yellow}]}>
                         <Text style={styles.buttonText}>Create New</Text>
                     </TouchableOpacity>
@@ -107,9 +107,9 @@ const styles = StyleSheet.create({
     },
     infoContainer: {
       backgroundColor: COLORS({opacity:1}).white,
-      margin: SIZES.medium,
-      marginVertical: SIZES.xxLarge*2,
-      borderRadius: SIZES.medium/2,
+      margin: textSIZES.small,
+      marginVertical: textSIZES.xxLarge*2,
+      borderRadius: textSIZES.small/2,
         ...SHADOWS.medium,
     },
     row: {
@@ -117,19 +117,19 @@ const styles = StyleSheet.create({
       alignItems: "center",
     },
     divider: {
-      paddingBottom: SIZES.xSmall,
+      paddingBottom: textSIZES.xSmall,
       borderBottomWidth: 0.5,
       borderColor: COLORS({opacity:1}).tertiary,
     },
     label:{
-      fontSize: SIZES.large,
+      fontSize: textSIZES.large,
       fontWeight: '300',
       color: COLORS({opacity:1}).secondary,
-      margin: SIZES.xSmall,
+      margin: textSIZES.xSmall,
     },
     property:{
       color: COLORS({opacity:0.8}).secondary,
-      margin: SIZES.xSmall,
+      margin: textSIZES.xSmall,
     },
     icon: {
       color: COLORS({opacity:1}).secondary,
@@ -138,64 +138,64 @@ const styles = StyleSheet.create({
       color: COLORS({opacity:1}).lightWhite,
     },
     title: {
-      fontSize: SIZES.large,
+      fontSize: textSIZES.large,
       fontFamily: FONT.regular,
       fontWeight: "200",
       color: COLORS({opacity:1}).primary,
     },
     button: {
         flex: 1,
-        padding: SIZES.xSmall,
-        margin: SIZES.xSmall,
+        padding: textSIZES.xSmall,
+        margin: textSIZES.xSmall,
         alignItems: "center",
         justifyContent: "center",
-        borderRadius: SIZES.medium
+        borderRadius: textSIZES.small
     },
     buttonText: {
         color: COLORS({opacity: 1}).white,
     },
     cardsContainer: {
-        marginBottom: SIZES.medium,
-        marginHorizontal: SIZES.medium,
+        marginBottom: textSIZES.small,
+        marginHorizontal: textSIZES.small,
         backgroundColor: COLORS({opacity:1}).lightGrey,// "#FFF",
-        borderRadius: SIZES.small,
+        borderRadius: textSIZES.xSmall,
         ...SHADOWS.xSmall,
         shadowColor: COLORS({opacity:1}).shadow,
-        padding: SIZES.xxSmall,
+        padding: textSIZES.xxSmall,
     },
     header: {
         display: "flex",
-        marginTop: SIZES.xSmall,
-        paddingHorizontal: SIZES.xSmall,
+        marginTop: textSIZES.xSmall,
+        paddingHorizontal: textSIZES.xSmall,
         justifyContent: "space-between",
     },
     searchButton: {
         // marginRight: 90,
         // marginLeft: 90,
         marginBottom: 25,
-        padding: SIZES.xSmall,
+        padding: textSIZES.xSmall,
         backgroundColor: COLORS({opacity: 1}).secondary,
-        borderRadius: SIZES.small,
+        borderRadius: textSIZES.xSmall,
     },
     searchButtonText: {
-        fontSize: SIZES.large,
+        fontSize: textSIZES.large,
         alignSelf: "center",
         color: COLORS({opacity:1}).lightWhite,
     },
     titleContainer: {
-        padding: SIZES.medium,
+        padding: textSIZES.small,
         borderColor: COLORS({opacity:0.5}).primary,
         borderBottomWidth: 1,
      },
     homeButton: {
-        height: SIZES.xLarge * 2,
-        width: SIZES.xLarge * 2,
-        padding: SIZES.xSmall,
-        marginHorizontal: SIZES.xSmall,
+        height: viewSIZES.xxSmall,
+        width: viewSIZES.xxSmall,
+        padding: textSIZES.xSmall,
+        marginHorizontal: textSIZES.xSmall,
         alignContent: "center",
         justifyContent: "center",
         borderWidth: 1,
-        borderRadius: SIZES.medium,
+        borderRadius: textSIZES.small,
         borderColor: COLORS({opacity:1}).primary,
       },
   });

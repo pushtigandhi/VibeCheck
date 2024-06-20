@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, View, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Image, Modal,Dimensions } from "react-native";
-import { COLORS, FONT, SIZES, SHADOWS } from "../../constants";
+import { COLORS, FONT, textSIZES, SHADOWS, viewSIZES } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 
 const defaultTestItems = [
@@ -111,7 +111,7 @@ const ListView = ({ items }) => (
     renderItem={({item}) => (
       <TouchableOpacity style={styles.cardContainer} key={item["_id"] + "_root"} >
         <View style={styles.row}>
-          <Text style={{ fontSize: SIZES.regular}}>{item.icon}</Text>
+          <Text style={{ fontSize: textSIZES.regular}}>{item.icon}</Text>
           <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
         </View>
       </TouchableOpacity>
@@ -133,7 +133,7 @@ const GalleryView = ({ items }) => (
           />
         </View>
         <View style={[styles.row]}>
-          <Text style={{fontSize: SIZES.xLarge}}>{item.icon}</Text>
+          <Text style={{fontSize: textSIZES.xLarge}}>{item.icon}</Text>
           <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
         </View>
       </TouchableOpacity>
@@ -166,7 +166,7 @@ export default function DefaultTemplate () {
             <Ionicons name={"search-outline"} size={20} style={styles.iconInverted} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.filterButtonIcon} >
-            <Ionicons name={"funnel-outline"} size={20} style={styles.iconInverted}/>
+            <Ionicons name={"options-outline"} size={20} style={styles.iconInverted}/>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.row, styles.addButton]} >
             <Ionicons name={"add-circle"} size={20} style={styles.iconInverted}/>
@@ -180,10 +180,10 @@ export default function DefaultTemplate () {
         >
           {selectedTab === 'List' ? 
             (
-              <Ionicons name={"list-circle"} size={SIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
+              <Ionicons name={"list-circle"} size={textSIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
             ) 
           : (
-              <Ionicons name={"list-circle-outline"} size={SIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
+              <Ionicons name={"list-circle-outline"} size={textSIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
             )
           }
         </TouchableOpacity>
@@ -193,10 +193,10 @@ export default function DefaultTemplate () {
         >
           {selectedTab === 'Gallery' ? 
             (
-              <Ionicons name={"image"} size={SIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
+              <Ionicons name={"image"} size={textSIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
             ) 
           : (
-              <Ionicons name={"image-outline"} size={SIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
+              <Ionicons name={"image-outline"} size={textSIZES.xxLarge} color={COLORS({opacity:0.8}).primary} />
             )
           }
         </TouchableOpacity>
@@ -214,51 +214,51 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
   },
   cardContainer: {
-    margin: SIZES.xSmall,
-    marginBottom: SIZES.tiny,
+    margin: textSIZES.xSmall,
+    marginBottom: textSIZES.tiny,
     backgroundColor: "#FFF",
     ...SHADOWS.small,
     shadowColor: COLORS({opacity:1}).shadow,
-    padding: SIZES.medium,
-    borderRadius: SIZES.small,
+    padding: textSIZES.small,
+    borderRadius: textSIZES.xSmall,
   },
   filterButtonIcon: {
-    height: SIZES.xxLarge,
-    width: SIZES.xxLarge,
-    marginRight: SIZES.small,
-    borderRadius: SIZES.xxSmall,
+    height: textSIZES.xxLarge,
+    width: textSIZES.xxLarge,
+    marginRight: textSIZES.xSmall,
+    borderRadius: textSIZES.xxSmall,
     backgroundColor: COLORS({opacity:0.7}).primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   addButton: {
-    height: SIZES.xxLarge,
-    borderRadius: SIZES.xxSmall,
-    //marginHorizontal: SIZES.medium,
+    height: textSIZES.xxLarge,
+    borderRadius: textSIZES.xxSmall,
+    //marginHorizontal: textSIZES.small,
     backgroundColor: COLORS({opacity:0.7}).primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   searchInput: {
-    marginRight: SIZES.small,
-    borderRadius: SIZES.small,
+    marginRight: textSIZES.xSmall,
+    borderRadius: textSIZES.xSmall,
     backgroundColor: COLORS({opacity:0.5}).secondary,
   },
   sectionContainer: {
-    margin: SIZES.xSmall,
-    padding: SIZES.xSmall,
+    margin: textSIZES.xSmall,
+    padding: textSIZES.xSmall,
     backgroundColor: COLORS({opacity:0.5}).primary,
-    borderRadius: SIZES.small,
+    borderRadius: textSIZES.xSmall,
     ...SHADOWS.medium,
     shadowColor: COLORS({opacity:1}).shadow,
   },
   title: {
-    fontSize: SIZES.large,
+    fontSize: textSIZES.large,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).primary,
   },
   section: {
-    fontSize: SIZES.medium,
+    fontSize: textSIZES.small,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).white,
   },
@@ -268,25 +268,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   icon: {
-    marginRight: SIZES.xxSmall,
+    marginRight: textSIZES.xxSmall,
     color: COLORS({opacity:0.8}).primary,
   },
   iconInverted: {
     color: COLORS({opacity:1}).white,
-    margin: SIZES.xxSmall,
+    margin: textSIZES.xxSmall,
   },
   propContainer: {
-    paddingHorizontal: SIZES.large,
-    paddingVertical: SIZES.medium,
+    paddingHorizontal: textSIZES.large,
+    paddingVertical: textSIZES.small,
     borderColor: COLORS({opacity:0.5}).primary,
     borderBottomWidth: 1,
-    borderRadius: SIZES.medium,
+    borderRadius: textSIZES.small,
     backgroundColor: "#FFF"
   },
   imageBox: {
     flexDirection: "row",
     justifyContent: "space-between",
-    margin: SIZES.Small,
+    margin: textSIZES.Small,
   },
   tabContainer: {
     flexDirection: 'row',
