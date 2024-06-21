@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     color: COLORS({opacity:0.8}).primary,
   },
   label:{
-    fontSize: textSIZES.large,
+    fontSize: textSIZES.medium,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).primary,
     margin: textSIZES.xSmall,

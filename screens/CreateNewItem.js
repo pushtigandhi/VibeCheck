@@ -228,7 +228,7 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
 
             <View style={[styles.row, styles.title]}>
                 <Text style={{fontSize: textSIZES.xLarge, marginRight: textSIZES.xxSmall}}>{icon}</Text>
-                <TextInput style={{width: "100%", fontSize: textSIZES.xLarge, color: COLORS({opacity:0.9}).primary}} defaultValue={ title } 
+                <TextInput style={{width: "100%", fontSize: textSIZES.large, color: COLORS({opacity:0.9}).primary}} defaultValue={ title } 
                     onChangeText={(newTitle) => (setTitle(newTitle))}
                 />
             </View>
@@ -419,8 +419,8 @@ const styles = StyleSheet.create({
         color: "black",
     },
     button: {
-        height: viewSIZES.xSmall,
-        width: viewSIZES.xSmall,
+        height: viewSIZES.xxSmall,
+        width: viewSIZES.xxSmall,
         padding: textSIZES.xSmall,
         marginHorizontal: textSIZES.xSmall,
         alignItems: "center",
