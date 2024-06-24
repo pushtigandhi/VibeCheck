@@ -56,7 +56,7 @@ export default function Backlog ({navigation, scrollEnabled = true}) {
     <SafeAreaView style={styles.screen}>
       <View style={[styles.row, styles.header]}>
         <Ionicons name={"search-outline"} size={20} style={styles.iconInverted} />
-        <TextInput style={{flex: 1, fontSize: textSIZES.small, color: COLORS({opacity:1}).primary}} 
+        <TextInput style={{flex: 1, fontSize: textSIZES.large, color: COLORS({opacity:1}).primary}} 
           {
             ...(search ? { defaultValue: search } : { placeholder: "Backlog" })}
             onChangeText={(newSearch) => (setSearch(newSearch))}

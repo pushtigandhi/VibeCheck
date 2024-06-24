@@ -130,8 +130,7 @@ export default function FilterModal({ filter, setFilter, closeFilter, doSearch, 
     }
 
     useEffect(() => {
-        console.log("filterModal");
-        console.log(filter);
+        // console.log(filter);
         if(filter.itemType) {
             setTypeOption(filter.itemType);
         }

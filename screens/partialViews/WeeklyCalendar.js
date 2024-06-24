@@ -35,7 +35,7 @@ export const WeeklyCalendar = ({navigation, date, filter, refreshing, itemList})
       alert(err.message)
     })
     setItems(itemList);
-    console.log("week: " +itemList);
+    //console.log("week: " +itemList);
 
   }, [refreshing])
 

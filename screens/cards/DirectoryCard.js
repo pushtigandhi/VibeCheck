@@ -10,7 +10,7 @@ const expandedCard = ({navigation, category, sections}) => {
   const [showAddSection, setShowAddSection] = useState(false);
 
   async function getSectionItemsFromAPI(section) {
-    console.log("GEt item");
+    //console.log("GEt item");
     try {
       let items_ = await GETitemsTEST(ItemType.Item, { category: category.title, section: section.title });
       return items_;
@@ -30,15 +30,15 @@ const expandedCard = ({navigation, category, sections}) => {
     });
     
     if(section.view == ViewType.Default) {
-      console.log(section.view);
+      //console.log(section.view);
       navigation.navigate("DefaultView", {"category": category.title, "section": section.title, "item": items})
     }
     else if(section.view == ViewType.Schedule) {
-      console.log(section.view);
+      //console.log(section.view);
       navigation.navigate("ScheduleView", {"category": category.title, "section": section.title, "item": items})
     }
     else if(section.view == ViewType.Checklist) {
-      console.log(section.view);
+      //console.log(section.view);
       navigation.navigate("ChecklistView", {"category": category.title, "section": section.title, "item": items[0]})
     }
   }

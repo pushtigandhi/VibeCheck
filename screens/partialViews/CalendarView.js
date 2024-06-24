@@ -64,7 +64,7 @@ export const CalendarView = ({navigation, filter={}, setFilter, isHome=false}) =
     }
 
     function doSearch({search}) {
-        console.log(search);
+        //console.log(search);
        // setSearchBar(false);
     }
     
