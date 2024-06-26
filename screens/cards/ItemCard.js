@@ -275,7 +275,7 @@ export default function ItemCard({ navigation, route }) {
           
           <View style={[styles.row, styles.title]}>
             <Text style={{fontSize: textSIZES.xLarge, marginRight: textSIZES.xxSmall}}>{icon}</Text>
-            <Text style={{width: "100%", fontSize: textSIZES.xLarge}}>
+            <Text style={{width: "100%", fontSize: textSIZES.large}}>
               {title}
             </Text>
           </View>
@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
     marginHorizontal: textSIZES.xLarge,
   },
   label: {
-    paddingVertical: textSIZES.xxSmall,
+    paddingVertical: textSIZES.xSmall,
     fontSize: textSIZES.small,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).primary,

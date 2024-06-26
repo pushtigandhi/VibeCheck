@@ -109,6 +109,7 @@ const styles = StyleSheet.create({
     fontSize: textSIZES.small,
     //fontFamily: FONT.regular,
     color: COLORS({opacity:1}).primary,
+    paddingVertical: textSIZES.xSmall,
   },
   iconInverted: {
     color: COLORS({opacity:1}).white,
