@@ -80,18 +80,14 @@ const styles = StyleSheet.create({
   cardContainer: {
     flex:1,
     margin: textSIZES.xSmall,
-    backgroundColor: "#FFF",
+    backgroundColor: COLORS({opacity:1}).white,
     borderRadius: textSIZES.small,
-    ...SHADOWS.medium,
-    shadowColor: COLORS({opacity:1}).shadow,
   },
   titleContainer: {
     flex: 1,
     padding: textSIZES.small,
     borderColor: COLORS({opacity:0.5}).primary,
     borderBottomWidth: 1,
-    borderBottomLeftRadius: textSIZES.small,
-    borderBottomRightRadius: textSIZES.small,
   },
   title: {
     fontSize: textSIZES.small,
@@ -107,9 +103,12 @@ const styles = StyleSheet.create({
   expandedContainer: {
     margin: textSIZES.xSmall,
     paddingBottom: textSIZES.small,
-    paddingHorizontal: textSIZES.xxSmall,
+    padding: textSIZES.xxSmall,
     flex: 1,
     height: viewSIZES.small,
+    backgroundColor: COLORS({opacity:1}).lightWhite,
+    borderBottomLeftRadius: textSIZES.small,
+    borderBottomRightRadius: textSIZES.small,
   },
   row: {
     flexDirection: "row",

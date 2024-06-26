@@ -1,22 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { View, TouchableOpacity, Text, TextInput, Keyboard, Modal,
     FlatList, RefreshControl, SafeAreaView, TouchableWithoutFeedback, StyleSheet } from 'react-native';
-import { COLORS, FONT, textSIZES, SHADOWS } from "../constants";
+import { COLORS, FONT, textSIZES, SHADOWS, viewSIZES } from "../constants";
 import HomeNavigation from "./HomeNavigation";
-
-import { DailyCalendar } from "./partialViews/DailyCalendar";
-import { WeeklyCalendar } from "./partialViews/WeeklyCalendar";
-import { MonthlyCalendar } from "./partialViews/MonthlyCalendar";
-import { useNavigation } from "@react-navigation/native";
-import { ToolBar } from "../components/Toolbar";
 
 import { Ionicons } from "@expo/vector-icons";
 
-import { ItemType } from "../constants";
-
-import { Dimensions } from 'react-native';
-
-import { GETdirectoryTEST, doOnStart } from "../API";
+import { directoryList, doOnStart, getDirectoryFromStorage } from "../API";
 
 //import { directoryList } from "../API";
 import FilterModal from "../components/FilterModal";
@@ -34,14 +24,10 @@ export default function HomeScreen ({ navigation, route }) {
         Keyboard.dismiss();
     };
     
-    useEffect(() => {
-        doOnStart();
-    }, [])
-
     return (
         <SafeAreaView style={styles.screen}>
-            <View style={[styles.row, {flex: 0, height: 75}]}>
-                <TouchableOpacity style={styles.profileButton}>
+            <View style={[styles.row, {flex: 0, height: viewSIZES.xSmall}]}>
+                <TouchableOpacity style={styles.profileButton} onPress={() => navigation.navigate('Profile')}>
                     <Ionicons name={"person"} size={textSIZES.xxLarge} style={{color: COLORS({opacity:1}).primary}}/>
                 </TouchableOpacity>
                 <TouchableWithoutFeedback onPress={dismissKeyboard}>
@@ -73,8 +59,8 @@ const styles = StyleSheet.create({
       borderColor: COLORS({opacity:1}).primary,
       borderRadius: 100,
       marginHorizontal: textSIZES.small,
-      height: 75,
-      width: 75,
+      height: viewSIZES.xSmall,
+      width: viewSIZES.xSmall,
       borderWidth: 1,
       justifyContent: 'center',
       alignItems: 'center',
@@ -84,7 +70,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: COLORS({opacity:1}).primary,
         borderRadius: textSIZES.xxSmall,
-        height: 75,
+        height: viewSIZES.xSmall,
         marginRight: textSIZES.small,
         padding: textSIZES.xxSmall,
         flex: 1,

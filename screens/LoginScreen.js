@@ -52,6 +52,9 @@ export default function Login({ navigation }) {
   const [isSignUp, setSignUp] = useState(false);
 
   let passwordInput;
+  let firstNameInput;
+  let lastNameInput;
+  let handleInput;
 
   const validateEmail = (email) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -123,11 +126,11 @@ export default function Login({ navigation }) {
     }
 
     // If all validations pass, proceed with sign-up logic here
-    // console.log('First Name:', firstName);
-    // console.log('Last Name:', lastName);
-    // console.log('Email:', email);
-    // console.log('Password:', password);
-    // console.log('Handle:', handle);
+    console.log('First Name:', firstName);
+    console.log('Last Name:', lastName);
+    console.log('Email:', email);
+    console.log('Password:', password);
+    console.log('Handle:', handle);
 
     doSignup(email, password, handle, firstName, lastName, navigation)
   };
@@ -136,9 +139,10 @@ export default function Login({ navigation }) {
     <SafeAreaView 
       style={styles.loginRoot}
       >
+      
       <KeyboardAvoidingView 
         behavior="position"
-        keyboardVerticalOffset={150}
+        //keyboardVerticalOffset={150}
         style={styles.imageAndText}
       >
         <View style={styles.imageBox}>
@@ -173,7 +177,7 @@ export default function Login({ navigation }) {
               placeholderTextColor={COLORS({opacity:1}).primary}
               secureTextEntry={!showPassword}
               onChangeText={(password) => setPassword(password)}
-              ///onSubmitEditing={() => doLogin(email, password, navigation)}
+              onSubmitEditing={() => isSignUp ? firstNameInput.focus() : doLogin(email, password, navigation)}            
             />
             <Ionicons
               name={showPassword ? "eye-off" : "eye"}
@@ -186,28 +190,31 @@ export default function Login({ navigation }) {
             <View>
                 <Text style={styles.label}>*First Name:</Text>
                 <TextInput
+                    ref={(input) => { firstNameInput = input; }}
                     style={[styles.textInputRoot, styles.textInput]}
                     autoCapitalize="none"
                     onChangeText={(firstName) => setFirstName(firstName)}
-                    onSubmitEditing={() => { passwordInput.focus(); }}
+                    onSubmitEditing={() => { lastNameInput.focus(); }}
                     blurOnSubmit={false}
                 />
                 <Text style={styles.label}>*Last Name:</Text>
                 <TextInput
+                    ref={(input) => { lastNameInput = input; }}
                     style={[styles.textInputRoot, styles.textInput]}
                     autoCapitalize="none"
                     onChangeText={(lastName) => setLastName(lastName)}
-                    onSubmitEditing={() => { passwordInput.focus(); }}
+                    onSubmitEditing={() => { handleInput.focus(); }}
                     blurOnSubmit={false}
                 />
                 <Text style={styles.label}>*@:</Text>
                 <TextInput
+                    ref={(input) => { handleInput = input; }}
                     style={[styles.textInputRoot, styles.textInput]}
                     placeholder="username"
                     placeholderTextColor={COLORS({opacity:1}).primary}
                     autoCapitalize="none"
                     onChangeText={(handle) => setHandle(handle)}
-                    onSubmitEditing={() => { passwordInput.focus(); }}
+                    onSubmitEditing={() => { validateSignUp(); }}
                     blurOnSubmit={false}
                 />
             </View>
@@ -273,20 +280,17 @@ export default function Login({ navigation }) {
 
 const styles = StyleSheet.create({
   loginRoot: {
-    height: "100%",
     backgroundColor: "#fff",
     alignItems: 'center',
-    width: "100%",
     display: "flex",
     flexDirection: "column",
-    display: "flex",
     justifyContent: "space-between",
-    paddingVertical: "10%",
+   // paddingVertical: "10%",
+    flex:1,
   },
   imageBox: {
     alignItems: "center",
     justifyContent: "center",
-    marginTop: "20%",
   },
   imageAndText: {
     width: "100%",

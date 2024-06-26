@@ -31,17 +31,17 @@ export default function Directory ({navigation, scrollEnabled = true}) {
   async function addNewCategory() {
     const category = {
       title: newCategory,
+      sections: [{"title": "All", "view": "Default"}]
     };
 
-    //console.log(category);
     getProfileID().then((profileID) => {
       //console.log(profileID)
       (async () => {
         POSTaddCategoryTEST(profileID, {
           ...category,
           _id: null
-        }).then((newCategory) => {
-          if (!!newCategory) {
+        }).then((newCat) => {
+          if (!!newCat) {
             alert("Success!");
           } else {
             alert("Failed.");
@@ -49,7 +49,7 @@ export default function Directory ({navigation, scrollEnabled = true}) {
         });
       })()
     }).catch((err) => {
-        alert(err.message)
+      alert(err.message)
     })
   }
 

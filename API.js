@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 import { ItemType } from './constants'
+import { defaultDirectory } from './constants/default';
 import { useState } from 'react';
 
 export let directoryList = [];
@@ -135,6 +136,8 @@ export async function doSignup(email, password, handle, firstName, lastName) {
             lastName: lastName
         }),
     });
+
+    await saveDirectoryToStorage(defaultDirectory);
 
     if (response.status === 201) {
         // success - signed up
@@ -322,28 +325,48 @@ export async function DELETEcontact(contactID) {
 //#endregion
 
 //#region DIRECTORY
-export async function GETdirectory(profileID) {
-    const response = await fetchWithAuth(`${DIRECTORY_BASE_URL}/${profileID}`, {
-        method: 'GET',
-    });
+
+export async function saveDirectoryToStorage(directory, userID) {
     try {
-        if (response.status == 201) {
-            // good, return 
-            const body = await response.json();
-            let directory = body.directory;
-            return directory.map((category) => {
-                return {
-                    ...category,
-                }
-            });
-        } else {
-            return []
-        }
-    } catch (err) {
-        alert(err.message);
-        return []
+        await AsyncStorage.setItem(`directory_${userID}`, JSON.stringify(directory));
+    } catch (error) {
+        console.log('Error saving directory to storage:', error);
     }
 }
+
+export async function getDirectoryFromStorage(userID) {
+    try {
+        const directory = await AsyncStorage.getItem(`directory_${userID}`);
+        directoryList = JSON.parse(directory);
+        return JSON.parse(directory);
+    } catch (error) {
+        console.log('Error retrieving directory from async storage:', error);
+        return [];
+    }
+}
+
+// export async function GETdirectory(profileID) {
+//     const response = await fetchWithAuth(`${DIRECTORY_BASE_URL}/${profileID}`, {
+//         method: 'GET',
+//     });
+//     try {
+//         if (response.status == 201) {
+//             // good, return 
+//             const body = await response.json();
+//             let directory = body.directory;
+//             return directory.map((category) => {
+//                 return {
+//                     ...category,
+//                 }
+//             });
+//         } else {
+//             return []
+//         }
+//     } catch (err) {
+//         alert(err.message);
+//         return []
+//     }
+// }
 
 export async function POSTaddCategory(profileID, category) {
     const response = await fetchWithAuthJSON(`${DIRECTORY_BASE_URL}/${profileID}`, {
@@ -662,6 +685,8 @@ export async function doSignupTEST(email, password, handle, firstName, lastName)
 
     console.log(AUTH_BASE_URL + " " + response);
 
+    await saveDirectoryToStorage(defaultDirectory);
+
     return 201;
 }
 
@@ -671,6 +696,7 @@ export async function doSignupTEST(email, password, handle, firstName, lastName)
 export async function doOnStart() {
     directoryList = GETdirectoryTEST();
 }
+
 //#endregion
 
 //#region USERS
@@ -881,6 +907,8 @@ export async function DELETEcontactTEST(contactID) {
 //#endregion
 
 //#region DIRECTORY
+
+
 export async function GETdirectoryTEST() {
     // const response = await fetchWithAuthTEST(`${DIRECTORY_BASE_URL}/${profileID}`, {
     //     method: 'GET',

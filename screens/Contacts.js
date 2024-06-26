@@ -59,7 +59,7 @@ export default function Contacts ({scrollEnabled = true}) {
 const styles = StyleSheet.create({
   screen: {
     flex:1,
-    backgroundColor: COLORS({opacity:1}).lightWhite,
+    backgroundColor: COLORS({opacity:1}).white,
   },
   header:{
     padding: textSIZES.xSmall,

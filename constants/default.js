@@ -57,5 +57,10 @@ const defaultRecipe = {
   //  "favicon": 'U+1F4CB',//if favicon === icon then <View style={[styles.border, {padding: 20}}><Text style={{fontisize: 100}}>{favicon}</Text>
     "itemType" : ItemType.Recipe,
 }
+
+const defaultDirectory = [{
+    "title": "Backlog",
+    "sections": [{"title": "All", "view": "Default"}],
+}]
  
-export { ItemType, ViewType, defaultItem, defaultTask, defaultEvent, defaultPage, defaultRecipe };
+export { ItemType, ViewType, defaultItem, defaultTask, defaultEvent, defaultPage, defaultRecipe, defaultDirectory };

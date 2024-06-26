@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, Modal,
+import { View, Text, TouchableOpacity, Modal, TextInput,
         StyleSheet, Animated, FlatList, ScrollView } from 'react-native';
 import { COLORS, SHADOWS, FONT, textSIZES, ViewType, ItemType } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { ExpandableView } from "../../utils";
 import { GETitems, GETitemsTEST } from "../../API";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const expandedCard = ({navigation, category, sections}) => {
   const [showAddSection, setShowAddSection] = useState(false);
@@ -80,36 +81,106 @@ const expandedCard = ({navigation, category, sections}) => {
   )
 };
 
+const RenameModal = ({ onCloseRenameModal, newTitle, setNewTitle, renameCategory }) => {
+  const handleRename = () => {
+    renameCategory();
+  };
+
+  return (
+    <View>
+      <Text>Rename Category</Text>
+      <TextInput
+        placeholder="Enter new category title"
+        value={newTitle}
+        onChangeText={setNewTitle}
+      />
+      <TouchableOpacity onPress={handleRename}>
+        <Text>Rename</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={onCloseRenameModal}>
+        <Text>Cancel</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
 const DirectoryCard = ({navigation, category, sections}) => {
   const [isExpanded, setIsExpanded] = useState(false);
+
+  const [newTitle, setNewTitle] = useState("");
   
-  async function DELETEcategory() {
-    try {
-      console.log("Delete category");
-    } catch (err) {
-      console.log("get me failed. "+err);
-    }
+  async function deleteCategory(category) { 
+    const newCategories = categories.filter((c) => c.title != category.title);
+    setCategories(newCategories);
+    await saveDirectoryToStorage(newCategories);  
   }
+
+  async function renameCategory(categories) { 
+    if (newTitle.trim() === "") {
+      alert("Please enter a new title for the category");
+      return;
+    }
+  
+    const newCategories = categories.map((c) => {
+      if(c.title == category.title) {
+        c.title = newTitle;
+      }
+      return c;
+    });
+  
+    setCategories(newCategories);
+    await saveDirectoryToStorage(newCategories);
+  
+    setNewTitle("");
+    onCloseRenameModal();
+  }
+
+  const [showOptions, setShowOptions] = useState(false);
+  const [showRenameModal, setShowRenameModal] = useState(false);
+
+  const handleRenameCategory = () => {
+    setShowRenameModal(true);
+  };
+
+  const onCloseOptions = () => {
+    setShowOptions(false);
+  };
 
   return (
     <>
       <TouchableOpacity
         onPress={() => {
-            setIsExpanded(!isExpanded);
-          }}
-          style={styles.titleContainer}
+          setIsExpanded(!isExpanded);
+        }}
+        style={styles.titleContainer}
       >
-        <View style={styles.row}>
-          <Ionicons name={"list-circle"} size={30} style={styles.icon}/>
-          <Text style={styles.title} numberOfLines={1}>{category.title}</Text>
-        </View>
-        {/* <TouchableOpacity>
+        <Text style={styles.title} numberOfLines={1}>{category.title}</Text>
+        <TouchableOpacity onPress={() => setShowOptions(true)}>
           <Ionicons name={"cog"} size={30} style={styles.icon}/>
-        </TouchableOpacity> */}
+        </TouchableOpacity>
       </TouchableOpacity>
       <ExpandableView expanded={isExpanded} view={expandedCard} params={{navigation, category, sections}} vh={200} />
+
+
+      <Modal visible={showOptions} animationType="slide" onRequestClose={onCloseOptions}>
+        <SafeAreaView style={styles.modalContainer}>
+          <TouchableOpacity style={styles.button} 
+            //onPress={handleRenameCategory}
+          >
+            <Text style={styles.buttonText}>Rename</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} 
+            //onPress={onCloseOptions}
+          >
+            <Text style={styles.buttonText}>Delete</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.removeButton} onPress={onCloseOptions}>
+            <Text style={styles.buttonText}>Cancel</Text>
+          </TouchableOpacity>
+        </SafeAreaView>
+      </Modal>
     </>
-  )
+  );
 };
 
 const styles = StyleSheet.create({
@@ -129,6 +200,10 @@ const styles = StyleSheet.create({
     padding: textSIZES.xSmall,
     backgroundColor: COLORS({opacity:0.5}).primary,
     borderRadius: textSIZES.xSmall,
+  },
+  modalContainer: { 
+    margin: textSIZES.xxLarge,
+    padding: textSIZES.small,
   },
   title: {
     fontSize: textSIZES.medium,
@@ -168,6 +243,17 @@ const styles = StyleSheet.create({
   iconInverted: {
     color: COLORS({opacity:1}).white,
     margin: textSIZES.xxSmall,
+  },
+  buttonText: { 
+    fontSize: textSIZES.medium,
+    margin: textSIZES.xSmall,
+  },
+  removeButton: {
+    backgroundColor: COLORS({opacity:1}).lightRed, 
+    padding: textSIZES.xxSmall, 
+    borderRadius: textSIZES.xxSmall,
+    marginLeft: textSIZES.xxSmall,
+    alignItems: 'center',
   },
 });
 
