@@ -5,7 +5,7 @@ import { defaultDirectory } from './constants/default';
 import { useState } from 'react';
 
 export let directoryList = [];
-export const BASE_URL = 'http://172.27.72.214:3000/api/v0';
+export const BASE_URL = 'http://172.18.150.237:3000/api/v0';
 
 const USERS_BASE_URL = `${BASE_URL}/users`;
 const PROFILE_BASE_URL = `${PROFILE_BASE_URL}`;
@@ -929,8 +929,8 @@ export async function GETdirectoryTEST() {
             "sections": [
                 {"title": "All", "view": "Default", "_id": "235235"},
                 {"title": "Recipes", "view": "Default", "_id": "74576"},
-                {"title": "Tips", "view": "Checklist", "_id": "4674764674"},
-                {"title": "Meal Plan", "view": "Schedule", "_id": "3578365"}
+                {"title": "Meal Plan", "view": "Schedule", "_id": "3578365"},
+                {"title": "Tips", "view": "Checklist", "_id": "4674764674"}
             ],
             "_id": "65e172b61635ad960dabdc32"
         },
@@ -1079,14 +1079,20 @@ export async function GETscheduledTEST(date, state, filter={}) {
 export async function GETtodayTEST(selectedDate, filter={}) {
     const date = new Date(selectedDate);
 
+    console.log("today test.");
+    
     filter.startgt = date; 
     filter.startlt = date;
 
-    const ext = getURL(!!filter.itemType ? filter.itemType : ItemType.Item);
+    ///const ext = getURL(!!filter.itemType ? filter.itemType : ItemType.Item);
 
-    const response = `${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "&" : "") + new URLSearchParams(filter);
+    //const response = `${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "&" : "") + new URLSearchParams(filter);
 
-    //console.log("today: " + response);
+    const response = await fetchWithAuth(`${ITEMS_BASE_URL}`, {
+        method: 'GET',
+    });
+
+    console.log("today: " + response);
 
     const body = {
         "items": [

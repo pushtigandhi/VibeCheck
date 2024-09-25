@@ -23,6 +23,10 @@ export default function HomeScreen ({ navigation, route }) {
     const dismissKeyboard = () => {
         Keyboard.dismiss();
     };
+
+    useEffect(() => { 
+        doOnStart();
+    }, []);
     
     return (
         <SafeAreaView style={styles.screen}>

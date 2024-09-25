@@ -134,7 +134,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false
 
   const onChangeCategory = (newCategory) => {
     setCategory(newCategory);
-    setSection("All");
+    onChangeSection("All");
     setFn({"category": newCategory});
   };
 
@@ -288,7 +288,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false
       )}
       {showPriority == true && (
         <>
-        <View style={[styles.row, styles.property, { justifyContent: "space-between" }]}>
+        <View style={[styles.row, styles.property]}>
           <>
             {(itemType === ItemType.Recipe) ? (
               <Ionicons name={"star-half-outline"} size={size} style={[styles.icon, {margin: textSIZES.xxSmall}]}/>
@@ -339,10 +339,10 @@ export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false
 const styles = StyleSheet.create({
   infoContainer: {
     marginHorizontal: textSIZES.small,
-    backgroundColor: COLORS({opacity:1}).lightWhite,
+    backgroundColor: COLORS({opacity:1}).white,
     //borderRadius: textSIZES.small/2,
-    ...SHADOWS.medium,
-    shadowColor: COLORS({opacity:1}).shadow,
+    // ...SHADOWS.small,
+    // shadowColor: COLORS({opacity:1}).shadow,
   },
   row: {
     flexDirection: "row",
