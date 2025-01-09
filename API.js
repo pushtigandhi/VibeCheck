@@ -4,7 +4,7 @@ import { ItemType } from './constants'
 import { useState } from 'react';
 
 export let directoryList = [];
-export const BASE_URL = 'http://172.27.72.214:3000/api/v0';
+export const BASE_URL = 'http://localhost:3000/api/v0';
 
 const USERS_BASE_URL = `${BASE_URL}/users`;
 const PROFILE_BASE_URL = `${PROFILE_BASE_URL}`;
@@ -526,7 +526,6 @@ export async function GETitems(itemType, filter={}) {
         method: 'GET',
     });
     try {
-        //console.log(response.status);
         if (response.status == 201) {
             // good, return 
             const body = await response.json();
@@ -548,7 +547,8 @@ export async function GETitems(itemType, filter={}) {
 export async function POSTcreateItem(itemType, item) {
     const ext = getURL(itemType);
 
-    const response = await fetchWithAuthJSON(`${ITEMS_BASE_URL}/${itemID}${ext}`, {
+    console.log("item title: " + item.title);
+    const response = await fetchWithAuthJSON(`${ITEMS_BASE_URL}/${ext}`, {
         method: 'POST',
         body: JSON.stringify(item),
     });
@@ -558,6 +558,7 @@ export async function POSTcreateItem(itemType, item) {
         const body = await response.json();
         return body.item;
     } else {
+        //console.log("Bad response: " + response.status)
         return null;
     }
 }

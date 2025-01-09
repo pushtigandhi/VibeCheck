@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { SafeAreaView, View, FlatList, StyleSheet, TextInput } from "react-native";
 import { COLORS, FONT, textSIZES, viewSIZES } from "../constants";
 import HomeNavigation from "./HomeNavigation";
-import { GETitems, GETitemsTEST } from "../API";
+import { GETitems } from "../API";
 import ContactCard from "./cards/ContactCard";
 import BacklogCard from "./cards/BacklogCard";
 import { ItemType } from "../constants";
@@ -21,15 +21,13 @@ export default function Backlog ({navigation, scrollEnabled = true}) {
   }
 
   async function getItemsFromAPI() {
-    let filter;
-    if (search == '') {
-      filter = { category: "Backlog"};
-    }
-    else {
-      filter = { category: "Backlog", search: search.trim() };
-    }
+    let filter = { 
+      category: "Backlog",
+      ...(search && { search: search.trim() }),
+    };
+    
     try {
-      let items_ = await GETitemsTEST(ItemType.Item, filter);
+      let items_ = await GETitems(ItemType.Item, filter);
       return items_;
     } catch (error) {
       console.log("error fetching items");

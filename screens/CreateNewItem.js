@@ -9,7 +9,7 @@ import TaskCard from "./cards/TaskCard";
 import RecipeCard from "./cards/RecipeCard";
 import * as ImagePicker from 'expo-image-picker';
 import { Scheduler } from "../components/Scheduler";
-import { PATCHitemTEST, DELETEitemTEST } from "../API";
+import { PATCHitem, DELETEitem, POSTcreateItem } from "../API";
 
 const defaultImage = require("../assets/icon.png");
 
@@ -123,14 +123,32 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
     }
     
     function onSave() {
+        const obj = {... updatedItem, 
+            title: title,
+            ...(description && { description: description }),
+            ...(favicon && { favicon: favicon }),
+            ...(icon && { icon: icon }),
+            ...(notes && { notes: notes }),
+            ...(location && { location: location }),
+        };
+
         if(isNew){
-            //console.log("New: " + updatedItem);
+            console.log("New: " + obj);
+
+            POSTcreateItem(item.itemType, {
+                ...obj
+            })
+            .then((item_) => {
+                //alert("Success!");
+            }).catch((error) => {
+                console.log(error);
+            });
 
         } else {
             //console.log("Edit: " + updatedItem);
 
-            PATCHitemTEST(item.itemType, {
-                ...updatedItem
+            PATCHitem(item.itemType, {
+                ...obj
             }, item._id)
             .then((item_) => {
                 //alert("Success!");
@@ -138,10 +156,11 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
                 console.log(error);
             });
         }
+        onClose();
     };
 
     function onDelete() {
-        DELETEitemTEST(item.itemType, item._id)
+        DELETEitem(item.itemType, item._id)
         .then((item_) => {
             //alert("Success!");
         }).catch((error) => {
