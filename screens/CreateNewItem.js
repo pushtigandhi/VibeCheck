@@ -9,7 +9,7 @@ import TaskCard from "./cards/TaskCard";
 import RecipeCard from "./cards/RecipeCard";
 import * as ImagePicker from 'expo-image-picker';
 import { Scheduler } from "../components/Scheduler";
-import { PATCHitemTEST, DELETEitemTEST } from "../API";
+import { PATCHitem, DELETEitem, POSTcreateItem } from "../API";
 
 const defaultImage = require("../assets/icon.png");
 
@@ -123,30 +123,51 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
     }
     
     function onSave() {
+        const obj = {
+            ...updatedItem,
+            title: title,
+            ...(description && { description: description }),
+            ...(favicon && { favicon: favicon }),
+            ...(location && { location: location }),
+            ...(notes && { notes: notes }),
+            ...(icon && { icon: icon }),
+        }
         if(isNew){
             //console.log("New: " + updatedItem);
-
-        } else {
-            //console.log("Edit: " + updatedItem);
-
-            PATCHitemTEST(item.itemType, {
-                ...updatedItem
-            }, item._id)
+            POSTcreateItem(item.itemType ? item.itemType : ItemType.Item, {
+                ...obj
+            })
             .then((item_) => {
                 //alert("Success!");
             }).catch((error) => {
                 console.log(error);
             });
+
+        } else {
+            //console.log("Edit: " + updatedItem);
+
+            PATCHitem(item.itemType ? item.itemType : ItemType.Item, {
+                ...obj
+            }, item._id)
+            .then((item_) => {
+                //alert("Success!");
+
+            }).catch((error) => {
+                console.log(error);
+            });
         }
+
+        onClose();
     };
 
     function onDelete() {
-        DELETEitemTEST(item.itemType, item._id)
+        DELETEitem(item.itemType ? item.itemType : ItemType.Item, item._id)
         .then((item_) => {
             //alert("Success!");
         }).catch((error) => {
             console.log(error);
         });
+        onClose('delete');
     };
 
     const ConfirmCancelPrompt = () => {

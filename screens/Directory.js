@@ -15,7 +15,7 @@ export default function Directory ({navigation, scrollEnabled = true}) {
   
   async function getProfileID() {
     try {
-      GETmeTEST().then((profile) => {
+      GETme().then((profile) => {
         if (!!profile) {
           //console.log(profile["_id"]);
           return profile["_id"].toString();

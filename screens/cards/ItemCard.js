@@ -8,7 +8,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import CollaboratorCard from "./CollaboratorCard";
 import TaskCard from "./TaskCard";
 import RecipeCard from "./RecipeCard";
-import { PATCHitemTEST } from "../../API";
+import { PATCHitem } from "../../API";
 import CreateNewItem from "../CreateNewItem";
 
 import React from "react";
@@ -170,11 +170,6 @@ export default function ItemCard({ navigation, route }) {
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [showCreateNew, setShowCreateNew] = useState(false);
-  function closeCreateNew() {
-    setShowCreateNew(false);
-}
-
   const [updatedItem, setUpdatedItem] = useState({});
   function updateNewItem(params) {
     if(params.subtasks) {
@@ -188,24 +183,19 @@ export default function ItemCard({ navigation, route }) {
     }
   }
 
-  function onGoBack() {
-    if(Object.keys(updatedItem).length > 0) {
-        PATCHitemTEST(itemType, {
-            ...route.params?.item,
-            ...updatedItem
-        }, route.params?.item._id)
-        .then((item_) => {
-            //alert("Success!");
-        }).catch((error) => {
-            console.log(error);
-        });
+  const [showCreateNew, setShowCreateNew] = useState(false);
+    function closeCreateNew(op = null) {
+      setShowCreateNew(false);
+      
+      if (op === 'delete') {
+        onGoBack();
+      }
     }
+
+  function onGoBack() {
+    route.params?.doRefresh();
     navigation.goBack();
   }
-
-  const onRefresh = React.useCallback(() => {
-    doRefresh();
-  }, [route.params?.item]);
 
   useEffect(() => {
     if (route.params?.item) {

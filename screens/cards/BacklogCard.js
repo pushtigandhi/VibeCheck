@@ -4,12 +4,12 @@ import { View, Text, TouchableOpacity,
 
 import { COLORS, SHADOWS, FONT, textSIZES, viewSIZES } from "../../constants";
 
-const BacklogCard = ({navigation, item}) => {
+const BacklogCard = ({navigation, item, doRefresh}) => {
   return (
     <View style={styles.cardContainer}>
       <TouchableOpacity
         onPress={() => {
-            navigation.navigate("Item", {item});
+            navigation.navigate("Item", {item, doRefresh});
           }}
           style={styles.titleContainer}
       >
