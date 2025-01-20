@@ -13,7 +13,7 @@ const expandedCard = ({navigation, category, sections}) => {
   async function getSectionItemsFromAPI(section) {
     //console.log("GEt item");
     try {
-      let items_ = await GETitemsTEST(ItemType.Item, { category: category.title, section: section.title });
+      let items_ = await GETitems(ItemType.Item, { category: category.title, section: section.title });
       return items_;
     } catch (error) {
       console.log("error fetching item");

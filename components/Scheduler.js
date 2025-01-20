@@ -38,6 +38,9 @@ export const Scheduler = ({ item = null, setFn }) => {
         setDiffInHours(Math.floor((differenceInMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
         setDiffInMinutes(Math.floor((differenceInMs % (1000 * 60 * 60)) / (1000 * 60)));
       }
+      else {
+        setFn({"startDate": startDate, "endDate": endDate, "repeat": repeat});
+      }
     }, [item]); 
 
     return(

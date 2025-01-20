@@ -49,8 +49,8 @@ const defaultPage = {
     "itemType" : ItemType.Page,
 }
 const defaultRecipe = {
-    "category": "Cooking",
-    "section": "Recipes",
+    "category": "Backlog",
+    "section": "All",
     "icon": '\u{1F37D}',
     "ingredients": [],
     "instructions": [],

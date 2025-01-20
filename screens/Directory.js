@@ -1,10 +1,10 @@
 import { SafeAreaView, View, FlatList, StyleSheet, Text, TouchableOpacity, TextInput, Modal } from "react-native";
 import { COLORS, FONT, textSIZES, SHADOWS, viewSIZES } from "../constants";
-import { GETitems, POSTcreateItem, POSTaddCategory, BASE_URL, GETmeTEST, POSTaddCategoryTEST } from "../API";
+import { GETitems, POSTcreateItem, POSTaddCategory, BASE_URL, GETme, POSTaddCategoryTEST } from "../API";
 import { Ionicons } from "@expo/vector-icons";
 import { useState, useEffect } from "react";
 import HomeNavigation from "./HomeNavigation";
-import { GETdirectoryTEST } from "../API";
+import { GETdirectory, getDirectoryFromStorage } from "../API";
 import DirectoryCard from "./cards/DirectoryCard"
 import SelectView from "./SelectView";
 
@@ -54,8 +54,14 @@ export default function Directory ({navigation, scrollEnabled = true}) {
   }
 
   async function getDirectoryFromAPI() {
-    try {
-      let categories_ = await GETdirectoryTEST();
+    try { 
+      // getProfileID().then(async (profileID) => {
+      //   let categories_ = await GETdirectory(profileID);
+      //   setCategories(categories_);
+      //   return categories_;
+      // })
+      let categories_ = await getDirectoryFromStorage();
+      setCategories(categories_);
       return categories_;
     } catch (error) {
       console.log("error fetching directory");

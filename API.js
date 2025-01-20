@@ -203,11 +203,18 @@ export async function GETme() {
         method: 'GET',
     });
 
-    if (response.status === 200) {
-        const body = await response.json();
+    try {
+        console.log(response.status);
+        if (response.status == 200) {
+            // good, return 
+            const body = await response.json();
         return body.profile;
-    } else {
-       return null;
+        } else {
+            return null;
+        }
+    } catch (err) {
+        alert(err.message);
+        return null;
     }
 }
 
@@ -352,6 +359,7 @@ export async function GETdirectory(profileID) {
     try {
         if (response.status == 201) {
             // good, return 
+            console.log(response.status);
             const body = await response.json();
             let directory = body.directory;
             return directory.map((category) => {
@@ -571,6 +579,8 @@ export async function GETitems(itemType, filter={}) {
 export async function POSTcreateItem(itemType, item) {
     const ext = getURL(itemType);
 
+    console.log(item);
+
     const response = await fetchWithAuthJSON(`${ITEMS_BASE_URL}/${ext}`, {
         method: 'POST',
         body: JSON.stringify(item),
@@ -707,7 +717,7 @@ export async function doSignupTEST(email, password, handle, firstName, lastName)
 
 //#region ONSTART
 export async function doOnStart() {
-    directoryList = GETdirectoryTEST();
+    directoryList = getDirectoryFromStorage();
 }
 
 //#endregion

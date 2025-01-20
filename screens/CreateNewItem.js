@@ -52,6 +52,7 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
     };
 
     function updateNewItem(params) {
+        console.log(params);
         if(params.category) {
           setUpdatedItem({... updatedItem, category: params.category});
         }

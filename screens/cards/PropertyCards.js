@@ -7,7 +7,7 @@ import { Picker } from '@react-native-picker/picker';
 import SingleSelectDropdown from "../../components/SingleSelectDropdown";
 import MultiSelectDropdown from "../../components/MultiSelectDropdown";
 
-import { directoryList } from "../../API";
+import { getDirectoryFromStorage } from "../../API";
 
 const allTags = [
   {
@@ -42,8 +42,9 @@ export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false
   const [minutePickerVisible, setMinutePickerVisible] = useState(false);
   const [hour, setHour] = useState(0);
   const [minute, setMinute] = useState(15);
+  const [directoryList, setDirectoryList] = useState([]);
 
-  const size = 25;
+  const size = 15;
 
   const toggleHourPicker = () => {
     setHourPickerVisible(!hourPickerVisible);
@@ -76,11 +77,11 @@ export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false
   }
 
   useEffect(() => {
-    // getTagsFromAPI().then((allTags_) => {
-    //   setAllTags(allTags_);
-    // }).catch((err) => {
-    //     alert(err.message)
-    // })
+    getDirectoryFromStorage().then((directoryList_) => {
+      setDirectoryList(directoryList_);
+    }).catch((err) => {
+        alert(err.message)
+    })
   }, []); // Empty dependency array to run only once on component mount
 
   useEffect(() => {
@@ -110,7 +111,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false
   }, [item]); // Update category and section when item changes
 
   function getCategories() {
-    const categoryTitles = directoryList._j.map(cat => {
+    const categoryTitles = directoryList.map(cat => {
       return cat.title;
     });
     return categoryTitles.map((title, index) => ({
@@ -120,11 +121,15 @@ export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false
   }
 
   function getSections() {
-    const sectionTitles = directoryList._j.find(cat => cat.title === category).sections;
-    return sectionTitles.map((section, index) => ({
-      label: section.title,
-      value: section.title
-    }));
+    if (!!category) {
+      const sectionTitles = directoryList.find(cat => cat.title === category).sections;
+      return sectionTitles.map((section, index) => ({
+        label: section.title,
+        value: section.title
+      }));
+    } else {
+      return [];
+    }
   }
 
   const onChangeSection = (newSection) => {
@@ -140,11 +145,11 @@ export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false
 
   return (
     <SafeAreaView style={styles.infoContainer}>
-      {directoryList._j.length > 0 ? (
+      {directoryList.length > 0 ? (
           <SingleSelectDropdown
                 options={getCategories()}
                 placeholder={!!category ? category : "Category"}
-                icon={<Ionicons name="folder-open-outline" size={size} style={[styles.icon, {margin: textSIZES.xxSmall}]} />}
+                icon={<Ionicons name="folder-open-outline" size={size} style={[styles.icon, {margin: textSIZES.tiny, marginRight: textSIZES.xSmall}]} />}
                 setFn={onChangeCategory}
                 isDisabled={isSection}
             />
@@ -152,7 +157,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false
         <Text>Loading categories...</Text>
       )}
 
-      {!!category && (directoryList._j.length > 0 ? (
+      {!!category && (directoryList.length > 0 ? (
         <SingleSelectDropdown options={getSections()} placeholder={!!section ? section : "Section"} setFn={onChangeSection} isDisabled={isSection}
           icon={<Ionicons name={"bookmark-outline"} size={size} style={[styles.icon, {margin: textSIZES.xxSmall}]} />} />
       ) : (
@@ -160,7 +165,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isScheduler = false
       ))}
 
       <MultiSelectDropdown options={allTags} placeholder="Tags" setFn={setTags} current={tags}
-        icon={<Text style={[styles.icon, {margin: textSIZES.xxSmall, fontSize: textSIZES.large}]}>#</Text>} /> 
+        icon={<Text style={[styles.icon, {margin: textSIZES.tiny, marginRight: textSIZES.xSmall, fontSize: textSIZES.medium}]}>#</Text>} /> 
 
       <>
       {!isScheduler && (

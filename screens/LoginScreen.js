@@ -1,7 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, Image, TextInput,
    SafeAreaView, KeyboardAvoidingView, Pressable, Alert } from "react-native";
-import { doLoginTEST as doLogin_, doSignupTEST as doSignup_ } from "../API";
+import { doLogin as doLogin_, doSignup as doSignup_ } from "../API";
 import { useState } from "react";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { COLORS } from "../constants";

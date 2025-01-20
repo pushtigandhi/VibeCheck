@@ -5,24 +5,24 @@ import { GETitems, GETitemsTEST } from "../../API";
 import { Ionicons } from "@expo/vector-icons";
 import FilterModal from "../../components/FilterModal";
 
-const ListView = ({items, navigation}) => (
+const ListView = ({items, navigation, doRefresh}) => (
   <FlatList
     scrollEnabled={true}
     data={items}
     renderItem={({item}) => (
       <TouchableOpacity
         onPress={() => {
-            navigation.navigate("Item", {item});
+            navigation.navigate("Item", {item, doRefresh});
         }}
         key={item["_id"] + "root"} 
         style={styles.cardsContainer}
       >
         <View style={{flexDirection: "row"}}>
           <View style={{ justifyContent: "center"}}>
-            <Text style={{ fontSize: textSIZES.xLarge}}>{item.icon}</Text>
+            <Text style={{ fontSize: textSIZES.medium}}>{item.icon}</Text>
           </View>
           <View style={styles.dayCardContainer}>
-            <Text style={styles.itemTitle} numberOfLines={1}>{item.title}</Text>
+            <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
             {!!item.location && (
               <Text style={styles.prop}>Location: {item.location}</Text>
             )}
@@ -39,7 +39,7 @@ const ListView = ({items, navigation}) => (
   /> 
 );
 
-const GalleryView = ({items, navigation}) => (
+const GalleryView = ({items, navigation, doRefresh}) => (
   <FlatList
     scrollEnabled={true}
     data={items}
@@ -47,7 +47,7 @@ const GalleryView = ({items, navigation}) => (
     renderItem={({item}) => (
       <TouchableOpacity style={styles.cardsContainer} key={item["_id"] + "_root"}
         onPress={() => {
-            navigation.navigate("Item", {item});
+            navigation.navigate("Item", {item, doRefresh});
         }}
       >
         <View style={styles.imageBox}>
@@ -57,7 +57,7 @@ const GalleryView = ({items, navigation}) => (
           />
         </View>
         <View style={[styles.row]}>
-          <Text style={{fontSize: textSIZES.xLarge}}>{item.icon}</Text>
+          <Text style={{fontSize: textSIZES.medium}}>{item.icon}</Text>
           <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
         </View>
       </TouchableOpacity>
@@ -79,6 +79,10 @@ export default function DefaultView ({navigation, route, scrollEnabled = true}) 
   const [search, setSearch] = useState('');
   const [expandSearchBar, setSearchBar] = useState(false);
 
+  function doRefresh() {
+    setRefreshing(!refreshing);
+  }
+
   function closeFilter() {
     setRefreshing(!refreshing);
     setFilterVisible(false);
@@ -91,7 +95,7 @@ export default function DefaultView ({navigation, route, scrollEnabled = true}) 
 
   async function getSectionItemsFromAPI() {
     try {
-      let items_ = await GETitemsTEST(ItemType.Item, filter);
+      let items_ = await GETitems(ItemType.Item, filter);
       return items_;
     } catch (error) {
       console.log("error fetching items");
@@ -105,21 +109,30 @@ export default function DefaultView ({navigation, route, scrollEnabled = true}) 
     setFilter({... filter, category: route.params?.category, section: route.params?.section})
   }, []) // only run once on load
 
+  useEffect(() => {
+    getSectionItemsFromAPI().then((items_) => {
+      setItems(items_);
+    });
+  }, [refreshing])
+
   const [selectedTab, setSelectedTab] = useState('List');
   const renderTab = () => {
     switch (selectedTab) {
       case 'List':
-        return <ListView items={items} navigation={navigation} />;
+        return <ListView items={items} navigation={navigation} doRefresh={doRefresh} />;
       case 'Gallery':
-        return <GalleryView items={items} navigation={navigation} />;
+        return <GalleryView items={items} navigation={navigation} doRefresh={doRefresh} />;
       default:
-        return <ListView items={items} navigation={navigation} />;
+        return <ListView items={items} navigation={navigation} doRefresh={doRefresh} />;
     }
   };
 
   return (
     <SafeAreaView style={styles.screen}>
       <View style={[styles.row, styles.propContainer, {justifyContent: "space-between"}]}>
+        <TouchableOpacity onPress={() => (navigation.goBack())} style={[styles.button]} > 
+          <Ionicons name={"arrow-back-outline"} size={textSIZES.small} style={styles.icon}/> 
+        </TouchableOpacity>
         <Text style={styles.title}>{title}</Text>
         <View style={styles.row}>
           <TouchableOpacity
@@ -229,7 +242,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS({opacity:0.5}).secondary,
   },
   title: {
-    fontSize: textSIZES.large,
+    fontSize: textSIZES.medium,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).primary,
   },
@@ -304,4 +317,15 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: textSIZES.xSmall,
   },
+  // button: {
+  //   height: viewSIZES.xxSmall,
+  //   width: viewSIZES.xxSmall,
+  //   padding: textSIZES.xSmall,
+  //   marginHorizontal: textSIZES.xSmall,
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  //   borderWidth: 1, 
+  //   borderColor: COLORS({opacity:1}).primary,
+  //   borderRadius: textSIZES.small
+  // },
 });

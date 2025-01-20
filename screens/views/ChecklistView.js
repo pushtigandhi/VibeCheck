@@ -15,6 +15,11 @@ const Checklist = ({item, setFn}) => {
 
   const [showInput, setShowInput] = useState(false);
   const [newSubtask, setNewSubtask] = useState('New');
+  const [refresh, setRefresh] = useState(false);
+
+  function doRefresh() {
+    setRefresh(!refresh);
+  }
 
   const onSave = () => {
     setSubtasks([... subtasks, { task: newSubtask, isChecked: false }])
