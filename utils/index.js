@@ -5,12 +5,12 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import PhoneInput from 'react-native-phone-input';
 import { COLORS, SHADOWS, FONT, textSIZES, viewSIZES } from "../constants";
 
-const ExpandableView = ({ expanded = false, view, params = {}, vh = 200 }) => {
-  const [height] = useState(new Animated.Value(0));
+const ExpandableView = ({ expanded = false, view, params = {}, vh = 200, vh0 = 0 }) => {
+  const [height] = useState(new Animated.Value(vh0));
 
   useEffect(() => {
     Animated.timing(height, {
-      toValue: expanded ? vh : 0,
+      toValue: expanded ? vh : vh0,
       duration: 250,
       useNativeDriver: false
     }).start();

@@ -52,7 +52,6 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
     };
 
     function updateNewItem(params) {
-        console.log(params);
         if(params.category) {
           setUpdatedItem({... updatedItem, category: params.category});
         }
@@ -124,6 +123,7 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
     }
     
     function onSave() {
+        console.log(updatedItem.startDate, updatedItem.endDate, updatedItem.repeat);
         const obj = {
             ...updatedItem,
             title: title,
@@ -134,7 +134,6 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
             ...(icon && { icon: icon }),
         }
         if(isNew){
-            //console.log("New: " + updatedItem);
             POSTcreateItem(item.itemType ? item.itemType : ItemType.Item, {
                 ...obj
             })

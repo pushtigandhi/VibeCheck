@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image, TouchableWithoutFeedback, Modal,
-        StyleSheet, SafeAreaView, KeyboardAvoidingView } from 'react-native';
+        StyleSheet, SafeAreaView, KeyboardAvoidingView, FlatList } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { COLORS, SHADOWS, FONT, textSIZES, ItemType, viewSIZES } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
@@ -8,8 +8,10 @@ import { ScrollView } from "react-native-gesture-handler";
 import CollaboratorCard from "./CollaboratorCard";
 import TaskCard from "./TaskCard";
 import RecipeCard from "./RecipeCard";
-import { PATCHitem } from "../../API";
+import { ExpandableView } from "../../utils";
+import { PATCHitem, GETitemsByIDs } from "../../API";
 import CreateNewItem from "../CreateNewItem";
+import BacklogCard from "./BacklogCard";
 
 import React from "react";
 
@@ -165,9 +167,11 @@ export default function ItemCard({ navigation, route }) {
   const [notes, setNotes] = useState(null);
   const [location, setLocation] = useState('');
   const [isScheduler, setIsScheduler] = useState(false);
+  const [lists, setLists] = useState(null);
 
   const [isExpanded, setIsExpanded] = useState(true);
-
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [isLocationExpanded, setIsLocationExpanded] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
   const [updatedItem, setUpdatedItem] = useState({});
@@ -197,6 +201,9 @@ export default function ItemCard({ navigation, route }) {
     navigation.goBack();
   }
 
+  function doRefresh() {
+  }
+
   useEffect(() => {
     if (route.params?.item) {
       const { item } = route.params;
@@ -214,9 +221,20 @@ export default function ItemCard({ navigation, route }) {
       } if (item.notes) {
         setNotes(item.notes);
       } if (item.location) {
-        setLocation(item.location);
+        setLocation(item.location); 
       } if (item.startDate) {
         setIsScheduler(true);
+      }
+      if (item.lists) {
+        (async () => {  // Create async IIFE
+          const lists = [];
+          for (const list of item.lists) {
+            const items = await GETitemsByIDs(itemType, list.ids);
+            //console.log(items);
+            lists.push({name: list.name, ids: items});
+          }
+          setLists(lists);
+        })();
       }
     }
   }, [route.params?.item]); // Update category and section when item changes
@@ -259,59 +277,72 @@ export default function ItemCard({ navigation, route }) {
                     setShowCreateNew(true);
                 }}  
             >
-                <Ionicons name={"pencil-outline"} size={textSIZES.large} style={styles.icon}/> 
+                <Ionicons name={"create-outline"} size={textSIZES.large} style={styles.icon}/> 
             </TouchableOpacity>
           </View>
           
-          <View style={[styles.row, styles.title]}>
-            <Text style={{fontSize: textSIZES.xLarge, marginRight: textSIZES.xxSmall}}>{icon}</Text>
-            <Text style={{width: "100%", fontSize: textSIZES.large}}>
-              {title}
-            </Text>
-          </View>
-
-
-          {description && (
-            <View style={[styles.row, styles.description]}>
-              <Ionicons name={"menu-outline"} size={textSIZES.xLarge} style={[styles.icon, {marginRight: textSIZES.xxSmall}]}/>
-              <Text style={{width: "100%", fontSize: textSIZES.small}}>
-                {description}
+          <View style={[styles.row, styles.title, { justifyContent: "space-between" }]}>
+            <View style={styles.row}>
+              <Text style={{fontSize: textSIZES.large, marginRight: textSIZES.xxSmall}}>{icon}</Text>
+              <Text style={{fontSize: textSIZES.medium}}>
+                {title}
               </Text>
             </View>
-          )}
-
-          {location && (
-            <View style={[styles.row, styles.description]}>
-                <Ionicons name={"location-outline"} size={textSIZES.xLarge} style={[styles.icon, {marginRight: textSIZES.xxSmall}]}/>
-                <Text style={styles.location}>{location}</Text>
-            </View>
-          )}
-
-          <View style={styles.divider}/>
-
-          <TouchableOpacity
+            <TouchableOpacity
               onPress={() => {
                   setIsExpanded(!isExpanded);
                 }}
-              style={styles.propContainer}
-          >
-            <View style={[styles.row, {justifyContent: "space-between"}]}>
-              <View style={styles.row}>
-                <Ionicons name={"information-circle-outline"} size={textSIZES.xLarge} style={styles.icon}/> 
-                <Text style={styles.label} numberOfLines={1}>Properties</Text>
-              </View>
-              <View>
-                {isExpanded ? (
-                    <Ionicons name="chevron-up-outline" size={textSIZES.xLarge} style={styles.icon}/>
-                ) : (
-                    <Ionicons name="chevron-down-outline" size={textSIZES.xLarge} style={styles.icon}/>
-                )}
-              </View>
-            </View>
-          </TouchableOpacity>
+              //style={styles.propContainer}
+            >
+              <Ionicons name={isExpanded ? "information-circle" : "information-circle-outline"} size={textSIZES.xLarge} style={styles.icon}/> 
+            </TouchableOpacity>
+          </View>
 
           {isExpanded && (
             <Properties itemType={itemType} item={route.params?.item} />
+          )}
+
+
+          {description && (
+            <>
+              <TouchableOpacity 
+                onPress={() => {
+                  setIsDescriptionExpanded(!isDescriptionExpanded);
+                }}
+                style={styles.cardContainer} >
+                <ExpandableView expanded={isDescriptionExpanded} view=
+                  {(expandedCard = () => {
+                    return (
+                      <>
+                        <Text style={{ color: COLORS({opacity:0.7}).primary, marginBottom: textSIZES.xxSmall}}>Description</Text>
+                        <Text style={{flex:1, fontSize: textSIZES.small}}>
+                          {description}
+                        </Text>
+                      </>
+                    )
+                  })}
+                  vh={300} vh0={viewSIZES.xSmall} />
+              </TouchableOpacity>
+            </>
+          )}
+
+          {location && (
+            <>
+              <TouchableOpacity onPress={() => setIsLocationExpanded(!isLocationExpanded)} style={styles.cardContainer}>
+                <ExpandableView expanded={isLocationExpanded} view=
+                  {(expandedCard = () => {
+                    return (
+                      <>
+                        <Text style={{ color: COLORS({opacity:0.7}).primary, marginBottom: textSIZES.xxSmall}}>Location</Text>
+                        <Text style={{flex:1, fontSize: textSIZES.small}}>
+                          {location}
+                        </Text>
+                      </>
+                    )
+                  })}
+                  vh={300} vh0={viewSIZES.xSmall} />
+              </TouchableOpacity>
+            </>
           )}
           
           <View style={styles.divider} />
@@ -336,15 +367,37 @@ export default function ItemCard({ navigation, route }) {
               <View style={styles.divider}/>
             </>
           )}
-
-          {notes && (
+    
+          {lists && lists.length > 0 && (
             <>
-              <View style={[styles.row, {marginTop: textSIZES.xSmall, marginLeft: textSIZES.xLarge}]}>
-                  <Ionicons name={"document-outline"} size={textSIZES.xLarge} style={styles.icon}/>
-                  <Text style={styles.label}>Notes</Text>
-              </View>
-              <Text style={styles.notes}>{notes}</Text>
+              {lists.map((list, index) => (
+                <View key={index} style={styles.listContainer}>
+                  <View style={[styles.row, {marginTop: textSIZES.xSmall, marginLeft: textSIZES.xLarge}]}>
+                    <Ionicons name={list.type === 'Item' ? "list-outline" : list.type === 'Contact' ? "person-outline" : list.type === 'Checklist' ? "checkbox-outline" : "list-outline"} size={textSIZES.medium} style={styles.icon}/>
+                    <Text style={styles.label}>{list.name}</Text>
+                  </View>
+                  <View style={styles.divider} />
+                  {/* <ExpandableView key={index.toString()} expanded={true} view=
+                      {(expandedCard = () => {
+                        return ( */}
+                          <View >
+                            {list.ids.map((item, index) => (
+                              <BacklogCard key={index.toString()} item={item} navigation={navigation} doRefresh={doRefresh} />
+                            ))}
+                          </View>
+                        {/* )
+                      })}
+                      vh={viewSIZES.Small} vh0={viewSIZES.xSmall} /> */}
+                </View>
+              ))}
             </>
+          )}
+
+          {notes && notes.length > 0 && (
+            <View style={styles.notes}>
+              <Text style={{ color: COLORS({opacity:0.7}).primary, marginBottom: textSIZES.xxSmall}}>Notes</Text>
+              <Text>{notes}</Text>
+            </View>
           )}
 
         </ScrollView>
@@ -366,19 +419,17 @@ const styles = StyleSheet.create({
       alignItems: "center",
   },
   title:{
-      padding: textSIZES.small,
+      padding: textSIZES.xxSmall,
       margin: textSIZES.small,
-      borderWidth: 1,
+      borderBottomWidth: 1,
       borderColor: COLORS({opacity:0.5}).primary,
       borderRadius: textSIZES.small,
   },
   description:{
-      padding: textSIZES.small,
-      marginHorizontal: textSIZES.small,
-      marginBottom: textSIZES.small,
-      borderWidth: 1,
-      borderColor: COLORS({opacity:0.5}).primary,
-      borderRadius: textSIZES.small,
+      // marginHorizontal: textSIZES.small,
+      // marginBottom: textSIZES.small,
+      // borderColor: COLORS({opacity:0.5}).primary,
+      // borderRadius: textSIZES.small,
   },
   notes:{
     fontSize: textSIZES.small,
@@ -437,9 +488,11 @@ const styles = StyleSheet.create({
     marginHorizontal: textSIZES.xSmall,
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 1, 
-    borderColor: COLORS({opacity:1}).primary,
-    borderRadius: textSIZES.small
+    //borderWidth: 1, 
+    //borderColor: COLORS({opacity:1}).primary,
+    borderRadius: textSIZES.xSmall,
+    ...SHADOWS.medium,
+    shadowColor: COLORS({opacity:1}).shadow,
   },
   addButtonIcon: {
     height: textSIZES.xxLarge,
@@ -517,5 +570,27 @@ const styles = StyleSheet.create({
     marginRight: textSIZES.xSmall,
     paddingHorizontal: textSIZES.xSmall,
     paddingVertical: textSIZES.xxSmall,
+  },
+  cardContainer: {
+    marginHorizontal: textSIZES.small,
+    marginBottom: textSIZES.small,
+    backgroundColor: COLORS({opacity:1}).white,
+    borderRadius: textSIZES.xSmall,
+    ...SHADOWS.medium,
+    shadowColor: COLORS({opacity:1}).shadow,
+    padding: textSIZES.small,
+    paddingBottom: 0,
+  },
+  listContainer: {
+    marginTop: textSIZES.small,
+    marginHorizontal: textSIZES.small,
+    backgroundColor: COLORS.lightWhite,
+    borderRadius: textSIZES.small/2,
+    // ...SHADOWS.medium,
+    // shadowColor: COLORS({opacity:1}).shadow,
+    borderWidth: 1,
+    borderColor: COLORS({opacity:1}).navy,
+    paddingBottom: textSIZES.small,
+    flex: 1,
   },
 });
