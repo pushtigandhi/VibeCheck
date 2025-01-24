@@ -653,6 +653,7 @@ export async function PATCHitem(itemType, newItem, itemID) {
 
     delete newItem._id; // remove _id from newPost
     delete newItem.id;
+   // console.log(newItem);
 
     const response = await fetchWithAuthJSON(`${ITEMS_BASE_URL}/${itemID}${ext}`, {
         method: "PATCH",
@@ -660,7 +661,7 @@ export async function PATCHitem(itemType, newItem, itemID) {
     });
 
     try {
-        console.log(response.status);
+        //console.log(response.status);
         if (response.status == 200) {
             // good, return 
             const editResponse = await response.json();

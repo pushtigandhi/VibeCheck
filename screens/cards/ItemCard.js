@@ -5,14 +5,13 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { COLORS, SHADOWS, FONT, textSIZES, ItemType, viewSIZES } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
-import CollaboratorCard from "./CollaboratorCard";
 import TaskCard from "./TaskCard";
 import RecipeCard from "./RecipeCard";
 import { ExpandableView } from "../../utils";
 import { PATCHitem, GETitemsByIDs } from "../../API";
 import CreateNewItem from "../CreateNewItem";
 import BacklogCard from "./BacklogCard";
-
+import ListView from "../views/ListView";
 import React from "react";
 
 const defaultImage = require("../../assets/icon.png");
@@ -157,7 +156,7 @@ const Properties = ({ item = null, itemType }) => {
 };
 
 export default function ItemCard({ navigation, route }) {
-
+  const [item, setItem] = useState(route.params?.item);
   const [itemType, setItemType] = useState('');
 
   const [title, setTitle] = useState(null);
@@ -188,13 +187,13 @@ export default function ItemCard({ navigation, route }) {
   }
 
   const [showCreateNew, setShowCreateNew] = useState(false);
-    function closeCreateNew(op = null) {
-      setShowCreateNew(false);
-      
-      if (op === 'delete') {
-        onGoBack();
-      }
+  function closeCreateNew(op = null) {
+    setShowCreateNew(false);
+    
+    if (op === 'delete') {
+      onGoBack();
     }
+  }
 
   function onGoBack() {
     route.params?.doRefresh();
@@ -205,8 +204,6 @@ export default function ItemCard({ navigation, route }) {
   }
 
   useEffect(() => {
-    if (route.params?.item) {
-      const { item } = route.params;
 
       if(item.itemType) {
         setItemType(item.itemType);
@@ -231,12 +228,12 @@ export default function ItemCard({ navigation, route }) {
           for (const list of item.lists) {
             const items = await GETitemsByIDs(itemType, list.ids);
             //console.log(items);
-            lists.push({name: list.name, ids: items});
+            lists.push({name: list.name, ids: items, type: list.type});
           }
+          item.lists = lists;
           setLists(lists);
         })();
       }
-    }
   }, [route.params?.item]); // Update category and section when item changes
 
   return (
@@ -372,22 +369,7 @@ export default function ItemCard({ navigation, route }) {
             <>
               {lists.map((list, index) => (
                 <View key={index} style={styles.listContainer}>
-                  <View style={[styles.row, {marginTop: textSIZES.xSmall, marginLeft: textSIZES.xLarge}]}>
-                    <Ionicons name={list.type === 'Item' ? "list-outline" : list.type === 'Contact' ? "person-outline" : list.type === 'Checklist' ? "checkbox-outline" : "list-outline"} size={textSIZES.medium} style={styles.icon}/>
-                    <Text style={styles.label}>{list.name}</Text>
-                  </View>
-                  <View style={styles.divider} />
-                  {/* <ExpandableView key={index.toString()} expanded={true} view=
-                      {(expandedCard = () => {
-                        return ( */}
-                          <View >
-                            {list.ids.map((item, index) => (
-                              <BacklogCard key={index.toString()} item={item} navigation={navigation} doRefresh={doRefresh} />
-                            ))}
-                          </View>
-                        {/* )
-                      })}
-                      vh={viewSIZES.Small} vh0={viewSIZES.xSmall} /> */}
+                  <ListView item={list} setFn={updateNewItem} isEditable={false} />
                 </View>
               ))}
             </>

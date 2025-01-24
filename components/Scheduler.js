@@ -4,10 +4,6 @@ import { COLORS, FONT, textSIZES, viewSIZES, SHADOWS, ItemType } from "../consta
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-const test1 = {
-    "startDate": new Date(),
-}
-
 export const Scheduler = ({ item = null, setFn }) => {
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), startDate.getHours(), startDate.getMinutes() + 15));
@@ -19,11 +15,10 @@ export const Scheduler = ({ item = null, setFn }) => {
 
     function updateDuration() {
       const differenceInMs = endDate - startDate;
-
-      // Convert milliseconds to days, hours, and minutes
       setDiffInDays(Math.floor(differenceInMs / (1000 * 60 * 60 * 24)));
       setDiffInHours(Math.floor((differenceInMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
       setDiffInMinutes(Math.floor((differenceInMs % (1000 * 60 * 60)) / (1000 * 60)));
+      setFn({"duration": diffInDays * 24 * 60 + diffInHours * 60 + diffInMinutes});
     }
 
     useEffect(() => {

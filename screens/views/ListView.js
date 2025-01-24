@@ -4,8 +4,8 @@ import { COLORS, SHADOWS, FONT, textSIZES, viewSIZES } from "../../constants";
 import { ExpandableView, Spacer } from '../../utils'
 import { Ionicons } from "@expo/vector-icons";
 
-const expandedContactList = ({contactList, setFn, isEditable}) => {
-  const [contacts, setContacts] = useState(contactList);
+const expandedItemList = ({itemList, setFn, isEditable}) => {
+  const [items, setItems] = useState(itemList);
 
   return (
     <View style={styles.expandedContainer}>
@@ -14,12 +14,12 @@ const expandedContactList = ({contactList, setFn, isEditable}) => {
           <Ionicons name={"add-circle"} size={textSIZES.large} style={styles.iconInverted} />
         </TouchableOpacity>
       )}
-      {contacts.length > 0 ? (contacts.map(item => (
+        {items.length > 0 ? (items.map(item => (
         <View style={styles.row} key={item["_id"] + "_root"}>
-          <TouchableOpacity style={styles.contactContainer} key={item["_id"]} 
+          <TouchableOpacity style={styles.itemContainer} key={item["_id"]} 
             onPress={() => {}}
           >
-          <Text style={styles.item} numberOfLines={1}>{item.name}</Text>
+          <Text style={styles.item} numberOfLines={1}>{item.title}</Text>
           </TouchableOpacity>
         </View>
       ))) : (
@@ -32,43 +32,51 @@ const expandedContactList = ({contactList, setFn, isEditable}) => {
   )
 };
 
-const CollaboratorCard = ({item, setFn, isEditable=true}) => {
-  const [isContactsExpanded, setIsContactsExpanded] = useState(true);
+const ListView = ({item, setFn, isEditable=true}) => {
+  const [isItemsExpanded, setIsItemsExpanded] = useState(true);
 
   return (
     <View style={styles.infoContainer}>
       <View style={styles.propContainer} >
-        <View style={[styles.row, {justifyContent: "space-between"}]}>
+        <TouchableOpacity
+          onPress={() => {
+            setIsItemsExpanded(!isItemsExpanded);
+          }}
+          style={[styles.row, {justifyContent: "space-between"}]}
+        >
           <View style={styles.row}>
-            <Ionicons name={"people-outline"} size={textSIZES.xLarge} style={styles.icon} />
-            <Text style={styles.label} numberOfLines={1}>Collaborators</Text>
-          </View>
-          <TouchableOpacity
-            onPress={() => {
-              setIsContactsExpanded(!isContactsExpanded);
-            }}
-          >
-            {isContactsExpanded ? (
-                <Ionicons name="chevron-up-outline" size={textSIZES.xLarge} style={styles.icon}/>
-            ) : (
-                <Ionicons name="chevron-down-outline" size={textSIZES.xLarge} style={styles.icon}/>
+            {item.type === 'Item' && (
+              <Ionicons name="list-outline" size={textSIZES.medium} style={[styles.icon, {marginRight: textSIZES.xxSmall}]}/>
             )}
-          </TouchableOpacity>
-        </View>
+            {item.type === 'Contact' && (
+              <Ionicons name="people-outline" size={textSIZES.medium} style={[styles.icon, {marginRight: textSIZES.xxSmall}]}/>
+            )}
+            <Text style={styles.label} numberOfLines={1}>{item.name}</Text>
+          </View>
+          {isItemsExpanded ? (
+              <Ionicons name="chevron-up-outline" size={textSIZES.xLarge} style={styles.icon}/>
+          ) : (
+              <Ionicons name="chevron-down-outline" size={textSIZES.xLarge} style={styles.icon}/>
+          )}
+        </TouchableOpacity>
       </View>
-      <ExpandableView expanded={isContactsExpanded} view={expandedContactList} params={{"contactList": item.contacts, "setFn": setFn, "isEditable": isEditable}} vh={300} />
+      <View style={styles.divider} />
+
+      <ExpandableView expanded={isItemsExpanded} view={expandedItemList} params={{"itemList": item.ids, "setFn": setFn, "isEditable": isEditable}} vh={300} />
     </View>
   )
 };
 
 const styles = StyleSheet.create({
   infoContainer: {
+    flex: 1,
     backgroundColor: COLORS.lightWhite,
     borderRadius: textSIZES.small/2,
   },
   label: {
     fontSize: textSIZES.small,
     //fontFamily: FONT.regular,
+    marginLeft: textSIZES.xxSmall,
     color: COLORS({opacity:1}).primary,
   },
   iconInverted: {
@@ -84,16 +92,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   expandedContainer: {
-    width: '90%',
-    margin: textSIZES.small,
     backgroundColor: COLORS.lightWhite,
-    borderRadius: textSIZES.small/2,
-    // ...SHADOWS.medium,
-    // shadowColor: COLORS({opacity:1}).shadow,
-    borderWidth: 1,
-    borderColor: COLORS({opacity:1}).navy,
-    padding: textSIZES.small,
     flex: 1,
+    marginHorizontal: textSIZES.medium,
   },
   addButtonIcon: {
     height: textSIZES.xxLarge,
@@ -106,23 +107,31 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   item: {
-    fontSize: textSIZES.small,
-    fontFamily: FONT.regular,
+    //fontSize: textSIZES.small,
+    //fontFamily: FONT.regular,
     //color: COLORS({opacity:1}).primary,
   },
   propContainer: {
     flex: 1,
-    paddingVertical: textSIZES.xxSmall,
+    paddingVertical: textSIZES.xSmall,
     marginHorizontal: textSIZES.xLarge,
   },
-  contactContainer: {
+  itemContainer: {
     margin: textSIZES.xxSmall,
     padding: textSIZES.xSmall,
     backgroundColor: COLORS({opacity:0.5}).white,
     borderRadius: textSIZES.xSmall,
     borderColor: COLORS({opacity:0.5}).lightGrey,
     borderWidth: 1,
+    flex: 1,
   },
+  divider: {
+    paddingHorizontal: textSIZES.small,
+    borderBottomWidth: 1,
+    borderColor: COLORS({opacity:0.7}).primary,
+    marginBottom: textSIZES.xSmall,
+    marginHorizontal: textSIZES.xLarge,
+},
 });
 
-export default CollaboratorCard
+export default ListView

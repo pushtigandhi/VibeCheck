@@ -5,6 +5,7 @@ import { View, Text, TouchableOpacity,
 import { COLORS, SHADOWS, FONT, textSIZES, viewSIZES } from "../../constants";
 
 const BacklogCard = ({navigation, item, doRefresh}) => {
+  //console.log(item);
   return (
     <View style={styles.cardContainer}>
       <TouchableOpacity

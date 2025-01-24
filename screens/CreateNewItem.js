@@ -4,7 +4,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { COLORS, FONT, textSIZES, SHADOWS, ItemType, viewSIZES } from "../constants";
 import React, { useEffect, useState } from "react";
 import { PropertyCard } from "../screens/cards/PropertyCards";
-import CollaboratorCard from "./cards/CollaboratorCard";
+import ListView from "../screens/views/ListView";
 import TaskCard from "./cards/TaskCard";
 import RecipeCard from "./cards/RecipeCard";
 import * as ImagePicker from 'expo-image-picker';
@@ -20,10 +20,8 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
     const [icon, setIcon] = useState('');
     const [notes, setNotes] = useState(null);
     const [location, setLocation] = useState('');
+    const [lists, setLists] = useState([]);
   
-    const [showDesc, setShowDesc] = useState(false);
-    const [showLocation, setShowLocation] = useState(false);
-    const [showNotes, setShowNotes] = useState(false);
     const [showScheduler, setShowScheduler] = useState(isScheduler);
     
     const [updatedItem, setUpdatedItem] = useState({});
@@ -58,23 +56,10 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
         if(params.section) {
             setUpdatedItem({... updatedItem, section: params.section});
         }
-        if(params.notes) {
-            if(params.notes == 'x')
-            {
-              const updated = updatedItem;
-              delete updated.notes;
-              setUpdatedItem(updated);
-            }
-            else {
-              setUpdatedItem({... updatedItem, notes: notes});
-            }
-          }
         if(params.duration) {
           if(params.duration == 'x')
           {
-            const updated = updatedItem;
-            delete updated.duration;
-            setUpdatedItem(updated);
+            setUpdatedItem({... updatedItem, duration: null});
           }
           else {
             setUpdatedItem({... updatedItem, duration: params.duration});
@@ -83,9 +68,7 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
         if(params.priority) {
           if(params.priority == 'x')
           {
-            const updated = updatedItem;
-            delete updated.priority;
-            setUpdatedItem(updated);
+            setUpdatedItem({... updatedItem, priority: null});
           }
           else {
             setUpdatedItem({... updatedItem, priority: params.priority});
@@ -103,9 +86,7 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
         if(params.servings) {
           if(params.servings == 'x')
           {
-            const updated = updatedItem;
-            delete updated.servings;
-            setUpdatedItem(updated);
+            setUpdatedItem({... updatedItem, servings: null});
           }
           else {
             setUpdatedItem({... updatedItem, servings: params.servings});
@@ -123,13 +104,12 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
     }
     
     function onSave() {
-        console.log(updatedItem.startDate, updatedItem.endDate, updatedItem.repeat);
         const obj = {
             ...updatedItem,
             title: title,
             ...(description && { description: description }),
             ...(favicon && { favicon: favicon }),
-            ...(location && { location: location }),
+            ...(location ? { location: location } : { location: null }),
             ...(notes && { notes: notes }),
             ...(icon && { icon: icon }),
         }
@@ -144,8 +124,6 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
             });
 
         } else {
-            //console.log("Edit: " + updatedItem);
-
             PATCHitem(item.itemType ? item.itemType : ItemType.Item, {
                 ...obj
             }, item._id)
@@ -200,26 +178,24 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
         })
     
         if (item) {
-            //console.log(item.itemType);
             if(item.ItemType)
                 setItemType(item.itemType);
           setIcon(item.icon.toString());
-          //console.log("item: " + item.itemType + " " + item.category  + " " +item.section);
           if (item["_id"]) {
             setIsNew(false);
             setTitle(item.title);
             if (item.description) {
               setDescription(item.description);
-              setShowDesc(true);
             } if (item.favicon) {
               setFavicon(item.favicon);
             } if (item.notes) {
               setNotes(item.notes);
-              setShowNotes(true);
             } if (item.location) {
               setLocation(item.location);
-              setShowLocation(true);
             }
+            if (item.lists) {
+                setLists(item.lists);
+              }
           }
           setUpdatedItem({... item});
         }
@@ -247,110 +223,65 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
                 </TouchableOpacity>
             </View>
 
-            <View style={[styles.row, styles.title]}>
-                <Text style={{fontSize: textSIZES.xLarge, marginRight: textSIZES.xxSmall}}>{icon}</Text>
-                <TextInput style={{width: "100%", fontSize: textSIZES.large, color: COLORS({opacity:0.9}).primary}} defaultValue={ title } 
-                    onChangeText={(newTitle) => (setTitle(newTitle))}
-                />
-            </View>
-
-            <View style={styles.divider}/>
-
-            {showDesc == false && (
-                <TouchableOpacity style={[styles.row, styles.label]} onPress={()=>(setShowDesc(true))}>
-                    <Ionicons name={"menu-outline"} size={textSIZES.xLarge} style={styles.icon}/>
-                    <Text style={styles.property}>Add Description</Text>
-                </TouchableOpacity>
-            )}
-            {showDesc == true && (
-                <>
-                    <View style={[styles.row, styles.description]}>
-                        <Ionicons name={"menu-outline"} size={textSIZES.xLarge} style={[styles.icon, {marginRight: textSIZES.xxSmall}]}/>
-                        <TextInput style={{width: "100%", fontSize: textSIZES.small, color: COLORS({opacity:0.9}).primary}}
-                            {...(description ? { defaultValue: description } : { placeholder: "Enter a description..." })} 
-                            onChangeText={(newDescription) => (
-                                setDescription(newDescription)
-                            )}
-                            multiline
-                        />
-                    </View>
-                    <TouchableOpacity style={[styles.row, styles.removeButton]}
-                        onPress={() => (setDescription(null), setShowDesc(false))}
-                    >
-                        <Ionicons name={"close-outline"} size={20} style={styles.icon} />
-                        <Text style={styles.unselectedText}>Remove</Text>
-                    </TouchableOpacity>
-                </>
-            )}
-
-            <View style={styles.divider}/>
-
-            {item.itemType == ItemType.Event && (
-            <>
-                {showLocation == false && (
-                    <>
-                    <TouchableOpacity style={[styles.row, styles.label]} onPress={()=>(setShowLocation(true))}>
-                        <Ionicons name={"location-outline"} size={textSIZES.xLarge} style={styles.icon}/>
-                        <Text style={styles.property}>Add Location</Text>
-                    </TouchableOpacity>
-
-                    <View style={styles.divider}/>
-                    </>
-                )}
-                {showLocation == true && (
-                    <>
-                    <View style={[styles.row, styles.description]}>
-                        <Ionicons name={"location-outline"} size={textSIZES.xLarge} style={[styles.icon, {marginRight: textSIZES.xxSmall}]}/>
-                        <TextInput style={styles.location} 
-                        {...(location ? { defaultValue: location.toString() } : { placeholder: "Location" })} 
-                        onChangeText={(newLocation) => (setLocation(newLocation))}
-                        />
-                    </View>
-                    <TouchableOpacity style={[styles.row, styles.removeButton, {marginTop: textSIZES.xxSmall}]}
-                        onPress={() => (setShowLocation(false))}
-                    >
-                        <Ionicons name={"close-outline"} size={20} style={styles.icon} />
-                        <Text style={styles.unselectedText}>Remove</Text>
-                    </TouchableOpacity>
-                    
-                    <View style={styles.divider}/>
-                    </>
-                )}
-            </>
-            )}
-
-            <TouchableOpacity style={[styles.row, styles.label, {justifyContent: "space-between"}]}
-              onPress={() => {
-                setIsExpanded(!isExpanded);
-              }}
-            >
+            <View style={[styles.row, styles.title, { justifyContent: "space-between" }]}>
                 <View style={styles.row}>
-                    <Ionicons name={"information-circle-outline"} size={textSIZES.xLarge} style={styles.icon}/> 
-                    <Text style={styles.property} numberOfLines={1}>Properties</Text>
+                    <Text style={{fontSize: textSIZES.xLarge, marginRight: textSIZES.xxSmall}}>{icon}</Text>
+                    <TextInput style={{ fontSize: textSIZES.large, color: COLORS({opacity:0.9}).primary}} defaultValue={ title } 
+                        onChangeText={(newTitle) => (setTitle(newTitle))}
+                    />
                 </View>
-                <View>
-                    {isExpanded ? (
-                        <Ionicons name="chevron-up-outline" size={textSIZES.xLarge} style={styles.icon}/>
-                    ) : (
-                        <Ionicons name="chevron-down-outline" size={textSIZES.xLarge} style={styles.icon}/>
-                    )}
-                </View>
-            </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => {
+                        setIsExpanded(!isExpanded);
+                        }}
+                >
+                <Ionicons name={isExpanded ? "information-circle" : "information-circle-outline"} size={textSIZES.xLarge} style={styles.icon}/> 
+                </TouchableOpacity>
+            </View>
             {isExpanded && (
                 <>
-                    <View style={styles.divider}/>
                     <PropertyCard itemType={item.itemType} item={updatedItem} setFn={updateNewItem} isScheduler={isScheduler} />
-                    {showScheduler && (
+                    {/* {showScheduler && (
                         <View style={styles.infoContainer}>
                           <Scheduler item={item} setFn={updateNewItem} />
                         </View>
-                    )}
+                    )} */}
+                    <View style={styles.divider}/>
                 </>
             )}
 
+            <View style={[styles.description]}>
+                <Text style={{ color: COLORS({opacity:0.7}).primary, marginBottom: textSIZES.xxSmall}}>Description</Text>
+                <TextInput style={{flex:1}}
+                    {...(description && { defaultValue: description })} 
+                    onChangeText={(newDescription) => {
+                        setDescription(newDescription)
+                        if(newDescription.length == 0) {
+                            const updated = updatedItem;
+                            delete updated.description;
+                            setUpdatedItem(updated);
+                        }
+                    }}
+                    multiline
+                />
+            </View>
+            <View style={[styles.row, styles.description, {marginBottom: 0}]}>
+                <Ionicons name={"location-outline"} size={textSIZES.xLarge} style={[styles.icon, {marginRight: textSIZES.xxSmall}]}/>
+                <TextInput style={[styles.location, {flex: 1}]} 
+                {...(location && { defaultValue: location })} 
+                onChangeText={(newLocation) => {
+                    setLocation(newLocation)
+                    if(newLocation.length == 0) {
+                        const updated = updatedItem;
+                        delete updated.location;
+                        setUpdatedItem(updated);
+                    }
+                }}
+                />
+            </View>
             <View style={styles.divider}/>
 
-            {item.itemType === ItemType.Event && (
+            {/* {item.itemType === ItemType.Event && (
                 <>
                     <CollaboratorCard item={item} setFn={updateNewItem} />
                     <View style={styles.divider}/>
@@ -369,36 +300,39 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
                     <RecipeCard item={item} setFn={updateNewItem} />
                     <View style={styles.divider}/>
                 </>
+            )} */}
+
+            {lists && lists.length > 0 && (
+            <>
+              {lists.map((list, index) => (
+                <View key={index} style={styles.listContainer}>
+                    <ListView item={list} setFn={updateNewItem} isEditable={true} />
+                </View>
+              ))}
+            </>
             )}
 
-            {(showNotes == false && item.itemType !== ItemType.Page) && (
-                <>
-                <TouchableOpacity style={[styles.row, styles.label]} onPress={()=>(setShowNotes(true))}>
-                    <Ionicons name={"document-outline"} size={textSIZES.xLarge} style={styles.icon}/>
-                    <Text style={styles.property}>Add Notes</Text>
-                </TouchableOpacity>
-                <View style={styles.divider}/>
-                </>
-            )}
-            {(showNotes == true || item.itemType === ItemType.Page) && (
-                <KeyboardAvoidingView behavior="padding" >
+            <View style={styles.divider}/>
+
+            <KeyboardAvoidingView behavior="padding" >
                 <GestureHandlerRootView>
-                <TextInput style={styles.notes} 
-                    multiline
-                    {...(notes ? { defaultValue: notes } : { placeholder: "Notes" })} 
-                    onChangeText={(newNotes) => setNotes(newNotes)}
-                />
-                {item.itemType !== ItemType.Page && (
-                    <TouchableOpacity style={[styles.row, styles.removeButton]}
-                        onPress={() => (setNotes(null), setShowNotes(false))}
-                    >
-                        <Ionicons name={"close-outline"} size={20} style={styles.icon} />
-                        <Text style={styles.unselectedText}>Remove</Text>
-                    </TouchableOpacity>
-                )}
+                    <View style={[styles.notes]}>
+                        <Text style={{ color: COLORS({opacity:0.7}).primary, marginBottom: textSIZES.xxSmall}}>Notes</Text>
+                        <TextInput style={{flex:1}}
+                            {...(notes && { defaultValue: notes })} 
+                            onChangeText={(newNotes) => {
+                                setNotes(newNotes)
+                                if(newNotes.length == 0) {
+                                    const updated = updatedItem;
+                                    delete updated.notes;
+                                    setUpdatedItem(updated);
+                                }
+                            }}
+                            multiline
+                        />
+                    </View>
                 </GestureHandlerRootView>
-                </KeyboardAvoidingView>
-            )}
+            </KeyboardAvoidingView>
 
             {!isNew && (
                 <TouchableOpacity onPress={() => ConfirmCancelPrompt()} style={[styles.removeButton, {backgroundColor: COLORS({opacity:1}).lightRed, margin: textSIZES.xSmall}]}>
@@ -551,10 +485,9 @@ const styles = StyleSheet.create({
         borderRadius: textSIZES.small
     },
     title:{
-        padding: textSIZES.small,
+        padding: textSIZES.xxSmall,
         margin: textSIZES.small,
-        marginBottom: 0,
-        borderWidth: 1,
+        borderBottomWidth: 1,
         borderColor: COLORS({opacity:0.5}).primary,
         borderRadius: textSIZES.small,
     },
@@ -602,4 +535,16 @@ const styles = StyleSheet.create({
         ...SHADOWS.medium,
         shadowColor: COLORS({opacity:1}).shadow,
     },
+    listContainer: {
+        marginTop: textSIZES.small,
+        marginHorizontal: textSIZES.small,
+        backgroundColor: COLORS.lightWhite,
+        borderRadius: textSIZES.small/2,
+        // ...SHADOWS.medium,
+        // shadowColor: COLORS({opacity:1}).shadow,
+        borderWidth: 1,
+        borderColor: COLORS({opacity:1}).navy,
+        paddingBottom: textSIZES.small,
+        flex: 1,
+      },
 });
