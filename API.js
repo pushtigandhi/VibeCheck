@@ -8,7 +8,7 @@ export let directoryList = [];
 export const BASE_URL = 'http://localhost:3000/api/v0';
 
 const USERS_BASE_URL = `${BASE_URL}/users`;
-const PROFILE_BASE_URL = `${PROFILE_BASE_URL}`;
+const PROFILE_BASE_URL = `${BASE_URL}/profile`;
 const AUTH_BASE_URL = `${BASE_URL}/auth`;
 const CONTACTS_BASE_URL = `${BASE_URL}/contacts`;
 const DIRECTORY_BASE_URL = `${BASE_URL}/directory`;
@@ -90,25 +90,25 @@ export async function doLogin(email, password) {
      */
     // POST to login endpoint
     try{
-    const response = await fetch(`${AUTH_BASE_URL}/login`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            email,
-            password,
-        }),
-    });
+        const response = await fetch(`${AUTH_BASE_URL}/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email,
+                password,
+            }),
+        });
 
-    if (response.status === 200) {
-        // success - save JWT
-        await saveAuth(response);
-        return { status: response.status, message: "Login successful" };
-    }
-    
-    const body = await response.json();
-    return { status: response.status, message: body.message };
+        if (response.status === 200) {
+            // success - save JWT
+            await saveAuth(response);
+            return { status: response.status, message: "Login successful" };
+        }
+        
+        const body = await response.json();
+        return { status: response.status, message: body.message };
     }
     catch(error){
         console.log(error);
@@ -136,6 +136,13 @@ export async function doSignup(email, password, handle, firstName, lastName) {
             lastName: lastName
         }),
     });
+
+    console.log(response.status);
+    console.log(response.message);
+    
+    //get profile in response and save id to storage
+    // const profile = await response.json();
+    // await AsyncStorage.setItem('profileID', profile._id);
 
     await saveDirectoryToStorage(defaultDirectory);
 

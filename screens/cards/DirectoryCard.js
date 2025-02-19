@@ -25,39 +25,29 @@ const expandedCard = ({navigation, category, sections}) => {
   async function onSelectSection(section) {
     let items;
     await getSectionItemsFromAPI(section).then((items_) => {
-      items = items_
+      items = items_;
+      console.log(items);
     }).catch((err) => {
       alert(err.message)
     });
     
-    if(section.view == ViewType.Default) {
-      //console.log(section.view);
-      navigation.navigate("DefaultView", {"category": category.title, "section": section.title, "item": items})
-    }
-    else if(section.view == ViewType.Schedule) {
-      //console.log(section.view);
-      navigation.navigate("ScheduleView", {"category": category.title, "section": section.title, "item": items})
-    }
-    else if(section.view == ViewType.Checklist) {
-      //console.log(section.view);
-      navigation.navigate("ChecklistView", {"category": category.title, "section": section.title, "item": items[0]})
-    }
+    // if(section.view == ViewType.Default) {
+    //   //console.log(section.view);
+    //   navigation.navigate("DefaultView", {"category": category.title, "section": section.title, "item": items})
+    // }
+    // else if(section.view == ViewType.Schedule) {
+    //   //console.log(section.view);
+    //   navigation.navigate("ScheduleView", {"category": category.title, "section": section.title, "item": items})
+    // }
+    // else if(section.view == ViewType.Checklist) {
+    //   //console.log(section.view);
+    //   navigation.navigate("ChecklistView", {"category": category.title, "section": section.title, "item": items[0]})
+    // }
   }
   
   function onClose() {
     setShowAddSection(false);
   }
-  
-  // useEffect(() => {
-  //   async function fetchSection() {
-  //     await getSectionItemsFromAPI().then((item_) => {
-  //       setItem(item_);
-  //     }).catch((err) => {
-  //       alert(err.message)
-  //     });
-  //   }
-  //   fetchSection();
-  // }, [])
 
   return (
     <ScrollView style={styles.expandedContainer}>
@@ -156,7 +146,7 @@ const DirectoryCard = ({navigation, category, sections}) => {
       >
         <Text style={styles.title} numberOfLines={1}>{category.title}</Text>
         <TouchableOpacity onPress={() => setShowOptions(true)}>
-          <Ionicons name={"cog"} size={30} style={styles.icon}/>
+          <Ionicons name={"ellipsis-vertical-outline"} size={textSIZES.medium} style={styles.icon}/>
         </TouchableOpacity>
       </TouchableOpacity>
       <ExpandableView expanded={isExpanded} view={expandedCard} params={{navigation, category, sections}} vh={200} />
