@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { COLORS, textSIZES, viewSIZES } from "../../constants";
-import { GETitems, GETmonthTEST } from "../../API";
+import { GETitems, GETmonth } from "../../API";
 import { ItemType } from "../../constants";
 
 import { View, StyleSheet, Text } from 'react-native';
@@ -41,22 +41,48 @@ export const MonthlyCalendar = ({navigation, date, month, onRefresh, filter, ref
 
   async function getItemsFromAPI(filter={}) {
     try {
-      let items_ = await GETmonthTEST(filter);
+      // Create a new filter object to avoid modifying the original
+      const apiFilter = { ...filter };
+      
+      // Ensure we have valid dates for the month
+      const startOfMonth = new Date(date.getFullYear(), month, 1);
+      const endOfMonth = new Date(date.getFullYear(), month + 1, 0);
+      
+      apiFilter.startgt = startOfMonth;
+      apiFilter.startlt = endOfMonth;
+
+      let items_ = await GETmonth(apiFilter);
       return items_;
     } catch (error) {
       console.log("error fetching items");
       console.log(error);
-      return [];
+      return {};
     }
   }
 
   useEffect(() => {
-    getItemsFromAPI(filter).then((items_) => {
-      setItems(items_);
-    }).catch((err) => {
-      alert(err.message)
-    })
-  }, [date, refreshing]) // only run once on load
+    let isMounted = true;
+
+    const fetchItems = async () => {
+      try {
+        const items_ = await getItemsFromAPI(filter);
+        if (isMounted) {
+          setItems(items_);
+        }
+      } catch (err) {
+        console.error("Error fetching items:", err);
+        if (isMounted) {
+          setItems({});
+        }
+      }
+    };
+
+    fetchItems();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [date, refreshing, filter, month]); // Added filter and month to dependencies
 
   return (
     <GestureHandlerRootView style={{alignItems: "center"}}>

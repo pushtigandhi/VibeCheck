@@ -4,7 +4,7 @@ import { ToolBar } from "../../components/Toolbar";
 import { Spacer } from "../../utils/index";
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import { textSIZES, viewSIZES, COLORS, FONT, SHADOWS } from "../../constants";
-import { GETitems, GETweekTEST } from "../../API";
+import { GETitems, GETweek } from "../../API";
 import { ItemType } from "../../constants";
 
 import { View, StyleSheet, Text, ScrollView, FlatList, TouchableOpacity } from 'react-native';
@@ -14,12 +14,22 @@ import { Dimensions } from 'react-native';
 const slotHeight = (Dimensions.get('window').height - 300) / 7;
 
 export const WeeklyCalendar = ({navigation, date, filter, refreshing, itemList}) => {
-
   const [items, setItems] = useState([]);
 
   async function getItemsFromAPI(filter={}) {
     try {
-      let items_ = await GETweekTEST(filter);
+      // Create a new filter object to avoid modifying the original
+      const apiFilter = { ...filter };
+
+      // Ensure we have valid dates for the week
+      const startOfWeek = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay());
+      const endOfWeek = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay() + 6);
+      
+      apiFilter.startgt = startOfWeek;
+      apiFilter.startlt = endOfWeek;
+
+      let items_ = await GETweek(apiFilter);
+      console.log(items_);
       return items_;
     } catch (error) {
       console.log("error fetching items");
@@ -29,37 +39,31 @@ export const WeeklyCalendar = ({navigation, date, filter, refreshing, itemList})
   }
 
   useEffect(() => {
-    getItemsFromAPI(filter).then((items_) => {
-      setItems(items_);
-    }).catch((err) => {
-      alert(err.message)
-    })
-    setItems(itemList);
-    //console.log("week: " +itemList);
+    let isMounted = true;
 
-  }, [refreshing])
+    const fetchItems = async () => {
+      try {
+        const items_ = await getItemsFromAPI(filter);
+        if (isMounted) {
+          setItems(items_);
+        }
+      } catch (err) {
+        console.error("Error fetching items:", err);
+        if (isMounted) {
+          setItems({});
+        }
+      }
+    };
 
+    fetchItems();
 
-  const days = ["SUN", "MON", "TUES", "WED", "THURS", "FRI", "SAT"];
+    return () => {
+      isMounted = false;
+    };
+  }, [date, refreshing, filter]); // Added filter and month to dependencies
 
-  const renderItem = ({ item }) => (
-    <TouchableOpacity style={styles.cardsContainer} //key={item["_id"] + "_root"} 
-      onPress={() => {
-        navigation.navigate("Item", {item});
-      }}
-    >
-      <Text style={styles.title}>{item.title}</Text>
-      <View style={styles.row}>
-        <View style={{ justifyContent: "center"}}>
-          <Text style={{ fontSize: textSIZES.xSmall}}>{item.icon}</Text>
-        </View>
-        <Text style={styles.timeLabel}>{String(new Date(item.startDate).getHours())}:{new Date(item.startDate).getMinutes() < 10 ? String("0"+ new Date(item.startDate).getMinutes()) : String(new Date(item.startDate).getMinutes())}</Text>
-        <Text style={styles.timeLabel}>-</Text>
-        <Text style={styles.timeLabel}>{String(new Date(item.endDate).getHours())}:{new Date(item.endDate).getMinutes() < 10 ? String("0"+ new Date(item.endDate).getMinutes()) : String(new Date(item.endDate).getMinutes())}</Text>
-      </View>
-    </TouchableOpacity>
-  );
-  
+  const days = ["Sunday ", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
   return (
     <View style={styles.column}>
       {days.map((day) => (
@@ -69,7 +73,23 @@ export const WeeklyCalendar = ({navigation, date, filter, refreshing, itemList})
           </View>
           <FlatList
             data={items[day]}
-            renderItem={renderItem}
+            renderItem={({ item }) => (
+              <TouchableOpacity style={styles.cardsContainer} //key={item["_id"] + "_root"} 
+                onPress={() => {
+                  navigation.navigate("Item", {item});
+                }}
+              >
+                <Text style={styles.title}>{item.title}</Text>
+                <View style={styles.row}>
+                  <View style={{ justifyContent: "center"}}>
+                    <Text style={{ fontSize: textSIZES.xSmall}}>{item.icon}</Text>
+                  </View>
+                  <Text style={styles.timeLabel}>{String(new Date(item.startDate).getHours())}:{new Date(item.startDate).getMinutes() < 10 ? String("0"+ new Date(item.startDate).getMinutes()) : String(new Date(item.startDate).getMinutes())}</Text>
+                  <Text style={styles.timeLabel}>-</Text>
+                  <Text style={styles.timeLabel}>{String(new Date(item.endDate).getHours())}:{new Date(item.endDate).getMinutes() < 10 ? String("0"+ new Date(item.endDate).getMinutes()) : String(new Date(item.endDate).getMinutes())}</Text>
+                </View>
+              </TouchableOpacity>
+            )}
             keyExtractor={(item) => item["_id"]} 
             style={styles.calendarView}
             horizontal={true}
