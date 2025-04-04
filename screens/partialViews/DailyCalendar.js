@@ -4,10 +4,9 @@ import { GETitems, GETitemsTEST, GETtoday } from "../../API";
 import { ItemType } from "../../constants";
 import { View, StyleSheet, Text, ScrollView, FlatList, TouchableOpacity } from 'react-native';
 
-export const DailyCalendar = ({navigation, date, filter, refreshing}) => {
+export const DailyCalendar = ({navigation, date, filter}) => {
   const [items, setItems] = useState([]);
-  const [today, setToday] = useState(new Date());
-
+  const [refreshing, setRefreshing] = useState(false);
   async function getItemsFromAPI(filter={}) {
     try {
       // Create a new filter object to avoid modifying the original
@@ -33,6 +32,12 @@ export const DailyCalendar = ({navigation, date, filter, refreshing}) => {
     }
   }
 
+  function doRefresh() {
+    setRefreshing(true);
+    getItemsFromAPI(filter);
+    setRefreshing(false);
+  }
+
   useEffect(() => {
     let isMounted = true;
 
@@ -55,16 +60,16 @@ export const DailyCalendar = ({navigation, date, filter, refreshing}) => {
     return () => {
       isMounted = false;
     };
-  }, [date, refreshing, filter]); // Added filter and month to dependencies
+  }, [date, filter, refreshing]); // Added filter and month to dependencies
 
   return (
-    <View>
+    <View style={{backgroundColor: COLORS({opacity:1}).white}}>
       <FlatList
           data={items}
           renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate("Item", {"item": item});
+              navigation.navigate("Item", {"item": item, "doRefresh": doRefresh});
             }}
             key={item["_id"] + "root"} 
             style={styles.cardsContainer}
@@ -103,9 +108,11 @@ const styles = StyleSheet.create({
   cardsContainer: {
     marginBottom: textSIZES.small,
     borderColor: COLORS({opacity:1}).lightGrey,
-    backgroundColor: COLORS({opacity:0.1}).lightGrey,
+    backgroundColor: COLORS({opacity:0.1}).white,
     borderRadius: textSIZES.xSmall,
-    borderWidth:0.51,
+    ...SHADOWS.small,
+    shadowColor: COLORS({opacity:1}).shadow,
+    borderWidth:0.50,
     alignContent: "center"
   },
   row: {

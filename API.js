@@ -4,7 +4,8 @@ import { ItemType } from './constants'
 import { defaultDirectory } from './constants/default';
 import { useState } from 'react';
 
-export let directoryList = [];
+export let PROFILE_ID;
+
 export const BASE_URL = 'http://localhost:3000/api/v0';
 
 const USERS_BASE_URL = `${BASE_URL}/users`;
@@ -40,7 +41,7 @@ export async function fetchWithAuth(url, options = {}) {
     } catch (err) {
         console.log(err);
     }
-    
+
     // Fetch
     let response;
     try {
@@ -104,6 +105,9 @@ export async function doLogin(email, password) {
         if (response.status === 200) {
             // success - save JWT
             await saveAuth(response);
+            PROFILE_ID = await GETme().then((profile) => {
+                return profile["_id"];
+            });
             return { status: response.status, message: "Login successful" };
         }
         
@@ -137,14 +141,10 @@ export async function doSignup(email, password, handle, firstName, lastName) {
         }),
     });
 
-    console.log(response.status);
-    console.log(response.message);
-    
     //get profile in response and save id to storage
-    // const profile = await response.json();
-    // await AsyncStorage.setItem('profileID', profile._id);
-
-    await saveDirectoryToStorage(defaultDirectory);
+    PROFILE_ID = await response.json().then((profile) => {
+        return profile["_id"];
+    });
 
     if (response.status === 201) {
         // success - signed up
@@ -205,17 +205,23 @@ export async function GETuserByHandle() {
 //#endregion
 
 //#region PROFILE
+// async function getProfileID() { 
+//     const response = await fetchWithAuth(`${PROFILE_BASE_URL}/`, {
+//         method: 'GET',
+//     });
+//     return response.profileID;
+// }
+
 export async function GETme() {
-    const response = await fetchWithAuth(PROFILE_BASE_URL, {
+    const response = await fetchWithAuth(`${PROFILE_BASE_URL}/`, {
         method: 'GET',
     });
 
     try {
-        console.log(response.status);
         if (response.status == 200) {
             // good, return 
             const body = await response.json();
-        return body.profile;
+            return body.profile;
         } else {
             return null;
         }
@@ -261,7 +267,6 @@ export async function GETcontacts() {
         method: 'GET',
     });
     try {
-        console.log(response.status);
         if (response.status == 201) {
             // good, return 
             const body = await response.json();
@@ -359,21 +364,14 @@ export async function getDirectoryFromStorage(userID) {
     }
 }
 
-export async function GETdirectory(profileID) {
-    const response = await fetchWithAuth(`${DIRECTORY_BASE_URL}/${profileID}`, {
+export async function GETdirectory() {
+    const response = await fetchWithAuth(`${DIRECTORY_BASE_URL}/${PROFILE_ID}`, {
         method: 'GET',
     });
     try {
         if (response.status == 201) {
             // good, return 
-            console.log(response.status);
-            const body = await response.json();
-            let directory = body.directory;
-            return directory.map((category) => {
-                return {
-                    ...category,
-                }
-            });
+            return await response.json();
         } else {
             return []
         }
@@ -383,8 +381,8 @@ export async function GETdirectory(profileID) {
     }
 }
 
-export async function POSTaddCategory(profileID, category) {
-    const response = await fetchWithAuthJSON(`${DIRECTORY_BASE_URL}/${profileID}`, {
+export async function POSTcategory(category) {
+    const response = await fetchWithAuthJSON(`${DIRECTORY_BASE_URL}/${PROFILE_ID}`, {
         method: 'POST',
         body: JSON.stringify(category),
     });
@@ -392,13 +390,7 @@ export async function POSTaddCategory(profileID, category) {
     try {
         if (response.status == 201) {
             // good, return 
-            const body = await response.json();
-            let directory = body.directory;
-            return directory.map((category) => {
-                return {
-                    ...category,
-                }
-            });
+            return await response.json();
         } else {
             return []
         }
@@ -408,25 +400,17 @@ export async function POSTaddCategory(profileID, category) {
     }
 }
 
-export async function PATCHcategory(newCategory, categoryID) {
-    delete newCategory._id;
-    delete newCategory.id;
-
-    const response = await fetchWithAuthJSON(`${DIRECTORY_BASE_URL}/${categoryID}`, {
+export async function PATCHcategory(category) {
+    const response = await fetchWithAuthJSON(`${DIRECTORY_BASE_URL}/${PROFILE_ID}`, {
         method: "PATCH",
-        body: JSON.stringify(newCategory),
+        body: JSON.stringify(category),
     });
 
     try {
         if (response.status == 201) {
             // good, return 
             const body = await response.json();
-            let directory = body.directory;
-            return directory.map((category) => {
-                return {
-                    ...category,
-                }
-            });
+            return body.directory;
         } else {
             return []
         }
@@ -437,20 +421,18 @@ export async function PATCHcategory(newCategory, categoryID) {
 }
 
 export async function DELETEcategory(categoryID) {
-    const response = await fetchWithAuth(`${DIRECTORY_BASE_URL}/${categoryID}`, {
+    console.log(PROFILE_ID);
+    console.log(categoryID);
+    const response = await fetchWithAuthJSON(`${DIRECTORY_BASE_URL}/${PROFILE_ID}`, {
         method: "DELETE",
+        body: JSON.stringify({ deletedId: categoryID }),
     });
 
     try {
+        console.log(response.status);
         if (response.status == 201) {
             // good, return 
-            const body = await response.json();
-            let directory = body.directory;
-            return directory.map((category) => {
-                return {
-                    ...category,
-                }
-            });
+            return await response.json();
         } else {
             return []
         }
@@ -700,80 +682,7 @@ export async function DELETEitem(itemType, itemID) {
 
 //#region  TODELETE - TESTS
 
-//#region AUTHORIZATION & AUTHENTICATION
 
-export async function fetchWithAuthTEST(url, options = {}) {
-    // Get JWT from storage
-    try {
-        const JWT = await AsyncStorage.getItem('JWT');
-        // Set JWT in headers
-        if (JWT) {
-            options.headers = {
-                ...options.headers,
-                "authorization": JWT,
-            };
-        }
-    } catch (err) {
-        console.log(err);
-    }
-    
-    response = await fetch(url, options);
-    return response;
-}
-
-export async function doLoginTEST(email, password) {
-    
-    const response = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            email,
-            password,
-        })
-    }
-
-    // console.log(`${AUTH_BASE_URL}/login` + " " + response.body);
-
-    //await saveAuth(response);
-    return { status: 200, message: "Login successful" };
-
-}
-
-export async function doSignupTEST(email, password, handle, firstName, lastName) {
-    /**
-     * Make request to signup endpoint
-     * return boolean indicating success
-     */
-    // POST to signup endpoint
-    const response = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            email,
-            password: password,
-            handle: handle,
-            firstName: firstName,
-            lastName: lastName
-        }),
-    };
-
-    console.log(AUTH_BASE_URL + " " + response);
-
-    await saveDirectoryToStorage(defaultDirectory);
-
-    return 201;
-}
-
-//#endregion
-
-//#region ONSTART
-export async function doOnStart() {
-    directoryList = getDirectoryFromStorage();
-}
 
 //#endregion
 
@@ -837,67 +746,6 @@ export async function GETprofileImageTEST() {
     if(!!profile.avatar) {
         return profile.avatar;
     }
-    return profile.profile;
-}
-
-export async function GETmeTEST() {
-    // const response = await fetchWithAuthTEST(PROFILE_BASE_URL, {
-    //     method: 'GET',
-    // });
-
-    // // console.log(response);
-
-    const profile = {
-        "profile": {
-            "emailInfo": {
-                "isVerified": true,
-                "email": "pushti@example.com"
-            },
-            "_id": "65dffad64102392ebb57839b",
-            "user": "65dffad64102392ebb578397",
-            "items": [
-                "65dffbe64102392ebb5783b0",
-                "65dffccb4102392ebb5783b9",
-                "65e134a91635ad960dabdc1b"
-            ],
-            "contactCard": "65dffad64102392ebb578399",
-            "contacts": [],
-            "directory": [
-                {
-                    "color": "rgba(193, 192, 200, 1)",
-                    "_id": "65dffad64102392ebb57839c",
-                    "title": "Backlog",
-                    "sections": [
-                        "All"
-                    ]
-                },
-                {
-                    "color": "rgba(193, 192, 200, 1)",
-                    "title": "Cooking",
-                    "sections": [
-                        "All",
-                        "Recipes",
-                        "Tips"
-                    ],
-                    "_id": "65e172b61635ad960dabdc32"
-                }
-            ],
-            "createdAt": "2024-02-29T03:32:38.682Z",
-            "updatedAt": "2024-03-01T06:16:22.508Z",
-            "__v": 1
-        }
-    };
-    return profile.profile;
-}
-
-export async function GETprofileDetailsTEST(profileID) {
-    const response = await fetchWithAuth(`${PROFILE_BASE_URL}/${profileID}`, {
-        method: 'GET',
-    });
-
-    // // console.log(response);
-
-    const profile = {"profile": {}};
     return profile.profile;
 }
 
@@ -1161,11 +1009,10 @@ export async function GETtoday(filter={}) {
     });
 
     try {
-        console.log(response.status);
         if (response.status == 201) {
             // good, return 
             const body = await response.json();
-            let items = body.items;
+            let items = body.items? body.items : [];
             return items.map((item) => {
                 return {
                     ...item,
@@ -1191,7 +1038,7 @@ export async function GETweek(filter={}) {
         if (response.status == 201) {
             // good, return 
             const body = await response.json();
-            let items = body.items;
+            let items = body.items? body.items : [];
             const weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
             const itemsWithWeekDays = items.reduce((acc, item) => {
                 const startDate = new Date(item.startDate);
@@ -1218,6 +1065,7 @@ export async function GETweek(filter={}) {
 export async function GETmonth(filter={}) {
     const ext = getURL(!!filter.itemType ? filter.itemType : ItemType.Item);
 
+
     const response = await fetchWithAuth(`${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "&" : "") +  new URLSearchParams(filter), {
         method: 'GET',
     });
@@ -1227,7 +1075,7 @@ export async function GETmonth(filter={}) {
         if (response.status == 201) {
             // good, return 
             const body = await response.json();
-            let items = body.items;
+            let items = body.items? body.items : [];
             const itemsWithMonthDays = items.reduce((acc, item) => {
                 const startDate = new Date(item.startDate);
                 const dayinmonth = startDate.getDate();
@@ -1239,6 +1087,7 @@ export async function GETmonth(filter={}) {
                 });
                 return acc;
             }, {});
+            //console.log(itemsWithMonthDays);
             return itemsWithMonthDays;
         } else {
             return []

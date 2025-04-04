@@ -13,9 +13,9 @@ import { Dimensions } from 'react-native';
 
 const slotHeight = (Dimensions.get('window').height - 300) / 7;
 
-export const WeeklyCalendar = ({navigation, date, filter, refreshing, itemList}) => {
+export const WeeklyCalendar = ({navigation, date, filter, itemList}) => {
   const [items, setItems] = useState([]);
-
+  const [refreshing, setRefreshing] = useState(false);
   async function getItemsFromAPI(filter={}) {
     try {
       // Create a new filter object to avoid modifying the original
@@ -29,13 +29,18 @@ export const WeeklyCalendar = ({navigation, date, filter, refreshing, itemList})
       apiFilter.startlt = endOfWeek;
 
       let items_ = await GETweek(apiFilter);
-      console.log(items_);
       return items_;
     } catch (error) {
       console.log("error fetching items");
       console.log(error);
       return [];
     }
+  }
+
+  function doRefresh() {
+    setRefreshing(true);
+    getItemsFromAPI(filter);
+    setRefreshing(false);
   }
 
   useEffect(() => {
@@ -60,7 +65,7 @@ export const WeeklyCalendar = ({navigation, date, filter, refreshing, itemList})
     return () => {
       isMounted = false;
     };
-  }, [date, refreshing, filter]); // Added filter and month to dependencies
+  }, [date, filter, refreshing]); // Added filter and month to dependencies
 
   const days = ["Sunday ", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
@@ -76,7 +81,7 @@ export const WeeklyCalendar = ({navigation, date, filter, refreshing, itemList})
             renderItem={({ item }) => (
               <TouchableOpacity style={styles.cardsContainer} //key={item["_id"] + "_root"} 
                 onPress={() => {
-                  navigation.navigate("Item", {item});
+                  navigation.navigate("Item", {"item": item, "doRefresh": doRefresh});
                 }}
               >
                 <Text style={styles.title}>{item.title}</Text>

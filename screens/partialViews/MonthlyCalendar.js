@@ -13,14 +13,13 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 const slotWidth = (Dimensions.get('window').width - 20) / 7;
 const slotHeight = (Dimensions.get('window').height - 308) / 6;
 
-export const MonthlyCalendar = ({navigation, date, month, onRefresh, filter, refreshing}) => {
+export const MonthlyCalendar = ({navigation, date, month, onRefresh, filter}) => {
+
+  const [refreshing, setRefreshing] = useState(false);
 
   const startOfMonth = new Date(date.getFullYear(), month, 1); // Get the start of the current month
-
   const daysInEachMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
   const daysOfWeek = ["SUN", "MON", "TUES", "WED", "THURS", "FRI", "SAT"];
-
   const daysOfMonth = Array.from({ length: daysInEachMonth[month] }, (_, index) => index + 1);
 
   const emptySlotsBefore = Array.from({ length: startOfMonth.getDay() }, (_, index) => (
@@ -60,6 +59,12 @@ export const MonthlyCalendar = ({navigation, date, month, onRefresh, filter, ref
     }
   }
 
+  function doRefresh() {
+    setRefreshing(true);
+    getItemsFromAPI(filter);
+    setRefreshing(false);
+  }
+
   useEffect(() => {
     let isMounted = true;
 
@@ -82,7 +87,7 @@ export const MonthlyCalendar = ({navigation, date, month, onRefresh, filter, ref
     return () => {
       isMounted = false;
     };
-  }, [date, refreshing, filter, month]); // Added filter and month to dependencies
+  }, [date, filter, month, refreshing]); // Added filter and month to dependencies
 
   return (
     <GestureHandlerRootView style={{alignItems: "center"}}>
@@ -97,11 +102,11 @@ export const MonthlyCalendar = ({navigation, date, month, onRefresh, filter, ref
         {emptySlotsBefore}
         {daysOfMonth.map(day => (
           <View key={day} style={styles.slot}>
-            <Text style={{color: COLORS({opacity: 1}).primary, fontSize: textSIZES.xSmall}}>{day}</Text>
+            <Text style={{color: COLORS({opacity: 1}).primary, fontWeight: 'bold', fontSize: textSIZES.xSmall}}>{day}</Text>
             {!!items[day] && items[day].slice(0, 2).map((item, index) => (
-              <TouchableOpacity key={index} numberOfLines={1} style={[styles.title, {backgroundColor: "white"}]} 
+              <TouchableOpacity key={index} numberOfLines={1} style={[styles.title]} 
                 onPress={() => {
-                  navigation.navigate("Item", {item});
+                  navigation.navigate("Item", {"item": item, "doRefresh": doRefresh});
                 }}
               >
                 <Text style={{fontSize: textSIZES.xSmall}}>{item.title}</Text>
@@ -140,7 +145,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
   },
   span: {
-    fontWeight: '500',
+    fontWeight: '700',
     //fontSize: 16,
     color: COLORS({ opacity: 1 }).lightWhite,
   },
@@ -157,10 +162,12 @@ const styles = StyleSheet.create({
     height: (slotHeight-textSIZES.xxLarge)/2, 
     justifyContent: 'center',
     alignItems: 'center', 
-    borderRadius: textSIZES.tiny,
-    borderColor: COLORS({ opacity: 1 }).primary, 
-    borderWidth: 0.5, 
-    marginBottom: textSIZES.tiny, 
+    marginBottom: textSIZES.tiny,
+    borderColor: COLORS({opacity:1}).lightGrey,
+    backgroundColor: COLORS({opacity:0.1}).lightGrey,
+    borderRadius: textSIZES.xxSmall,
+    borderWidth:0.50,
+    alignContent: "center",
     overflow: 'hidden'
   },
   time: {

@@ -4,117 +4,25 @@ import { COLORS, FONT, textSIZES, SHADOWS, ItemType, ViewType, viewSIZES } from 
 import { GETitems, GETitemsTEST } from "../../API";
 import { Ionicons } from "@expo/vector-icons";
 import FilterModal from "../../components/FilterModal";
-
-const ListView = ({items, navigation, doRefresh}) => (
-  <FlatList
-    scrollEnabled={true}
-    data={items}
-    renderItem={({item}) => (
-      <TouchableOpacity
-        onPress={() => {
-            navigation.navigate("Item", {item, doRefresh});
-        }}
-        key={item["_id"] + "root"} 
-        style={styles.cardsContainer}
-      >
-        <View style={{flexDirection: "row"}}>
-          <View style={{ justifyContent: "center"}}>
-            <Text style={{ fontSize: textSIZES.medium}}>{item.icon}</Text>
-          </View>
-          <View style={styles.dayCardContainer}>
-            <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
-            {!!item.location && (
-              <Text style={styles.prop}>Location: {item.location}</Text>
-            )}
-            {!!item.subtasks && item.subtasks.length > 0 && (
-              <Text style={styles.prop}>Subtasks: {item.subtasks.length}</Text>
-            )}
-            {!!item.priority && (
-              <Text style={styles.prop}>Priority: {item.priority}</Text>
-            )}
-          </View>
-        </View>
-      </TouchableOpacity>
-    )}
-  /> 
-);
-
-const GalleryView = ({items, navigation, doRefresh}) => (
-  <FlatList
-    scrollEnabled={true}
-    data={items}
-    numColumns={2} 
-    renderItem={({item}) => (
-      <TouchableOpacity style={styles.cardsContainer} key={item["_id"] + "_root"}
-        onPress={() => {
-            navigation.navigate("Item", {item, doRefresh});
-        }}
-      >
-        <View style={styles.imageBox}>
-          <Image
-              source={item.favicon ? { uri: item.favicon.uri } : defaultImage}
-              style={[styles.border, { width: 140, height: 140}]}
-          />
-        </View>
-        <View style={[styles.row]}>
-          <Text style={{fontSize: textSIZES.medium}}>{item.icon}</Text>
-          <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
-        </View>
-      </TouchableOpacity>
-    )}
-  />
-);
-
+import { GalleryView } from "./GalleryView";
+import { ListView } from "../partialViews/ListView";
 const defaultImage = require("../../assets/icon.png");
 
 export default function DefaultView ({navigation, route, scrollEnabled = true}) {
   const [title, setTitle] = useState([]);
-  
-  const [items, setItems] = useState(route.params?.item);
+
   const [filter, setFilter] = useState({});
   const [filterVisible, setFilterVisible] = useState(false);
-
-  const [refreshing, setRefreshing] = useState(false);
 
   const [search, setSearch] = useState('');
   const [expandSearchBar, setSearchBar] = useState(false);
 
+  const [refreshing, setRefreshing] = useState(false);
   function doRefresh() {
     setRefreshing(!refreshing);
   }
 
-  function closeFilter() {
-    setRefreshing(!refreshing);
-    setFilterVisible(false);
-  }
-
-  function doSearch() {
-    //console.log(search);
-    setSearchBar(false);
-  }
-
-  async function getSectionItemsFromAPI() {
-    try {
-      let items_ = await GETitems(ItemType.Item, filter);
-      return items_;
-    } catch (error) {
-      console.log("error fetching items");
-      console.log(error);
-      return [];
-    }
-  }
-
-  useEffect(() => {
-    setTitle(route.params?.section);
-    setFilter({... filter, category: route.params?.category, section: route.params?.section})
-  }, []) // only run once on load
-
-  useEffect(() => {
-    getSectionItemsFromAPI().then((items_) => {
-      setItems(items_);
-    });
-  }, [refreshing])
-
+  const [items, setItems] = useState(route.params?.item);
   const [selectedTab, setSelectedTab] = useState('List');
   const renderTab = () => {
     switch (selectedTab) {
@@ -127,9 +35,18 @@ export default function DefaultView ({navigation, route, scrollEnabled = true}) 
     }
   };
 
+  const doSearch = () => {
+    setSearchBar(false);
+    setSearch('');
+  }
+
+  useEffect(() => {
+    setTitle(route.params?.section);
+    setFilter({... filter, category: route.params?.category, section: route.params?.section})
+  }, []) // only run once on load
   return (
     <SafeAreaView style={styles.screen}>
-      <View style={[styles.row, styles.propContainer, {justifyContent: "space-between"}]}>
+       <View style={[styles.row, styles.propContainer, {justifyContent: "space-between"}]}>
         <TouchableOpacity onPress={() => (navigation.goBack())} style={[styles.button]} > 
           <Ionicons name={"arrow-back-outline"} size={textSIZES.small} style={styles.icon}/> 
         </TouchableOpacity>
@@ -172,10 +89,10 @@ export default function DefaultView ({navigation, route, scrollEnabled = true}) 
           </TouchableOpacity>
         </View>
       </View>
-        
+      {/*  
       <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
         <FilterModal closeFilter={closeFilter} filter={filter} setFilter={setFilter} />
-      </Modal>
+      </Modal>*/}
 
       <View style={styles.container}>
         <View style={styles.tabContainer}>
@@ -209,7 +126,7 @@ export default function DefaultView ({navigation, route, scrollEnabled = true}) 
         <View style={styles.contentContainer}>
           {renderTab()}
         </View>
-      </View>
+      </View> 
     </SafeAreaView>
   );
 };
@@ -275,6 +192,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     backgroundColor:  COLORS({opacity:1}).lightWhite,
     paddingVertical: textSIZES.xxSmall,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS({opacity:0.5}).primary,
   },
   tab: {
     paddingVertical: textSIZES.xxSmall,
@@ -317,15 +236,4 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: textSIZES.xSmall,
   },
-  // button: {
-  //   height: viewSIZES.xxSmall,
-  //   width: viewSIZES.xxSmall,
-  //   padding: textSIZES.xSmall,
-  //   marginHorizontal: textSIZES.xSmall,
-  //   alignItems: "center",
-  //   justifyContent: "center",
-  //   borderWidth: 1, 
-  //   borderColor: COLORS({opacity:1}).primary,
-  //   borderRadius: textSIZES.small
-  // },
 });

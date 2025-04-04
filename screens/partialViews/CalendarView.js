@@ -137,13 +137,13 @@ export const CalendarView = ({navigation, filter={}, setFilter, isHome=false}) =
                 )}
                 <View style={{height: calendarHeight}} >
                     {state === 'day' && (
-                        <DailyCalendar navigation={navigation} date={selectedDate} filter={filter} refreshing={refreshing} />
+                        <DailyCalendar navigation={navigation} date={selectedDate} filter={filter} />
                     )}
                     {state === 'week' && (
-                        <WeeklyCalendar navigation={navigation} date={selectedDate} filter={filter} refreshing={refreshing} itemList={items} />
+                        <WeeklyCalendar navigation={navigation} date={selectedDate} filter={filter} itemList={items} />
                     )}
                     {state === 'month' && (
-                        <MonthlyCalendar navigation={navigation} date={selectedDate} month={selectedDate.getMonth()} filter={filter} onRefresh={onRefresh} refreshing={refreshing} />
+                        <MonthlyCalendar navigation={navigation} date={selectedDate} month={selectedDate.getMonth()} filter={filter} />
                     )}
                 </View>
             </View>

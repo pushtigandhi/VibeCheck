@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Modal, TextInput,
-        StyleSheet, Animated, FlatList, ScrollView } from 'react-native';
-import { COLORS, SHADOWS, FONT, textSIZES, ViewType, ItemType } from "../../constants";
+        StyleSheet, Animated, FlatList, ScrollView, Alert } from 'react-native';
+import { COLORS, SHADOWS, FONT, textSIZES, ViewType, ItemType, viewSIZES } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { ExpandableView } from "../../utils";
 import { GETitems, GETitemsTEST } from "../../API";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { DELETEcategory, PATCHcategory } from "../../API"; 
 
-const expandedCard = ({navigation, category, sections}) => {
-  const [showAddSection, setShowAddSection] = useState(false);
+const expandedCard = ({navigation, category, sections, doRefresh}) => {
 
   async function getSectionItemsFromAPI(section) {
-    //console.log("GEt item");
     try {
       let items_ = await GETitems(ItemType.Item, { category: category.title, section: section.title });
       return items_;
@@ -26,115 +25,165 @@ const expandedCard = ({navigation, category, sections}) => {
     let items;
     await getSectionItemsFromAPI(section).then((items_) => {
       items = items_;
-      console.log(items);
     }).catch((err) => {
       alert(err.message)
     });
-    
-    // if(section.view == ViewType.Default) {
-    //   //console.log(section.view);
-    //   navigation.navigate("DefaultView", {"category": category.title, "section": section.title, "item": items})
-    // }
-    // else if(section.view == ViewType.Schedule) {
-    //   //console.log(section.view);
-    //   navigation.navigate("ScheduleView", {"category": category.title, "section": section.title, "item": items})
-    // }
-    // else if(section.view == ViewType.Checklist) {
-    //   //console.log(section.view);
-    //   navigation.navigate("ChecklistView", {"category": category.title, "section": section.title, "item": items[0]})
-    // }
+
+    if(section.view == ViewType.Default) {
+      navigation.navigate("DefaultView", {"category": category.title, "section": section.title, "item": items})
+    }
   }
-  
-  function onClose() {
-    setShowAddSection(false);
+
+  async function addSection(newTitle) {
+    const updatedCategory = {
+      id: category["_id"],
+      sections: [...sections, {title: newTitle, view: ViewType.Default}],
+    }
+    await PATCHcategory(updatedCategory).then((directory) => {
+      let sections_ = directory.find(c => c._id === category["_id"]).sections;
+      doRefresh(sections_);
+    }).catch((err) => {
+      alert(err.message)
+    });
   }
+
+  async function deleteSection(sectionID) {
+    const updatedCategory = {
+      id: category["_id"],
+      sections: sections.filter(s => s._id !== sectionID),
+    }
+    await PATCHcategory(updatedCategory).then((directory) => {  
+      let sections_ = directory.find(c => c._id === category["_id"]).sections;
+      doRefresh(sections_);
+    }).catch((err) => {
+      alert(err.message)
+    });
+  }
+
+  async function editSection(sectionID, newTitle) {
+    const updatedCategory = {
+      id: category["_id"],
+      sections: sections.map(s => s._id === sectionID ? {...s, title: newTitle} : s),
+    }
+    await PATCHcategory(updatedCategory).then((directory) => {
+      let sections_ = directory.find(c => c._id === category["_id"]).sections;
+      doRefresh(sections_);
+    }).catch((err) => {
+      alert(err.message)
+    });
+  } 
+
+  const [showSectionOptions, setShowSectionOptions] = useState(false);
 
   return (
     <ScrollView style={styles.expandedContainer}>
-      <TouchableOpacity style={styles.addButtonIcon} onPress={() => (setShowAddSection(true))}>
+      <TouchableOpacity style={styles.addButtonIcon} onPress={() => (
+        Alert.prompt(
+          "Add Section",
+          "Enter new section title",
+          [
+            {text: "Cancel", style: "cancel"},
+            {text: "Add", style: "default", onPress: (newTitle) => {  
+              addSection(newTitle);
+            }}
+          ]
+        )
+      )}>
         <Ionicons name={"add-circle"} size={textSIZES.large} style={styles.iconInverted} />
       </TouchableOpacity>
-      {/* <Modal visible={showAddSection} animationType="slide" onRequestClose={onClose}>
-        <SelectView onClose={onClose} />
-      </Modal> */}
+
+      <TouchableOpacity key={"all"} style={styles.sectionContainer} onPress={() => {
+        onSelectSection({title: "All", view: ViewType.Default});
+      }}>
+        <Text style={styles.section}>All</Text>
+      </TouchableOpacity>
       
       {sections.map(section => (
-        <TouchableOpacity style={styles.sectionContainer} key={section["_id"] + "_root"}
+        <View key={section["_id"] + "_root"}>
+        <TouchableOpacity style={styles.sectionContainer}
           onPress={() => {
             onSelectSection(section);
+          }}
+          onLongPress={() => {
+            setShowSectionOptions(true);
           }}
         >
           <Text style={styles.section} numberOfLines={1}>{section.title}</Text>
         </TouchableOpacity>
+        <Modal visible={showSectionOptions} animationType="fade" transparent={true}>
+        <SafeAreaView style={{flex: 1}}>
+          <TouchableOpacity style={{flex: 1}} onPress={() => setShowSectionOptions(false)}>
+            <View style={{
+              position: 'absolute',
+              right: 10,
+              top: 40,
+              width: '25%',
+              backgroundColor: COLORS({opacity: 1}).white,
+              borderRadius: textSIZES.xSmall,
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.25,
+              shadowRadius: 4,
+              elevation: 5,
+              zIndex: 1000,
+            }}>
+              <TouchableOpacity style={styles.button} onPress={() => {
+                Alert.prompt(
+                  "Rename Section",
+                  "Enter new section title",
+                  [
+                    {text: "Cancel", style: "cancel"},
+                    {text: "Rename", style: "default", onPress: (newTitle) => {
+                      if (newTitle && newTitle.trim() !== "") {
+                        editSection(section["_id"], newTitle);
+                      }
+                    }}
+                  ],
+                  "plain-text",
+                );
+                setShowSectionOptions(false);
+              }}>
+                <Text style={styles.buttonText}>Rename</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.button} onPress={() => {
+                Alert.alert(
+                  "Delete Section",
+                  "Are you sure you want to delete this section?",
+                  [
+                    {text: "Cancel", style: "cancel"},
+                    {text: "Delete", style: "destructive", onPress: async () => {
+                      deleteSection(section["_id"]);
+                    }}
+                  ]
+                );
+                setShowSectionOptions(false);
+              }}>
+                <Text style={styles.buttonText}>Delete</Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        </SafeAreaView>
+        </Modal>
+        </View>
       ))}
     </ScrollView>
   )
 };
 
-const RenameModal = ({ onCloseRenameModal, newTitle, setNewTitle, renameCategory }) => {
-  const handleRename = () => {
-    renameCategory();
-  };
-
-  return (
-    <View>
-      <Text>Rename Category</Text>
-      <TextInput
-        placeholder="Enter new category title"
-        value={newTitle}
-        onChangeText={setNewTitle}
-      />
-      <TouchableOpacity onPress={handleRename}>
-        <Text>Rename</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={onCloseRenameModal}>
-        <Text>Cancel</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
-
-const DirectoryCard = ({navigation, category, sections}) => {
+const DirectoryCard = ({navigation, category, handleDelete, handleRename}) => {
   const [isExpanded, setIsExpanded] = useState(false);
-
-  const [newTitle, setNewTitle] = useState("");
-  
-  async function deleteCategory(category) { 
-    const newCategories = categories.filter((c) => c.title != category.title);
-    setCategories(newCategories);
-    await saveDirectoryToStorage(newCategories);  
-  }
-
-  async function renameCategory(categories) { 
-    if (newTitle.trim() === "") {
-      alert("Please enter a new title for the category");
-      return;
-    }
-  
-    const newCategories = categories.map((c) => {
-      if(c.title == category.title) {
-        c.title = newTitle;
-      }
-      return c;
-    });
-  
-    setCategories(newCategories);
-    await saveDirectoryToStorage(newCategories);
-  
-    setNewTitle("");
-    onCloseRenameModal();
-  }
-
   const [showOptions, setShowOptions] = useState(false);
-  const [showRenameModal, setShowRenameModal] = useState(false);
+  const [sections, setSections] = useState(category.sections);
+  const doRefresh = (sections_) => {
+    setSections(sections_);
+  }
 
-  const handleRenameCategory = () => {
-    setShowRenameModal(true);
-  };
+  useEffect(() => {
 
-  const onCloseOptions = () => {
-    setShowOptions(false);
-  };
+  }, [sections]);
 
   return (
     <>
@@ -146,29 +195,69 @@ const DirectoryCard = ({navigation, category, sections}) => {
       >
         <Text style={styles.title} numberOfLines={1}>{category.title}</Text>
         <TouchableOpacity onPress={() => setShowOptions(true)}>
-          <Ionicons name={"ellipsis-vertical-outline"} size={textSIZES.medium} style={styles.icon}/>
+          <Ionicons name={"ellipsis-horizontal-outline"} size={textSIZES.medium} style={styles.icon}/>
         </TouchableOpacity>
       </TouchableOpacity>
-      <ExpandableView expanded={isExpanded} view={expandedCard} params={{navigation, category, sections}} vh={200} />
 
-
-      <Modal visible={showOptions} animationType="slide" onRequestClose={onCloseOptions}>
-        <SafeAreaView style={styles.modalContainer}>
-          <TouchableOpacity style={styles.button} 
-            //onPress={handleRenameCategory}
-          >
-            <Text style={styles.buttonText}>Rename</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} 
-            //onPress={onCloseOptions}
-          >
-            <Text style={styles.buttonText}>Delete</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.removeButton} onPress={onCloseOptions}>
-            <Text style={styles.buttonText}>Cancel</Text>
+      <Modal visible={showOptions} animationType="fade" transparent={true}>
+        <SafeAreaView style={{flex: 1}}>
+          <TouchableOpacity style={{flex: 1}} onPress={() => setShowOptions(false)}>
+            <View style={{
+              position: 'absolute',
+              right: 10,
+              top: 40,
+              width: '25%',
+              backgroundColor: COLORS({opacity: 1}).white,
+              borderRadius: textSIZES.xSmall,
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.25,
+              shadowRadius: 4,
+              elevation: 5,
+              zIndex: 1000,
+            }}>
+              <TouchableOpacity style={styles.button} onPress={() => {
+                Alert.prompt(
+                  "Rename Category",
+                  "Enter new category title",
+                  [
+                    {text: "Cancel", style: "cancel"},
+                    {text: "Rename", style: "default", onPress: (newTitle) => {
+                      if (newTitle && newTitle.trim() !== "") {
+                        handleRename(newTitle);
+                      }
+                    }}
+                  ],
+                  "plain-text",
+                );
+                setShowOptions(false);
+              }}>
+                <Text style={styles.buttonText}>Rename</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.button} onPress={() => {
+                Alert.alert(
+                  "Delete Category",
+                  "Are you sure you want to delete this category?",
+                  [
+                    {text: "Cancel", style: "cancel"},
+                    {text: "Delete", style: "destructive", onPress: async () => {
+                      handleDelete();
+                    }}
+                  ]
+                );
+                setShowOptions(false);
+              }}>
+                <Text style={styles.buttonText}>Delete</Text>
+              </TouchableOpacity>
+            </View>
           </TouchableOpacity>
         </SafeAreaView>
       </Modal>
+
+      <ExpandableView expanded={isExpanded} view={expandedCard} params={{navigation, category, sections, doRefresh}} vh={200} />
     </>
   );
 };
@@ -193,7 +282,12 @@ const styles = StyleSheet.create({
   },
   modalContainer: { 
     margin: textSIZES.xxLarge,
-    padding: textSIZES.small,
+    paddingHorizontal: textSIZES.small,
+    width: viewSIZES.medium,
+    backgroundColor: COLORS({opacity:1}).white,
+    borderRadius: textSIZES.xSmall,
+    borderWidth: 1,
+    borderColor: COLORS({opacity:0.5}).primary,
   },
   title: {
     fontSize: textSIZES.medium,
@@ -235,7 +329,7 @@ const styles = StyleSheet.create({
     margin: textSIZES.xxSmall,
   },
   buttonText: { 
-    fontSize: textSIZES.medium,
+    fontSize: textSIZES.small,
     margin: textSIZES.xSmall,
   },
   removeButton: {
