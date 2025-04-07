@@ -205,12 +205,6 @@ export async function GETuserByHandle() {
 //#endregion
 
 //#region PROFILE
-// async function getProfileID() { 
-//     const response = await fetchWithAuth(`${PROFILE_BASE_URL}/`, {
-//         method: 'GET',
-//     });
-//     return response.profileID;
-// }
 
 export async function GETme() {
     const response = await fetchWithAuth(`${PROFILE_BASE_URL}/`, {
@@ -612,10 +606,8 @@ export async function GETitemsByIDs(itemType, itemIDs) {
 
 
 
-export async function POSTcreateItem(itemType, item) {
+export async function POSTitem(itemType, item) {
     const ext = getURL(itemType);
-
-    console.log(item);
 
     const response = await fetchWithAuthJSON(`${ITEMS_BASE_URL}/${ext}`, {
         method: 'POST',
@@ -623,7 +615,6 @@ export async function POSTcreateItem(itemType, item) {
     });
 
     try {
-        console.log(response.status);
         if (response.status == 201) {
             // good, return 
             const body = await response.json();

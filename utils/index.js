@@ -68,7 +68,7 @@ const checkImageURL = (url) => {
     }
 };
 
-const Spacer = ({horizontal, size}) => {
+const Spacer = ({horizontal = false, size}) => {
     const defaultValue = 'auto';
   
     return (
@@ -89,10 +89,6 @@ const Spacer = ({horizontal, size}) => {
       PropTypes.string
     ]).isRequired,
     horizontal: PropTypes.bool,
-  };
-  
-  Spacer.defaultProps = {
-    horizontal: false,
   };
 
 const MyDateTimePicker = ({mode, date, onChange }) => {

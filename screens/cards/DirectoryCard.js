@@ -143,6 +143,7 @@ const expandedCard = ({navigation, category, sections, doRefresh}) => {
                     }}
                   ],
                   "plain-text",
+                  section.title
                 );
                 setShowSectionOptions(false);
               }}>

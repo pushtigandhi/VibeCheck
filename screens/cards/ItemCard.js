@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image, TouchableWithoutFeedback, Modal,
         StyleSheet, SafeAreaView, KeyboardAvoidingView, FlatList } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { COLORS, SHADOWS, FONT, textSIZES, ItemType, viewSIZES } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
@@ -155,6 +156,61 @@ const Properties = ({ item = null, itemType }) => {
     )
 };
 
+const Scheduler = ({ item = null }) => {
+  return (
+    <SafeAreaView style={styles.infoContainer}>
+        <View styles={styles.schedulerContainer}>
+          <View style={[styles.row, styles.schedulerProperty, {justifyContent: "space-between"}]}>
+            <Text style={styles.label}>From: </Text>
+            <View style={styles.row}>
+              <DateTimePicker
+                value={new Date(item.startDate)}
+                mode={"date"}
+                is24Hour={true}
+                display="default"
+                isDisabled={true}
+            />
+            <DateTimePicker
+                value={new Date(item.startDate)}
+                mode={"time"}
+                is24Hour={true}
+                display="default"
+                minuteInterval={15}
+                isDisabled={true}
+              />
+            </View>
+          </View>
+          <View style={[styles.row, styles.schedulerProperty, {justifyContent: "space-between"}]}>
+            <Text style={styles.label}>To: </Text>
+            <View style={styles.row}>
+              <DateTimePicker
+                value={new Date(item.endDate)}
+                mode={"date"}
+                is24Hour={true}
+                display="default"
+                isDisabled={true}
+              />
+              <DateTimePicker   
+                value={new Date(item.endDate)}
+                mode={"time"}
+                is24Hour={true}
+                display="default"
+                minuteInterval={15}
+                isDisabled={true}
+              />
+            </View>
+          </View>
+        </View>
+        <View style={[styles.row, styles.schedulerProperty, {justifyContent: "space-between", borderBottomWidth: 0}]}>
+          <Ionicons name={"repeat-outline"} size={textSIZES.large} style={[styles.icon, {margin: textSIZES.xxSmall}]}/>
+            <View style={[styles.row, styles.box, styles.selectedBox]}>
+              <Text style={[styles.property, styles.selectedText]}>{item.repeat}</Text>
+            </View>
+        </View>
+      </SafeAreaView>
+  )
+}
+
 export default function ItemCard({ navigation, route }) {
   const [item, setItem] = useState(route.params?.item);
   const [itemType, setItemType] = useState('');
@@ -172,6 +228,8 @@ export default function ItemCard({ navigation, route }) {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [isLocationExpanded, setIsLocationExpanded] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+
+  const [showScheduler, setShowScheduler] = useState(false);
 
   const [updatedItem, setUpdatedItem] = useState({});
   function updateNewItem(params) {
@@ -198,9 +256,6 @@ export default function ItemCard({ navigation, route }) {
   function onGoBack() {
     route.params?.doRefresh();
     navigation.goBack();
-  }
-
-  function doRefresh() {
   }
 
   useEffect(() => {
@@ -285,20 +340,35 @@ export default function ItemCard({ navigation, route }) {
                 {title}
               </Text>
             </View>
-            <TouchableOpacity
-              onPress={() => {
-                  setIsExpanded(!isExpanded);
-                }}
-              //style={styles.propContainer}
-            >
-              <Ionicons name={isExpanded ? "information-circle" : "information-circle-outline"} size={textSIZES.xLarge} style={styles.icon}/> 
-            </TouchableOpacity>
+            <View style={styles.row}>
+              {route.params?.item.startDate && (
+                <TouchableOpacity
+                  onPress={() => {
+                    setShowScheduler(!showScheduler);
+                  }}
+                 style={styles.propContainer}
+               >
+                  <Ionicons name={showScheduler ? "calendar" : "calendar-outline"} size={textSIZES.xLarge} style={styles.icon}/> 
+                </TouchableOpacity>
+              )}
+              <TouchableOpacity
+                onPress={() => {
+                    setIsExpanded(!isExpanded);
+                  }}
+                style={styles.propContainer}
+              >
+                <Ionicons name={isExpanded ? "information-circle" : "information-circle-outline"} size={textSIZES.xLarge} style={styles.icon}/> 
+              </TouchableOpacity>
+            </View>
           </View>
 
           {isExpanded && (
             <Properties itemType={itemType} item={route.params?.item} />
           )}
 
+          {route.params?.item.startDate && showScheduler && (
+            <Scheduler item={route.params?.item} />
+          )}
 
           {description && (
             <>
@@ -427,9 +497,8 @@ const styles = StyleSheet.create({
     //color: COLORS({opacity:0.9}).primary
   },
   propContainer: {
-    flex: 1,
-    paddingVertical: textSIZES.xxSmall,
-    marginHorizontal: textSIZES.xLarge,
+    marginHorizontal: textSIZES.xxSmall,
+    marginVertical: textSIZES.tiny,
   },
   label: {
     paddingVertical: textSIZES.xSmall,
@@ -513,7 +582,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS({opacity:1}).secondary,
   },
   selectedText: {
-    color: COLORS({opacity:1}).secondary,
+    color: COLORS({opacity:1}).white,
   },
   duration: {
     backgroundColor: COLORS({opacity:0.5}).lightGrey,
@@ -558,8 +627,10 @@ const styles = StyleSheet.create({
     marginBottom: textSIZES.small,
     backgroundColor: COLORS({opacity:1}).white,
     borderRadius: textSIZES.xSmall,
-    ...SHADOWS.medium,
-    shadowColor: COLORS({opacity:1}).shadow,
+    borderWidth: 1,
+    borderColor: COLORS({opacity:1}).secondary,
+    ...SHADOWS.small,
+    shadowColor: COLORS({opacity:1}).secondary,
     padding: textSIZES.small,
     paddingBottom: 0,
   },
@@ -568,11 +639,22 @@ const styles = StyleSheet.create({
     marginHorizontal: textSIZES.small,
     backgroundColor: COLORS.lightWhite,
     borderRadius: textSIZES.small/2,
-    // ...SHADOWS.medium,
-    // shadowColor: COLORS({opacity:1}).shadow,
     borderWidth: 1,
     borderColor: COLORS({opacity:1}).navy,
     paddingBottom: textSIZES.small,
     flex: 1,
+  },
+  schedulerContainer: {
+    margin: textSIZES.small,
+    marginVertical: textSIZES.xxLarge*2,
+    ...SHADOWS.medium,
+  },
+  schedulerProperty: {
+    color: COLORS({opacity:0.8}).secondary,
+    marginHorizontal: textSIZES.xSmall,
+    marginVertical: textSIZES.xxSmall,
+    paddingBottom: textSIZES.xxSmall,
+    borderBottomWidth: 0.5,
+    borderColor: COLORS({opacity:1}).tertiary,
   },
 });

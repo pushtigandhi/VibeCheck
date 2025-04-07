@@ -9,7 +9,7 @@ import TaskCard from "./cards/TaskCard";
 import RecipeCard from "./cards/RecipeCard";
 import * as ImagePicker from 'expo-image-picker';
 import { Scheduler } from "../components/Scheduler";
-import { PATCHitem, DELETEitem, POSTcreateItem } from "../API";
+import { PATCHitem, DELETEitem, POSTitem } from "../API";
 
 const defaultImage = require("../assets/icon.png");
 
@@ -58,8 +58,9 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
         }
         if(params.duration) {
           if(params.duration == 'x')
+
           {
-            setUpdatedItem({... updatedItem, duration: null});
+            setUpdatedItem(({ duration, ...rest }) => rest);
           }
           else {
             setUpdatedItem({... updatedItem, duration: params.duration});
@@ -68,7 +69,7 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
         if(params.priority) {
           if(params.priority == 'x')
           {
-            setUpdatedItem({... updatedItem, priority: null});
+            setUpdatedItem(({ priority, ...rest }) => rest);
           }
           else {
             setUpdatedItem({... updatedItem, priority: params.priority});
@@ -86,20 +87,21 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
         if(params.servings) {
           if(params.servings == 'x')
           {
-            setUpdatedItem({... updatedItem, servings: null});
+            setUpdatedItem(({ servings, ...rest }) => rest);
           }
           else {
             setUpdatedItem({... updatedItem, servings: params.servings});
           }
         }
-        if (params.startDate) {
-            setUpdatedItem({... updatedItem, startDate: params.startDate});
+        if (params.addSchedule) {
+            setUpdatedItem({... updatedItem, startDate: params.startDate, endDate: params.endDate, repeat: params.repeat});
         }
-        if (params.endDate) {
-            setUpdatedItem({... updatedItem, endDate: params.endDate});
+        if(params.cancelSchedule) {
+            setUpdatedItem(({ startDate, endDate, repeat, ...rest }) => rest);
+            setShowScheduler(false);
         }
-        if(params.repeat) {
-            setUpdatedItem({... updatedItem, repeat: params.repeat});
+        if(params.originalSchedule) {
+            setUpdatedItem({... updatedItem, startDate: item.startDate, endDate: item.endDate, repeat: item.repeat});
         }
     }
     
@@ -111,10 +113,10 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
             ...(favicon && { favicon: favicon }),
             ...(location ? { location: location } : { location: null }),
             ...(notes && { notes: notes }),
-            ...(icon && { icon: icon }),
+            ...(icon && { icon: icon })
         }
         if(isNew){
-            POSTcreateItem(item.itemType ? item.itemType : ItemType.Item, {
+            POSTitem(item.itemType ? item.itemType : ItemType.Item, {
                 ...obj
             })
             .then((item_) => {
@@ -230,23 +232,33 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
                         onChangeText={(newTitle) => (setTitle(newTitle))}
                     />
                 </View>
-                <TouchableOpacity
-                    onPress={() => {
-                        setIsExpanded(!isExpanded);
+                <View style={styles.row}>
+                    <TouchableOpacity
+                        onPress={() => {
+                            setShowScheduler(!showScheduler);
                         }}
-                >
-                <Ionicons name={isExpanded ? "information-circle" : "information-circle-outline"} size={textSIZES.xLarge} style={styles.icon}/> 
-                </TouchableOpacity>
+                        style={styles.propContainer}
+                    >
+                        <Ionicons name={showScheduler ? "calendar" : "calendar-outline"} size={textSIZES.xLarge} style={styles.icon}/> 
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => {
+                            setIsExpanded(!isExpanded);
+                            }}
+                        style={styles.propContainer}
+                    >
+                        <Ionicons name={isExpanded ? "information-circle" : "information-circle-outline"} size={textSIZES.xLarge} style={styles.icon}/> 
+                    </TouchableOpacity>
+                </View>
             </View>
             {isExpanded && (
                 <>
-                    <PropertyCard itemType={item.itemType} item={updatedItem} setFn={updateNewItem} isScheduler={isScheduler} />
-                    {/* {showScheduler && (
-                        <View style={styles.infoContainer}>
-                          <Scheduler item={item} setFn={updateNewItem} />
-                        </View>
-                    )} */}
-                    <View style={styles.divider}/>
+                    <PropertyCard itemType={item.itemType} item={updatedItem} setFn={updateNewItem}/>
+                </>
+            )}
+            {showScheduler && (
+                <>
+                    <Scheduler item={updatedItem} setFn={updateNewItem} />
                 </>
             )}
 
@@ -265,7 +277,7 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
                     multiline
                 />
             </View>
-            <View style={[styles.row, styles.description, {marginBottom: 0}]}>
+            <View style={[styles.row, styles.description, {marginBottom: textSIZES.small}]}>
                 <Ionicons name={"location-outline"} size={textSIZES.xLarge} style={[styles.icon, {marginRight: textSIZES.xxSmall}]}/>
                 <TextInput style={[styles.location, {flex: 1}]} 
                 {...(location && { defaultValue: location })} 
@@ -279,28 +291,6 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
                 }}
                 />
             </View>
-            <View style={styles.divider}/>
-
-            {/* {item.itemType === ItemType.Event && (
-                <>
-                    <CollaboratorCard item={item} setFn={updateNewItem} />
-                    <View style={styles.divider}/>
-                </>
-            )}
-
-            {(item.itemType === ItemType.Task || item.itemType === ItemType.Event) && (
-                <>
-                    <TaskCard item={item} setFn={updateNewItem} />
-                    <View style={styles.divider}/>
-                </>
-            )}
-
-            {item.itemType === ItemType.Recipe && (
-                <>
-                    <RecipeCard item={item} setFn={updateNewItem} />
-                    <View style={styles.divider}/>
-                </>
-            )} */}
 
             {lists && lists.length > 0 && (
             <>
@@ -311,8 +301,6 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
               ))}
             </>
             )}
-
-            <View style={styles.divider}/>
 
             <KeyboardAvoidingView behavior="padding" >
                 <GestureHandlerRootView>
@@ -536,7 +524,7 @@ const styles = StyleSheet.create({
         shadowColor: COLORS({opacity:1}).shadow,
     },
     listContainer: {
-        marginTop: textSIZES.small,
+        marginBottom: textSIZES.small,
         marginHorizontal: textSIZES.small,
         backgroundColor: COLORS.lightWhite,
         borderRadius: textSIZES.small/2,
@@ -546,5 +534,9 @@ const styles = StyleSheet.create({
         borderColor: COLORS({opacity:1}).navy,
         paddingBottom: textSIZES.small,
         flex: 1,
-      },
+    },
+    propContainer: {
+        marginHorizontal: textSIZES.xxSmall,
+        marginVertical: textSIZES.tiny,
+    }
 });
