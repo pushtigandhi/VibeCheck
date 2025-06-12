@@ -1,4 +1,4 @@
-import { SafeAreaView, View, FlatList, StyleSheet, Text, TouchableOpacity, TextInput, Modal } from "react-native";
+import { SafeAreaView, View, FlatList, StyleSheet, Text, TouchableOpacity, TextInput, Modal, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { COLORS, FONT, textSIZES, SHADOWS, viewSIZES } from "../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { useState, useEffect } from "react";
@@ -10,12 +10,13 @@ export default function Directory ({navigation, scrollEnabled = true}) {
   const [categories, setCategories] = useState([]);
   const [showInput, setShowInput] = useState(false);
   const [newCategory, setNewCategory] = useState('');
+  const [search, setSearch] = useState('');
+  const [searchFocused, setSearchFocused] = useState(false);
 
   async function addNewCategory(newTitle) {
     if (newTitle) {
       const category = {
         title: newTitle,
-        sections: [{"title": "All", "view": "Default"}]
       };
 
       try{
@@ -87,43 +88,64 @@ export default function Directory ({navigation, scrollEnabled = true}) {
     })
   }, []) // only run once on load
 
-  return (
-    <SafeAreaView style={styles.screen}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Directory</Text>
-        <TouchableOpacity
-          onPress={() => (() => {
-            Alert.prompt(
-              "Enter New Category",
-              "Enter title:",
-              [
-                {text: "Cancel", style: "cancel"},
-                {text: "Rename", style: "default", onPress: (newTitle) => {
-                  if (newTitle && newTitle.trim() !== "") {
-                    addNewCategory(newTitle);
-                  }
-                }}
-              ],
-              "plain-text",
-            );
-          })()}
-          style={[styles.row, styles.addButton]}
-        >
-          <Ionicons name={"add-circle"} size={textSIZES.xLarge} style={styles.icon}/>
-        </TouchableOpacity>
-      </View>
+  function doSearch() {
+    // Optionally implement search logic for categories here
+    // For now, just filter locally
+    if (!search.trim()) return categories;
+    return categories.filter(cat => cat.title.toLowerCase().includes(search.trim().toLowerCase()));
+  }
 
-      <FlatList
-        scrollEnabled={scrollEnabled}
-        data={categories}
-        renderItem={({item}) => (
-          <View key={item["_id"] + "root"} style={styles.cardContainer}>
-            <DirectoryCard navigation={navigation} category={item} key={item["_id"]} handleRename={(newTitle) => editCategory(item["_id"], newTitle)} handleDelete={() => deleteCategory(item["_id"])} />
+  return (
+    <TouchableWithoutFeedback onPress={() => { Keyboard.dismiss(); setSearchFocused(false); }}>
+      <SafeAreaView style={styles.screen}>
+        <View style={{flexDirection: 'row', alignItems: 'center', marginHorizontal: textSIZES.xSmall, marginTop: textSIZES.xSmall}}>
+          <View style={[styles.row, styles.header, {flex: 1, marginRight: textSIZES.small}]}> 
+            <Ionicons name={"search-outline"} size={textSIZES.large} style={styles.iconInverse} />
+            <TextInput
+              style={{flex: 1, fontSize: textSIZES.large, color: COLORS({opacity:1}).primary}}
+              {...(search ? { defaultValue: search } : { placeholder: "Directory" })}
+              onChangeText={setSearch}
+              returnKeyType='search'
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => setSearchFocused(false)}
+              showSoftInputOnFocus={true}
+              caretHidden={!searchFocused}
+            />
           </View>
-        )}
-      />
-      <HomeNavigation size={30} iconColor={COLORS({opacity:1}).primary}/>
-    </SafeAreaView>
+          <TouchableOpacity
+            onPress={() => (() => {
+              Alert.prompt(
+                "Enter New Category",
+                "Enter title:",
+                [
+                  {text: "Cancel", style: "cancel"},
+                  {text: "Create", style: "default", onPress: (newTitle) => {
+                    if (newTitle && newTitle.trim() !== "") {
+                      addNewCategory(newTitle);
+                    }
+                  }}
+                ],
+                "plain-text",
+              );
+            })()}
+            style={[styles.button]}
+          >
+            <Ionicons name={"add-circle"} size={textSIZES.xxLarge} style={styles.icon}/>
+          </TouchableOpacity>
+        </View>
+
+        <FlatList
+          scrollEnabled={scrollEnabled}
+          data={doSearch()}
+          renderItem={({item}) => (
+            <View key={item["_id"] + "root"} style={styles.cardContainer}>
+              <DirectoryCard navigation={navigation} category={item} key={item["_id"]} handleRename={(newTitle) => editCategory(item["_id"], newTitle)} handleDelete={() => deleteCategory(item["_id"])} />
+            </View>
+          )}
+        />
+        <HomeNavigation size={30} iconColor={COLORS({opacity:1}).primary}/>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -140,9 +162,10 @@ const styles = StyleSheet.create({
     borderRadius: textSIZES.xSmall,
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
   },
   headerText: {
-    fontSize: textSIZES.large,
+    fontSize: textSIZES.medium,
     color: COLORS({opacity:1}).primary,
   },
   cardContainer: {
@@ -164,19 +187,17 @@ const styles = StyleSheet.create({
     marginHorizontal: textSIZES.xSmall,
   },
   button: {
-    flex: 1,
-    padding: 10,
-    backgroundColor: '#007bff',
-    borderRadius: 5,
-    marginHorizontal: 5,
+    padding: textSIZES.xxSmall,
+    backgroundColor: COLORS({opacity:1}).primary,
+    borderRadius: textSIZES.xxSmall,
     alignItems: 'center',
   },
   icon: {
-    color: COLORS({opacity:0.8}).primary,
+    color: COLORS({opacity:1}).lightWhite,
   },
   iconInverse: {
       //margin: textSIZES.xxSmall,
-      color: COLORS({opacity:1}).lightWhite,
+      color: COLORS({opacity:1}).primary,
   },
   newCategory: {
     margin: textSIZES.xSmall
