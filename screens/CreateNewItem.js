@@ -2,16 +2,18 @@ import { Ionicons } from "@expo/vector-icons";
 import { ScrollView, Text, View, StyleSheet, TouchableOpacity, TextInput, Image, KeyboardAvoidingView, Alert } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { COLORS, FONT, textSIZES, SHADOWS, ItemType, viewSIZES } from "../constants";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { PropertyCard } from "../screens/cards/PropertyCards";
 import ListView from "../screens/views/ListView";
-import TaskCard from "./cards/TaskCard";
-import RecipeCard from "./cards/RecipeCard";
 import * as ImagePicker from 'expo-image-picker';
 import { Scheduler } from "../components/Scheduler";
 import { PATCHitem, DELETEitem, POSTitem } from "../API";
+import SingleSelectDropdown from "../components/SingleSelectDropdown";
+import { ListType } from "../constants/default";
+import { useNavigation } from '@react-navigation/native';
 
 const defaultImage = require("../assets/icon.png");
+const listTypes = [{"label": ListType.Items, "value": ListType.Items}, {"label": ListType.Contacts, "value": ListType.Contacts}];
 
 export default function CreateNewItem({ item = null, onClose, isScheduler=false }) {
     const [title, setTitle] = useState("Untitled");
@@ -21,8 +23,14 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
     const [notes, setNotes] = useState(null);
     const [location, setLocation] = useState('');
     const [lists, setLists] = useState([]);
-  
+    const [tags, setTags] = useState([]);
+
+    const [newListTitle, setNewListTitle] = useState('');
+    const [newListType, setNewListType] = useState('');
+
     const [showScheduler, setShowScheduler] = useState(isScheduler);
+    const [showLists, setShowLists] = useState(false);
+    const [showDropdown, setShowDropdown] = useState(false);
     
     const [updatedItem, setUpdatedItem] = useState({});
   
@@ -32,6 +40,18 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
 
     const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
 
+    const navigation = useNavigation();
+    
+    const dropdownOptions = [
+        { id: 'new', label: 'New', icon: 'add', action: () => console.log('New action') },
+        { id: 'item', label: 'Item', icon: 'cube', action: () => console.log('Item action') },
+        { id: 'event', label: 'Event', icon: 'search', action: () => console.log('Event action') },
+        { id: 'task', label: 'Task', icon: 'list', action: () => console.log('Task action') },
+        { id: 'page', label: 'Page', icon: 'document', action: () => console.log('Page action') },
+        { id: 'recipe', label: 'Recipe', icon: 'restaurant', action: () => console.log('Recipe action') },
+    ];
+
+    
     const pickImage = async () => {
         let pickerResult = await ImagePicker.launchImageLibraryAsync({
           mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -102,6 +122,11 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
         }
         if(params.originalSchedule) {
             setUpdatedItem({... updatedItem, startDate: item.startDate, endDate: item.endDate, repeat: item.repeat});
+        }
+        if(params.tags) {
+            setUpdatedItem({... updatedItem, tags: params.tags.split(/\s+|,/)
+          .map((tag) => tag.trim())
+          .filter((tag) => tag !== "")});
         }
     }
     
@@ -197,18 +222,25 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
             }
             if (item.lists) {
                 setLists(item.lists);
+                setShowLists(true);
               }
           }
           setUpdatedItem({... item});
         }
     }, [item]); // Update category and section when item changes
-   
+
     return (
         <ScrollView style={styles.container} scrollEnabled={true}>
             <View style={styles.imageBox}>
-                <TouchableOpacity onPress={() => (onClose())} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightRed}]} > 
-                    <Ionicons name={"close-outline"} size={textSIZES.xxLarge} style={styles.iconInverse}/> 
-                </TouchableOpacity>
+                {!item["_id"] ? (
+                    <TouchableOpacity onPress={() => (onClose())} style={[styles.button]} > 
+                        <Ionicons name={"close"} size={textSIZES.large} style={styles.icon}/> 
+                    </TouchableOpacity>
+                ) : (
+                    <TouchableOpacity onPress={() => (onClose())} style={[styles.button]} > 
+                        <Ionicons name={"arrow-back"} size={textSIZES.large} style={styles.icon}/> 
+                    </TouchableOpacity>
+                )}
                 <TouchableOpacity style={{alignContent: "center"}}
                     onPress={(newFavicon) => (
                         pickImage(),
@@ -220,19 +252,52 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
                         style={[styles.border, { width: 140, height: 140}]}
                     />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => (onSave())} style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightGreen}]} >
-                    <Ionicons name={"checkmark-outline"} size={textSIZES.xxLarge} style={styles.iconInverse}/> 
+                <TouchableOpacity onPress={() => (onSave())} style={[styles.button]} >
+                    <Ionicons name={"checkmark"} size={textSIZES.xxLarge} style={styles.icon}/> 
                 </TouchableOpacity>
             </View>
 
             <View style={[styles.row, styles.title, { justifyContent: "space-between" }]}>
                 <View style={styles.row}>
+                    <TouchableOpacity
+                        onPress={() => setShowDropdown(!showDropdown)}
+                        style={styles.dropdownTrigger}
+                    >
+                        <Ionicons name="cube" size={textSIZES.xLarge} style={styles.icon}/>
+                        {showDropdown && (
+                            <View style={styles.dropdownMenu}>
+                                <ScrollView style={styles.dropdownScrollView} showsVerticalScrollIndicator={true}>
+                                    {dropdownOptions.map((option) => (
+                                        <TouchableOpacity
+                                            key={option.id}
+                                            style={styles.dropdownItem}
+                                            onPress={() => {
+                                                option.action();
+                                                setShowDropdown(false);
+                                            }}
+                                        >
+                                            <Ionicons name={option.icon} size={textSIZES.small} style={styles.dropdownIcon}/>
+                                            <Text style={styles.dropdownText}>{option.label}</Text>
+                                        </TouchableOpacity>
+                                    ))}
+                                </ScrollView>
+                            </View>
+                        )}
+                    </TouchableOpacity>
                     <Text style={{fontSize: textSIZES.xLarge, marginRight: textSIZES.xxSmall}}>{icon}</Text>
                     <TextInput style={{ fontSize: textSIZES.large, color: COLORS({opacity:0.9}).primary}} defaultValue={ title } 
                         onChangeText={(newTitle) => (setTitle(newTitle))}
                     />
                 </View>
                 <View style={styles.row}>
+                <TouchableOpacity
+                        onPress={() => {
+                            setIsExpanded(!isExpanded);
+                            }}
+                        style={styles.propContainer}
+                    >
+                        <Ionicons name={isExpanded ? "information-circle" : "information-circle-outline"} size={textSIZES.xxLarge} style={styles.icon}/> 
+                    </TouchableOpacity>
                     <TouchableOpacity
                         onPress={() => {
                             setShowScheduler(!showScheduler);
@@ -243,14 +308,49 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
                     </TouchableOpacity>
                     <TouchableOpacity
                         onPress={() => {
-                            setIsExpanded(!isExpanded);
-                            }}
+                            setShowLists(!showLists);
+                        }}
                         style={styles.propContainer}
                     >
-                        <Ionicons name={isExpanded ? "information-circle" : "information-circle-outline"} size={textSIZES.xLarge} style={styles.icon}/> 
+                        <Ionicons name={showLists ? "list-circle" : "list-circle-outline"} size={textSIZES.xxLarge} style={styles.icon}/> 
                     </TouchableOpacity>
                 </View>
             </View>
+            {showLists && (
+                <View style={styles.listContainer}>
+                    <Text style={{color: COLORS({opacity:1}).primary, fontSize: textSIZES.small, fontWeight: "bold", marginHorizontal: textSIZES.xSmall, marginBottom: textSIZES.xSmall}}>New List</Text>
+                    <TextInput
+                        style={styles.textInput}
+                        placeholder="Enter Title"
+                        value={newListTitle}    
+                        onChangeText={(newTitle) => setNewListTitle(newTitle)}
+                    />
+                    <SingleSelectDropdown
+                        options={listTypes}
+                        selectedValue={newListType}
+                        placeholder="Select List Type"
+                        hideSearch={true}
+                        setFn={(itemValue) => setNewListType(itemValue)}
+                    />
+                    <View style={[styles.row, {justifyContent: "space-between"}]}>
+                        <TouchableOpacity onPress={() => {
+                            setShowLists(false)
+                            setNewListTitle('')
+                            setNewListType('')
+                        }} style={[styles.addListButton, {backgroundColor: COLORS({opacity:1}).lightRed}]} >
+                            <Text style={{color: COLORS({opacity:1}).lightWhite, fontSize: textSIZES.small, fontWeight: "bold"}}>Cancel</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => {
+                            setLists([...lists, {name: newListTitle, type: newListType, items: []}]);
+                            setShowLists(false);
+                            setNewListTitle('');
+                            setNewListType('');
+                        }} style={[styles.addListButton, {backgroundColor: COLORS({opacity:1}).lightGreen}]} >
+                            <Text style={{color: COLORS({opacity:1}).lightWhite, fontSize: textSIZES.small, fontWeight: "bold"}}>Create</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            )}
             {isExpanded && (
                 <>
                     <PropertyCard itemType={item.itemType} item={updatedItem} setFn={updateNewItem}/>
@@ -261,7 +361,7 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
                     <Scheduler item={updatedItem} setFn={updateNewItem} />
                 </>
             )}
-
+            
             <View style={[styles.description]}>
                 <Text style={{ color: COLORS({opacity:0.7}).primary, marginBottom: textSIZES.xxSmall}}>Description</Text>
                 <TextInput style={{flex:1}}
@@ -293,13 +393,13 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
             </View>
 
             {lists && lists.length > 0 && (
-            <>
-              {lists.map((list, index) => (
-                <View key={index} style={styles.listContainer}>
-                    <ListView item={list} setFn={updateNewItem} isEditable={true} />
-                </View>
-              ))}
-            </>
+                <>
+                    {lists.map((list, index) => (
+                        <View key={index} style={{marginBottom: textSIZES.small}}>
+                            <ListView item={list} setFn={updateNewItem} isEditable={true} />
+                        </View>
+                    ))}
+                </>
             )}
 
             <KeyboardAvoidingView behavior="padding" >
@@ -323,7 +423,7 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
             </KeyboardAvoidingView>
 
             {!isNew && (
-                <TouchableOpacity onPress={() => ConfirmCancelPrompt()} style={[styles.removeButton, {backgroundColor: COLORS({opacity:1}).lightRed, margin: textSIZES.xSmall}]}>
+                <TouchableOpacity onPress={() => ConfirmCancelPrompt()} style={[styles.removeButton, {backgroundColor: COLORS({opacity:1}).lightRed, marginHorizontal: textSIZES.xLarge, marginTop: textSIZES.xSmall, marginBottom: textSIZES.xLarge}]}>
                     <Text style={styles.iconInverse}>Delete</Text>
                 </TouchableOpacity>
             )}
@@ -368,7 +468,13 @@ const styles = StyleSheet.create({
         marginHorizontal: textSIZES.xSmall,
         alignItems: "center",
         justifyContent: "center",
-        borderRadius: textSIZES.small
+        borderRadius: textSIZES.small,
+        backgroundColor: COLORS({opacity:1}).white,
+        shadowColor: COLORS({opacity:1}).black,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     searchButton: {
         // marginRight: 90,
@@ -406,10 +512,10 @@ const styles = StyleSheet.create({
         borderColor: COLORS({opacity:1}).primary,
         backgroundColor: "white",
         borderRadius: textSIZES.xSmall,
-        borderWidth: 2,
+        borderWidth: 0.5,
         padding: 15,
         borderRadius: textSIZES.xSmall,
-        width: 260
+        width: '100%'
     },
     icon: {
         //margin: textSIZES.xxSmall,
@@ -515,28 +621,72 @@ const styles = StyleSheet.create({
         fontSize: textSIZES.small,
         color: COLORS({opacity:1}).primary,
     },
-    infoContainer: {
-        marginHorizontal: textSIZES.small,
-        marginVertical: textSIZES.xSmall,
-        backgroundColor: COLORS({opacity:1}).lightWhite,
-        borderRadius: textSIZES.small/2,
-        ...SHADOWS.medium,
-        shadowColor: COLORS({opacity:1}).shadow,
-    },
-    listContainer: {
-        marginBottom: textSIZES.small,
-        marginHorizontal: textSIZES.small,
-        backgroundColor: COLORS.lightWhite,
-        borderRadius: textSIZES.small/2,
-        // ...SHADOWS.medium,
-        // shadowColor: COLORS({opacity:1}).shadow,
-        borderWidth: 1,
-        borderColor: COLORS({opacity:1}).navy,
-        paddingBottom: textSIZES.small,
-        flex: 1,
+    propertyButton:{
+        fontSize: textSIZES.small,
+        color: COLORS({opacity:1}).primary,
     },
     propContainer: {
         marginHorizontal: textSIZES.xxSmall,
         marginVertical: textSIZES.tiny,
+    },
+    addListButton: {
+        borderRadius: textSIZES.xxSmall,
+        padding: textSIZES.xSmall, 
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: textSIZES.xSmall,
+        marginHorizontal: textSIZES.xSmall,
+        flex: 1,
+        //backgroundColor: COLORS({opacity:1}).navy,
+    },
+    listContainer: {
+        marginHorizontal: textSIZES.small,
+        marginBottom: textSIZES.small,
+        padding: textSIZES.xSmall,
+        backgroundColor: COLORS({opacity:1}).lightWhite,
+        borderRadius: textSIZES.small/2,
+        borderWidth: 1,
+        borderColor: COLORS({opacity:1}).primary,
+        maxHeight: 800,
+    },
+    dropdownTrigger: {
+        position: 'relative',
+        marginRight: textSIZES.xxSmall,
+    },
+    dropdownMenu: {
+        position: 'absolute',
+        bottom: textSIZES.xLarge,
+        left: 0,
+        backgroundColor: COLORS({opacity:1}).white,
+        borderRadius: textSIZES.xSmall,
+        borderWidth: 1,
+        borderColor: 'rgba(35, 73, 146, 0.3)',
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+        zIndex: 1000,
+        minWidth: 120,
+        maxHeight: 100,
+    },
+    dropdownScrollView: {
+        maxHeight: 200,
+    },
+    dropdownItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: textSIZES.xSmall,
+        borderBottomWidth: 1,
+        borderBottomColor: 'rgba(35, 73, 146, 0.1)',
+    },
+    dropdownIcon: {
+        color: 'var(--secondary)',
+        marginRight: textSIZES.xxSmall,
+    },
+    dropdownText: {
+        fontSize: textSIZES.small,
+        color: 'var(--primary)',
+        fontWeight: '500',
     }
 });
