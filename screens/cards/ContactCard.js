@@ -1,153 +1,142 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image,
-        StyleSheet, ScrollView } from 'react-native';
-import { COLORS, SHADOWS, FONT, textSIZES, viewSIZES } from "../../constants";
-import { ExpandableView } from "../../utils";
+import { Modal, View, Text, TouchableOpacity, Image, ScrollView, StyleSheet } from "react-native";
+import { COLORS, FONT, textSIZES } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 
 const defaultImage = require("../../assets/icon.png");
 
-const expandedCard = ({contact}) => {
-  return (
-    <ScrollView style={styles.expandedContainer}>
-      {contact.company && (
-        <View style={styles.property}>
-          <Text style={styles.label}>Company</Text>
-          <Text style={styles.value}>{contact.company}</Text>
-        </View>
-      )}
-      {contact.phoneNumber && (
-        <View style={styles.property}>
-          <Text style={styles.label}>Phone</Text>
-          <Text style={styles.value}>{contact.phoneNumber}</Text>
-        </View>
-      )}
-      {contact.birthday && (
-        <View style={styles.property}>
-          <Text style={styles.label}>Birthday</Text>
-          <Text style={styles.value}>{contact.birthday}</Text>
-        </View>
-      )}
-      {contact.address && (
-        <View style={styles.property}>
-          <Text style={styles.label}>Address</Text>
-          <Text style={styles.value}>{contact.address}</Text>
-        </View>
-      )}
-      {contact.notes && (
-        <View style={styles.property}>
-          <Text style={styles.label}>Latest Update</Text>
-          <Text style={styles.value}>{contact.notes}</Text>
-        </View>
-      )}
-    </ScrollView>
-  )
-};
-
-const ContactCard = ({contact}) => {
-
-  const [isExpanded, setIsExpanded] = useState(false);
+export default function ContactCard ({contact, visible, onClose}) {
 
   return (
-    <View style={styles.cardContainer}>
-      <TouchableOpacity
-        onPress={() => {
-            setIsExpanded(!isExpanded);
-          }}
-          style={styles.titleContainer}
-      >
-        <View style={styles.row}> 
-        <Image 
-            source={defaultImage}
-            resizeMode='contain'
-            style={styles.contactImage}
-          />
-          <View>
-            <Text style={styles.title} numberOfLines={1}>{contact.name}</Text>
-            {contact.handle && (
-              <Text style={styles.company} numberOfLines={1}>@{contact.handle}</Text>
-            )}
+    <Modal
+      animationType="fade"
+      transparent={true}
+      visible={visible}
+      onRequestClose={onClose}
+    >
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalContent}>
+          <View style={styles.modalHeader}>
+            <View style={styles.modalAvatarContainer}>
+              <Image 
+                source={defaultImage}
+                resizeMode='contain'
+                style={styles.modalAvatar}
+              />
+              <Text style={styles.modalName}>{contact?.name || "Name"}</Text>
+              {contact?.handle && (
+                <Text style={styles.modalHandle}>@{contact.handle}</Text>
+              )}
+            </View>
+            <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+              <Ionicons name="close" size={textSIZES.large} style={styles.closeIcon} />
+            </TouchableOpacity>
           </View>
+          <ScrollView style={styles.modalScrollView}>
+            {contact?.company && (
+              <View style={styles.property}>
+                <Text style={styles.label}>Company</Text>
+                <Text style={styles.value}>{contact.company}</Text>
+              </View>
+            )}
+            {contact?.phoneNumber && (
+              <View style={styles.property}>
+                <Text style={styles.label}>Phone</Text>
+                <Text style={styles.value}>{contact.phoneNumber}</Text>
+              </View>
+            )}
+            {contact?.birthday && (
+              <View style={styles.property}>
+                <Text style={styles.label}>Birthday</Text>
+                <Text style={styles.value}>{contact.birthday}</Text>
+              </View>
+            )}
+            {contact?.address && (
+              <View style={styles.property}>
+                <Text style={styles.label}>Address</Text>
+                <Text style={styles.value}>{contact.address}</Text>
+              </View>
+            )}
+            {contact?.notes && (
+              <View style={styles.property}>
+                <Text style={styles.label}>Latest Update</Text>
+                <Text style={styles.value}>{contact.notes}</Text>
+              </View>
+            )}
+          </ScrollView>
         </View>
-      </TouchableOpacity>
-      <ExpandableView expanded={isExpanded} view={expandedCard} params={{contact}} vh={300} />
-    </View>
+      </View>
+    </Modal>
   )
 };
-
 
 const styles = StyleSheet.create({
-  cardContainer: {
-    flex:1,
-    margin: textSIZES.xSmall,
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
     backgroundColor: COLORS({opacity:1}).white,
     borderRadius: textSIZES.small,
-  },
-  titleContainer: {
-    flex: 1,
     padding: textSIZES.small,
-    borderColor: COLORS({opacity:0.5}).primary,
-    borderBottomWidth: 1,
-  },
-  title: {
-    fontSize: textSIZES.small,
-    fontFamily: FONT.regular,
-    color: COLORS({opacity:1}).navy,
-  },
-  handle: {
-    fontSize: textSIZES.xSmall,
-    //fontFamily: "DMRegular",
-    color: COLORS({opacity:1}).primary,
-    textTransform: "capitalize",
-  },
-  expandedContainer: {
     margin: textSIZES.xSmall,
-    paddingBottom: textSIZES.small,
-    padding: textSIZES.xxSmall,
+    width: '90%',
+    maxHeight: '80%',
+    shadowColor: COLORS({opacity:1}).black,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: textSIZES.small,
+  },
+  modalAvatarContainer: {
+    alignItems: 'center',
     flex: 1,
-    height: viewSIZES.small,
-    backgroundColor: COLORS({opacity:1}).lightWhite,
-    borderBottomLeftRadius: textSIZES.small,
-    borderBottomRightRadius: textSIZES.small,
   },
-  row: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
+  modalAvatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    borderWidth: 3,
+    borderColor: COLORS({opacity:0.3}).primary,
+    backgroundColor: COLORS({opacity:0.1}).primary,
+    marginBottom: textSIZES.xSmall,
   },
-  icon: {
-    marginRight: textSIZES.xxSmall,
-    color: COLORS({opacity:0.8}).primary,
+  modalName: {
+    fontSize: textSIZES.large,
+    fontFamily: FONT.medium,
+    color: COLORS({opacity:1}).primary,
+    textAlign: 'center',
+    marginBottom: textSIZES.tiny,
   },
-  contactImage: {
-    width: textSIZES.xxLarge+5,
-    height: textSIZES.xxLarge+5,
-    borderWidth: 1,
-    borderRadius: textSIZES.xxSmall,
-    borderColor: COLORS({opacity:1}).navy,
-    marginRight: textSIZES.xxSmall,
+  modalHandle: {
+    fontSize: textSIZES.small,
+    color: COLORS({opacity:0.7}).primary,
+    textAlign: 'center',
   },
-  property:{
-    fontSize: textSIZES.xSmall,
-    //fontFamily: FONT.regular,
-    color: COLORS({opacity:0.8}).primary,
-    margin: textSIZES.xxSmall,
-    padding: textSIZES.xxSmall,
-    backgroundColor: COLORS({opacity:0.2}).tertiary,
-    borderRadius: textSIZES.xSmall,
+  modalScrollView: {
+    maxHeight: 400,
   },
-  label:{
-    fontSize: textSIZES.xSmall,
-    fontFamily: FONT.regular,
-    color: COLORS({opacity:1}).secondary,
-    padding: textSIZES.xxSmall,
-    marginBottom: 2,
+  property: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: textSIZES.small,
+  },
+  label: {
+    fontSize: textSIZES.small,
+    fontFamily: FONT.medium,
+    color: COLORS({opacity:0.7}).primary,
   },
   value: {
-    fontSize: textSIZES.xSmall,
+    fontSize: textSIZES.small,
     fontFamily: FONT.regular,
-    padding: textSIZES.xxSmall,
+    color: COLORS({opacity:1}).primary,
   },
 });
-
-export default ContactCard
