@@ -8,7 +8,7 @@ import { View, StyleSheet, Text } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { Dimensions } from 'react-native';
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { TouchableOpacity, TouchableHighlight } from "react-native-gesture-handler";
 
 const slotWidth = (Dimensions.get('window').width - 20) / 7;
 const slotHeight = (Dimensions.get('window').height - 308) / 6;
@@ -104,13 +104,11 @@ export const MonthlyCalendar = ({navigation, date, month, onRefresh, filter}) =>
           <View key={day} style={styles.slot}>
             <Text style={{color: COLORS({opacity: 1}).primary, fontWeight: 'bold', fontSize: textSIZES.xSmall}}>{day}</Text>
             {!!items[day] && items[day].slice(0, 2).map((item, index) => (
-              <TouchableOpacity key={index} numberOfLines={1} style={[styles.title]} 
-                onPress={() => {
-                  navigation.navigate("Item", {"item": item, "doRefresh": doRefresh});
-                }}
+              <TouchableHighlight underlayColor={COLORS({opacity:0.2}).lightGrey} key={index} numberOfLines={1} style={[styles.title]} 
+                onPress={() => (navigation.navigate("Item", {"item": item, "doRefresh": doRefresh}))}
               >
                 <Text style={{fontSize: textSIZES.xSmall}}>{item.title}</Text>
-              </TouchableOpacity>
+              </TouchableHighlight>
             ))}
             {!!items[day] && items[day].length > 2 && (
               <TouchableOpacity onPress={() => (onRefresh(new Date(date.getFullYear(), date.getMonth(), Number(day)), "day"))}>
@@ -164,7 +162,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     marginBottom: textSIZES.tiny,
     borderColor: COLORS({opacity:1}).lightGrey,
-    backgroundColor: COLORS({opacity:0.1}).lightGrey,
+    backgroundColor: COLORS({opacity:0.1}).white,
     borderRadius: textSIZES.xxSmall,
     borderWidth:0.50,
     alignContent: "center",

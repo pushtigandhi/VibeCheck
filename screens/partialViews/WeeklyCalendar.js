@@ -7,7 +7,7 @@ import { textSIZES, viewSIZES, COLORS, FONT, SHADOWS } from "../../constants";
 import { GETitems, GETweek } from "../../API";
 import { ItemType } from "../../constants";
 
-import { View, StyleSheet, Text, ScrollView, FlatList, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, ScrollView, FlatList, TouchableOpacity, TouchableHighlight } from 'react-native';
 
 import { Dimensions } from 'react-native';
 
@@ -72,28 +72,30 @@ export const WeeklyCalendar = ({navigation, date, filter, itemList}) => {
   return (
     <View style={styles.column}>
       {days.map((day) => (
-        <View style={[styles.row, {borderBottomWidth: 0.5, borderColor: COLORS({opacity:1}).lightGrey}]}>
+        <View style={[styles.row, {borderBottomWidth: 0.5, borderColor: COLORS({opacity:1}).lightGrey}]} key={day}>
           <View style={styles.label} key={day}>
             <Text style={styles.span}>{day.slice(0,1)}</Text>
           </View>
           <FlatList
             data={items[day]}
             renderItem={({ item }) => (
-              <TouchableOpacity style={styles.cardsContainer} //key={item["_id"] + "_root"} 
+              <TouchableHighlight underlayColor={COLORS({opacity:0.2}).lightGrey} style={styles.cardsContainer} //key={item["_id"] + "_root"} 
                 onPress={() => {
                   navigation.navigate("Item", {"item": item, "doRefresh": doRefresh});
                 }}
               >
+                <>
                 <Text style={styles.title}>{item.title}</Text>
+                <View style={{ justifyContent: "center"}}>
+                  <Text style={{ fontSize: textSIZES.xSmall}}>{item.icon}</Text>
+                </View>
                 <View style={styles.row}>
-                  <View style={{ justifyContent: "center"}}>
-                    <Text style={{ fontSize: textSIZES.xSmall}}>{item.icon}</Text>
-                  </View>
                   <Text style={styles.timeLabel}>{String(new Date(item.startDate).getHours())}:{new Date(item.startDate).getMinutes() < 10 ? String("0"+ new Date(item.startDate).getMinutes()) : String(new Date(item.startDate).getMinutes())}</Text>
                   <Text style={styles.timeLabel}>-</Text>
                   <Text style={styles.timeLabel}>{String(new Date(item.endDate).getHours())}:{new Date(item.endDate).getMinutes() < 10 ? String("0"+ new Date(item.endDate).getMinutes()) : String(new Date(item.endDate).getMinutes())}</Text>
                 </View>
-              </TouchableOpacity>
+                </>
+              </TouchableHighlight>
             )}
             keyExtractor={(item) => item["_id"]} 
             style={styles.calendarView}
@@ -108,12 +110,12 @@ export const WeeklyCalendar = ({navigation, date, filter, itemList}) => {
 const styles = StyleSheet.create({
   cardsContainer: {
     borderColor: COLORS({opacity:1}).lightGrey,
-    backgroundColor: COLORS({opacity:0.1}).lightGrey,
-    borderWidth: 0.51,
-    borderRadius: textSIZES.xxSmall,
-    width: 100, //slotWidth - textSIZES.xSmall,
+    backgroundColor: COLORS({opacity:0.1}).white,
+    borderRadius: textSIZES.xSmall,
+    borderWidth:0.50,
+    alignContent: "center",
+    width: 100,
     height: slotHeight - textSIZES.xSmall, 
-    padding: textSIZES.tiny,
     marginHorizontal: textSIZES.xxSmall,
     alignItems: "center",
     justifyContent: "center",
@@ -146,9 +148,9 @@ const styles = StyleSheet.create({
     color: COLORS({opacity: 1}).primary,
   },
   title: {
-    fontWeight: "200",
+    fontWeight: "300",
     marginBottom: textSIZES.xxSmall,
-    fontSize: textSIZES.xSmall,
+    fontSize: textSIZES.small,
   },
   time: {
     padding: textSIZES.xSmall,
@@ -156,7 +158,7 @@ const styles = StyleSheet.create({
     alignItems: "right",
   },
   timeLabel: {
-    fontWeight: "200",
-    fontSize: textSIZES.xSmall,
+    fontWeight: "300",
+    fontSize: textSIZES.small,
   }
 });

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { textSIZES, viewSIZES, COLORS, FONT, SHADOWS } from "../../constants";
 import { GETitems, GETitemsTEST, GETtoday } from "../../API";
 import { ItemType } from "../../constants";
-import { View, StyleSheet, Text, ScrollView, FlatList, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, ScrollView, FlatList, TouchableOpacity, TouchableHighlight } from 'react-native';
 
 export const DailyCalendar = ({navigation, date, filter}) => {
   const [items, setItems] = useState([]);
@@ -67,7 +67,7 @@ export const DailyCalendar = ({navigation, date, filter}) => {
       <FlatList
           data={items}
           renderItem={({ item }) => (
-          <TouchableOpacity
+          <TouchableHighlight underlayColor={COLORS({opacity:0.2}).lightGrey}
             onPress={() => {
               navigation.navigate("Item", {"item": item, "doRefresh": doRefresh});
             }}
@@ -95,7 +95,7 @@ export const DailyCalendar = ({navigation, date, filter}) => {
                 )}
               </View>
             </View>
-          </TouchableOpacity>
+          </TouchableHighlight>
           )}
           keyExtractor={(item) => item["_id"]} 
           style={styles.calendarView}
