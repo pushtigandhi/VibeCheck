@@ -5,17 +5,13 @@ import HomeScreen from './screens/HomeScreen';
 import Contacts from './screens/Contacts';
 import ProfileScreen from './screens/ProfileScreen';
 import Directory from './screens/Directory';
-import DirectoryCard from './screens/cards/DirectoryCard';
 import VibeCheck from './screens/VibeCheck';
 import Backlog from './screens/Backlog';
 import Login from './screens/LoginScreen';
 import NewItem from './screens/NewItem';
-import ItemCard from './screens/cards/ItemCard';
+import ItemCard from './screens/ItemView';
 import { useFonts } from 'expo-font';
 import DefaultView from './screens/views/DefaultView';
-import ScheduleView from './screens/views/ScheduleView';
-import ChecklistView from './screens/views/ChecklistView';
-import SelectView from './screens/SelectView';
 
 const Stack = createNativeStackNavigator();
 
@@ -42,9 +38,6 @@ export default function App() {
       <Stack.Screen name="VibeCheck" component={VibeCheck}/>
       <Stack.Screen name="Backlog" component={Backlog}/>
       <Stack.Screen name="DefaultView" component={DefaultView}/>
-      <Stack.Screen name="SelectView" component={SelectView}/>
-      <Stack.Screen name="ScheduleView" component={ScheduleView}/>
-      <Stack.Screen name="ChecklistView" component={ChecklistView}/>
       <Stack.Screen name="Item" component={ItemCard}/>
     </Stack.Navigator>
   </NavigationContainer>
