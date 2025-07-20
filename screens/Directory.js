@@ -115,8 +115,8 @@ export default function Directory ({navigation, scrollEnabled = true}) {
           <TouchableOpacity
             onPress={() => (() => {
               Alert.prompt(
-                "Enter New Category",
-                "Enter title:",
+                "Enter New Name",
+                "Enter name:",
                 [
                   {text: "Cancel", style: "cancel"},
                   {text: "Create", style: "default", onPress: (newTitle) => {

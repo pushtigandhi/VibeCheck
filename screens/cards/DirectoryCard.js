@@ -34,19 +34,6 @@ const expandedCard = ({navigation, category, sections, doRefresh}) => {
     }
   }
 
-  async function addSection(newTitle) {
-    const updatedCategory = {
-      id: category["_id"],
-      sections: [...sections, {title: newTitle, view: ViewType.Default}],
-    }
-    await PATCHcategory(updatedCategory).then((directory) => {
-      let sections_ = directory.find(c => c._id === category["_id"]).sections;
-      doRefresh(sections_);
-    }).catch((err) => {
-      alert(err.message)
-    });
-  }
-
   async function deleteSection(sectionID) {
     const updatedCategory = {
       id: category["_id"],
@@ -118,7 +105,7 @@ const expandedCard = ({navigation, category, sections, doRefresh}) => {
               <TouchableOpacity style={styles.button} onPress={() => {
                 Alert.prompt(
                   "Rename Section",
-                  "Enter new section title",
+                  "Enter new name",
                   [
                     {text: "Cancel", style: "cancel"},
                     {text: "Rename", style: "default", onPress: (newTitle) => {
@@ -233,7 +220,7 @@ const DirectoryCard = ({navigation, category, handleDelete, handleRename}) => {
             <TouchableOpacity style={styles.button} onPress={() => {
               Alert.prompt(
                 "Add Section",
-                "Enter new section title",
+                "Enter new name",
                 [
                   {text: "Cancel", style: "cancel"},
                   {text: "Add", style: "default", onPress: (newTitle) => { handleAddSection(newTitle); }}
@@ -246,7 +233,7 @@ const DirectoryCard = ({navigation, category, handleDelete, handleRename}) => {
             <TouchableOpacity style={styles.button} onPress={() => {
               Alert.prompt(
                 "Rename Category",
-                "Enter new category title",
+                "Enter new name",
                 [
                   {text: "Cancel", style: "cancel"},
                   {text: "Rename", style: "default", onPress: (newTitle) => {
