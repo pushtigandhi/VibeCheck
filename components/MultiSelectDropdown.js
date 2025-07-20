@@ -78,11 +78,11 @@ const styles = StyleSheet.create({
   },
   placeholderStyle: {
     fontSize: textSIZES.small,
-    color: COLORS({opacity:1}).navy,
+    color: COLORS({opacity:1}).primary,
   },
   selectedTextStyle: {
     fontSize: textSIZES.small,
-    color: COLORS({opacity:1}).navy,
+    color: COLORS({opacity:1}).primary,
   },
   iconStyle: {
     width: 20,
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: 5,
-    color: COLORS({opacity:1}).navy,
+    color: COLORS({opacity:1}).primary,
   },
   item: {
     padding: 17,
