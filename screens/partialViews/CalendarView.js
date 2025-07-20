@@ -14,7 +14,7 @@ import NewItem from "../NewItem";
 import { Sidebar } from "../../components/Sidebar";
 import ScheduleScreen from "../ScheduleScreen";
 
-export const CalendarView = ({navigation, filter={}, setFilter, isHome=false}) => {
+export const CalendarView = ({navigation, filter={}, setFilter, isHome=false, refresh=false}) => {
     const calendarHeight = Dimensions.get('window').height - 300;
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [filterVisible, setFilterVisible] = useState(false);
@@ -40,7 +40,7 @@ export const CalendarView = ({navigation, filter={}, setFilter, isHome=false}) =
     const onRefresh = React.useCallback((updatedDate, state) => {
         setSelectedDate(updatedDate);
         setState(state);
-    });
+    }, [refresh]);
 
     const toggleSidebar = React.useCallback(() => {
         setRefreshing(true);
@@ -70,7 +70,7 @@ export const CalendarView = ({navigation, filter={}, setFilter, isHome=false}) =
     
     useEffect(() => {
         getScheduledItemsFromAPI();
-      },[refreshing])
+    },[refreshing])
 
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
