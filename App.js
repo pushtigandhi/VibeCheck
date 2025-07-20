@@ -9,10 +9,9 @@ import DirectoryCard from './screens/cards/DirectoryCard';
 import VibeCheck from './screens/VibeCheck';
 import Backlog from './screens/Backlog';
 import Login from './screens/LoginScreen';
-
+import NewItem from './screens/NewItem';
 import ItemCard from './screens/cards/ItemCard';
 import { useFonts } from 'expo-font';
-import NewItem from './screens/NewItem';
 import DefaultView from './screens/views/DefaultView';
 import ScheduleView from './screens/views/ScheduleView';
 import ChecklistView from './screens/views/ChecklistView';
@@ -38,7 +37,7 @@ export default function App() {
       //<Stack.Screen name="Profile" component={ProfileScreen} initialParams={{ isOwnProfile: false }} />
       //<Stack.Screen name="Drafts" component={DraftsScreen}/>
       }
-      <Stack.Screen name="New" component={NewItem}/>
+      <Stack.Screen name="NewItem" component={NewItem}/>
       <Stack.Screen name="Directory" component={Directory}/>
       <Stack.Screen name="VibeCheck" component={VibeCheck}/>
       <Stack.Screen name="Backlog" component={Backlog}/>
