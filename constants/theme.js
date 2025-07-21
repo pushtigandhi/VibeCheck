@@ -1,24 +1,41 @@
-const COLORS = ({ opacity = 1 }) => ({
-  primary: `rgba(35, 73, 146, ${opacity})`, //`rgba(34, 159, 208, ${opacity})`,
-  secondary: `rgba(79, 129, 222, ${opacity})`,
-  tertiary: `rgba(125, 170, 255, ${opacity})`,
+const COLORS = ({ theme = 1 }) => {
+  if (theme == 1) {
+    return {
+      primary: `rgba(35, 73, 146, 1)`, //`rgba(34, 159, 208, ${opacity})`,
+      secondary: `rgba(79, 129, 222, 1)`,
+      tertiary: `rgba(125, 170, 255, 1)`,
+      grey: `rgba(181, 181, 181, 1)`,
+      lightGrey: `rgba(193, 192, 200, 1)`,
 
-  navy: `rgba(43, 96, 197, ${opacity})`,
-  indigo: `rgba(13, 6, 48, ${opacity})`,
-  shadow: `rgba(13, 6, 48, ${opacity})`,
+      white: `rgba(255, 255, 255, 1)`,
+      lightWhite: `rgba(250, 250, 250, 1)`,
+    }
+  } else if (theme == 2) {
+    return {
+      primary: `rgba(43, 96, 197, 1)`,
+      secondary: `rgba(13, 6, 48, 1)`,
+      shadow: `rgba(13, 6, 48, 1)`,
 
-  lavendar: `rgba(164, 176, 245, ${opacity})`,
-  yellow: `rgba(241, 200, 131, ${opacity})`,
-  lightGreen: `rgba(128, 173, 173, ${opacity})`,
-  lightRed: `rgba(236, 134, 134, ${opacity})`,
-  
-  grey: `rgba(181, 181, 181, ${opacity})`,
-  lightGrey: `rgba(193, 192, 200, ${opacity})`,
+      lavendar: `rgba(164, 176, 245, 1)`,
+      yellow: `rgba(241, 200, 131, 1)`,
+      lightGreen: `rgba(128, 173, 173, 1)`,
+      lightRed: `rgba(236, 134, 134, 1)`,
+      lightBlue: `rgba(125, 170, 255, 1)`,
+      grey: `rgba(181, 181, 181, 1)`,
+      lightGrey: `rgba(193, 192, 200, 1)`,
 
-  ///lightWhite: `rgba(243, 244, 248, ${opacity})`,
-  white: `rgba(255, 255, 255, ${opacity})`,
-  lightWhite: `rgba(250, 250, 250, ${opacity})`,
-});
+      ///lightWhite: `rgba(243, 244, 248, ${opacity})`,
+      white: `rgba(255, 255, 255, 1)`,
+      lightWhite: `rgba(250, 250, 250, 1)`,
+    }
+  } else {
+    return {
+      primary: `rgba(43, 96, 197, 1)`,
+      secondary: `rgba(13, 6, 48, 1)`,
+      shadow: `rgba(13, 6, 48, 1)`,
+    }
+  }
+};
   
 const FONT = {
   regular: "DMRegular",
@@ -48,6 +65,16 @@ const viewSIZES = {
 };
 
 const SHADOWS = {
+  xSmall: {
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 2,
+  },
   small: {
     shadowColor: "#000",
     shadowOffset: {

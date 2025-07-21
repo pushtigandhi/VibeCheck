@@ -215,6 +215,7 @@ export async function GETme() {
         if (response.status == 200) {
             // good, return 
             const body = await response.json();
+            console.log(body);
             return body.profile;
         } else {
             return null;
@@ -536,7 +537,7 @@ const getURL= (itemType) => {
 export async function GETitems(itemType, filter={}) {
     const ext = getURL(itemType);
 
-    console.log(filter);
+    //console.log(filter);
 
     const response = await fetchWithAuth(`${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "&" : "") +  new URLSearchParams(filter), {
         method: 'GET',

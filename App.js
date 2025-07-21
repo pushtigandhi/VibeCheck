@@ -5,7 +5,6 @@ import HomeScreen from './screens/HomeScreen';
 import Contacts from './screens/Contacts';
 import ProfileScreen from './screens/ProfileScreen';
 import Directory from './screens/Directory';
-import VibeCheck from './screens/VibeCheck';
 import Backlog from './screens/Backlog';
 import Login from './screens/LoginScreen';
 import NewItem from './screens/NewItem';
@@ -35,7 +34,6 @@ export default function App() {
       }
       <Stack.Screen name="NewItem" component={NewItem}/>
       <Stack.Screen name="Directory" component={Directory}/>
-      <Stack.Screen name="VibeCheck" component={VibeCheck}/>
       <Stack.Screen name="Backlog" component={Backlog}/>
       <Stack.Screen name="DefaultView" component={DefaultView}/>
       <Stack.Screen name="Item" component={ItemCard}/>

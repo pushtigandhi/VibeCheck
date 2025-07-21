@@ -13,6 +13,11 @@ const ViewType = {
   Default: 'Default'
 };
 
+const ListType = {
+  Items: 'Items',
+  Contacts: 'Contacts'
+};
+
 const defaultItem = {
     "category": "Backlog",
     "section": "All",
@@ -58,4 +63,4 @@ const defaultRecipe = {
     "itemType" : ItemType.Recipe,
 }
  
-export { ItemType, ViewType, defaultItem, defaultTask, defaultEvent, defaultPage, defaultRecipe };
+export { ItemType, ViewType, ListType, defaultItem, defaultTask, defaultEvent, defaultPage, defaultRecipe };

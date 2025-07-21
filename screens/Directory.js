@@ -6,6 +6,8 @@ import HomeNavigation from "./HomeNavigation";
 import { GETdirectory, POSTcategory, DELETEcategory, PATCHcategory } from "../API";
 import DirectoryCard from "./cards/DirectoryCard"
 import { Alert } from "react-native";
+
+
 export default function Directory ({navigation, scrollEnabled = true}) {
   const [categories, setCategories] = useState([]);
   const [showInput, setShowInput] = useState(false);
