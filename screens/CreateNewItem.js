@@ -2,9 +2,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { ScrollView, Text, View, StyleSheet, TouchableOpacity, TextInput, Image, KeyboardAvoidingView, Alert } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { COLORS, FONT, textSIZES, SHADOWS, ItemType, viewSIZES } from "../constants";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { PropertyCard } from "../screens/cards/PropertyCards";
-import ListView from "../screens/views/ListView";
+import ItemList from "../components/ItemList";
 import * as ImagePicker from 'expo-image-picker';
 import { Scheduler } from "../components/Scheduler";
 import { PATCHitem, DELETEitem, POSTitem } from "../API";
@@ -202,12 +202,11 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
             galleryStatus = await ImagePicker.getMediaLibraryPermissionsAsync();
           }
           setHasGalleryPermission(galleryStatus.status == 'granted');
-        })
+        })();
     
         if (item) {
-            if(item.ItemType)
-                setItemType(item.itemType);
-          setIcon(item.icon.toString());
+            if(item.itemType)
+                setIcon(item.icon.toString());
           if (item["_id"]) {
             setIsNew(false);
             setTitle(item.title);
@@ -284,7 +283,6 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
                             </View>
                         )}
                     </TouchableOpacity>
-                    <Text style={{fontSize: textSIZES.xLarge, marginRight: textSIZES.xxSmall}}>{icon}</Text>
                     <TextInput style={{ fontSize: textSIZES.large, color: COLORS({opacity:0.9}).primary}} defaultValue={ title } 
                         onChangeText={(newTitle) => (setTitle(newTitle))}
                     />
@@ -337,16 +335,16 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
                             setShowLists(false)
                             setNewListTitle('')
                             setNewListType('')
-                        }} style={[styles.addListButton, {backgroundColor: COLORS({opacity:1}).lightRed}]} >
-                            <Text style={{color: COLORS({opacity:1}).lightWhite, fontSize: textSIZES.small, fontWeight: "bold"}}>Cancel</Text>
+                        }} style={[styles.addListButton, {borderWidth: 0.5, borderColor: COLORS({opacity:1}).primary}]} >
+                            <Text style={{fontSize: textSIZES.small, fontWeight: "bold"}}>Cancel</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => {
                             setLists([...lists, {name: newListTitle, type: newListType, items: []}]);
                             setShowLists(false);
                             setNewListTitle('');
                             setNewListType('');
-                        }} style={[styles.addListButton, {backgroundColor: COLORS({opacity:1}).lightGreen}]} >
-                            <Text style={{color: COLORS({opacity:1}).lightWhite, fontSize: textSIZES.small, fontWeight: "bold"}}>Create</Text>
+                        }} style={[styles.addListButton, {borderWidth: 0.5, borderColor: COLORS({opacity:1}).primary}]} >
+                            <Text style={{fontSize: textSIZES.small, fontWeight: "bold"}}>Create</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -396,7 +394,7 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
                 <>
                     {lists.map((list, index) => (
                         <View key={index} style={{marginBottom: textSIZES.small}}>
-                            <ListView item={list} setFn={updateNewItem} isEditable={true} />
+                            <ItemList item={list} setFn={updateNewItem} isEditable={true} />
                         </View>
                     ))}
                 </>
@@ -423,8 +421,8 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
             </KeyboardAvoidingView>
 
             {!isNew && (
-                <TouchableOpacity onPress={() => ConfirmCancelPrompt()} style={[styles.removeButton, {backgroundColor: COLORS({opacity:1}).lightRed, marginHorizontal: textSIZES.xLarge, marginTop: textSIZES.xSmall, marginBottom: textSIZES.xLarge}]}>
-                    <Text style={styles.iconInverse}>Delete</Text>
+                <TouchableOpacity onPress={() => ConfirmCancelPrompt()} style={[styles.removeButton, {borderWidth: 0.5, borderColor: COLORS({opacity:1}).primary, marginHorizontal: textSIZES.xLarge, marginTop: textSIZES.xSmall, marginBottom: textSIZES.xLarge}]}>
+                    <Text style={{fontSize: textSIZES.small, fontWeight: "bold"}}>Delete</Text>
                 </TouchableOpacity>
             )}
         </ScrollView>

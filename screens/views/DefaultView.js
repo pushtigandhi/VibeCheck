@@ -48,7 +48,7 @@ export default function DefaultView ({navigation, route, scrollEnabled = true}) 
     <SafeAreaView style={styles.screen}>
        <View style={[styles.row, styles.propContainer, {justifyContent: "space-between"}]}>
         <TouchableOpacity onPress={() => (navigation.goBack())} style={[styles.button]} > 
-          <Ionicons name={"arrow-back-outline"} size={textSIZES.small} style={styles.icon}/> 
+          <Ionicons name={"chevron-back-outline"} size={textSIZES.xLarge} style={styles.icon}/> 
         </TouchableOpacity>
         <Text style={styles.title}>{title}</Text>
         <View style={styles.row}>
@@ -177,8 +177,8 @@ const styles = StyleSheet.create({
     margin: textSIZES.xxSmall,
   },
   propContainer: {
-    paddingHorizontal: textSIZES.large,
-    paddingBottom: textSIZES.small,
+    paddingHorizontal: textSIZES.small,
+    paddingBottom: textSIZES.tiny,
     borderColor: COLORS({opacity:0.5}).primary,
     borderBottomWidth: 1,
     borderRadius: textSIZES.small,

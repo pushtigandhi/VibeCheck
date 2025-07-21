@@ -30,7 +30,7 @@ const allTags = [
 ]
 
 
-export const PropertyCard = ({ item = null, itemType, setFn}) => {
+export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) => {
   const [category, setCategory] = useState('');
   const [section, setSection] = useState('');
   const [serving, setServing] = useState(null);
@@ -66,18 +66,6 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
     minuteItem.push(<Picker.Item key={i} label={`${i}`} value={`${i}`} />);
   }
 
-  async function getTagsFromAPI() {
-    try {
-        let allTags_ = await GETtags();
-        return allTags_;
-    } catch (error) {
-      console.log("error fetching tags");
-      console.log(error);
-
-        return [];
-    }
-  }
-
   useEffect(() => {
     getDirectoryFromStorage().then((directoryList_) => {
       setDirectoryList(directoryList_);
@@ -88,7 +76,6 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
 
   useEffect(() => {
     if (item) {
-      console.log(item);
       if(!!item.category){
         setCategory(item.category);
         setSection('All');
@@ -160,9 +147,7 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
         <Text>Loading sections...</Text>
       ))}
 
-      <MultiSelectDropdown options={allTags} placeholder="Tags" setFn={setTags} current={tags}
-        icon={<Text style={[styles.icon, {marginRight: textSIZES.xSmall, fontSize: size}]}>#</Text>} /> 
-
+      
         <View style={[styles.divider, {padding: 0}]}/>
 
         {showDuration == false && (
@@ -327,6 +312,11 @@ export const PropertyCard = ({ item = null, itemType, setFn}) => {
         </View>
         </>
       )}
+
+      <View style={[styles.divider, {padding: 0}]}/>
+
+      <MultiSelectDropdown options={allTags} placeholder="Tags" setFn={setTags} current={tags}
+        icon={<Text style={[styles.icon, {marginRight: textSIZES.xSmall, fontSize: size}]}>#</Text>} /> 
     </SafeAreaView>
   )
 };
@@ -354,6 +344,7 @@ const styles = StyleSheet.create({
   label:{
     color: COLORS({opacity:1}).secondary,
     margin: textSIZES.xSmall,
+    fontSize: textSIZES.small,
   },
   property:{
     // fontSize: textSIZES.small,
@@ -409,7 +400,9 @@ const styles = StyleSheet.create({
     color: COLORS({opacity:1}).primary,
   },
   duration: {
-    backgroundColor: COLORS({opacity:0.5}).lightGrey,
+    backgroundColor: COLORS({opacity:0.5}).white,
+    borderWidth: 0.5,
+    borderColor: COLORS({opacity:1}).primary,
     padding: textSIZES.xSmall,
     borderRadius: textSIZES.xSmall,
     marginLeft: textSIZES.xSmall,
@@ -419,7 +412,9 @@ const styles = StyleSheet.create({
     height: 150,
   },
   removeButton: {
-    backgroundColor: COLORS({opacity:0.5}).lightGrey, 
+    backgroundColor: COLORS({opacity:0.5}).white, 
+    borderWidth: 0.5,
+    borderColor: COLORS({opacity:1}).primary,
     padding: textSIZES.xxSmall, 
     borderRadius: textSIZES.xxSmall,
     marginHorizontal: textSIZES.small,

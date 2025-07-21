@@ -129,58 +129,62 @@ export const Scheduler = ({ item = null, setFn }) => {
             />
           </View>
         </View>
-        <View style={[styles.row, styles.property, styles.divider]}>
+        <View style={[styles.row, styles.property, styles.divider, {justifyContent: "space-between"}]}>
           <Ionicons name={"repeat-outline"} size={textSIZES.large} style={[styles.icon, {margin: textSIZES.xxSmall}]}/>
-          <TouchableOpacity style={[styles.row, styles.box, repeat === 'ONCE' ? styles.selectedBox:styles.unselectedBox]}
+          <View style={styles.row}>
+            <TouchableOpacity style={[styles.row, styles.box, repeat === 'ONCE' ? styles.selectedBox:styles.unselectedBox]}
+                onPress={() => {
+                  setIsSaved(false);
+                  setRepeat("ONCE");
+                }}
+            >
+            <Text style={[styles.property, repeat === 'ONCE' ? styles.selectedText:styles.unselectedText]}>Once</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.row, styles.box, repeat === 'DAILY' ? styles.selectedBox:styles.unselectedBox]}
               onPress={() => {
                 setIsSaved(false);
-                setRepeat("ONCE");
+                setRepeat("DAILY");
               }}
-          >
-          <Text style={[styles.property, repeat === 'ONCE' ? styles.selectedText:styles.unselectedText]}>Once</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.row, styles.box, repeat === 'DAILY' ? styles.selectedBox:styles.unselectedBox]}
-            onPress={() => {
-              setIsSaved(false);
-              setRepeat("DAILY");
-            }}
-          >
-            <Text style={[styles.property, repeat === 'DAILY' ? styles.selectedText:styles.unselectedText]}>Daily</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.row, styles.box, repeat === 'WEEKLY' ? styles.selectedBox:styles.unselectedBox]}
-            onPress={() => {
-              setIsSaved(false);
-              setRepeat("WEEKLY");
-            }}
-          >
-              <Text style={[styles.property, repeat === 'WEEKLY' ? styles.selectedText:styles.unselectedText]}>Weekly</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.row, styles.box, repeat === 'MONTHLY' ? styles.selectedBox:styles.unselectedBox]}
-            onPress={() => {
-              setIsSaved(false);
-              setRepeat("MONTHLY");
-            }}
-          >
-            <Text style={[styles.property, repeat === 'MONTHLY' ? styles.selectedText:styles.unselectedText]}>Monthly</Text>
-          </TouchableOpacity>
+            >
+              <Text style={[styles.property, repeat === 'DAILY' ? styles.selectedText:styles.unselectedText]}>Daily</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.row, styles.box, repeat === 'WEEKLY' ? styles.selectedBox:styles.unselectedBox]}
+              onPress={() => {
+                setIsSaved(false);
+                setRepeat("WEEKLY");
+              }}
+            >
+                <Text style={[styles.property, repeat === 'WEEKLY' ? styles.selectedText:styles.unselectedText]}>Weekly</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.row, styles.box, repeat === 'MONTHLY' ? styles.selectedBox:styles.unselectedBox]}
+              onPress={() => {
+                setIsSaved(false);
+                setRepeat("MONTHLY");
+              }}
+            >
+              <Text style={[styles.property, repeat === 'MONTHLY' ? styles.selectedText:styles.unselectedText]}>Monthly</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={[styles.row, styles.property, styles.divider]}>
+        <View style={[styles.row, styles.property, styles.divider, {justifyContent: "space-between"}]}>
           <Ionicons name={"timer-outline"} size={textSIZES.large} style={[styles.icon]}/>
-          <View style={[styles.box, styles.unselectedBox, { marginHorizontal: textSIZES.xxSmall }]}>
-            <Text style={[styles.property, styles.unselectedText]}>{diffInDays}</Text>
+          <View style={styles.row}>
+            <View style={[styles.box, styles.unselectedBox, { marginHorizontal: textSIZES.xxSmall }]}>
+              <Text style={[styles.property, styles.unselectedText]}>{diffInDays}</Text>
+            </View>
+            <Text style={[styles.property, styles.unselectedText, { marginLeft: 0 }]}>Days</Text>
+            <View style={[styles.box, styles.unselectedBox, { marginHorizontal: textSIZES.xxSmall }]}>
+              <Text style={[styles.property, styles.unselectedText]}>{diffInHours}</Text>
+            </View>
+            <Text style={[styles.property, styles.unselectedText, { marginLeft: 0 }]}>Hours</Text>
+            <View style={[styles.box, styles.unselectedBox, { marginHorizontal: textSIZES.xxSmall }]}>
+              <Text style={[styles.property, styles.unselectedText]}>{diffInMinutes}</Text>
+            </View>
+            <Text style={[styles.property, styles.unselectedText,{ marginLeft: 0 }]}>Minutes</Text>
           </View>
-          <Text style={[styles.property, styles.unselectedText, { marginLeft: 0 }]}>Days</Text>
-          <View style={[styles.box, styles.unselectedBox, { marginHorizontal: textSIZES.xxSmall }]}>
-            <Text style={[styles.property, styles.unselectedText]}>{diffInHours}</Text>
-          </View>
-          <Text style={[styles.property, styles.unselectedText, { marginLeft: 0 }]}>Hours</Text>
-          <View style={[styles.box, styles.unselectedBox, { marginHorizontal: textSIZES.xxSmall }]}>
-            <Text style={[styles.property, styles.unselectedText]}>{diffInMinutes}</Text>
-          </View>
-          <Text style={[styles.property, styles.unselectedText,{ marginLeft: 0 }]}>Minutes</Text>
         </View>
         <View style={[styles.row, styles.property]}>
-          <TouchableOpacity style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightRed, borderColor: COLORS({opacity:1}).lightRed}]}
+          <TouchableOpacity style={[styles.button, {borderWidth: 0.5, borderColor: COLORS({opacity:1}).primary}]}
             onPress={() => {
               setIsSaved(false);
               setFn({
@@ -188,7 +192,7 @@ export const Scheduler = ({ item = null, setFn }) => {
               });
             }}
           >
-            <Text style={[styles.property, {color: COLORS({opacity:1}).lightWhite, fontWeight: "bold"}]}>Delete</Text>
+            <Text style={[styles.property, {fontWeight: "bold"}]}>Delete</Text>
           </TouchableOpacity>
           {item && item.startDate && item.endDate && item.repeat && (
             <TouchableOpacity style={[styles.button, {borderWidth: 0.5, borderColor: COLORS({opacity:1}).primary}]}
@@ -199,10 +203,10 @@ export const Scheduler = ({ item = null, setFn }) => {
                 });
               }}
             >
-              <Text style={[styles.property]}>Reset</Text>
+              <Text style={[styles.property, {fontWeight: "bold"}]}>Reset</Text>
             </TouchableOpacity>
           )}
-          <TouchableOpacity style={[styles.row, styles.button, {backgroundColor: COLORS({opacity:1}).lightGreen, borderColor: COLORS({opacity:1}).lightGreen}]}
+          <TouchableOpacity style={[styles.row, styles.button, {borderWidth: 0.5, borderColor: COLORS({opacity:1}).primary}]}
             onPress={() => {
               setFn({
                 addSchedule: true,
@@ -213,8 +217,8 @@ export const Scheduler = ({ item = null, setFn }) => {
               setIsSaved(true);
             }}
           >
-            <Text style={[styles.property, {color: COLORS({opacity:1}).lightWhite}]}>Save</Text>
-            {isSaved && <Ionicons name={"checkmark-outline"} size={textSIZES.large} style={[styles.icon, {color: COLORS({opacity:1}).lightWhite}]}/>}
+            <Text style={[styles.property, {fontWeight: "bold"}]}>Save</Text>
+            {isSaved && <Ionicons name={"checkmark-outline"} size={textSIZES.large} style={[styles.icon]}/>}
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -230,11 +234,12 @@ const styles = StyleSheet.create({
     borderRadius: textSIZES.small/2,
     borderWidth: 1,
     borderColor: COLORS({opacity:1}).primary,
+    maxHeight: 400,
   },
   infoContainer: {
     margin: textSIZES.small,
-    marginVertical: textSIZES.xxLarge*2,
-      ...SHADOWS.medium,
+    marginVertical: textSIZES.large,
+    ...SHADOWS.medium,
   },
   row: {
     flexDirection: "row",
@@ -248,7 +253,7 @@ const styles = StyleSheet.create({
   label:{
     width: 50,
     color: COLORS({opacity:1}).secondary,
-    margin: textSIZES.xSmall,
+    fontSize: textSIZES.small,
   },
   property:{
     // fontSize: textSIZES.small,
@@ -307,11 +312,11 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
-    padding: textSIZES.xSmall,
+    padding: textSIZES.xxSmall,
     marginHorizontal: textSIZES.tiny,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: textSIZES.small
+    borderRadius: textSIZES.xSmall
   },
   buttonText: {
     color: COLORS({opacity: 1}).white,

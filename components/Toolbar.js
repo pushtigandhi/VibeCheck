@@ -63,33 +63,6 @@ export const ToolBar = ({
     }
   });
 
-  const isCurrentPeriod = () => {
-    const today = new Date();
-    const selected = new Date(date);
-    
-    if (state === 'day') {
-      return selected.getDate() === today.getDate() && 
-             selected.getMonth() === today.getMonth() && 
-             selected.getFullYear() === today.getFullYear();
-    }
-    if (state === 'week') {
-      const selectedDayOfWeek = selected.getDay();
-      const selectedStartOfWeek = new Date(selected);
-      selectedStartOfWeek.setDate(selected.getDate() - selectedDayOfWeek);
-      
-      const todayDayOfWeek = today.getDay();
-      const todayStartOfWeek = new Date(today);
-      todayStartOfWeek.setDate(today.getDate() - todayDayOfWeek);
-      
-      return selectedStartOfWeek.getTime() === todayStartOfWeek.getTime();
-    }
-    if (state === 'month') {
-      return selected.getMonth() === today.getMonth() && 
-             selected.getFullYear() === today.getFullYear();
-    }
-    return false;
-  };
-
   return (
     <>
     <View style={[styles.toolBar, styles.row]}>
@@ -110,21 +83,18 @@ export const ToolBar = ({
         
         {["day", "month", "week"].includes(state) && (
           <View style={[styles.row, {
-            borderWidth: 1,
             borderColor: COLORS({opacity:1}).primary,
             borderRadius: textSIZES.xxSmall,
           }]}>
             <Text style={[styles.span, {
               fontWeight:'500', 
-              color: isCurrentPeriod() ? COLORS({opacity:1}).white : COLORS({opacity:1}).primary,
-              backgroundColor: isCurrentPeriod() ? COLORS({opacity:1}).primary : 'transparent',
+              color: COLORS({opacity:1}).primary,
               borderRadius: textSIZES.xxSmall, padding: textSIZES.tiny
             }]}>
                 {String(formattedDate)}
             </Text>
             <Text style={[styles.span, {
-              color: isCurrentPeriod() ? COLORS({opacity:1}).white : COLORS({opacity:1}).primary,
-              backgroundColor: isCurrentPeriod() ? COLORS({opacity:1}).primary : 'transparent',
+              color: COLORS({opacity:1}).primary,
               borderRadius: textSIZES.xxSmall, padding: textSIZES.tiny
             }]}> {String(date.getFullYear())}</Text>
           </View>
