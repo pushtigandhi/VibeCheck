@@ -68,6 +68,7 @@ export const ListView = ({items, navigation, doRefresh}) => (
       fontSize: textSIZES.medium,
       fontFamily: FONT.regular,
       color: COLORS({opacity:1}).primary,
+      
     },
     section: {
       fontSize: textSIZES.small,
@@ -116,11 +117,16 @@ export const ListView = ({items, navigation, doRefresh}) => (
       alignItems: "center",
     },
     cardsContainer: {
-      paddingHorizontal: textSIZES.xSmall,
-      paddingVertical: textSIZES.xSmall,
-      alignContent: "center",
-      borderBottomWidth: 1,
-      borderColor: COLORS({opacity:1}).grey,
+      marginTop: textSIZES.small,
+      marginHorizontal: textSIZES.small,
+      padding: textSIZES.small,
+      borderColor: COLORS({opacity:1}).lightGrey,
+      backgroundColor: COLORS({opacity:0.1}).white,
+      borderRadius: textSIZES.xSmall,
+      ...SHADOWS.small,
+      shadowColor: COLORS({opacity:1}).shadow,
+      borderWidth:0.50,
+      alignContent: "center"
     },
     imageBox: {
       margin: textSIZES.Small,

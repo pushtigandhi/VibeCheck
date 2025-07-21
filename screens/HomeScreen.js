@@ -42,7 +42,7 @@ export default function HomeScreen ({ navigation, route }) {
                     /> 
                 </TouchableWithoutFeedback>
             </View>
-            <CalendarView navigation={navigation} filter={filter} setFilter={setFilter} isHome={true} />
+            <CalendarView navigation={navigation} filter={filter} setFilter={setFilter} isHome={true} refresh={refreshing} />
             
             <HomeNavigation style={{flex: 0}} size={textSIZES.xxLarge} iconColor={COLORS({opacity:1}).primary}/> 
         </SafeAreaView>

@@ -30,7 +30,7 @@ export default function HomeNavigation({ size, iconColor }) {
       <TouchableOpacity onPress={() => navigation.navigate("Backlog")} style={styles.iconRoot}>
         <Ionicons name={"folder-open-outline"} size={size} color={iconColor} style={styles.icon}/>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate("New")} style={styles.iconRoot} >
+      <TouchableOpacity onPress={() => navigation.navigate("NewItem")} style={styles.iconRoot} >
         <Ionicons name={"add-outline"} size={size} color={iconColor} style={styles.icon}/>
       </TouchableOpacity>
     </View>

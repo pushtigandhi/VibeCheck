@@ -5,10 +5,73 @@ import { COLORS, FONT, textSIZES, viewSIZES, SHADOWS } from "../constants";
 import HomeNavigation from "./HomeNavigation";
 import { GETcontactsTEST } from "../API";
 import { Ionicons } from "@expo/vector-icons";
-import ContactCard from "./cards/ContactCard";
+
 
 const defaultImage = require("../assets/icon.png");
 
+export const ContactCard = ({contact, visible, onClose}) => {
+  return (
+    <Modal
+      animationType="fade"
+      transparent={true}
+      visible={visible}
+      onRequestClose={onClose}
+    >
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalContent}>
+          <View style={styles.modalHeader}>
+            <View style={styles.modalAvatarContainer}>
+              <Image 
+                source={defaultImage}
+                resizeMode='contain'
+                style={styles.modalAvatar}
+              />
+              <Text style={styles.modalName}>{contact?.name || "Name"}</Text>
+              {contact?.handle && (
+                <Text style={styles.modalHandle}>@{contact.handle}</Text>
+              )}
+            </View>
+            <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+              <Ionicons name="close" size={textSIZES.large} style={styles.closeIcon} />
+            </TouchableOpacity>
+          </View>
+          <ScrollView style={styles.modalScrollView}>
+            {contact?.company && (
+              <View style={styles.property}>
+                <Text style={styles.label}>Company</Text>
+                <Text style={styles.value}>{contact.company}</Text>
+              </View>
+            )}
+            {contact?.phoneNumber && (
+              <View style={styles.property}>
+                <Text style={styles.label}>Phone</Text>
+                <Text style={styles.value}>{contact.phoneNumber}</Text>
+              </View>
+            )}
+            {contact?.birthday && (
+              <View style={styles.property}>
+                <Text style={styles.label}>Birthday</Text>
+                <Text style={styles.value}>{contact.birthday}</Text>
+              </View>
+            )}
+            {contact?.address && (
+              <View style={styles.property}>
+                <Text style={styles.label}>Address</Text>
+                <Text style={styles.value}>{contact.address}</Text>
+              </View>
+            )}
+            {contact?.notes && (
+              <View style={styles.property}>
+                <Text style={styles.label}>Latest Update</Text>
+                <Text style={styles.value}>{contact.notes}</Text>
+              </View>
+            )}
+          </ScrollView>
+        </View>
+      </View>
+    </Modal>
+  )
+};
 
 export default function Contacts ({scrollEnabled = true}) {
   const [contacts, setContacts] = useState([]);
@@ -95,6 +158,7 @@ const styles = StyleSheet.create({
   },
   header:{
     padding: textSIZES.xSmall,
+    paddingBottom: 0,
     marginHorizontal: textSIZES.xSmall,
     borderWidth: 1,
     borderColor: COLORS({opacity:1}).primary,
@@ -173,22 +237,22 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS({opacity:0.1}).primary,
   },
   property:{
-    fontSize: textSIZES.xSmall,
-    color: COLORS({opacity:0.8}).primary,
+    fontSize: textSIZES.medium,
+    color: COLORS({opacity:1}).primary,
     margin: textSIZES.xxSmall,
     padding: textSIZES.xxSmall,
-    backgroundColor: COLORS({opacity:0.2}).tertiary,
+    backgroundColor: COLORS({opacity:0.2}).white,
     borderRadius: textSIZES.xSmall,
   },
   label:{
-    fontSize: textSIZES.xSmall,
+    fontSize: textSIZES.medium,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).secondary,
     padding: textSIZES.xxSmall,
     marginBottom: 2,
   },
   value: {
-    fontSize: textSIZES.xSmall,
+    fontSize: textSIZES.small,
     fontFamily: FONT.regular,
     padding: textSIZES.xxSmall,
   },
@@ -251,15 +315,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   closeButton: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
     width: 40,
     height: 40,
     borderRadius: 20,
+    color: COLORS({opacity:1}).white,
     backgroundColor: COLORS({opacity:0.1}).primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   closeIcon: {
-    color: COLORS({opacity:1}).primary,
+    color: COLORS({opacity:1}).white,
   },
   modalScrollView: {
     maxHeight: 400,
