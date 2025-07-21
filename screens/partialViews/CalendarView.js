@@ -6,13 +6,13 @@ import { DailyCalendar } from "./DailyCalendar";
 import { WeeklyCalendar } from "./WeeklyCalendar";
 import { MonthlyCalendar } from "./MonthlyCalendar";
 import { View, StyleSheet, Text, ScrollView, FlatList, TouchableOpacity, Dimensions, RefreshControl,
-    Modal } from 'react-native';
+    Modal, SafeAreaView } from 'react-native';
 
 import { ToolBar } from "../../components/Toolbar";
 import FilterModal from "../../components/FilterModal";
 import NewItem from "../NewItem";
 import { Sidebar } from "../../components/Sidebar";
-import ScheduleScreen from "../ScheduleScreen";
+import { Ionicons } from "@expo/vector-icons";
 
 export const CalendarView = ({navigation, filter={}, setFilter, isHome=false, refresh=false}) => {
     const calendarHeight = Dimensions.get('window').height - 300;
@@ -94,7 +94,15 @@ export const CalendarView = ({navigation, filter={}, setFilter, isHome=false, re
                     <FilterModal closeFilter={closeFilter} doSearch={closeFilter} filter={filter} setFilter={setFilter} />
                 </Modal>
                 <Modal visible={scheduleVisible} animationType="slide" onRequestClose={closeSchedule}>
-                    <ScheduleScreen navigation={navigation} onClose={setScheduleVisible} />
+                    <SafeAreaView style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                    <View style={styles.modalHeader}>
+                        <TouchableOpacity onPress={closeSchedule} style={styles.closeButton}>
+                        <Ionicons name="close" size={textSIZES.large} style={styles.closeIcon} />
+                        </TouchableOpacity>
+                    </View>
+                    </View>
+                    </SafeAreaView>
                 </Modal>
                 <View style={styles.iconRoot}>
                     <TouchableOpacity
