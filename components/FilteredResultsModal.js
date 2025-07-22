@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Text, View, StyleSheet, TouchableOpacity, SafeAreaView, FlatList} from "react-native";
 import { COLORS, FONT, textSIZES, viewSIZES, SHADOWS, ItemType } from "../constants";
 import React, { useEffect, useState } from "react";
-import { GETitemsTEST } from "../API";
+import { GETitems } from "../API";
 
 export default function FilteredResultsModal({filter, onUpdate, onClose, onItemSelected, setFn}) {
     const [items, setItems] = useState([]);
@@ -20,7 +20,7 @@ export default function FilteredResultsModal({filter, onUpdate, onClose, onItemS
         }
         // console.log(copyFilter);
         try {
-          let items_ = await GETitemsTEST(itemType, copyFilter);
+          let items_ = await GETitems(itemType, copyFilter);
           return items_;
         } catch (error) {
           console.log("error fetching items");

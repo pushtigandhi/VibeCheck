@@ -13,6 +13,11 @@ const ViewType = {
   Default: 'Default'
 };
 
+const ListType = {
+  Items: 'Items',
+  Contacts: 'Contacts'
+};
+
 const defaultItem = {
     "category": "Backlog",
     "section": "All",
@@ -49,8 +54,8 @@ const defaultPage = {
     "itemType" : ItemType.Page,
 }
 const defaultRecipe = {
-    "category": "Cooking",
-    "section": "Recipes",
+    "category": "Backlog",
+    "section": "All",
     "icon": '\u{1F37D}',
     "ingredients": [],
     "instructions": [],
@@ -58,4 +63,4 @@ const defaultRecipe = {
     "itemType" : ItemType.Recipe,
 }
  
-export { ItemType, ViewType, defaultItem, defaultTask, defaultEvent, defaultPage, defaultRecipe };
+export { ItemType, ViewType, ListType, defaultItem, defaultTask, defaultEvent, defaultPage, defaultRecipe };

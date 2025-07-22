@@ -82,11 +82,21 @@ export const ToolBar = ({
         )}
         
         {["day", "month", "week"].includes(state) && (
-          <View style={[styles.row]}>
-            <Text style={[styles.span, {fontWeight:'500'}]}>
+          <View style={[styles.row, {
+            borderColor: COLORS({opacity:1}).primary,
+            borderRadius: textSIZES.xxSmall,
+          }]}>
+            <Text style={[styles.span, {
+              fontWeight:'500', 
+              color: COLORS({opacity:1}).primary,
+              borderRadius: textSIZES.xxSmall, padding: textSIZES.tiny
+            }]}>
                 {String(formattedDate)}
             </Text>
-            <Text style={styles.span}> {String(date.getFullYear())}</Text>
+            <Text style={[styles.span, {
+              color: COLORS({opacity:1}).primary,
+              borderRadius: textSIZES.xxSmall, padding: textSIZES.tiny
+            }]}> {String(date.getFullYear())}</Text>
           </View>
         )}
         <TouchableOpacity onPress={toggleDatePicker}>

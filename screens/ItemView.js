@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image, TouchableWithoutFeedback, Modal,
-        StyleSheet, SafeAreaView, KeyboardAvoidingView } from 'react-native';
+        StyleSheet, SafeAreaView, KeyboardAvoidingView, FlatList } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { COLORS, SHADOWS, FONT, textSIZES, ItemType, viewSIZES } from "../../constants";
+import { COLORS, SHADOWS, FONT, textSIZES, ItemType, viewSIZES } from "../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
-import CollaboratorCard from "./CollaboratorCard";
-import TaskCard from "./TaskCard";
-import RecipeCard from "./RecipeCard";
-import { PATCHitemTEST } from "../../API";
-import CreateNewItem from "../CreateNewItem";
-
+import { ExpandableView } from "../utils";
+import { GETitemsByIDs } from "../API";
+import CreateNewItem from "./CreateNewItem";
+import ItemList from "../components/ItemList";
 import React from "react";
 
-const defaultImage = require("../../assets/icon.png");
+const defaultImage = require("../assets/icon.png");
+
 
 const Properties = ({ item = null, itemType }) => {
     const [hour, setHour] = useState(0);
@@ -155,7 +155,7 @@ const Properties = ({ item = null, itemType }) => {
 };
 
 export default function ItemCard({ navigation, route }) {
-
+  const [item, setItem] = useState(route.params?.item);
   const [itemType, setItemType] = useState('');
 
   const [title, setTitle] = useState(null);
@@ -165,15 +165,13 @@ export default function ItemCard({ navigation, route }) {
   const [notes, setNotes] = useState(null);
   const [location, setLocation] = useState('');
   const [isScheduler, setIsScheduler] = useState(false);
-
+  const [lists, setLists] = useState(null);
+  const [tags, setTags] = useState(null);
   const [isExpanded, setIsExpanded] = useState(true);
-
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [isLocationExpanded, setIsLocationExpanded] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [showCreateNew, setShowCreateNew] = useState(false);
-  function closeCreateNew() {
-    setShowCreateNew(false);
-}
 
   const [updatedItem, setUpdatedItem] = useState({});
   function updateNewItem(params) {
@@ -188,28 +186,21 @@ export default function ItemCard({ navigation, route }) {
     }
   }
 
-  function onGoBack() {
-    if(Object.keys(updatedItem).length > 0) {
-        PATCHitemTEST(itemType, {
-            ...route.params?.item,
-            ...updatedItem
-        }, route.params?.item._id)
-        .then((item_) => {
-            //alert("Success!");
-        }).catch((error) => {
-            console.log(error);
-        });
+  const [showCreateNew, setShowCreateNew] = useState(false);
+  function closeCreateNew(op = null) {
+    setShowCreateNew(false);
+    
+    if (op === 'delete') {
+      onGoBack();
     }
+  }
+
+  function onGoBack() {
+    route.params?.doRefresh();
     navigation.goBack();
   }
 
-  const onRefresh = React.useCallback(() => {
-    doRefresh();
-  }, [route.params?.item]);
-
   useEffect(() => {
-    if (route.params?.item) {
-      const { item } = route.params;
 
       if(item.itemType) {
         setItemType(item.itemType);
@@ -224,11 +215,25 @@ export default function ItemCard({ navigation, route }) {
       } if (item.notes) {
         setNotes(item.notes);
       } if (item.location) {
-        setLocation(item.location);
+        setLocation(item.location); 
       } if (item.startDate) {
         setIsScheduler(true);
       }
-    }
+      if (item.lists) {
+        (async () => {  // Create async IIFE
+          const lists = [];
+          for (const list of item.lists) {
+            const items = await GETitemsByIDs(itemType, list.ids);
+            //console.log(items);
+            lists.push({name: list.name, ids: items, type: list.type});
+          }
+          item.lists = lists;
+          setLists(lists);
+        })();
+      }
+      if (item.tags) {
+        setTags(item.tags.join(" "));
+      }
   }, [route.params?.item]); // Update category and section when item changes
 
   return (
@@ -238,7 +243,7 @@ export default function ItemCard({ navigation, route }) {
         <ScrollView scrollEnabled={true}>
           <View style={styles.imageBox}>
             <TouchableOpacity onPress={() => (onGoBack())} style={[styles.button]} > 
-                <Ionicons name={"arrow-back-outline"} size={textSIZES.large} style={styles.icon}/> 
+                <Ionicons name={"chevron-back-outline"} size={textSIZES.xLarge} style={styles.icon}/> 
             </TouchableOpacity>
             {favicon && (
                 <>
@@ -269,92 +274,92 @@ export default function ItemCard({ navigation, route }) {
                     setShowCreateNew(true);
                 }}  
             >
-                <Ionicons name={"pencil-outline"} size={textSIZES.large} style={styles.icon}/> 
+                <Ionicons name={"create-outline"} size={textSIZES.xLarge} style={styles.icon}/> 
             </TouchableOpacity>
           </View>
           
-          <View style={[styles.row, styles.title]}>
-            <Text style={{fontSize: textSIZES.xLarge, marginRight: textSIZES.xxSmall}}>{icon}</Text>
-            <Text style={{width: "100%", fontSize: textSIZES.large}}>
-              {title}
-            </Text>
-          </View>
-
-
-          {description && (
-            <View style={[styles.row, styles.description]}>
-              <Ionicons name={"menu-outline"} size={textSIZES.xLarge} style={[styles.icon, {marginRight: textSIZES.xxSmall}]}/>
-              <Text style={{width: "100%", fontSize: textSIZES.small}}>
-                {description}
+          <View style={[styles.row, styles.title, { justifyContent: "space-between" }]}>
+            <View style={styles.row}>
+              <Text style={{fontSize: textSIZES.large, marginRight: textSIZES.xxSmall}}>{icon}</Text>
+              <Text style={{fontSize: textSIZES.medium}}>
+                {title}
               </Text>
             </View>
-          )}
-
-          {location && (
-            <View style={[styles.row, styles.description]}>
-                <Ionicons name={"location-outline"} size={textSIZES.xLarge} style={[styles.icon, {marginRight: textSIZES.xxSmall}]}/>
-                <Text style={styles.location}>{location}</Text>
+            <View style={styles.row}>
+              <TouchableOpacity
+                onPress={() => {
+                    setIsExpanded(!isExpanded);
+                  }}
+                style={styles.propContainer}
+              >
+                <Ionicons name={isExpanded ? "information-circle" : "information-circle-outline"} size={textSIZES.xLarge} style={styles.icon}/> 
+              </TouchableOpacity>
             </View>
-          )}
-
-          <View style={styles.divider}/>
-
-          <TouchableOpacity
-              onPress={() => {
-                  setIsExpanded(!isExpanded);
-                }}
-              style={styles.propContainer}
-          >
-            <View style={[styles.row, {justifyContent: "space-between"}]}>
-              <View style={styles.row}>
-                <Ionicons name={"information-circle-outline"} size={textSIZES.xLarge} style={styles.icon}/> 
-                <Text style={styles.label} numberOfLines={1}>Properties</Text>
-              </View>
-              <View>
-                {isExpanded ? (
-                    <Ionicons name="chevron-up-outline" size={textSIZES.xLarge} style={styles.icon}/>
-                ) : (
-                    <Ionicons name="chevron-down-outline" size={textSIZES.xLarge} style={styles.icon}/>
-                )}
-              </View>
-            </View>
-          </TouchableOpacity>
+          </View>
 
           {isExpanded && (
             <Properties itemType={itemType} item={route.params?.item} />
           )}
+
+          {description && (
+            <>
+              <TouchableOpacity 
+                onPress={() => {
+                  setIsDescriptionExpanded(!isDescriptionExpanded);
+                }}
+                style={styles.cardContainer} >
+                <ExpandableView expanded={isDescriptionExpanded} view=
+                  {(expandedCard = () => {
+                    return (
+                      <>
+                        <Text style={{ color: COLORS({opacity:0.7}).primary, marginBottom: textSIZES.xxSmall}}>Description</Text>
+                        <Text style={{flex:1, fontSize: textSIZES.small}}>
+                          {description}
+                        </Text>
+                      </>
+                    )
+                  })}
+                  vh={300} vh0={viewSIZES.xSmall} />
+              </TouchableOpacity>
+            </>
+          )}
+
+          {location && (
+            <>
+              <TouchableOpacity onPress={() => setIsLocationExpanded(!isLocationExpanded)} style={styles.cardContainer}>
+                <ExpandableView expanded={isLocationExpanded} view=
+                  {(expandedCard = () => {
+                    return (
+                      <>
+                        <Text style={{ color: COLORS({opacity:0.7}).primary, marginBottom: textSIZES.xxSmall}}>Location</Text>
+                        <Text style={{flex:1, fontSize: textSIZES.small}}>
+                          {location}
+                        </Text>
+                      </>
+                    )
+                  })}
+                  vh={300} vh0={viewSIZES.xSmall} />
+              </TouchableOpacity>
+            </>
+          )}
           
           <View style={styles.divider} />
-          
-          {itemType === ItemType.Event && (
+    
+          {lists && lists.length > 0 && (
             <>
-              <CollaboratorCard item={route.params?.item} setFn={updateNewItem} isEditable={false} />
-              <View style={styles.divider}/>
+              {lists.map((list, index) => (
+                <View key={index} style={styles.listContainer}>
+                  <ItemList item={list} setFn={updateNewItem} isEditable={false} />
+                </View>
+              ))}
             </>
           )}
 
-          {(itemType === ItemType.Task || itemType === ItemType.Event) && (
-            <>
-              <TaskCard item={route.params?.item} setFn={updateNewItem} isEditable={false} />
-              <View style={styles.divider}/>
-            </>
-          )}
-
-          {itemType === ItemType.Recipe && (
-            <>
-              <RecipeCard item={route.params?.item} setFn={updateNewItem} isEditable={false} />
-              <View style={styles.divider}/>
-            </>
-          )}
-
-          {notes && (
-            <>
-              <View style={[styles.row, {marginTop: textSIZES.xSmall, marginLeft: textSIZES.xLarge}]}>
-                  <Ionicons name={"document-outline"} size={textSIZES.xLarge} style={styles.icon}/>
-                  <Text style={styles.label}>Notes</Text>
-              </View>
-              <Text style={styles.notes}>{notes}</Text>
-            </>
+          {notes && notes.length > 0 && (
+            <View style={styles.notes}>
+              <Text style={{ color: COLORS({opacity:0.7}).primary, marginBottom: textSIZES.xxSmall}}>Notes</Text>
+              <Text>{notes}</Text>
+            </View>
           )}
 
         </ScrollView>
@@ -376,19 +381,17 @@ const styles = StyleSheet.create({
       alignItems: "center",
   },
   title:{
-      padding: textSIZES.small,
+      padding: textSIZES.xxSmall,
       margin: textSIZES.small,
-      borderWidth: 1,
+      borderBottomWidth: 1,
       borderColor: COLORS({opacity:0.5}).primary,
       borderRadius: textSIZES.small,
   },
   description:{
-      padding: textSIZES.small,
-      marginHorizontal: textSIZES.small,
-      marginBottom: textSIZES.small,
-      borderWidth: 1,
-      borderColor: COLORS({opacity:0.5}).primary,
-      borderRadius: textSIZES.small,
+      // marginHorizontal: textSIZES.small,
+      // marginBottom: textSIZES.small,
+      // borderColor: COLORS({opacity:0.5}).primary,
+      // borderRadius: textSIZES.small,
   },
   notes:{
     fontSize: textSIZES.small,
@@ -404,11 +407,11 @@ const styles = StyleSheet.create({
     //color: COLORS({opacity:0.9}).primary
   },
   propContainer: {
-    flex: 1,
-    paddingVertical: textSIZES.xxSmall,
-    marginHorizontal: textSIZES.xLarge,
+    marginHorizontal: textSIZES.xxSmall,
+    marginVertical: textSIZES.tiny,
   },
   label: {
+    paddingVertical: textSIZES.xSmall,
     paddingVertical: textSIZES.xSmall,
     fontSize: textSIZES.small,
     fontFamily: FONT.regular,
@@ -447,9 +450,11 @@ const styles = StyleSheet.create({
     marginHorizontal: textSIZES.xSmall,
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 1, 
-    borderColor: COLORS({opacity:1}).primary,
-    borderRadius: textSIZES.small
+    //borderWidth: 1, 
+    //borderColor: COLORS({opacity:1}).primary,
+    borderRadius: textSIZES.xSmall,
+    ...SHADOWS.medium,
+    shadowColor: COLORS({opacity:1}).shadow,
   },
   addButtonIcon: {
     height: textSIZES.xxLarge,
@@ -488,7 +493,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS({opacity:1}).secondary,
   },
   selectedText: {
-    color: COLORS({opacity:1}).secondary,
+    color: COLORS({opacity:1}).white,
   },
   duration: {
     backgroundColor: COLORS({opacity:0.5}).lightGrey,
@@ -527,5 +532,33 @@ const styles = StyleSheet.create({
     marginRight: textSIZES.xSmall,
     paddingHorizontal: textSIZES.xSmall,
     paddingVertical: textSIZES.xxSmall,
+  },
+  cardContainer: {
+    marginHorizontal: textSIZES.small,
+    marginBottom: textSIZES.small,
+    backgroundColor: COLORS({opacity:1}).white,
+    borderRadius: textSIZES.xSmall,
+    borderWidth: 1,
+    borderColor: COLORS({opacity:1}).secondary,
+    ...SHADOWS.small,
+    shadowColor: COLORS({opacity:1}).secondary,
+    padding: textSIZES.small,
+    paddingBottom: 0,
+  },
+  listContainer: {
+   
+  },
+  schedulerContainer: {
+    margin: textSIZES.small,
+    marginVertical: textSIZES.xxLarge*2,
+    ...SHADOWS.medium,
+  },
+  schedulerProperty: {
+    color: COLORS({opacity:0.8}).secondary,
+    marginHorizontal: textSIZES.xSmall,
+    marginVertical: textSIZES.xxSmall,
+    paddingBottom: textSIZES.xxSmall,
+    borderBottomWidth: 0.5,
+    borderColor: COLORS({opacity:1}).tertiary,
   },
 });

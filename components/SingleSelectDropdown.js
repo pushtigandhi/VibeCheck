@@ -4,7 +4,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { COLORS, textSIZES, viewSIZES } from '../constants';
 import { Ionicons } from '@expo/vector-icons';
 
-const SingleSelectDropdown = ({ options, placeholder = "Select", icon, setFn, isDisabled=false }) => {
+const SingleSelectDropdown = ({ options, placeholder = "Select", icon, setFn, isDisabled=false, hideSearch=false }) => {
     const [value, setValue] = useState(null);
 
     const renderItem = (item) => {
@@ -25,7 +25,7 @@ const SingleSelectDropdown = ({ options, placeholder = "Select", icon, setFn, is
             iconStyle={styles.iconStyle}
             containerStyle={styles.containerStyle}
             data={options}
-            search
+            search={!hideSearch}
             maxHeight={300}
             labelField="label"
             valueField="value"
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     dropdown: {
         margin: textSIZES.xSmall,
         height: 40,
-        backgroundColor: COLORS({ opacity: 1 }).lightWhite,
+        backgroundColor: COLORS({ opacity: 1 }).white,
         borderRadius: textSIZES.xSmall,
         padding: textSIZES.xSmall,
         shadowColor: '#000',
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     },
     icon: {
         marginRight: 5,
-        color: COLORS({ opacity: 1 }).navy,
+        color: COLORS({ opacity: 1 }).primary,
     },
     item: {
         padding: 17,
@@ -74,15 +74,15 @@ const styles = StyleSheet.create({
     textItem: {
         flex: 1,
         fontSize: textSIZES.small,
-        color: COLORS({ opacity: 1 }).navy,
+        color: COLORS({ opacity: 1 }).primary,
     },
     placeholderStyle: {
         fontSize: textSIZES.small,
-        color: COLORS({ opacity: 1 }).navy,
+        color: COLORS({ opacity: 1 }).primary,
     },
     selectedTextStyle: {
         fontSize: textSIZES.small,
-        color: COLORS({ opacity: 1 }).navy,
+        color: COLORS({ opacity: 1 }).primary,
     },
     iconStyle: {
         width: 20,

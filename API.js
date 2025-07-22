@@ -1,13 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 import { ItemType } from './constants'
+import { defaultDirectory } from './constants/default';
 import { useState } from 'react';
 
-export let directoryList = [];
+export let PROFILE_ID;
+
 export const BASE_URL = 'http://localhost:3000/api/v0';
 
 const USERS_BASE_URL = `${BASE_URL}/users`;
-const PROFILE_BASE_URL = `${PROFILE_BASE_URL}`;
+const PROFILE_BASE_URL = `${BASE_URL}/profile`;
 const AUTH_BASE_URL = `${BASE_URL}/auth`;
 const CONTACTS_BASE_URL = `${BASE_URL}/contacts`;
 const DIRECTORY_BASE_URL = `${BASE_URL}/directory`;
@@ -39,7 +41,7 @@ export async function fetchWithAuth(url, options = {}) {
     } catch (err) {
         console.log(err);
     }
-    
+
     // Fetch
     let response;
     try {
@@ -89,25 +91,28 @@ export async function doLogin(email, password) {
      */
     // POST to login endpoint
     try{
-    const response = await fetch(`${AUTH_BASE_URL}/login`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            email,
-            password,
-        }),
-    });
+        const response = await fetch(`${AUTH_BASE_URL}/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email,
+                password,
+            }),
+        });
 
-    if (response.status === 200) {
-        // success - save JWT
-        await saveAuth(response);
-        return { status: response.status, message: "Login successful" };
-    }
-    
-    const body = await response.json();
-    return { status: response.status, message: body.message };
+        if (response.status === 200) {
+            // success - save JWT
+            await saveAuth(response);
+            PROFILE_ID = await GETme().then((profile) => {
+                return profile["_id"];
+            });
+            return { status: response.status, message: "Login successful" };
+        }
+        
+        const body = await response.json();
+        return { status: response.status, message: body.message };
     }
     catch(error){
         console.log(error);
@@ -134,6 +139,11 @@ export async function doSignup(email, password, handle, firstName, lastName) {
             firstName: firstName,
             lastName: lastName
         }),
+    });
+
+    //get profile in response and save id to storage
+    PROFILE_ID = await response.json().then((profile) => {
+        return profile["_id"];
     });
 
     if (response.status === 201) {
@@ -195,16 +205,24 @@ export async function GETuserByHandle() {
 //#endregion
 
 //#region PROFILE
+
 export async function GETme() {
-    const response = await fetchWithAuth(PROFILE_BASE_URL, {
+    const response = await fetchWithAuth(`${PROFILE_BASE_URL}/`, {
         method: 'GET',
     });
 
-    if (response.status === 200) {
-        const body = await response.json();
-        return body.profile;
-    } else {
-       return null;
+    try {
+        if (response.status == 200) {
+            // good, return 
+            const body = await response.json();
+            console.log(body);
+            return body.profile;
+        } else {
+            return null;
+        }
+    } catch (err) {
+        alert(err.message);
+        return null;
     }
 }
 
@@ -244,7 +262,6 @@ export async function GETcontacts() {
         method: 'GET',
     });
     try {
-        console.log(response.status);
         if (response.status == 201) {
             // good, return 
             const body = await response.json();
@@ -322,20 +339,34 @@ export async function DELETEcontact(contactID) {
 //#endregion
 
 //#region DIRECTORY
-export async function GETdirectory(profileID) {
-    const response = await fetchWithAuth(`${DIRECTORY_BASE_URL}/${profileID}`, {
+
+export async function saveDirectoryToStorage(directory, userID) {
+    try {
+        await AsyncStorage.setItem(`directory_${userID}`, JSON.stringify(directory));
+    } catch (error) {
+        console.log('Error saving directory to storage:', error);
+    }
+}
+
+export async function getDirectoryFromStorage(userID) {
+    try {
+        const directory = await AsyncStorage.getItem(`directory_${userID}`);
+        directoryList = JSON.parse(directory);
+        return JSON.parse(directory);
+    } catch (error) {
+        console.log('Error retrieving directory from async storage:', error);
+        return [];
+    }
+}
+
+export async function GETdirectory() {
+    const response = await fetchWithAuth(`${DIRECTORY_BASE_URL}/${PROFILE_ID}`, {
         method: 'GET',
     });
     try {
         if (response.status == 201) {
             // good, return 
-            const body = await response.json();
-            let directory = body.directory;
-            return directory.map((category) => {
-                return {
-                    ...category,
-                }
-            });
+            return await response.json();
         } else {
             return []
         }
@@ -345,8 +376,8 @@ export async function GETdirectory(profileID) {
     }
 }
 
-export async function POSTaddCategory(profileID, category) {
-    const response = await fetchWithAuthJSON(`${DIRECTORY_BASE_URL}/${profileID}`, {
+export async function POSTcategory(category) {
+    const response = await fetchWithAuthJSON(`${DIRECTORY_BASE_URL}/${PROFILE_ID}`, {
         method: 'POST',
         body: JSON.stringify(category),
     });
@@ -354,13 +385,7 @@ export async function POSTaddCategory(profileID, category) {
     try {
         if (response.status == 201) {
             // good, return 
-            const body = await response.json();
-            let directory = body.directory;
-            return directory.map((category) => {
-                return {
-                    ...category,
-                }
-            });
+            return await response.json();
         } else {
             return []
         }
@@ -370,25 +395,17 @@ export async function POSTaddCategory(profileID, category) {
     }
 }
 
-export async function PATCHcategory(newCategory, categoryID) {
-    delete newCategory._id;
-    delete newCategory.id;
-
-    const response = await fetchWithAuthJSON(`${DIRECTORY_BASE_URL}/${categoryID}`, {
+export async function PATCHcategory(category) {
+    const response = await fetchWithAuthJSON(`${DIRECTORY_BASE_URL}/${PROFILE_ID}`, {
         method: "PATCH",
-        body: JSON.stringify(newCategory),
+        body: JSON.stringify(category),
     });
 
     try {
         if (response.status == 201) {
             // good, return 
             const body = await response.json();
-            let directory = body.directory;
-            return directory.map((category) => {
-                return {
-                    ...category,
-                }
-            });
+            return body.directory;
         } else {
             return []
         }
@@ -399,20 +416,18 @@ export async function PATCHcategory(newCategory, categoryID) {
 }
 
 export async function DELETEcategory(categoryID) {
-    const response = await fetchWithAuth(`${DIRECTORY_BASE_URL}/${categoryID}`, {
+    console.log(PROFILE_ID);
+    console.log(categoryID);
+    const response = await fetchWithAuthJSON(`${DIRECTORY_BASE_URL}/${PROFILE_ID}`, {
         method: "DELETE",
+        body: JSON.stringify({ deletedId: categoryID }),
     });
 
     try {
+        console.log(response.status);
         if (response.status == 201) {
             // good, return 
-            const body = await response.json();
-            let directory = body.directory;
-            return directory.map((category) => {
-                return {
-                    ...category,
-                }
-            });
+            return await response.json();
         } else {
             return []
         }
@@ -499,6 +514,7 @@ export async function DELETEtag(tagID) {
 const getURL= (itemType) => {
     let ext;
     //console.log("getURL: " + itemType);
+    //console.log("getURL: " + itemType);
     switch(itemType) {
         case ItemType.Task:
             ext = TASKS_EXT;
@@ -522,10 +538,13 @@ const getURL= (itemType) => {
 export async function GETitems(itemType, filter={}) {
     const ext = getURL(itemType);
 
+    //console.log(filter);
+
     const response = await fetchWithAuth(`${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "&" : "") +  new URLSearchParams(filter), {
         method: 'GET',
     });
     try {
+        //console.log(response.status);
         if (response.status == 201) {
             // good, return 
             const body = await response.json();
@@ -544,22 +563,70 @@ export async function GETitems(itemType, filter={}) {
     }
 }
 
-export async function POSTcreateItem(itemType, item) {
+export async function GETitemsByID(itemType, itemID) {
     const ext = getURL(itemType);
 
-    console.log("item title: " + item.title);
+    const response = await fetchWithAuth(`${ITEMS_BASE_URL}/${itemID}${ext}`, {
+        method: 'GET',
+    });
+
+    try {
+        if (response.status == 200) {
+            // good, return 
+            const body = await response.json();
+            return body.item;
+        } else {
+            return null;
+        }
+    } catch (err) {
+        alert(err.message);
+        return null;
+    }
+}
+
+export async function GETitemsByIDs(itemType, itemIDs) {
+    const ext = getURL(itemType);
+    const idsQuery = itemIDs.join(',');
+
+    const response = await fetchWithAuth(`${ITEMS_BASE_URL}/batch/?ids=${idsQuery}`, {
+        method: 'GET',
+    });
+
+    try {
+        if (response.status == 200) {
+            // good, return 
+            const body = await response.json();
+            return body.items;
+        } else {
+            return [];
+        }
+    } catch (err) {
+        alert(err.message);
+        return [];
+    }
+}
+
+
+
+export async function POSTitem(itemType, item) {
+    const ext = getURL(itemType);
+
     const response = await fetchWithAuthJSON(`${ITEMS_BASE_URL}/${ext}`, {
         method: 'POST',
         body: JSON.stringify(item),
     });
 
-    if (response.status === 201) {
-        // good
-        const body = await response.json();
+    try {
+        if (response.status == 201) {
+            // good, return 
+            const body = await response.json();
         return body.item;
-    } else {
-        //console.log("Bad response: " + response.status)
-        return null;
+        } else {
+            return []
+        }
+    } catch (err) {
+        alert(err.message);
+        return []
     }
 }
 
@@ -568,17 +635,25 @@ export async function PATCHitem(itemType, newItem, itemID) {
 
     delete newItem._id; // remove _id from newPost
     delete newItem.id;
+   // console.log(newItem);
 
     const response = await fetchWithAuthJSON(`${ITEMS_BASE_URL}/${itemID}${ext}`, {
         method: "PATCH",
         body: JSON.stringify(newItem),
     });
 
-    if (response.status === 200) {
-        const editResponse = await response.json();
-        return editResponse.item;
-    } else {
-        throw new Error("Error updating item");
+    try {
+        //console.log(response.status);
+        if (response.status == 200) {
+            // good, return 
+            const editResponse = await response.json();
+            return editResponse.item;
+        } else {
+            throw new Error("Error updating item");
+        }
+    } catch (err) {
+        alert(err.message);
+        return []
     }
 }
 
@@ -600,78 +675,8 @@ export async function DELETEitem(itemType, itemID) {
 
 //#region  TODELETE - TESTS
 
-//#region AUTHORIZATION & AUTHENTICATION
 
-export async function fetchWithAuthTEST(url, options = {}) {
-    // Get JWT from storage
-    try {
-        const JWT = await AsyncStorage.getItem('JWT');
-        // Set JWT in headers
-        if (JWT) {
-            options.headers = {
-                ...options.headers,
-                "authorization": JWT,
-            };
-        }
-    } catch (err) {
-        console.log(err);
-    }
-    
-    response = await fetch(url, options);
-    return response;
-}
 
-export async function doLoginTEST(email, password) {
-    
-    const response = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            email,
-            password,
-        })
-    }
-
-    // console.log(`${AUTH_BASE_URL}/login` + " " + response.body);
-
-    //await saveAuth(response);
-    return { status: 200, message: "Login successful" };
-
-}
-
-export async function doSignupTEST(email, password, handle, firstName, lastName) {
-    /**
-     * Make request to signup endpoint
-     * return boolean indicating success
-     */
-    // POST to signup endpoint
-    const response = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            email,
-            password: password,
-            handle: handle,
-            firstName: firstName,
-            lastName: lastName
-        }),
-    };
-
-    console.log(AUTH_BASE_URL + " " + response);
-
-    return 201;
-}
-
-//#endregion
-
-//#region ONSTART
-export async function doOnStart() {
-    directoryList = GETdirectoryTEST();
-}
 //#endregion
 
 //#region USERS
@@ -681,6 +686,7 @@ export async function GETuserByHandleTEST() {
         method: 'GET',
     });
 
+    // console.log(response);
     // console.log(response);
 
     const body = {};
@@ -737,73 +743,13 @@ export async function GETprofileImageTEST() {
     return profile.profile;
 }
 
-export async function GETmeTEST() {
-    // const response = await fetchWithAuthTEST(PROFILE_BASE_URL, {
-    //     method: 'GET',
-    // });
-
-    // // console.log(response);
-
-    const profile = {
-        "profile": {
-            "emailInfo": {
-                "isVerified": true,
-                "email": "pushti@example.com"
-            },
-            "_id": "65dffad64102392ebb57839b",
-            "user": "65dffad64102392ebb578397",
-            "items": [
-                "65dffbe64102392ebb5783b0",
-                "65dffccb4102392ebb5783b9",
-                "65e134a91635ad960dabdc1b"
-            ],
-            "contactCard": "65dffad64102392ebb578399",
-            "contacts": [],
-            "directory": [
-                {
-                    "color": "rgba(193, 192, 200, 1)",
-                    "_id": "65dffad64102392ebb57839c",
-                    "title": "Backlog",
-                    "sections": [
-                        "All"
-                    ]
-                },
-                {
-                    "color": "rgba(193, 192, 200, 1)",
-                    "title": "Cooking",
-                    "sections": [
-                        "All",
-                        "Recipes",
-                        "Tips"
-                    ],
-                    "_id": "65e172b61635ad960dabdc32"
-                }
-            ],
-            "createdAt": "2024-02-29T03:32:38.682Z",
-            "updatedAt": "2024-03-01T06:16:22.508Z",
-            "__v": 1
-        }
-    };
-    return profile.profile;
-}
-
-export async function GETprofileDetailsTEST(profileID) {
-    const response = await fetchWithAuth(`${PROFILE_BASE_URL}/${profileID}`, {
-        method: 'GET',
-    });
-
-    // // console.log(response);
-
-    const profile = {"profile": {}};
-    return profile.profile;
-}
-
 export async function PATCHupdateProfileTEST(data) {
     const response = await fetchWithAuthJSON(PROFILE_BASE_URL, {
         method: "PATCH",
         body: JSON.stringify(data),
     });
 
+    // console.log(response);
     // console.log(response);
 
     const profile = {"profile": {}};
@@ -817,6 +763,7 @@ export async function GETcontactsTEST() {
 
     const response =CONTACTS_BASE_URL;
 
+    // console.log(response);
     // console.log(response);
 
     const body = {"contacts": [{
@@ -840,6 +787,7 @@ export async function GETcontactByTEST(contactID) {
     });
 
     // console.log(response);
+    // console.log(response);
 
     const body = {"contacts": {}};
     return body.contacts;
@@ -851,6 +799,7 @@ export async function POSTaddContactTEST(contact) {
         body: JSON.stringify(contact),
     });
 
+    // console.log(response);
     // console.log(response);
 
     const body = {"contacts": {}};
@@ -867,6 +816,7 @@ export async function PATCHcontactTEST(newContact, contactID) {
     });
 
     // console.log(response);
+    // console.log(response);
 
     const editResponse = {"contacts": {}};
     return editResponse.contacts;
@@ -878,15 +828,19 @@ export async function DELETEcontactTEST(contactID) {
     });
 
     // console.log(response);
+    // console.log(response);
 }
 //#endregion
 
 //#region DIRECTORY
+
+
 export async function GETdirectoryTEST() {
     // const response = await fetchWithAuthTEST(`${DIRECTORY_BASE_URL}/${profileID}`, {
     //     method: 'GET',
     // });
 
+    // // console.log(response);
     // // console.log(response);
 
     const body = {"directory": [
@@ -902,8 +856,8 @@ export async function GETdirectoryTEST() {
             "sections": [
                 {"title": "All", "view": "Default", "_id": "235235"},
                 {"title": "Recipes", "view": "Default", "_id": "74576"},
-                {"title": "Tips", "view": "Checklist", "_id": "4674764674"},
-                {"title": "Meal Plan", "view": "Schedule", "_id": "3578365"}
+                {"title": "Meal Plan", "view": "Schedule", "_id": "3578365"},
+                {"title": "Tips", "view": "Checklist", "_id": "4674764674"}
             ],
             "_id": "65e172b61635ad960dabdc32"
         },
@@ -931,6 +885,7 @@ export async function POSTaddCategoryTEST(profileID, category) {
     const response = `${DIRECTORY_BASE_URL}/${profileID}...body:` + JSON.stringify(category);
 
     // console.log(response);
+    // console.log(response);
 
     const body = {"directory": []};
     let directory = body.directory;
@@ -951,6 +906,7 @@ export async function PATCHcategoryTEST(newCategory, categoryID) {
     });
 
     // console.log(response);
+    // console.log(response);
 
     const body = {"directory": []};
     let directory = body.directory;
@@ -966,6 +922,7 @@ export async function DELETEcategoryTEST(categoryID) {
         method: "DELETE",
     });
 
+    // console.log(response);
     // console.log(response);
 
     const body = {"directory": []};
@@ -985,6 +942,7 @@ export async function GETtagsTEST() {
     });
 
     // console.log(response);
+    // console.log(response);
 
     const body = {"tags": []};
     let tags = body.tags;
@@ -1001,6 +959,7 @@ export async function POSTaddTagTEST(tag) {
         body: JSON.stringify(tag),
     });
 
+    // console.log(response);
     // console.log(response);
 
     const body = {"tag": {}};
@@ -1028,6 +987,7 @@ export async function DELETEtagTEST(tagID) {
     });
 
     // console.log(response);
+    // console.log(response);
 
     const body = {"tag": {}};
     return body.tag;
@@ -1039,31 +999,27 @@ export async function GETscheduledTEST(date, state, filter={}) {
     //console.log("scheduled: " + date + " " + state);
 
     if (state == "day") {
-        return GETtodayTEST(date, filter);
+        return GETtoday(date, filter);
     }
     else if (state == "week") {
-        return GETweekTEST(date, filter);
+        return GETweek(date, filter);
     }
     else {
-        return GETmonthTEST(date, filter);
+        return GETmonth(date, filter);
     }
 }
 
-export async function GETtodayTEST(selectedDate, filter={}) {
-    const date = new Date(selectedDate);
-
-    filter.startgt = date; 
-    filter.startlt = date;
-
+export async function GETtoday(filter={}) {
     const ext = getURL(!!filter.itemType ? filter.itemType : ItemType.Item);
-
-    const response = `${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "&" : "") + new URLSearchParams(filter);
+    const response = await fetchWithAuth(`${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "&" : "") +  new URLSearchParams(filter), {
+        method: 'GET',
+    });
 
     try {
         if (response.status == 201) {
             // good, return 
             const body = await response.json();
-            let items = body.items;
+            let items = body.items? body.items : [];
             return items.map((item) => {
                 return {
                     ...item,
@@ -1078,495 +1034,77 @@ export async function GETtodayTEST(selectedDate, filter={}) {
     }
 }
 
-export async function GETweekTEST(selectedDate, filter={}) {
-    const date = new Date(selectedDate);
-    const dayOfWeek = date.getDay(); // Get the day of the week (0-6, where 0 is Sunday)
-    const startOfWeek = new Date(date); // Clone the date
-    startOfWeek.setDate(date.getDate() - dayOfWeek);
-    const endOfWeek = new Date(startOfWeek); // Clone the startOfWeek
-    endOfWeek.setDate(startOfWeek.getDate() + 6); // Add 6 days to find Sunday
-
-    filter.startgt = startOfWeek; 
-    filter.startlt = endOfWeek;
-
+export async function GETweek(filter={}) {
     const ext = getURL(!!filter.itemType ? filter.itemType : ItemType.Item);
 
-    const response = `${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "&" : "") + new URLSearchParams(filter);
+    const response = await fetchWithAuth(`${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "&" : "") +  new URLSearchParams(filter), {
+        method: 'GET',
+    });
 
-    // console.log("week: " + response);
-
-    const body = {
-        "week": {
-        "MON" : 
-        [
-                {
-                    "_id": "one",
-                    "title": "WEEK item 0",
-                    "category": "Backlog",
-                    "section": "All",
-                    "icon": "📍",
-                    "tags": [
-                        "new"
-                    ],
-                    "notes": [],
-                    "owner": "65dffad64102392ebb57839b4567",
-                    "duration": "30",
-                    "startDate": "2024-03-29T05:15:00.000Z",
-                    "endDate": "2024-03-13T07:08:05.326Z",
-                    "createdAt": "2024-02-29T03:37:10.111Z",
-                    "updatedAt": "2024-02-29T03:37:10.111Z",
-                    "__v": 0
-                },{
-                    "_id": "two",
-                    "title": "WEEK item 0",
-                    "category": "Backlog",
-                    "section": "All",
-                    "icon": "📍",
-                    "tags": [
-                        "new"
-                    ],
-                    "notes": [],
-                    "owner": "65dffad64102392ebb57839b",
-                    "duration": "30",
-                    "startDate": "2024-03-29T05:15:00.000Z",
-                    "endDate": "2024-03-13T07:08:05.326Z",
-                    "createdAt": "2024-02-29T03:37:10.111Z",
-                    "updatedAt": "2024-02-29T03:37:10.111Z",
-                    "__v": 0
-                },{
-                    "_id": "three",
-                    "title": "today item 1",
-                    "category": "Backlog",
-                    "section": "All",
-                    "icon": "📍",
-                    "tags": [
-                        "new"
-                    ],
-                    "notes": [],
-                    "owner": "65dffad64102392ebb57839b",
-                    "duration": "30",
-                    "startDate": "2024-03-29T05:15:00.000Z",
-                    "endDate": "2024-03-13T07:08:05.326Z",
-                    "createdAt": "2024-02-29T03:37:10.111Z",
-                    "updatedAt": "2024-02-29T03:37:10.111Z",
-                    "__v": 0
-                },{
-                    "_id": "four",
-                    "title": "today item 2",
-                    "category": "Backlog",
-                    "section": "All",
-                    "icon": "📍",
-                    "tags": [
-                        "new"
-                    ],
-                    "notes": [],
-                    "owner": "65dffad64102392ebb57839b",
-                    "duration": "30",
-                    "startDate": "2024-03-29T05:15:00.000Z",
-                    "endDate": "2024-03-13T07:08:05.326Z",
-                    "createdAt": "2024-02-29T03:37:10.111Z",
-                    "updatedAt": "2024-02-29T03:37:10.111Z",
-                    "__v": 0
-            }],
-        "TUES" : [
-                {
-                    "_id": "five",
-                    "title": "today item 3",
-                    "category": "Backlog",
-                    "section": "All",
-                    "icon": "📍",
-                    "tags": [
-                        "new"
-                    ],
-                    "notes": [],
-                    "owner": "65dffad64102392ebb57839b",
-                    "duration": "30",
-                    "startDate": "2024-03-29T05:15:00.000Z",
-                    "endDate": "2024-03-13T07:08:05.326Z",
-                    "createdAt": "2024-02-29T03:37:10.111Z",
-                    "updatedAt": "2024-02-29T03:37:10.111Z",
-                    "__v": 0
-                },{
-                    "_id": "six",
-                    "title": "test item 4",
-                    "category": "Backlog",
-                    "section": "All",
-                    "icon": "📍",
-                    "tags": [
-                        "new"
-                    ],
-                    "notes": [],
-                    "owner": "65dffad64102392ebb57839b",
-                    "duration": "30",
-                    "startDate": "2024-03-29T05:15:00.000Z",
-                    "endDate": "2024-03-13T07:08:05.326Z",
-                    "createdAt": "2024-02-29T03:37:10.111Z",
-                    "updatedAt": "2024-02-29T03:37:10.111Z",
-                    "__v": 0
-                },{
-                    "_id": "seven",
-                    "title": "test item 5",
-                    "category": "Backlog",
-                    "section": "All",
-                    "icon": "📍",
-                    "tags": [
-                        "new"
-                    ],
-                    "notes": [],
-                    "owner": "65dffad64102392ebb57839b",
-                    "duration": "30",
-                    "startDate": "2024-03-29T05:15:00.000Z",
-                    "endDate": "2024-03-13T07:08:05.326Z",
-                    "createdAt": "2024-02-29T03:37:10.111Z",
-                    "updatedAt": "2024-02-29T03:37:10.111Z",
-                    "__v": 0
-            }],
-        "WED" : [
-                {
-                    "_id": "eight",
-                    "title": "test item 6",
-                    "category": "Backlog",
-                    "section": "All",
-                    "icon": "📍",
-                    "tags": [
-                        "new"
-                    ],
-                    "notes": [],
-                    "owner": "65dffad64102392ebb57839b",
-                    "duration": "30",
-                    "startDate": "2024-03-29T05:15:00.000Z",
-                    "endDate": "2024-03-13T07:08:05.326Z",
-                    "createdAt": "2024-02-29T03:37:10.111Z",
-                    "updatedAt": "2024-02-29T03:37:10.111Z",
-                    "__v": 0
-            }],
-        "THURS": [{
-                    "_id": "nine",
-                    "title": "test item 7",
-                    "category": "Backlog",
-                    "section": "All",
-                    "icon": "📍",
-                    "tags": [
-                        "new"
-                    ],
-                    "notes": [],
-                    "owner": "65dffad64102392ebb57839b",
-                    "duration": "30",
-                    "startDate": "2024-03-29T05:15:00.000Z",
-                    "endDate": "2024-03-13T07:08:05.326Z",
-                    "createdAt": "2024-02-29T03:37:10.111Z",
-                    "updatedAt": "2024-02-29T03:37:10.111Z",
-                    "__v": 0
-            }],
-        "FRI": [{
-                    "_id": "ten",
-                    "title": "test task 8",
-                    "category": "Backlog",
-                    "section": "All",
-                    "icon": "📍",
-                    "tags": [
-                        "new"
-                    ],
-                    "notes": [],
-                    "owner": "65dffad64102392ebb57839b",
-                    "itemType": "Task",
-                    "location": "23 locatiton",
-                    "subtasks": [],
-                    "duration": "20",
-                    "startDate": "2024-03-29T08:30:00.000Z",
-                    "endDate": "2024-03-13T07:08:05.326Z",
-                    "createdAt": "2024-02-29T03:40:59.685Z",
-                    "updatedAt": "2024-02-29T03:40:59.685Z",
-                    "__v": 0
-            }],
-        "SAT": [
-                {
-                    "_id": "eleven",
-                    "title": "task with subtask",
-                    "category": "Backlog",
-                    "section": "All",
-                    "icon": "📍",
-                    "tags": [
-                        "new",
-                        "first"
-                    ],
-                    "notes": [],
-                    "owner": "65dffad64102392ebb57839b",
-                    "itemType": "Task",
-                    "subtasks": [
-                        {
-                            "isChecked": false,
-                            "task": "first subtask",
-                            "_id": "65e134a91635ad960dabdc1c"
-                        }
-                    ],
-                    "duration": "10",
-                    "startDate": "2024-03-29T12:45:00.000Z",
-                    "endDate": "2024-03-13T07:08:05.326Z",
-                    "createdAt": "2024-03-01T01:51:37.332Z",
-                    "updatedAt": "2024-03-01T01:53:24.873Z",
-                    "__v": 0
+    try {
+        if (response.status == 201) {
+            // good, return 
+            const body = await response.json();
+            let items = body.items? body.items : [];
+            const weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            const itemsWithWeekDays = items.reduce((acc, item) => {
+                const startDate = new Date(item.startDate);
+                const dayOfWeek = weekDays[startDate.getDay()];
+                if (!acc[dayOfWeek]) {
+                    acc[dayOfWeek] = [];
                 }
-            ],
-        "SUN": [
-            {
-                "_id": "twelve",
-                "title": "test item 7",
-                "category": "Backlog",
-                "section": "All",
-                "icon": "📍",
-                "tags": [
-                    "new"
-                ],
-                "notes": [],
-                "owner": "65dffad64102392ebb57839b",
-                "duration": "30",
-                "startDate": "2024-03-29T05:15:00.000Z",
-                "endDate": "2024-03-13T07:08:05.326Z",
-                "createdAt": "2024-02-29T03:37:10.111Z",
-                "updatedAt": "2024-02-29T03:37:10.111Z",
-                "__v": 0
-            }
-        ]
+                acc[dayOfWeek].push({
+                    ...item,
+                    dayOfWeek: dayOfWeek
+                });
+                return acc;
+            }, {});
+            return itemsWithWeekDays;
+        } else {
+            return []
         }
-    };
-    let week = body.week;
-    return week;
+    } catch (err) {
+        alert(err.message);
+        return []
+    }
 }
 
-export async function GETmonthTEST(selectedDate, filter={}) {
-    const date = new Date(selectedDate);
-    const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-    const endOfMonth = new Date(date.getFullYear(), date.getMonth()+1, 0);
-
-    filter.startgt = startOfMonth;
-    filter.startlt =  endOfMonth;
-
+export async function GETmonth(filter={}) {
     const ext = getURL(!!filter.itemType ? filter.itemType : ItemType.Item);
 
-    const response = `${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "&" : "") + new URLSearchParams(filter);
 
-    // console.log("month: " + response);
+    const response = await fetchWithAuth(`${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "&" : "") +  new URLSearchParams(filter), {
+        method: 'GET',
+    });
 
-    const body = {
-        "month": {
-        "1" : 
-            [
-                {
-                    "_id": "65dffbe64102392ebb5783b142356eruy",
-                    "title": "MONTH",
-                    "category": "Backlog",
-                    "section": "All",
-                    "icon": "📍",
-                    "tags": [
-                        "new"
-                    ],
-                    "notes": [],
-                    "owner": "65dffad64102392ebb57839b",
-                    "duration": "30",
-                    "startDate": "2024-03-29T05:15:00.000Z",
-                    "endDate": "2024-03-13T07:08:05.326Z",
-                    "createdAt": "2024-02-29T03:37:10.111Z",
-                    "updatedAt": "2024-02-29T03:37:10.111Z",
-                    "__v": 0
-                },{
-                    "_id": "65dffbe64102392ebb5783b043q54wtrytd",
-                    "title": "today item 1",
-                    "category": "Backlog",
-                    "section": "All",
-                    "icon": "📍",
-                    "tags": [
-                        "new"
-                    ],
-                    "notes": [],
-                    "owner": "65dffad64102392ebb57839b",
-                    "duration": "30",
-                    "startDate": "2024-03-29T05:15:00.000Z",
-                    "endDate": "2024-03-13T07:08:05.326Z",
-                    "createdAt": "2024-02-29T03:37:10.111Z",
-                    "updatedAt": "2024-02-29T03:37:10.111Z",
-                    "__v": 0
-                },{
-                    "_id": "65dffbe64102392ebb5783b214q3retsgfxcv",
-                    "title": "today item 2",
-                    "category": "Backlog",
-                    "section": "All",
-                    "icon": "📍",
-                    "tags": [
-                        "new"
-                    ],
-                    "notes": [],
-                    "owner": "65dffad64102392ebb57839b",
-                    "duration": "30",
-                    "startDate": "2024-03-29T05:15:00.000Z",
-                    "endDate": "2024-03-13T07:08:05.326Z",
-                    "createdAt": "2024-02-29T03:37:10.111Z",
-                    "updatedAt": "2024-02-29T03:37:10.111Z",
-                    "__v": 0
-            }],
-        "2" : [
-                {
-                    "_id": "65dffbe64102392ebb5783b45etrufyjh",
-                    "title": "today item 3",
-                    "category": "Backlog",
-                    "section": "All",
-                    "icon": "📍",
-                    "tags": [
-                        "new"
-                    ],
-                    "notes": [],
-                    "owner": "65dffad64102392ebb57839b",
-                    "duration": "30",
-                    "startDate": "2024-03-29T05:15:00.000Z",
-                    "endDate": "2024-03-13T07:08:05.326Z",
-                    "createdAt": "2024-02-29T03:37:10.111Z",
-                    "updatedAt": "2024-02-29T03:37:10.111Z",
-                    "__v": 0
-                },{
-                    "_id": "65dffbe64102392ebb5783b0w46zrydt",
-                    "title": "test item 4",
-                    "category": "Backlog",
-                    "section": "All",
-                    "icon": "📍",
-                    "tags": [
-                        "new"
-                    ],
-                    "notes": [],
-                    "owner": "65dffad64102392ebb57839b",
-                    "duration": "30",
-                    "startDate": "2024-03-29T05:15:00.000Z",
-                    "endDate": "2024-03-13T07:08:05.326Z",
-                    "createdAt": "2024-02-29T03:37:10.111Z",
-                    "updatedAt": "2024-02-29T03:37:10.111Z",
-                    "__v": 0
-                },{
-                    "_id": "65dffbe64102392ebb5783b02435e6zytdgjcvhm",
-                    "title": "test item 5",
-                    "category": "Backlog",
-                    "section": "All",
-                    "icon": "📍",
-                    "tags": [
-                        "new"
-                    ],
-                    "notes": [],
-                    "owner": "65dffad64102392ebb57839b",
-                    "duration": "30",
-                    "startDate": "2024-03-29T05:15:00.000Z",
-                    "endDate": "2024-03-13T07:08:05.326Z",
-                    "createdAt": "2024-02-29T03:37:10.111Z",
-                    "updatedAt": "2024-02-29T03:37:10.111Z",
-                    "__v": 0
-            }],
-        "10" : [
-                {
-                    "_id": "65dffbe64102392ebb5783b0124hvjbn",
-                    "title": "test item 6",
-                    "category": "Backlog",
-                    "section": "All",
-                    "icon": "📍",
-                    "tags": [
-                        "new"
-                    ],
-                    "notes": [],
-                    "owner": "65dffad64102392ebb57839b",
-                    "duration": "30",
-                    "startDate": "2024-03-29T05:15:00.000Z",
-                    "endDate": "2024-03-13T07:08:05.326Z",
-                    "createdAt": "2024-02-29T03:37:10.111Z",
-                    "updatedAt": "2024-02-29T03:37:10.111Z",
-                    "__v": 0
-            }],
-        "15": [{
-                    "_id": "65dffbe64102392ebb5783b03534wtrydhgc4",
-                    "title": "test item 7",
-                    "category": "Backlog",
-                    "section": "All",
-                    "icon": "📍",
-                    "tags": [
-                        "new"
-                    ],
-                    "notes": [],
-                    "owner": "65dffad64102392ebb57839b",
-                    "duration": "30",
-                    "startDate": "2024-03-29T05:15:00.000Z",
-                    "endDate": "2024-03-13T07:08:05.326Z",
-                    "createdAt": "2024-02-29T03:37:10.111Z",
-                    "updatedAt": "2024-02-29T03:37:10.111Z",
-                    "__v": 0
-            }],
-        "18": [{
-                    "_id": "65dffccb4102392ebb5783b94254wrydhgc",
-                    "title": "test task 8",
-                    "category": "Backlog",
-                    "section": "All",
-                    "icon": "📍",
-                    "tags": [
-                        "new"
-                    ],
-                    "notes": [],
-                    "owner": "65dffad64102392ebb57839b",
-                    "itemType": "Task",
-                    "location": "23 locatiton",
-                    "subtasks": [],
-                    "duration": "20",
-                    "startDate": "2024-03-29T08:30:00.000Z",
-                    "endDate": "2024-03-13T07:08:05.326Z",
-                    "createdAt": "2024-02-29T03:40:59.685Z",
-                    "updatedAt": "2024-02-29T03:40:59.685Z",
-                    "__v": 0
-            }],
-        "22": [
-                {
-                    "_id": "65e134a91635ad960dabdc1b35635hvbnsdfdghv",
-                    "title": "task with subtask",
-                    "category": "Backlog",
-                    "section": "All",
-                    "icon": "📍",
-                    "tags": [
-                        "new",
-                        "first"
-                    ],
-                    "notes": [],
-                    "owner": "65dffad64102392ebb57839b",
-                    "itemType": "Task",
-                    "subtasks": [
-                        {
-                            "isChecked": false,
-                            "task": "first subtask",
-                            "_id": "65e134a91635ad960dabdc1c"
-                        }
-                    ],
-                    "duration": "10",
-                    "startDate": "2024-03-29T12:45:00.000Z",
-                    "endDate": "2024-03-13T07:08:05.326Z",
-                    "createdAt": "2024-03-01T01:51:37.332Z",
-                    "updatedAt": "2024-03-01T01:53:24.873Z",
-                    "__v": 0
+
+    try {
+        if (response.status == 201) {
+            // good, return 
+            const body = await response.json();
+            let items = body.items? body.items : [];
+            const itemsWithMonthDays = items.reduce((acc, item) => {
+                const startDate = new Date(item.startDate);
+                const dayinmonth = startDate.getDate();
+                if (!acc[dayinmonth]) {
+                    acc[dayinmonth] = [];
                 }
-            ],
-        "28": [{
-                "_id": "65dffbe64102392ebb5783b0srfdhgcjhvbj356",
-                "title": "test item 7",
-                "category": "Backlog",
-                "section": "All",
-                "icon": "📍",
-                "tags": [
-                    "new"
-                ],
-                "notes": [],
-                "owner": "65dffad64102392ebb57839b",
-                "duration": "30",
-                "startDate": "2024-03-29T05:15:00.000Z",
-                "endDate": "2024-03-13T07:08:05.326Z",
-                "createdAt": "2024-02-29T03:37:10.111Z",
-                "updatedAt": "2024-02-29T03:37:10.111Z",
-                "__v": 0
-            }]
+                acc[dayinmonth].push({
+                    ...item
+                });
+                return acc;
+            }, {});
+            //console.log(itemsWithMonthDays);
+            return itemsWithMonthDays;
+        } else {
+            return []
         }
-    };
-    let month = body.month;
-    return month;
+    } catch (err) {
+        alert(err.message);
+        return []
+    }
 }
+
 
 //#endregion
 
@@ -1578,6 +1116,7 @@ export async function GETsectionTEST(itemType, filter={}) {
     const response = `${ITEMS_BASE_URL}/${ext}` + new URLSearchParams(filter);
 
     let body;
+    // console.log("items: " + response);
     // console.log("items: " + response);
 
     body = {
@@ -1610,171 +1149,6 @@ export async function GETsectionTEST(itemType, filter={}) {
     });
 }
 
-export async function GETitemsTEST(itemType, filter={}) {
-    const ext = getURL(itemType);
-
-    const response = `${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "&" : "") + new URLSearchParams(filter);
-
-    // console.log(response);
-    let body;
-
-    if(!!filter.search) {
-        body = {
-            "items": [
-                {
-                    "_id": "65dffbe64102392ebb5783b0",
-                    "title": "test item 0",
-                    "category": "Backlog",
-                    "section": "All",
-                    "icon": "📍",
-                    "tags": [
-                        "new"
-                    ],
-                    "notes": [],
-                    "owner": "65dffad64102392ebb57839b",
-                    "duration": "30",
-                    "startDate": "2024-03-29T05:15:00.000Z",
-                    "endDate": "2024-03-13T07:08:05.326Z",
-                    "createdAt": "2024-02-29T03:37:10.111Z",
-                    "updatedAt": "2024-02-29T03:37:10.111Z",
-                    "__v": 0
-                },
-                
-            ]
-        };
-    }
-
-    else {
-        body = {
-            "items": [
-                // {
-                //     "_id": "65dffbe64102392ebb5783b0",
-                //     "category": "Backlog", 
-                //     "description": "Description of what the item is. ", 
-                //     "favicon": {"assetId": "A763AC6D-6F2C-46F2-93A6-5B8E616CC06C/L0/001", "base64": null, "duration": null, "exif": null, "fileName": "IMG_0707.jpg", "fileSize": 1536094, "height": 2002, "mimeType": "image/jpeg", "type": "image", "uri": "file:///var/mobile/Containers/Data/Application/2B539751-A0AE-44FE-B0A5-919A07440921/Library/Caches/ExponentExperienceData/@anonymous/VibeCheck-c25b1d4f-7003-4b9f-8017-6562b5a94a07/ImagePicker/4E780BC8-D48C-4176-9570-17ACAECCBADF.jpg", "width": 2002}, 
-                //     "icon": "📦", 
-                //     "notes": "Remember important info about the item. ", 
-                //     "section": "All", 
-                //     "title": "Item",
-                //     "owner": "65dffad64102392ebb57839b",
-                //     "duration": "30",
-                //     "startDate": "2024-03-29T10:00:00.000Z",
-                //     "endDate": "2024-03-29T13:08:05.326Z",
-                //     "repeat": "DAILY",
-                //     "createdAt": "2024-02-29T03:37:10.111Z",
-                //     "updatedAt": "2024-02-29T03:37:10.111Z",
-                //     "__v": 0
-                // },
-                {
-                    "category": "Backlog", 
-                    "description": "Description of the task. ", 
-                    "icon": "📋", 
-                    "notes": "Important details about the task.", 
-                    "priority": "HIGH", 
-                    "section": "All", 
-                    "title": "Task",
-                    "tags": [
-                        "new"
-                    ],
-                    "_id": "65dffbe64102392ebb5783b01235436457",
-                    "itemType": "Task",
-                    "subtasks": [{"isChecked": false, "task": "first item", "_id": "65e134a91635ad960dab35ytsdc1dsc"},
-                    {"isChecked": false, "task": "another item", "_id": "65e134a91635ad960dabsrhjdc1c"}],
-                    "contacts": [{"isChecked": false, "task": "4 subtask", "_id": "65e134a91635afdgfd96tdku0dabdc1c"},
-                    {"isChecked": false, "task": "5 subtask", "_id": "65e134a91635ad96nhdtt0dfgdabdc1c"}],
-                    "owner": "65dffad64102392ebb57839b",
-                    "duration": "150",
-                    "startDate": "2024-03-29T14:30:00.000Z",
-                    "endDate": "2024-03-29T15:30:00.000Z",
-                    "createdAt": "2024-02-29T03:37:10.111Z",
-                    "updatedAt": "2024-02-29T03:37:10.111Z",
-                    "__v": 0
-                },
-                // {
-                //     "category": "Backlog", 
-                //     "description": "Description of the event. ", 
-                //     "favicon": {"assetId": "89BA16EB-A861-4651-848B-33B0D9E412E5/L0/001", "base64": null, "duration": null, "exif": null, "fileName": "IMG_1345.jpg", "fileSize": 3784860, "height": 4032, "mimeType": "image/jpeg", "type": "image", "uri": "file:///var/mobile/Containers/Data/Application/2B539751-A0AE-44FE-B0A5-919A07440921/Library/Caches/ExponentExperienceData/@anonymous/VibeCheck-c25b1d4f-7003-4b9f-8017-6562b5a94a07/ImagePicker/F223FEC7-EEF1-40AE-AAA2-F16ED2247BEB.jpg", "width": 3024}, 
-                //     "icon": "📍", 
-                //     "section": "All", 
-                //     "title": "Event",
-                //     "_id": "65dffbe64102392ebb5783b056478",
-                //     "contacts": [],
-                //     "subtasks": [],
-                //     "owner": "65dffad64102392ebb57839b",
-                //     "duration": "60",
-                //     "itemType": "Event",
-                //     "startDate": "2024-03-29T18:15:00.000Z",
-                //     "endDate": "2024-03-29T19:15:05.326Z",
-                //     "createdAt": "2024-02-29T03:37:10.111Z",
-                //     "updatedAt": "2024-02-29T03:37:10.111Z",
-                //     "__v": 0
-                // },{
-                //     "_id": "65dffbe64102392ebb5783b0xtu",
-                //     "icon": '\u{1F4C4}',
-                //     "title": "Daily Reflection",
-                //     "category": "Backlog",
-                //     "section": "All",
-                //     "itemType": "Page",
-                //     "repeat": "DAILY",
-                //     "notes": "Journal prompt here.",
-                //     "owner": "65dffad64102392ebb57839b",
-                //     "startDate": "2024-03-29T20:00:00.000Z",
-                //     "endDate": "2024-03-13T20:30:00.326Z",
-                //     "createdAt": "2024-02-29T03:37:10.111Z",
-                //     "updatedAt": "2024-02-29T03:37:10.111Z",
-                //     "__v": 0
-                // },{
-                //     "_id": "65dffbe64102392ebb5b0xtu",
-                //     "title": "Dinner - Recipe",
-                //     "category": "Cooking",
-                //     "section": "Recipes",
-                //     "favicon": {"assetId": "62706304-B2F0-4E98-9790-67237652BE20/L0/001", "base64": null, "duration": null, "exif": null, "fileName": "IMG_1416.jpg", "fileSize": 5345389, "height": 4032, "mimeType": "image/jpeg", "type": "image", "uri": "file:///var/mobile/Containers/Data/Application/2B539751-A0AE-44FE-B0A5-919A07440921/Library/Caches/ExponentExperienceData/@anonymous/VibeCheck-c25b1d4f-7003-4b9f-8017-6562b5a94a07/ImagePicker/099B69F1-2513-4BBF-BF8A-5EAB53A1EA33.jpg", "width": 3024},
-                //     "itemType": "Recipe",
-                //     "icon": '\u{1F37D}',
-                //     "servings": 3,
-                //     "repeat": "WEEKLY",
-                //     "priority": "HIGH",
-                //     "ingredients" : [{"isChecked": false, "task": "2 cups all puprose flour", "_id": "65e134a91635ad9sads60dab35ytsdc1c"},
-                //         {"isChecked": false, "task": "1 cup water", "_id": "65e134a91635ad960dabsrhjdc1c"},
-                //         {"isChecked": false, "task": "1tbsp yeast", "_id": "65e134a91635ad960dabsrhjwew1c"},
-                //     ],
-                //     "instructions": [{"isChecked": false, "task": "Mix ingredients and knead dough", "_id": "65e134a91635ad960fsvgdbdab35ytsdc1c"},
-                //     {"isChecked": false, "task": "Rest for 30 mins", "_id": "65e134a91635ad960dabsrhjdc1c"},
-                //     {"isChecked": false, "task": "Separate dough into 4", "_id": "65e134a91635ad960dabsrhjwew1c"},
-                //     {"isChecked": false, "task": "Preheat oven to 350F", "_id": "65e1sfvb34a91635ad960dab35ytsdc1c"}],
-                //     "owner": "65dffad64102392ebb57839b",
-                //     "startDate": "2024-03-29T22:00:00.000Z",
-                //     "endDate": "2024-03-13T23:30:00.326Z",
-                //     "createdAt": "2024-02-29T03:37:10.111Z",
-                //     "updatedAt": "2024-02-29T03:37:10.111Z",
-                //     "__v": 0
-                // },
-            ]
-        };
-    }
-
-    
-    let items = body.items;
-    return items.map((item) => {
-        return {
-            ...item,
-        }
-    });
-}
-
-export async function POSTcreateItemTEST(itemType, item) {
-    const ext = getURL(itemType);
-
-    const response = await fetchWithAuthJSON(`${ITEMS_BASE_URL}/${itemID}${ext}`, {
-        method: 'POST',
-        body: JSON.stringify(item),
-    });
-
-    // console.log(response);
-
-    const body = {"item": {}};
-    return body.item;
-}
 
 export async function PATCHitemTEST(itemType, newItem, itemID) {
     const ext = getURL(itemType);
@@ -1783,8 +1157,10 @@ export async function PATCHitemTEST(itemType, newItem, itemID) {
     delete newItem.id;
 
     // console.log(newItem);
+    // console.log(newItem);
     const response = `${ITEMS_BASE_URL}/${itemID}${ext}`;
 
+    // console.log(response);
     // console.log(response);
 
     const body = {"item": {}};
@@ -1796,6 +1172,7 @@ export async function DELETEitemTEST(itemType, itemID) {
     
     const response = `${ITEMS_BASE_URL}/${itemID}${ext}`;
 
+    // console.log(response);
     // console.log(response);
 
     const body = {"item": {}};

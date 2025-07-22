@@ -1,62 +1,82 @@
-import { SafeAreaView, View, FlatList, StyleSheet, Text, TouchableOpacity, TextInput, Modal } from "react-native";
+import { SafeAreaView, View, FlatList, StyleSheet, Text, TouchableOpacity, TextInput, Modal, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { COLORS, FONT, textSIZES, SHADOWS, viewSIZES } from "../constants";
-import { GETitems, POSTcreateItem, POSTaddCategory, BASE_URL, GETmeTEST, POSTaddCategoryTEST } from "../API";
 import { Ionicons } from "@expo/vector-icons";
 import { useState, useEffect } from "react";
 import HomeNavigation from "./HomeNavigation";
-import { GETdirectoryTEST } from "../API";
+import { GETdirectory, POSTcategory, DELETEcategory, PATCHcategory } from "../API";
 import DirectoryCard from "./cards/DirectoryCard"
-import SelectView from "./SelectView";
+import { Alert } from "react-native";
+
 
 export default function Directory ({navigation, scrollEnabled = true}) {
   const [categories, setCategories] = useState([]);
   const [showInput, setShowInput] = useState(false);
-  const [newCategory, setNewCategory] = useState('New');
-  
-  async function getProfileID() {
+  const [newCategory, setNewCategory] = useState('');
+  const [search, setSearch] = useState('');
+  const [searchFocused, setSearchFocused] = useState(false);
+
+  async function addNewCategory(newTitle) {
+    if (newTitle) {
+      const category = {
+        title: newTitle,
+      };
+
+      try{
+        (async () => {
+          await POSTcategory(category).then((directory) => {
+            if (directory) {
+              setCategories(directory);
+            } else {
+              alert("Failed.");
+            }
+          });
+        })()
+      } catch (err) {
+        alert(err.message)
+      }
+    }
+  }
+
+  async function deleteCategory(categoryID) { 
     try {
-      GETmeTEST().then((profile) => {
-        if (!!profile) {
-          //console.log(profile["_id"]);
-          return profile["_id"].toString();
+      await DELETEcategory(categoryID).then((directory) => {
+        if (directory.length > 0) {
+          setCategories(directory);
         } else {
           alert("Failed.");
         }
       });
     } catch (err) {
-      console.log("get me failed. "+err);
+      alert(err.message);
     }
   }
 
-  async function addNewCategory() {
+  async function editCategory(categoryID, newTitle) {
     const category = {
-      title: newCategory,
+      id: categoryID,
+      title: newTitle,
     };
-
-    //console.log(category);
-    getProfileID().then((profileID) => {
-      //console.log(profileID)
-      (async () => {
-        POSTaddCategoryTEST(profileID, {
-          ...category,
-          _id: null
-        }).then((newCategory) => {
-          if (!!newCategory) {
-            alert("Success!");
-          } else {
-            alert("Failed.");
-          }
-        });
-      })()
-    }).catch((err) => {
-        alert(err.message)
-    })
+    try {
+      await PATCHcategory(category).then((directory) => {
+        if (directory) {
+          setCategories(directory);
+        }
+      }); 
+    } catch (err) {
+      alert(err.message);
+    }
   }
 
   async function getDirectoryFromAPI() {
-    try {
-      let categories_ = await GETdirectoryTEST();
-      return categories_;
+    try { 
+      await GETdirectory().then((directory) => {
+        if (directory) {
+          setCategories(directory);
+          return directory;
+        } else {
+          alert("Failed.");
+        }
+      });
     } catch (error) {
       console.log("error fetching directory");
       console.log(error);
@@ -65,62 +85,69 @@ export default function Directory ({navigation, scrollEnabled = true}) {
   }
 
   useEffect(() => {
-    getDirectoryFromAPI().then((categories_) => {
-      setCategories(categories_);
-    }).catch((err) => {
+    getDirectoryFromAPI().catch((err) => {
         alert(err.message)
     })
-    
   }, []) // only run once on load
 
-  function onClose() {
-    setIsDefaultExpanded(false);
-  } 
-
-  const renderCategory = ({ item }) => (
-    <View key={item["_id"] + "root"} style={styles.cardContainer}>
-        <DirectoryCard navigation={navigation} category={item} key={item["_id"]} sections={item.sections} />
-    </View>
-  );
+  function doSearch() {
+    // Optionally implement search logic for categories here
+    // For now, just filter locally
+    if (!search.trim()) return categories;
+    return categories.filter(cat => cat.title.toLowerCase().includes(search.trim().toLowerCase()));
+  }
 
   return (
-    <SafeAreaView style={styles.screen}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Directory</Text>
-        <TouchableOpacity
-          onPress={() => (setShowInput(true))}
-          style={[styles.row, styles.addButton]}
-        >
-          <Ionicons name={"add-circle"} size={textSIZES.xLarge} style={styles.icon}/>
-        </TouchableOpacity>
-      </View>
-
-      {showInput==true && (
-        <View style={styles.newCategory}>
-          <TextInput style={styles.inputBox}
-            value={newCategory}
-            onChangeText={setNewCategory}
-            returnKeyType='default'
-          /> 
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightRed}]} onPress={() => setShowInput(false)}>
-              <Ionicons name={"close-outline"} size={textSIZES.small} style={styles.iconInverse}/> 
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, {backgroundColor: COLORS({opacity:1}).lightGreen}]} onPress={addNewCategory}>
-              <Ionicons name={"checkmark-outline"} size={textSIZES.small} style={styles.iconInverse}/> 
-            </TouchableOpacity>
+    <TouchableWithoutFeedback onPress={() => { Keyboard.dismiss(); setSearchFocused(false); }}>
+      <SafeAreaView style={styles.screen}>
+        <View style={{flexDirection: 'row', alignItems: 'center', marginHorizontal: textSIZES.xSmall, marginTop: textSIZES.xSmall}}>
+          <View style={[styles.row, styles.header, {flex: 1, marginRight: textSIZES.small}]}> 
+            <Ionicons name={"search-outline"} size={textSIZES.large} style={styles.iconInverse} />
+            <TextInput
+              style={{flex: 1, fontSize: textSIZES.large, color: COLORS({opacity:1}).primary}}
+              {...(search ? { defaultValue: search } : { placeholder: "Directory" })}
+              onChangeText={setSearch}
+              returnKeyType='search'
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => setSearchFocused(false)}
+              showSoftInputOnFocus={true}
+              caretHidden={!searchFocused}
+            />
           </View>
-          
+          <TouchableOpacity
+            onPress={() => (() => {
+              Alert.prompt(
+                "Enter New Name",
+                "Enter name:",
+                [
+                  {text: "Cancel", style: "cancel"},
+                  {text: "Create", style: "default", onPress: (newTitle) => {
+                    if (newTitle && newTitle.trim() !== "") {
+                      addNewCategory(newTitle);
+                    }
+                  }}
+                ],
+                "plain-text",
+              );
+            })()}
+            style={[styles.button]}
+          >
+            <Ionicons name={"add-circle"} size={textSIZES.xxLarge} style={styles.icon}/>
+          </TouchableOpacity>
         </View>
-      )}
-      
-      <FlatList
-        scrollEnabled={scrollEnabled}
-        data={categories}
-        renderItem={renderCategory}
-      />
-      <HomeNavigation size={30} iconColor={COLORS({opacity:1}).primary}/>
-    </SafeAreaView>
+
+        <FlatList
+          scrollEnabled={scrollEnabled}
+          data={doSearch()}
+          renderItem={({item}) => (
+            <View key={item["_id"] + "root"} style={styles.cardContainer}>
+              <DirectoryCard navigation={navigation} category={item} key={item["_id"]} handleRename={(newTitle) => editCategory(item["_id"], newTitle)} handleDelete={() => deleteCategory(item["_id"])} />
+            </View>
+          )}
+        />
+        <HomeNavigation size={30} iconColor={COLORS({opacity:1}).primary}/>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -137,9 +164,10 @@ const styles = StyleSheet.create({
     borderRadius: textSIZES.xSmall,
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
   },
   headerText: {
-    fontSize: textSIZES.large,
+    fontSize: textSIZES.medium,
     color: COLORS({opacity:1}).primary,
   },
   cardContainer: {
@@ -161,19 +189,17 @@ const styles = StyleSheet.create({
     marginHorizontal: textSIZES.xSmall,
   },
   button: {
-    flex: 1,
-    padding: 10,
-    backgroundColor: '#007bff',
-    borderRadius: 5,
-    marginHorizontal: 5,
+    padding: textSIZES.xxSmall,
+    backgroundColor: COLORS({opacity:1}).primary,
+    borderRadius: textSIZES.xxSmall,
     alignItems: 'center',
   },
   icon: {
-    color: COLORS({opacity:0.8}).primary,
+    color: COLORS({opacity:1}).lightWhite,
   },
   iconInverse: {
       //margin: textSIZES.xxSmall,
-      color: COLORS({opacity:1}).lightWhite,
+      color: COLORS({opacity:1}).primary,
   },
   newCategory: {
     margin: textSIZES.xSmall

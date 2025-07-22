@@ -1,16 +1,38 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, FlatList, StyleSheet, TextInput } from "react-native";
-import { COLORS, FONT, textSIZES, viewSIZES } from "../constants";
+import { SafeAreaView, View, FlatList, StyleSheet, TextInput, Text, TouchableOpacity, Animated } from "react-native";
+import { COLORS, FONT, textSIZES, viewSIZES, SHADOWS } from "../constants";
 import HomeNavigation from "./HomeNavigation";
 import { GETitems } from "../API";
-import ContactCard from "./cards/ContactCard";
-import BacklogCard from "./cards/BacklogCard";
 import { ItemType } from "../constants";
 import { Ionicons } from "@expo/vector-icons";
+
+const BacklogCard = ({navigation, item, doRefresh}) => {
+  //console.log(item);
+  return (
+    <View style={styles.cardContainer}>
+      <TouchableOpacity
+        onPress={() => {
+            navigation.navigate("Item", {item, doRefresh});
+          }}
+          style={styles.titleContainer}
+      >
+        <View style={styles.row}>
+          <Text style={{ fontSize: textSIZES.regular, marginRight: textSIZES.xxSmall}}>{item.icon}</Text>
+          <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
+        </View>
+      </TouchableOpacity>
+    </View>
+  )
+};
 
 export default function Backlog ({navigation, scrollEnabled = true}) {
   const [items, setItems] = useState([]);
   const [search, setSearch] = useState('');
+  const [refresh, setRefresh] = useState(false);
+
+  function doRefresh() {
+    setRefresh(!refresh);
+  }
 
   function doSearch() {
     getItemsFromAPI().then((items_) => {
@@ -26,11 +48,16 @@ export default function Backlog ({navigation, scrollEnabled = true}) {
       ...(search && { search: search.trim() }),
     };
     
+    let filter = { 
+      category: "Backlog",
+      ...(search && { search: search.trim() }),
+    };
+    
     try {
+      let items_ = await GETitems(ItemType.Item, filter);
       let items_ = await GETitems(ItemType.Item, filter);
       return items_;
     } catch (error) {
-      console.log("error fetching items");
       console.log(error);
       return [];
     }
@@ -42,11 +69,11 @@ export default function Backlog ({navigation, scrollEnabled = true}) {
     }).catch((err) => {
       alert(err.message)
     })
-  }, []) // only run once on load
+  }, [refresh]) // only run once on load
 
   const renderItem = ({ item }) => (
-    <View style={styles.cardContainer} key={item["_id"] + "root"}>
-      <BacklogCard navigation={navigation} item={item} />
+    <View key={item["_id"] + "root"}>
+      <BacklogCard navigation={navigation} item={item} doRefresh={doRefresh} />
     </View>
   );
 
@@ -54,6 +81,7 @@ export default function Backlog ({navigation, scrollEnabled = true}) {
     <SafeAreaView style={styles.screen}>
       <View style={[styles.row, styles.header]}>
         <Ionicons name={"search-outline"} size={20} style={styles.iconInverted} />
+        <TextInput style={{flex: 1, fontSize: textSIZES.large, color: COLORS({opacity:1}).primary}} 
         <TextInput style={{flex: 1, fontSize: textSIZES.large, color: COLORS({opacity:1}).primary}} 
           {
             ...(search ? { defaultValue: search } : { placeholder: "Backlog" })}
@@ -94,5 +122,42 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     alignItems: "center",
+  },
+  // BacklogCard styles
+  cardContainer: {
+    marginTop: textSIZES.xSmall,
+    marginHorizontal: textSIZES.small,
+    backgroundColor: COLORS({opacity:1}).white,
+    borderRadius: textSIZES.xSmall,
+    ...SHADOWS.small,
+    shadowColor: COLORS({opacity:1}).shadow,
+  },
+  titleContainer: {
+    flex:1,
+    padding: textSIZES.small,
+    borderBottomLeftRadius: textSIZES.xLarge,
+    borderBottomRightRadius: textSIZES.xLarge,
+  },
+  sectionContainer: {
+    margin: textSIZES.xSmall,
+    padding: textSIZES.xSmall,
+    backgroundColor: COLORS({opacity:0.5}).primary,
+    borderRadius: textSIZES.xSmall,
+    ...SHADOWS.medium,
+    shadowColor: COLORS({opacity:1}).shadow,
+  },
+  title: {
+    fontSize: textSIZES.small,
+    fontFamily: FONT.regular,
+    color: COLORS({opacity:1}).primary,
+  },
+  section: {
+    fontSize: textSIZES.small,
+    fontFamily: FONT.regular,
+    color: COLORS({opacity:1}).white,
+  },
+  icon: {
+    marginRight: textSIZES.xxSmall,
+    color: COLORS({opacity:0.8}).primary,
   },
 });

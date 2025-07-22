@@ -4,122 +4,52 @@ import { COLORS, FONT, textSIZES, SHADOWS, ItemType, ViewType, viewSIZES } from 
 import { GETitems, GETitemsTEST } from "../../API";
 import { Ionicons } from "@expo/vector-icons";
 import FilterModal from "../../components/FilterModal";
-
-const ListView = ({items, navigation}) => (
-  <FlatList
-    scrollEnabled={true}
-    data={items}
-    renderItem={({item}) => (
-      <TouchableOpacity
-        onPress={() => {
-            navigation.navigate("Item", {item});
-        }}
-        key={item["_id"] + "root"} 
-        style={styles.cardsContainer}
-      >
-        <View style={{flexDirection: "row"}}>
-          <View style={{ justifyContent: "center"}}>
-            <Text style={{ fontSize: textSIZES.xLarge}}>{item.icon}</Text>
-          </View>
-          <View style={styles.dayCardContainer}>
-            <Text style={styles.itemTitle} numberOfLines={1}>{item.title}</Text>
-            {!!item.location && (
-              <Text style={styles.prop}>Location: {item.location}</Text>
-            )}
-            {!!item.subtasks && item.subtasks.length > 0 && (
-              <Text style={styles.prop}>Subtasks: {item.subtasks.length}</Text>
-            )}
-            {!!item.priority && (
-              <Text style={styles.prop}>Priority: {item.priority}</Text>
-            )}
-          </View>
-        </View>
-      </TouchableOpacity>
-    )}
-  /> 
-);
-
-const GalleryView = ({items, navigation}) => (
-  <FlatList
-    scrollEnabled={true}
-    data={items}
-    numColumns={2} 
-    renderItem={({item}) => (
-      <TouchableOpacity style={styles.cardsContainer} key={item["_id"] + "_root"}
-        onPress={() => {
-            navigation.navigate("Item", {item});
-        }}
-      >
-        <View style={styles.imageBox}>
-          <Image
-              source={item.favicon ? { uri: item.favicon.uri } : defaultImage}
-              style={[styles.border, { width: 140, height: 140}]}
-          />
-        </View>
-        <View style={[styles.row]}>
-          <Text style={{fontSize: textSIZES.xLarge}}>{item.icon}</Text>
-          <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
-        </View>
-      </TouchableOpacity>
-    )}
-  />
-);
-
+import { GalleryView } from "./GalleryView";
+import { ListView } from "../partialViews/ListView";
 const defaultImage = require("../../assets/icon.png");
 
 export default function DefaultView ({navigation, route, scrollEnabled = true}) {
   const [title, setTitle] = useState([]);
-  
-  const [items, setItems] = useState(route.params?.item);
+
   const [filter, setFilter] = useState({});
   const [filterVisible, setFilterVisible] = useState(false);
-
-  const [refreshing, setRefreshing] = useState(false);
 
   const [search, setSearch] = useState('');
   const [expandSearchBar, setSearchBar] = useState(false);
 
-  function closeFilter() {
+  const [refreshing, setRefreshing] = useState(false);
+  function doRefresh() {
     setRefreshing(!refreshing);
-    setFilterVisible(false);
   }
 
-  function doSearch() {
-    //console.log(search);
-    setSearchBar(false);
-  }
-
-  async function getSectionItemsFromAPI() {
-    try {
-      let items_ = await GETitemsTEST(ItemType.Item, filter);
-      return items_;
-    } catch (error) {
-      console.log("error fetching items");
-      console.log(error);
-      return [];
+  const [items, setItems] = useState(route.params?.item);
+  const [selectedTab, setSelectedTab] = useState('List');
+  const renderTab = () => {
+    switch (selectedTab) {
+      case 'List':
+        return <ListView items={items} navigation={navigation} doRefresh={doRefresh} />;
+      case 'Gallery':
+        return <GalleryView items={items} navigation={navigation} doRefresh={doRefresh} />;
+      default:
+        return <ListView items={items} navigation={navigation} doRefresh={doRefresh} />;
     }
+  };
+
+  const doSearch = () => {
+    setSearchBar(false);
+    setSearch('');
   }
 
   useEffect(() => {
     setTitle(route.params?.section);
     setFilter({... filter, category: route.params?.category, section: route.params?.section})
   }, []) // only run once on load
-
-  const [selectedTab, setSelectedTab] = useState('List');
-  const renderTab = () => {
-    switch (selectedTab) {
-      case 'List':
-        return <ListView items={items} navigation={navigation} />;
-      case 'Gallery':
-        return <GalleryView items={items} navigation={navigation} />;
-      default:
-        return <ListView items={items} navigation={navigation} />;
-    }
-  };
-
   return (
     <SafeAreaView style={styles.screen}>
-      <View style={[styles.row, styles.propContainer, {justifyContent: "space-between"}]}>
+       <View style={[styles.row, styles.propContainer, {justifyContent: "space-between"}]}>
+        <TouchableOpacity onPress={() => (navigation.goBack())} style={[styles.button]} > 
+          <Ionicons name={"chevron-back-outline"} size={textSIZES.xLarge} style={styles.icon}/> 
+        </TouchableOpacity>
         <Text style={styles.title}>{title}</Text>
         <View style={styles.row}>
           <TouchableOpacity
@@ -159,10 +89,10 @@ export default function DefaultView ({navigation, route, scrollEnabled = true}) 
           </TouchableOpacity>
         </View>
       </View>
-        
+      {/*  
       <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
         <FilterModal closeFilter={closeFilter} filter={filter} setFilter={setFilter} />
-      </Modal>
+      </Modal>*/}
 
       <View style={styles.container}>
         <View style={styles.tabContainer}>
@@ -196,7 +126,7 @@ export default function DefaultView ({navigation, route, scrollEnabled = true}) 
         <View style={styles.contentContainer}>
           {renderTab()}
         </View>
-      </View>
+      </View> 
     </SafeAreaView>
   );
 };
@@ -229,7 +159,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS({opacity:0.5}).secondary,
   },
   title: {
-    fontSize: textSIZES.large,
+    fontSize: textSIZES.medium,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).primary,
   },
@@ -247,8 +177,8 @@ const styles = StyleSheet.create({
     margin: textSIZES.xxSmall,
   },
   propContainer: {
-    paddingHorizontal: textSIZES.large,
-    paddingBottom: textSIZES.small,
+    paddingHorizontal: textSIZES.small,
+    paddingBottom: textSIZES.tiny,
     borderColor: COLORS({opacity:0.5}).primary,
     borderBottomWidth: 1,
     borderRadius: textSIZES.small,
@@ -262,6 +192,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     backgroundColor:  COLORS({opacity:1}).lightWhite,
     paddingVertical: textSIZES.xxSmall,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS({opacity:0.5}).primary,
   },
   tab: {
     paddingVertical: textSIZES.xxSmall,

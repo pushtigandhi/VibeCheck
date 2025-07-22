@@ -7,98 +7,13 @@ import * as df  from "../constants/default";
 import CreateNewItem from "./CreateNewItem";
 
 export default function NewItem({navigation, onBack=null, isScheduler=false}) {
-
-  const [item, setItem] = useState({});
-  const [showCreateNew, setShowCreateNew] = useState(false);
-
-  function closeCreateNew() {
-    setShowCreateNew(false);
-  }
-
   function goHome() {
-    if(onBack)
-      onBack();
-    else
-      navigation.goBack();
+    navigation.goBack();
   }
 
   return (
     <SafeAreaView style={styles.infoContainer}>
-      <View style={styles.row}>
-        <TouchableOpacity onPress={() => (goHome())} style={[styles.button]} > 
-          <Ionicons name={"arrow-back-outline"} size={textSIZES.large} style={styles.icon}/> 
-        </TouchableOpacity>
-        <Text style={[styles.label]}>Select Item Type</Text>
-      </View>
-      
-      <TouchableOpacity
-        onPress={() => {
-            setItem(df.defaultItem);
-            setShowCreateNew(true);
-        }}
-        style={styles.titleContainer}
-      >
-      <View style={styles.row}>
-          <Text style={styles.label}>{df.ItemType.Item}</Text>
-          <Text style={{fontSize: textSIZES.xLarge}}>{df.defaultItem.icon}</Text>
-      </View>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={() => {
-            setItem(df.defaultTask);
-            setShowCreateNew(true);
-        }}
-        style={styles.titleContainer}
-      >
-      <View style={styles.row}>
-          <Text style={styles.label}>{df.ItemType.Task}</Text>
-          <Text style={{fontSize: textSIZES.xLarge}}>{df.defaultTask.icon}</Text>
-      </View>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={() => {
-            setItem(df.defaultEvent);
-            setShowCreateNew(true);
-        }}
-        style={styles.titleContainer}
-      >
-      <View style={styles.row}>
-          <Text style={styles.label}>{df.ItemType.Event}</Text>
-          <Text style={{fontSize: textSIZES.xLarge}}>{df.defaultEvent.icon}</Text>
-      </View>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={() => {
-            setItem(df.defaultPage);
-            setShowCreateNew(true);
-        }}
-        style={styles.titleContainer}
-      >
-          <View style={styles.row}>
-          <Text style={styles.label}>{df.ItemType.Page}</Text>
-          <Text style={{fontSize: textSIZES.xLarge}}>{df.defaultPage.icon}</Text>
-          </View>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={() => {
-            setItem(df.defaultRecipe);
-            setShowCreateNew(true);
-        }}
-        style={styles.titleContainer}
-      >
-          <View style={styles.row}>
-          <Text style={styles.label}>{df.ItemType.Recipe}</Text>
-          <Text style={{fontSize: textSIZES.xLarge}}>{df.defaultRecipe.icon}</Text>
-          </View>
-      </TouchableOpacity>
-
-      <Modal visible={showCreateNew} animationType="slide" onRequestClose={closeCreateNew}>
-        <CreateNewItem item={item} onClose={closeCreateNew} isScheduler={isScheduler} />
-      </Modal>
+      <CreateNewItem item={df.defaultItem} onClose={goHome} isScheduler={isScheduler} />
     </SafeAreaView>
   )
 };
@@ -107,6 +22,7 @@ const styles = StyleSheet.create({
   infoContainer: {
     flex:1,
     backgroundColor: COLORS({opacity:1}).white,
+    marginTop: -50,
   },
   titleContainer: {
     padding: textSIZES.small,

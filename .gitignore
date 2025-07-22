@@ -34,3 +34,5 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 SvgDemoApp/android/.gradle/8.3/dependencies-accessors/executionHistory.bin
+constants/theme.js
+.gitignore

@@ -4,10 +4,6 @@ import { COLORS, FONT, textSIZES, viewSIZES, SHADOWS, ItemType } from "../consta
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-const test1 = {
-    "startDate": new Date(),
-}
-
 export const Scheduler = ({ item = null, setFn }) => {
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), startDate.getHours(), startDate.getMinutes() + 15));
@@ -19,26 +15,41 @@ export const Scheduler = ({ item = null, setFn }) => {
 
     function updateDuration() {
       const differenceInMs = endDate - startDate;
-
-      // Convert milliseconds to days, hours, and minutes
       setDiffInDays(Math.floor(differenceInMs / (1000 * 60 * 60 * 24)));
       setDiffInHours(Math.floor((differenceInMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
-      setDiffInMinutes(Math.floor((differenceInMs % (1000 * 60 * 60)) / (1000 * 60)));
+      const minutes = (differenceInMs % (1000 * 60 * 60)) / (1000 * 60);
+      setDiffInMinutes(minutes % 5 == 0 ? minutes : Math.ceil(minutes));
     }
 
+    const [isSaved, setIsSaved] = useState(false);
+
     useEffect(() => {
-      if (item.startDate) {
-        setStartDate(new Date(item.startDate));
-        setEndDate(new Date(item.endDate));
-        setRepeat(item.repeat);
-
-        const differenceInMs = new Date(item.endDate) - new Date(item.startDate);
-
-        setDiffInDays(Math.floor(differenceInMs / (1000 * 60 * 60 * 24)));
-        setDiffInHours(Math.floor((differenceInMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
-        setDiffInMinutes(Math.floor((differenceInMs % (1000 * 60 * 60)) / (1000 * 60)));
+      if (item && item.startDate) {
+        const start = new Date(item.startDate);
+        const end = new Date(item.endDate);
+        
+        // Validate dates
+        if (!isNaN(start.getTime())) {
+          setStartDate(start);
+        }
+        if (!isNaN(end.getTime())) {
+          setEndDate(end);
+        }
+        if (item.repeat) {
+          setRepeat(item.repeat);
+        }
       }
-    }, [item]); 
+      updateDuration();
+    }, [item]);
+
+    // Update the item whenever startDate, endDate, or repeat changes
+    useEffect(() => {
+      setFn({
+        startDate: startDate,
+        endDate: endDate,
+        repeat: repeat
+      });
+    }, [startDate, endDate, repeat]);
 
     return(
       <SafeAreaView style={styles.screen}>
@@ -51,13 +62,14 @@ export const Scheduler = ({ item = null, setFn }) => {
               is24Hour={true}
               display="default"
               onChange={(event, selectedDate) => {
-                const currentDate = selectedDate || startDate;
-                setStartDate(currentDate);
-                if(currentDate>endDate) {
-                  setEndDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), currentDate.getHours(), currentDate.getMinutes() + 15));
+                if (selectedDate) {
+                  setStartDate(selectedDate);
+                  if(selectedDate > endDate) {
+                    setEndDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), selectedDate.getHours(), selectedDate.getMinutes() + 15));
+                  }
+                  updateDuration();
+                  setIsSaved(false);
                 }
-                updateDuration();
-                setFn({"startDate": currentDate});
               }}
             />
             <DateTimePicker
@@ -67,13 +79,14 @@ export const Scheduler = ({ item = null, setFn }) => {
               display="default"
               minuteInterval={15}
               onChange={(event, selectedDate) => {
-                const currentDate = selectedDate || startDate;
-                setStartDate(currentDate);
-                if(currentDate>=endDate) {
-                setEndDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), currentDate.getHours(), currentDate.getMinutes() + 15));
+                if (selectedDate) {
+                  setStartDate(selectedDate);
+                  if(selectedDate >= endDate) {
+                    setEndDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), selectedDate.getHours(), selectedDate.getMinutes() + 15));
+                  }
+                  updateDuration();
+                  setIsSaved(false);
                 }
-                updateDuration();
-                setFn({"startDate": currentDate});
               }}
             />
           </View>
@@ -85,14 +98,14 @@ export const Scheduler = ({ item = null, setFn }) => {
               is24Hour={true}
               display="default"
               onChange={(event, selectedDate) => {
-                const currentDate = selectedDate || endDate;
-                if(currentDate>startDate) {
-                    setEndDate(currentDate);
+                if (selectedDate) {
+                  if(selectedDate > startDate) {
+                    setEndDate(selectedDate);
                     updateDuration();
-                    setFn({"endDate": currentDate});
-                }
-                else {
-                  alert("End datetime has to be after start datetime.");
+                    setIsSaved(false);
+                  } else {
+                    alert("End datetime has to be after start datetime.");
+                  }
                 }
               }}
             />
@@ -103,68 +116,110 @@ export const Scheduler = ({ item = null, setFn }) => {
               display="default"
               minuteInterval={15}
               onChange={(event, selectedDate) => {
-              const currentDate = selectedDate || endDate;
-              if(currentDate>startDate) {
-                setEndDate(currentDate);
-                updateDuration();
-                setFn({"endDate": currentDate});
-              }
-              else {
-                alert("End datetime has to be after start datetime.");
-              }
+                if (selectedDate) {
+                  if(selectedDate > startDate) {
+                    setEndDate(selectedDate);
+                    updateDuration();
+                    setIsSaved(false);
+                  } else {
+                    alert("End datetime has to be after start datetime.");
+                  }
+                }
               }}
             />
           </View>
         </View>
-        <View style={[styles.row, styles.property, styles.divider]}>
+        <View style={[styles.row, styles.property, styles.divider, {justifyContent: "space-between"}]}>
           <Ionicons name={"repeat-outline"} size={textSIZES.large} style={[styles.icon, {margin: textSIZES.xxSmall}]}/>
-          <TouchableOpacity style={[styles.row, styles.box, repeat === 'ONCE' ? styles.selectedBox:styles.unselectedBox]}
-              onPress={() => (
-              setRepeat("ONCE"),
-              setFn({"repeat": "ONCE"})
-              )}
-          >
-          <Text style={[styles.property, repeat === 'ONCE' ? styles.selectedText:styles.unselectedText]}>Once</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.row, styles.box, repeat === 'DAILY' ? styles.selectedBox:styles.unselectedBox]}
-              onPress={() => (
-              setRepeat("DAILY"),
-              setFn({"repeat": "DAILY"})
-              )}
-          >
-          <Text style={[styles.property, repeat === 'DAILY' ? styles.selectedText:styles.unselectedText]}>Daily</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.row, styles.box, repeat === 'WEEKLY' ? styles.selectedBox:styles.unselectedBox]}
-            onPress={() => (
-              setRepeat("WEEKLY"),
-              setFn({"repeat": "WEEKLY"})
-            )}
-          >
-              <Text style={[styles.property, repeat === 'WEEKLY' ? styles.selectedText:styles.unselectedText]}>Weekly</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.row, styles.box, repeat === 'MONTHLY' ? styles.selectedBox:styles.unselectedBox]}
-            onPress={() => (
-              setRepeat("MONTHLY"),
-              setFn({"repeat": "MONTHLY"})
-            )}
-          >
-            <Text style={[styles.property, repeat === 'MONTHLY' ? styles.selectedText:styles.unselectedText]}>Monthly</Text>
-          </TouchableOpacity>
+          <View style={styles.row}>
+            <TouchableOpacity style={[styles.row, styles.box, repeat === 'ONCE' ? styles.selectedBox:styles.unselectedBox]}
+                onPress={() => {
+                  setIsSaved(false);
+                  setRepeat("ONCE");
+                }}
+            >
+            <Text style={[styles.property, repeat === 'ONCE' ? styles.selectedText:styles.unselectedText]}>Once</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.row, styles.box, repeat === 'DAILY' ? styles.selectedBox:styles.unselectedBox]}
+              onPress={() => {
+                setIsSaved(false);
+                setRepeat("DAILY");
+              }}
+            >
+              <Text style={[styles.property, repeat === 'DAILY' ? styles.selectedText:styles.unselectedText]}>Daily</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.row, styles.box, repeat === 'WEEKLY' ? styles.selectedBox:styles.unselectedBox]}
+              onPress={() => {
+                setIsSaved(false);
+                setRepeat("WEEKLY");
+              }}
+            >
+                <Text style={[styles.property, repeat === 'WEEKLY' ? styles.selectedText:styles.unselectedText]}>Weekly</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.row, styles.box, repeat === 'MONTHLY' ? styles.selectedBox:styles.unselectedBox]}
+              onPress={() => {
+                setIsSaved(false);
+                setRepeat("MONTHLY");
+              }}
+            >
+              <Text style={[styles.property, repeat === 'MONTHLY' ? styles.selectedText:styles.unselectedText]}>Monthly</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={[styles.row, styles.property, styles.divider, {justifyContent: "space-between"}]}>
+          <Ionicons name={"timer-outline"} size={textSIZES.large} style={[styles.icon]}/>
+          <View style={styles.row}>
+            <View style={[styles.box, styles.unselectedBox, { marginHorizontal: textSIZES.xxSmall }]}>
+              <Text style={[styles.property, styles.unselectedText]}>{diffInDays}</Text>
+            </View>
+            <Text style={[styles.property, styles.unselectedText, { marginLeft: 0 }]}>Days</Text>
+            <View style={[styles.box, styles.unselectedBox, { marginHorizontal: textSIZES.xxSmall }]}>
+              <Text style={[styles.property, styles.unselectedText]}>{diffInHours}</Text>
+            </View>
+            <Text style={[styles.property, styles.unselectedText, { marginLeft: 0 }]}>Hours</Text>
+            <View style={[styles.box, styles.unselectedBox, { marginHorizontal: textSIZES.xxSmall }]}>
+              <Text style={[styles.property, styles.unselectedText]}>{diffInMinutes}</Text>
+            </View>
+            <Text style={[styles.property, styles.unselectedText,{ marginLeft: 0 }]}>Minutes</Text>
+          </View>
         </View>
         <View style={[styles.row, styles.property]}>
-          <Ionicons name={"timer-outline"} size={textSIZES.large} style={[styles.icon]}/>
-          <View style={[styles.box, styles.unselectedBox, { marginHorizontal: textSIZES.xxSmall }]}>
-            <Text style={[styles.property, styles.unselectedText]}>{diffInDays}</Text>
-          </View>
-          <Text style={[styles.property, styles.unselectedText, { marginLeft: 0 }]}>Days</Text>
-          <View style={[styles.box, styles.unselectedBox, { marginHorizontal: textSIZES.xxSmall }]}>
-            <Text style={[styles.property, styles.unselectedText]}>{diffInHours}</Text>
-          </View>
-          <Text style={[styles.property, styles.unselectedText, { marginLeft: 0 }]}>Hours</Text>
-          <View style={[styles.box, styles.unselectedBox, { marginHorizontal: textSIZES.xxSmall }]}>
-            <Text style={[styles.property, styles.unselectedText]}>{diffInMinutes}</Text>
-          </View>
-          <Text style={[styles.property, styles.unselectedText,{ marginLeft: 0 }]}>Minutes</Text>
+          <TouchableOpacity style={[styles.button, {borderWidth: 0.5, borderColor: COLORS({opacity:1}).primary}]}
+            onPress={() => {
+              setIsSaved(false);
+              setFn({
+                cancelSchedule: true
+              });
+            }}
+          >
+            <Text style={[styles.property, {fontWeight: "bold"}]}>Delete</Text>
+          </TouchableOpacity>
+          {item && item.startDate && item.endDate && item.repeat && (
+            <TouchableOpacity style={[styles.button, {borderWidth: 0.5, borderColor: COLORS({opacity:1}).primary}]}
+              onPress={() => {
+                setIsSaved(false);
+                setFn({
+                  originalSchedule: true
+                });
+              }}
+            >
+              <Text style={[styles.property, {fontWeight: "bold"}]}>Reset</Text>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity style={[styles.row, styles.button, {borderWidth: 0.5, borderColor: COLORS({opacity:1}).primary}]}
+            onPress={() => {
+              setFn({
+                addSchedule: true,
+                startDate: startDate,
+                endDate: endDate,
+                repeat: repeat
+              });
+              setIsSaved(true);
+            }}
+          >
+            <Text style={[styles.property, {fontWeight: "bold"}]}>Save</Text>
+            {isSaved && <Ionicons name={"checkmark-outline"} size={textSIZES.large} style={[styles.icon]}/>}
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     )
@@ -172,13 +227,19 @@ export const Scheduler = ({ item = null, setFn }) => {
 
 const styles = StyleSheet.create({
   screen: {
+    marginHorizontal: textSIZES.small,
+    marginBottom: textSIZES.small,
+    padding: textSIZES.xSmall,
     backgroundColor: COLORS({opacity:1}).lightWhite,
+    borderRadius: textSIZES.small/2,
+    borderWidth: 1,
+    borderColor: COLORS({opacity:1}).primary,
+    maxHeight: 400,
   },
   infoContainer: {
-    backgroundColor: COLORS({opacity:1}).white,
     margin: textSIZES.small,
-    marginVertical: textSIZES.xxLarge*2,
-      ...SHADOWS.medium,
+    marginVertical: textSIZES.large,
+    ...SHADOWS.medium,
   },
   row: {
     flexDirection: "row",
@@ -192,7 +253,7 @@ const styles = StyleSheet.create({
   label:{
     width: 50,
     color: COLORS({opacity:1}).secondary,
-    margin: textSIZES.xSmall,
+    fontSize: textSIZES.small,
   },
   property:{
     // fontSize: textSIZES.small,
@@ -251,11 +312,11 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
-    padding: textSIZES.xSmall,
-    margin: textSIZES.xSmall,
+    padding: textSIZES.xxSmall,
+    marginHorizontal: textSIZES.tiny,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: textSIZES.small
+    borderRadius: textSIZES.xSmall
   },
   buttonText: {
     color: COLORS({opacity: 1}).white,
@@ -268,5 +329,12 @@ const styles = StyleSheet.create({
     ...SHADOWS.xSmall,
     shadowColor: COLORS({opacity:1}).shadow,
     padding: textSIZES.xxSmall,
+  },
+  cancelSchedule: {
+    backgroundColor: COLORS({opacity:1}).lightRed,
+    padding: textSIZES.xSmall,
+    borderBottomLeftRadius: textSIZES.small/2,
+    borderBottomRightRadius: textSIZES.small/2,
+    justifyContent: "center",
   },
 });
