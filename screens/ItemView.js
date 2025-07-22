@@ -412,6 +412,7 @@ const styles = StyleSheet.create({
   },
   label: {
     paddingVertical: textSIZES.xSmall,
+    paddingVertical: textSIZES.xSmall,
     fontSize: textSIZES.small,
     fontFamily: FONT.regular,
     color: COLORS({opacity:1}).primary,

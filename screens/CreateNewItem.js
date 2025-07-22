@@ -462,6 +462,8 @@ const styles = StyleSheet.create({
     button: {
         height: viewSIZES.xxSmall,
         width: viewSIZES.xxSmall,
+        height: viewSIZES.xxSmall,
+        width: viewSIZES.xxSmall,
         padding: textSIZES.xSmall,
         marginHorizontal: textSIZES.xSmall,
         alignItems: "center",

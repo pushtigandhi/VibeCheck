@@ -514,6 +514,7 @@ export async function DELETEtag(tagID) {
 const getURL= (itemType) => {
     let ext;
     //console.log("getURL: " + itemType);
+    //console.log("getURL: " + itemType);
     switch(itemType) {
         case ItemType.Task:
             ext = TASKS_EXT;
@@ -686,6 +687,7 @@ export async function GETuserByHandleTEST() {
     });
 
     // console.log(response);
+    // console.log(response);
 
     const body = {};
     return body.user;
@@ -748,6 +750,7 @@ export async function PATCHupdateProfileTEST(data) {
     });
 
     // console.log(response);
+    // console.log(response);
 
     const profile = {"profile": {}};
     return profile.profile;
@@ -760,6 +763,7 @@ export async function GETcontactsTEST() {
 
     const response =CONTACTS_BASE_URL;
 
+    // console.log(response);
     // console.log(response);
 
     const body = {"contacts": [{
@@ -783,6 +787,7 @@ export async function GETcontactByTEST(contactID) {
     });
 
     // console.log(response);
+    // console.log(response);
 
     const body = {"contacts": {}};
     return body.contacts;
@@ -794,6 +799,7 @@ export async function POSTaddContactTEST(contact) {
         body: JSON.stringify(contact),
     });
 
+    // console.log(response);
     // console.log(response);
 
     const body = {"contacts": {}};
@@ -810,6 +816,7 @@ export async function PATCHcontactTEST(newContact, contactID) {
     });
 
     // console.log(response);
+    // console.log(response);
 
     const editResponse = {"contacts": {}};
     return editResponse.contacts;
@@ -820,6 +827,7 @@ export async function DELETEcontactTEST(contactID) {
         method: "DELETE",
     });
 
+    // console.log(response);
     // console.log(response);
 }
 //#endregion
@@ -832,6 +840,7 @@ export async function GETdirectoryTEST() {
     //     method: 'GET',
     // });
 
+    // // console.log(response);
     // // console.log(response);
 
     const body = {"directory": [
@@ -876,6 +885,7 @@ export async function POSTaddCategoryTEST(profileID, category) {
     const response = `${DIRECTORY_BASE_URL}/${profileID}...body:` + JSON.stringify(category);
 
     // console.log(response);
+    // console.log(response);
 
     const body = {"directory": []};
     let directory = body.directory;
@@ -896,6 +906,7 @@ export async function PATCHcategoryTEST(newCategory, categoryID) {
     });
 
     // console.log(response);
+    // console.log(response);
 
     const body = {"directory": []};
     let directory = body.directory;
@@ -911,6 +922,7 @@ export async function DELETEcategoryTEST(categoryID) {
         method: "DELETE",
     });
 
+    // console.log(response);
     // console.log(response);
 
     const body = {"directory": []};
@@ -930,6 +942,7 @@ export async function GETtagsTEST() {
     });
 
     // console.log(response);
+    // console.log(response);
 
     const body = {"tags": []};
     let tags = body.tags;
@@ -946,6 +959,7 @@ export async function POSTaddTagTEST(tag) {
         body: JSON.stringify(tag),
     });
 
+    // console.log(response);
     // console.log(response);
 
     const body = {"tag": {}};
@@ -972,6 +986,7 @@ export async function DELETEtagTEST(tagID) {
         method: "DELETE",
     });
 
+    // console.log(response);
     // console.log(response);
 
     const body = {"tag": {}};
@@ -1102,6 +1117,7 @@ export async function GETsectionTEST(itemType, filter={}) {
 
     let body;
     // console.log("items: " + response);
+    // console.log("items: " + response);
 
     body = {
         "items": [
@@ -1141,8 +1157,10 @@ export async function PATCHitemTEST(itemType, newItem, itemID) {
     delete newItem.id;
 
     // console.log(newItem);
+    // console.log(newItem);
     const response = `${ITEMS_BASE_URL}/${itemID}${ext}`;
 
+    // console.log(response);
     // console.log(response);
 
     const body = {"item": {}};
@@ -1154,6 +1172,7 @@ export async function DELETEitemTEST(itemType, itemID) {
     
     const response = `${ITEMS_BASE_URL}/${itemID}${ext}`;
 
+    // console.log(response);
     // console.log(response);
 
     const body = {"item": {}};
