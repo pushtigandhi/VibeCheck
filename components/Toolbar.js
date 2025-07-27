@@ -1,9 +1,8 @@
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { View, TouchableOpacity, StyleSheet, Text, TextInput, RefreshControl } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Text, RefreshControl, TouchableWithoutFeedback, Modal } from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS, textSIZES, viewSIZES, SHADOWS } from "../constants";
-import DateTimePicker from '@react-native-community/datetimepicker';
 
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 
@@ -15,8 +14,6 @@ export const ToolBar = ({
   date,
   toggleSidebar,
   setFilterVisible,
-  setScheduleVisible,
-  doSearch,
   isHome = false, 
   navigation
 }) => {
@@ -24,7 +21,7 @@ export const ToolBar = ({
   const [selected, setSelected] = useState('');
   const [formattedDate, setFormattedDate] = useState(null);
   const [showDatePicker, toggleShowDatePicker] = useState(false);
-  const [expandSearchBar, setSearchBar] = useState(false);
+  const [showAddDropdown, setShowAddDropdown] = useState(false);
 
   useEffect(() => {
     toggleShowDatePicker(false);
@@ -64,8 +61,9 @@ export const ToolBar = ({
   });
 
   return (
-    <>
-    <View style={[styles.toolBar, styles.row]}>
+    <TouchableWithoutFeedback onPress={() => setShowAddDropdown(false)}>
+      <View>
+        <View style={[styles.toolBar, styles.row]}>
       <View style={[styles.row, styles.leftContent]}>
         {isHome && (
           <TouchableOpacity 
@@ -107,14 +105,6 @@ export const ToolBar = ({
       {isHome && (
         <View style={[styles.row, styles.rightContent]}>
           <TouchableOpacity
-              style={[styles.row, styles.searchButtonIcon]}
-              onPress={() => {
-              setSearchBar(!expandSearchBar);
-              }}
-          >
-              <Ionicons name={"search-outline"} size={20} style={styles.iconInverted} />
-          </TouchableOpacity>
-          <TouchableOpacity
               onPress={() => {
               setFilterVisible(true);
               }}
@@ -123,22 +113,48 @@ export const ToolBar = ({
               <Ionicons name={"options-outline"} size={20} style={styles.iconInverted}/>
           </TouchableOpacity>
           <TouchableOpacity
-              onPress={() => {setScheduleVisible(true);}}
+              onPress={() => {setShowAddDropdown(!showAddDropdown);}}
               style={[styles.row, styles.addButtonIcon]}
           >
               <Ionicons name={"add-circle"} size={20} style={styles.iconInverted}/>
           </TouchableOpacity>
         </View>
       )}
-      
     </View>
-    {expandSearchBar && (
-      <TextInput style={styles.searchInput} 
-          placeholder="search"
-          onSubmitEditing={(newSearch) => (setSearchBar(false), doSearch(newSearch))}
-          returnKeyType='search'
-      /> 
-    )} 
+
+    <Modal
+      visible={showAddDropdown}
+      transparent={true}
+      animationType="fade"
+      onRequestClose={() => setShowAddDropdown(false)}
+    >
+      <TouchableWithoutFeedback onPress={() => setShowAddDropdown(false)}>
+        <View style={styles.modalOverlay}>
+          <TouchableWithoutFeedback onPress={() => {}}>
+            <View style={styles.dropdownMenu}>
+              <TouchableOpacity 
+                style={styles.dropdownItem}
+                onPress={() => {
+                  setShowAddDropdown(false);
+                  navigation.navigate("NewItem", { isScheduler: true });
+                }}
+              >
+                <Text style={styles.dropdownText}>Create New</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[styles.dropdownItem, styles.dropdownItemLast]}
+                onPress={() => {
+                  setShowAddDropdown(false);
+                  navigation.navigate("Directory");
+                }}
+              >
+                <Text style={styles.dropdownText}>Select Existing</Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      </TouchableWithoutFeedback>
+    </Modal>
 
     {showDatePicker && (
       <Calendar
@@ -153,7 +169,8 @@ export const ToolBar = ({
         theme={styles.calendar}
       />
     )}
-    </>
+        </View>
+      </TouchableWithoutFeedback>
   );
 };
 
@@ -177,7 +194,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flex: 'row',
     justifyContent: 'space-between',
-    //position: 'relative',
+    position: 'relative',
     height: 50,
   },
   leftContent: {
@@ -210,7 +227,7 @@ const styles = StyleSheet.create({
     height: textSIZES.xxLarge,
     width: textSIZES.xxLarge,
     borderRadius: textSIZES.xxSmall,
-    backgroundColor: COLORS({opacity:0.7}).primary,
+    backgroundColor: COLORS({opacity:0.7}).secondary,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -230,6 +247,33 @@ const styles = StyleSheet.create({
     padding: textSIZES.xxSmall,
     marginTop: textSIZES.xxSmall,
     borderColor: COLORS({opacity:0.5}).primary,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-end',
+    paddingTop: 200,
+    paddingRight: textSIZES.xSmall,
+  },
+  dropdownMenu: {
+    backgroundColor: COLORS({opacity:1}).white,
+    borderRadius: textSIZES.xSmall,
+    ...SHADOWS.medium,
+    minWidth: 120,
+  },
+  dropdownItem: {
+    padding: textSIZES.xSmall,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS({opacity:0.1}).primary,
+  },
+  dropdownItemLast: {
+    borderBottomWidth: 0,
+  },
+  dropdownText: {
+    fontSize: textSIZES.small,
+    color: COLORS({opacity:1}).primary,
+    textAlign: 'center',
   },
   icon: {
     color: COLORS({opacity:1}).primary,

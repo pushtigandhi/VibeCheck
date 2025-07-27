@@ -85,24 +85,12 @@ export const CalendarView = ({navigation, filter={}, setFilter, isHome=false, re
                     showSidebar={showSidebar}
                     onRefresh={onRefresh}
                     setFilterVisible={setFilterVisible}
-                    setScheduleVisible={setScheduleVisible}
                     doSearch={doSearch}
                     isHome={isHome}
                     navigation={navigation}
                 />
                 <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
                     <FilterModal closeFilter={closeFilter} doSearch={closeFilter} filter={filter} setFilter={setFilter} />
-                </Modal>
-                <Modal visible={scheduleVisible} animationType="slide" onRequestClose={closeSchedule}>
-                    <SafeAreaView style={styles.modalOverlay}>
-                    <View style={styles.modalContent}>
-                    <View style={styles.modalHeader}>
-                        <TouchableOpacity onPress={closeSchedule} style={styles.closeButton}>
-                        <Ionicons name="close" size={textSIZES.large} style={styles.closeIcon} />
-                        </TouchableOpacity>
-                    </View>
-                    </View>
-                    </SafeAreaView>
                 </Modal>
                 <View style={styles.iconRoot}>
                     <TouchableOpacity

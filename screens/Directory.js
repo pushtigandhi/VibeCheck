@@ -6,6 +6,7 @@ import HomeNavigation from "./HomeNavigation";
 import { GETdirectory, POSTcategory, DELETEcategory, PATCHcategory } from "../API";
 import DirectoryCard from "./cards/DirectoryCard"
 import { Alert } from "react-native";
+import FilterModal from "../components/FilterModal";
 
 
 export default function Directory ({navigation, scrollEnabled = true}) {
@@ -14,6 +15,8 @@ export default function Directory ({navigation, scrollEnabled = true}) {
   const [newCategory, setNewCategory] = useState('');
   const [search, setSearch] = useState('');
   const [searchFocused, setSearchFocused] = useState(false);
+  const [filterVisible, setFilterVisible] = useState(false);
+  const [filter, setFilter] = useState({});
 
   async function addNewCategory(newTitle) {
     if (newTitle) {
@@ -97,14 +100,18 @@ export default function Directory ({navigation, scrollEnabled = true}) {
     return categories.filter(cat => cat.title.toLowerCase().includes(search.trim().toLowerCase()));
   }
 
+  function closeFilter() {
+    setFilterVisible(false);
+  }
+
   return (
     <TouchableWithoutFeedback onPress={() => { Keyboard.dismiss(); setSearchFocused(false); }}>
       <SafeAreaView style={styles.screen}>
         <View style={{flexDirection: 'row', alignItems: 'center', marginHorizontal: textSIZES.xSmall, marginTop: textSIZES.xSmall}}>
-          <View style={[styles.row, styles.header, {flex: 1, marginRight: textSIZES.small}]}> 
+          <View style={[styles.row, styles.header, {flex: 1, marginRight: textSIZES.xxSmall}]}> 
             <Ionicons name={"search-outline"} size={textSIZES.large} style={styles.iconInverse} />
             <TextInput
-              style={{flex: 1, fontSize: textSIZES.large, color: COLORS({opacity:1}).primary}}
+              style={{flex: 1, fontSize: textSIZES.medium, color: COLORS({opacity:1}).primary}}
               {...(search ? { defaultValue: search } : { placeholder: "Directory" })}
               onChangeText={setSearch}
               returnKeyType='search'
@@ -114,6 +121,15 @@ export default function Directory ({navigation, scrollEnabled = true}) {
               caretHidden={!searchFocused}
             />
           </View>
+          <>
+          <TouchableOpacity
+              onPress={() => {
+              setFilterVisible(true);
+              }}
+              style={styles.button}
+          >
+              <Ionicons name={"options-outline"} size={textSIZES.xLarge} style={styles.icon}/>
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={() => (() => {
               Alert.prompt(
@@ -132,8 +148,9 @@ export default function Directory ({navigation, scrollEnabled = true}) {
             })()}
             style={[styles.button]}
           >
-            <Ionicons name={"add-circle"} size={textSIZES.xxLarge} style={styles.icon}/>
+            <Ionicons name={"add-circle"} size={textSIZES.xLarge} style={styles.icon}/>
           </TouchableOpacity>
+          </>
         </View>
 
         <FlatList
@@ -145,6 +162,9 @@ export default function Directory ({navigation, scrollEnabled = true}) {
             </View>
           )}
         />
+        <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
+                    <FilterModal closeFilter={closeFilter} doSearch={closeFilter} filter={filter} setFilter={setFilter} />
+        </Modal>
         <HomeNavigation size={30} iconColor={COLORS({opacity:1}).primary}/>
       </SafeAreaView>
     </TouchableWithoutFeedback>
@@ -158,7 +178,7 @@ const styles = StyleSheet.create({
   },
   header:{
     padding: textSIZES.xSmall,
-    marginHorizontal: textSIZES.xSmall,
+    marginLeft: textSIZES.xSmall,
     borderWidth: 1,
     borderColor: COLORS({opacity:1}).primary,
     borderRadius: textSIZES.xSmall,
@@ -176,7 +196,7 @@ const styles = StyleSheet.create({
     borderRadius: textSIZES.xSmall,
   },
   inputBox: {
-    margin: textSIZES.xSmall,
+    margin: textSIZES.xxSmall,
     padding: textSIZES.xSmall,
     borderWidth: 0.5,
     borderRadius: textSIZES.xSmall,
@@ -193,6 +213,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS({opacity:1}).primary,
     borderRadius: textSIZES.xxSmall,
     alignItems: 'center',
+    marginRight: textSIZES.tiny,
   },
   icon: {
     color: COLORS({opacity:1}).lightWhite,

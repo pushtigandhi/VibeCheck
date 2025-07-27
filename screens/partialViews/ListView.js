@@ -17,7 +17,7 @@ export const ListView = ({items, navigation, doRefresh}) => (
       >
         <View style={{flexDirection: "row"}}>
           <View style={{ justifyContent: "center"}}>
-            <Text style={{ fontSize: textSIZES.medium}}>{item.icon}</Text>
+            <Text style={{ fontSize: textSIZES.small}}>{item.icon}</Text>
           </View>
           <View style={styles.dayCardContainer}>
             <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
@@ -65,7 +65,7 @@ export const ListView = ({items, navigation, doRefresh}) => (
       backgroundColor: COLORS({opacity:0.5}).secondary,
     },
     title: {
-      fontSize: textSIZES.medium,
+      fontSize: textSIZES.small,
       fontFamily: FONT.regular,
       color: COLORS({opacity:1}).primary,
       
@@ -117,8 +117,8 @@ export const ListView = ({items, navigation, doRefresh}) => (
       alignItems: "center",
     },
     cardsContainer: {
-      marginTop: textSIZES.small,
-      marginHorizontal: textSIZES.small,
+      marginTop: textSIZES.xSmall,
+      marginHorizontal: textSIZES.xSmall,
       padding: textSIZES.small,
       borderColor: COLORS({opacity:1}).lightGrey,
       backgroundColor: COLORS({opacity:0.1}).white,
