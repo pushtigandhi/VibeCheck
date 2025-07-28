@@ -75,6 +75,7 @@ export default function Directory ({navigation, scrollEnabled = true}) {
       await GETdirectory().then((directory) => {
         if (directory) {
           setCategories(directory);
+          console.log("directory", directory);
           return directory;
         } else {
           alert("Failed.");

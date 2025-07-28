@@ -366,7 +366,8 @@ export async function GETdirectory() {
     try {
         if (response.status == 201) {
             // good, return 
-            return await response.json();
+            const body = await response.json();
+            return body;
         } else {
             return []
         }

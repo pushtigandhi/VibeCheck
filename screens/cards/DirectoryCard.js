@@ -37,7 +37,7 @@ const expandedCard = ({navigation, category, sections, doRefresh}) => {
   async function deleteSection(sectionID) {
     const updatedCategory = {
       id: category["_id"],
-      sections: sections.filter(s => s._id !== sectionID),
+      sections: (sections || []).filter(s => s._id !== sectionID),
     }
     await PATCHcategory(updatedCategory).then((directory) => {  
       let sections_ = directory.find(c => c._id === category["_id"]).sections;
@@ -50,7 +50,7 @@ const expandedCard = ({navigation, category, sections, doRefresh}) => {
   async function editSection(sectionID, newTitle) {
     const updatedCategory = {
       id: category["_id"],
-      sections: sections.map(s => s._id === sectionID ? {...s, title: newTitle} : s),
+      sections: (sections || []).map(s => s._id === sectionID ? {...s, title: newTitle} : s),
     }
     await PATCHcategory(updatedCategory).then((directory) => {
       let sections_ = directory.find(c => c._id === category["_id"]).sections;
@@ -70,7 +70,7 @@ const expandedCard = ({navigation, category, sections, doRefresh}) => {
         <Text style={styles.section}>All</Text>
       </TouchableOpacity>
       
-      {sections.map(section => (
+      {sections && sections.map(section => (
         <View key={section["_id"] + "_root"}>
         <TouchableOpacity style={styles.sectionContainer}
           onPress={() => {
@@ -149,7 +149,7 @@ const expandedCard = ({navigation, category, sections, doRefresh}) => {
 const DirectoryCard = ({navigation, category, handleDelete, handleRename}) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
-  const [sections, setSections] = useState(category.sections);
+  const [sections, setSections] = useState(category.sections || []);
   const [optionsPosition, setOptionsPosition] = useState({ x: 0, y: 0 });
   const dotsRef = useRef(null);
 
@@ -176,7 +176,7 @@ const DirectoryCard = ({navigation, category, handleDelete, handleRename}) => {
     if (!newTitle || !newTitle.trim()) return;
     const updatedCategory = {
       id: category["_id"],
-      sections: [...sections, {title: newTitle, view: ViewType.Default}],
+      sections: [...(sections || []), {title: newTitle, view: ViewType.Default}],
     };
     await PATCHcategory(updatedCategory).then((directory) => {
       let sections_ = directory.find(c => c._id === category["_id"]).sections;
