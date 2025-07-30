@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { textSIZES, viewSIZES, COLORS, FONT, SHADOWS } from "../../constants";
-import { GETitems, GETitemsTEST, GETtodayTEST, GETscheduledTEST } from "../../API";
+import { GETitems, GETitemsTEST, GETtodayTEST, GETscheduled } from "../../API";
 import { ItemType } from "../../constants";
 import { DailyCalendar } from "./DailyCalendar";
 import { WeeklyCalendar } from "./WeeklyCalendar";
@@ -18,24 +18,12 @@ export const CalendarView = ({navigation, filter={}, setFilter, isHome=false, re
     const calendarHeight = Dimensions.get('window').height - 300;
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [filterVisible, setFilterVisible] = useState(false);
-    const [scheduleVisible, setScheduleVisible] = useState(false);
-
+ 
     const [state, setState] = useState("day");
     const [items, setItems] = useState([]);
 
     const [refreshing, setRefreshing] = useState(false);
     const [showSidebar, toggleShowSidebar] = useState(false);
-
-    async function getScheduledItemsFromAPI() {
-        try {
-          let items_ = await GETscheduledTEST(selectedDate, state, filter);
-          return items_;
-        } catch (error) {
-          console.log("error fetching items");
-          console.log(error);
-          return [];
-        }
-    }
 
     const onRefresh = React.useCallback((updatedDate, state) => {
         setSelectedDate(updatedDate);
@@ -58,10 +46,7 @@ export const CalendarView = ({navigation, filter={}, setFilter, isHome=false, re
         setRefreshing(!refreshing);
         setFilterVisible(false);
     }
-    function closeSchedule() {
-        setRefreshing(!refreshing);
-        setScheduleVisible(false);
-    }
+
 
     function doSearch({search}) {
         //console.log(search);
@@ -69,8 +54,8 @@ export const CalendarView = ({navigation, filter={}, setFilter, isHome=false, re
     }
     
     useEffect(() => {
-        getScheduledItemsFromAPI();
-    },[refreshing])
+        //getScheduledItemsFromAPI();
+    },[refreshing, selectedDate, state])
 
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
