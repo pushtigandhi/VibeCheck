@@ -15,11 +15,6 @@ const CONTACTS_BASE_URL = `${BASE_URL}/contacts`;
 const DIRECTORY_BASE_URL = `${BASE_URL}/directory`;
 const TAGS_BASE_URL = `${BASE_URL}/tags`;
 const ITEMS_BASE_URL = `${BASE_URL}/items`;
-const ITEMS_EXT = `?itemType=item`;
-const TASKS_EXT = `?itemType=task`;
-const EVENTS_EXT = `$?itemType=event`;
-const PAGES_EXT = `?itemType=page`;
-const RECIPE_EXT = `?itemType=recipe`;
 
 
 //#region AUTHORIZATION & AUTHENTICATION
@@ -512,36 +507,10 @@ export async function DELETEtag(tagID) {
 //#endregion
 
 //#region ITEMS
-const getURL= (itemType) => {
-    let ext;
-    //console.log("getURL: " + itemType);
-    //console.log("getURL: " + itemType);
-    switch(itemType) {
-        case ItemType.Task:
-            ext = TASKS_EXT;
-            break;
-        case ItemType.Event:
-            ext = EVENTS_EXT;
-            break;
-        case ItemType.Page:
-            ext = PAGES_EXT;
-            break;
-        case ItemType.Recipe:
-            ext = RECIPE_EXT;
-            break;
-        case ItemType.Item:
-            ext = ITEMS_EXT;
-            break;
-    }
-    return ext;
-} 
 
-export async function GETitems(itemType, filter={}) {
-    const ext = getURL(itemType);
+export async function GETitems(filter={}) {
 
-    //console.log(filter);
-
-    const response = await fetchWithAuth(`${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "&" : "") +  new URLSearchParams(filter), {
+    const response = await fetchWithAuth(`${ITEMS_BASE_URL}` + (!!Object.keys(filter).length ? "/?" : "") +  new URLSearchParams(filter), {
         method: 'GET',
     });
     try {
@@ -564,10 +533,9 @@ export async function GETitems(itemType, filter={}) {
     }
 }
 
-export async function GETitemsByID(itemType, itemID) {
-    const ext = getURL(itemType);
+export async function GETitemsByID(itemID) {
 
-    const response = await fetchWithAuth(`${ITEMS_BASE_URL}/${itemID}${ext}`, {
+    const response = await fetchWithAuth(`${ITEMS_BASE_URL}/${itemID}`, {
         method: 'GET',
     });
 
@@ -585,10 +553,8 @@ export async function GETitemsByID(itemType, itemID) {
     }
 }
 
-export async function GETitemsByIDs(itemType, itemIDs) {
-    const ext = getURL(itemType);
+export async function GETitemsByIDs(itemIDs) {
     const idsQuery = itemIDs.join(',');
-
     const response = await fetchWithAuth(`${ITEMS_BASE_URL}/batch/?ids=${idsQuery}`, {
         method: 'GET',
     });
@@ -609,10 +575,9 @@ export async function GETitemsByIDs(itemType, itemIDs) {
 
 
 
-export async function POSTitem(itemType, item) {
-    const ext = getURL(itemType);
+export async function POSTitem(item) {
 
-    const response = await fetchWithAuthJSON(`${ITEMS_BASE_URL}/${ext}`, {
+    const response = await fetchWithAuthJSON(`${ITEMS_BASE_URL}`, {
         method: 'POST',
         body: JSON.stringify(item),
     });
@@ -631,14 +596,13 @@ export async function POSTitem(itemType, item) {
     }
 }
 
-export async function PATCHitem(itemType, newItem, itemID) {
-    const ext = getURL(itemType);
+export async function PATCHitem(newItem, itemID) {
 
     delete newItem._id; // remove _id from newPost
     delete newItem.id;
    // console.log(newItem);
 
-    const response = await fetchWithAuthJSON(`${ITEMS_BASE_URL}/${itemID}${ext}`, {
+    const response = await fetchWithAuthJSON(`${ITEMS_BASE_URL}/${itemID}`, {
         method: "PATCH",
         body: JSON.stringify(newItem),
     });
@@ -658,10 +622,9 @@ export async function PATCHitem(itemType, newItem, itemID) {
     }
 }
 
-export async function DELETEitem(itemType, itemID) {
-    const ext = getURL(itemType);
+export async function DELETEitem(itemID) {
     
-    const response = await fetchWithAuth(`${ITEMS_BASE_URL}/${itemID}${ext}`, {
+    const response = await fetchWithAuth(`${ITEMS_BASE_URL}/${itemID}`, {
         method: "DELETE",
     });
 
@@ -671,39 +634,15 @@ export async function DELETEitem(itemType, itemID) {
         throw new Error("Error deleting item");
     }
 }
-
-//#endregion
-
-//#region  TODELETE - TESTS
-
-
-
-//#endregion
-
-//#region USERS
-
-export async function GETuserByHandleTEST() {
-    const response = await fetchWithAuth(`${USERS_BASE_URL}/handle`, {
-        method: 'GET',
-    });
-
-    // console.log(response);
-    // console.log(response);
-
-    const body = {};
-    return body.user;
-}
-
 //#endregion
 
 //#region CALENDAR
 
 export async function GETtoday(filter={}) {
-    const ext = getURL(!!filter.itemType ? filter.itemType : ItemType.Item);
     if (filter.hasOwnProperty('endlt')) {
         delete filter.endlt;
     }
-    const response = await fetchWithAuth(`${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "&" : "") +  new URLSearchParams(filter), {
+    const response = await fetchWithAuth(`${ITEMS_BASE_URL}` + (!!Object.keys(filter).length ? "/?" : "") +  new URLSearchParams(filter), {
         method: 'GET',
     });
 
@@ -727,12 +666,11 @@ export async function GETtoday(filter={}) {
 }
 
 export async function GETweek(filter={}) {
-    const ext = getURL(!!filter.itemType ? filter.itemType : ItemType.Item);
 
     if (filter.hasOwnProperty('endlt')) {
         delete filter.endlt;
     }
-    const response = await fetchWithAuth(`${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "&" : "") +  new URLSearchParams(filter), {
+    const response = await fetchWithAuth(`${ITEMS_BASE_URL}` + (!!Object.keys(filter).length ? "/?" : "") +  new URLSearchParams(filter), {
         method: 'GET',
     });
 
@@ -765,10 +703,8 @@ export async function GETweek(filter={}) {
 }
 
 export async function GETmonth(filter={}) {
-    const ext = getURL(!!filter.itemType ? filter.itemType : ItemType.Item);
 
-
-    const response = await fetchWithAuth(`${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "&" : "") +  new URLSearchParams(filter), {
+        const response = await fetchWithAuth(`${ITEMS_BASE_URL}` + (!!Object.keys(filter).length ? "/?" : "") +  new URLSearchParams(filter), {
         method: 'GET',
     });
 
