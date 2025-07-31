@@ -124,9 +124,7 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
             setUpdatedItem({... updatedItem, startDate: item.startDate, endDate: item.endDate, repeat: item.repeat});
         }
         if(params.tags) {
-            setUpdatedItem({... updatedItem, tags: params.tags.split(/\s+|,/)
-          .map((tag) => tag.trim())
-          .filter((tag) => tag !== "")});
+            setUpdatedItem({... updatedItem, tags: params.tags});
         }
     }
     

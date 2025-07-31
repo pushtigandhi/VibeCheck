@@ -1,5 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useEffect } from 'react';
 
 import HomeScreen from './screens/HomeScreen';
 import Contacts from './screens/Contacts';
@@ -11,6 +12,7 @@ import NewItem from './screens/NewItem';
 import ItemCard from './screens/ItemView';
 import { useFonts } from 'expo-font';
 import DefaultView from './screens/views/DefaultView';
+import { initializeProfileId } from './API';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +22,11 @@ export default function App() {
       DMMedium: require("./assets/fonts/DMSans-Medium.ttf"),
       DMRegular: require("./assets/fonts/DMSans-Regular.ttf"),
     });
+
+    // Initialize profile ID from AsyncStorage on app startup
+    useEffect(() => {
+        initializeProfileId();
+    }, []);
     
   return (
     <NavigationContainer>

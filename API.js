@@ -1,8 +1,4 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Platform } from 'react-native';
-import { ItemType } from './constants'
-import { defaultDirectory } from './constants/default';
-import { useState } from 'react';
 
 export let PROFILE_ID;
 
@@ -70,9 +66,48 @@ export async function saveAuth(response) {
     await AsyncStorage.setItem('JWT', JWT);
 }
 
+export async function saveProfileId(profileId) {
+    // save profile ID to storage
+    try {
+        await AsyncStorage.setItem('PROFILE_ID', profileId);
+        console.log('Profile ID saved to storage:', profileId);
+    } catch (err) {
+        console.log('Error saving profile ID to storage:', err);
+    }
+}
+
+export async function getProfileId() {
+    // get profile ID from storage
+    try {
+        const profileId = await AsyncStorage.getItem('PROFILE_ID');
+        return profileId;
+    } catch (err) {
+        console.log('Error getting profile ID from storage:', err);
+        return null;
+    }
+}
+
+export async function initializeProfileId() {
+    // Initialize PROFILE_ID from AsyncStorage on app startup
+    try {
+        const profileId = await AsyncStorage.getItem('PROFILE_ID');
+        if (profileId) {
+            PROFILE_ID = profileId;
+            console.log('Profile ID initialized from storage:', profileId);
+        } else {
+            console.log('No profile ID found in storage');
+        }
+        return profileId;
+    } catch (err) {
+        console.log('Error initializing profile ID from storage:', err);
+        return null;
+    }
+}
+
 export async function removeAuth() {
-    // remove JWT from storage
+    // remove JWT and profile ID from storage
     await AsyncStorage.removeItem('JWT');
+    await AsyncStorage.removeItem('PROFILE_ID');
 }
 
 export async function doLogout() {
@@ -100,9 +135,11 @@ export async function doLogin(email, password) {
         if (response.status === 200) {
             // success - save JWT
             await saveAuth(response);
-            PROFILE_ID = await GETme().then((profile) => {
-                return profile["_id"];
-            });
+            const profile = await GETme();
+            if (profile && profile["_id"]) {
+                PROFILE_ID = profile["_id"];
+                await saveProfileId(PROFILE_ID);
+            }
             return { status: response.status, message: "Login successful" };
         }
         
@@ -136,13 +173,13 @@ export async function doSignup(email, password, handle, firstName, lastName) {
         }),
     });
 
-    //get profile in response and save id to storage
-    PROFILE_ID = await response.json().then((profile) => {
-        return profile["_id"];
-    });
-
     if (response.status === 201) {
-        // success - signed up
+        // success - signed up, get profile and save id to storage
+        const profile = await response.json();
+        if (profile && profile["_id"]) {
+            PROFILE_ID = profile["_id"];
+            await saveProfileId(PROFILE_ID);
+        }
         return response.status;
     } else {
         return response.status;
@@ -210,7 +247,6 @@ export async function GETme() {
         if (response.status == 200) {
             // good, return 
             const body = await response.json();
-            console.log(body);
             return body.profile;
         } else {
             return null;
@@ -345,7 +381,13 @@ export async function saveDirectoryToStorage(directory, userID) {
 
 export async function getDirectoryFromStorage(userID) {
     try {
-        const directory = await AsyncStorage.getItem(`directory_${userID}`);
+        // If no userID provided, use stored profile ID
+        let profileId = userID;
+        if (!profileId) {
+            profileId = PROFILE_ID || await getProfileId();
+        }
+        
+        const directory = await AsyncStorage.getItem(`directory_${profileId}`);
         directoryList = JSON.parse(directory);
         return JSON.parse(directory);
     } catch (error) {
@@ -355,7 +397,13 @@ export async function getDirectoryFromStorage(userID) {
 }
 
 export async function GETdirectory() {
-    const response = await fetchWithAuth(`${DIRECTORY_BASE_URL}/${PROFILE_ID}`, {
+    // Get profile ID from storage if not available
+    let profileId = PROFILE_ID;
+    if (!profileId) {
+        profileId = await getProfileId();
+    }
+    
+    const response = await fetchWithAuth(`${DIRECTORY_BASE_URL}/${profileId}`, {
         method: 'GET',
     });
     try {
@@ -373,7 +421,13 @@ export async function GETdirectory() {
 }
 
 export async function POSTcategory(category) {
-    const response = await fetchWithAuthJSON(`${DIRECTORY_BASE_URL}/${PROFILE_ID}`, {
+    // Get profile ID from storage if not available
+    let profileId = PROFILE_ID;
+    if (!profileId) {
+        profileId = await getProfileId();
+    }
+    
+    const response = await fetchWithAuthJSON(`${DIRECTORY_BASE_URL}/${profileId}`, {
         method: 'POST',
         body: JSON.stringify(category),
     });
@@ -392,7 +446,13 @@ export async function POSTcategory(category) {
 }
 
 export async function PATCHcategory(category) {
-    const response = await fetchWithAuthJSON(`${DIRECTORY_BASE_URL}/${PROFILE_ID}`, {
+    // Get profile ID from storage if not available
+    let profileId = PROFILE_ID;
+    if (!profileId) {
+        profileId = await getProfileId();
+    }
+    
+    const response = await fetchWithAuthJSON(`${DIRECTORY_BASE_URL}/${profileId}`, {
         method: "PATCH",
         body: JSON.stringify(category),
     });
@@ -412,15 +472,18 @@ export async function PATCHcategory(category) {
 }
 
 export async function DELETEcategory(categoryID) {
-    console.log(PROFILE_ID);
-    console.log(categoryID);
-    const response = await fetchWithAuthJSON(`${DIRECTORY_BASE_URL}/${PROFILE_ID}`, {
+    // Get profile ID from storage if not available
+    let profileId = PROFILE_ID;
+    if (!profileId) {
+        profileId = await getProfileId();
+    }
+    
+    const response = await fetchWithAuthJSON(`${DIRECTORY_BASE_URL}/${profileId}`, {
         method: "DELETE",
         body: JSON.stringify({ deletedId: categoryID }),
     });
 
     try {
-        console.log(response.status);
         if (response.status == 201) {
             // good, return 
             return await response.json();
@@ -514,7 +577,6 @@ export async function GETitems(filter={}) {
         method: 'GET',
     });
     try {
-        //console.log(response.status);
         if (response.status == 201) {
             // good, return 
             const body = await response.json();
@@ -600,7 +662,6 @@ export async function PATCHitem(newItem, itemID) {
 
     delete newItem._id; // remove _id from newPost
     delete newItem.id;
-   // console.log(newItem);
 
     const response = await fetchWithAuthJSON(`${ITEMS_BASE_URL}/${itemID}`, {
         method: "PATCH",
@@ -608,7 +669,6 @@ export async function PATCHitem(newItem, itemID) {
     });
 
     try {
-        //console.log(response.status);
         if (response.status == 200) {
             // good, return 
             const editResponse = await response.json();

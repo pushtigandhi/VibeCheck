@@ -5,29 +5,12 @@ import { Spacer } from '../../utils';
 import { Ionicons } from "@expo/vector-icons";
 import { Picker } from '@react-native-picker/picker';
 import SingleSelectDropdown from "../../components/SingleSelectDropdown";
-import MultiSelectDropdown from "../../components/MultiSelectDropdown";
+import TagsInput from "../../components/TagsInput";
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { getDirectoryFromStorage } from "../../API";
 
-const allTags = [
-  {
-    label: "work",
-    value: "work"
-  },{
-    label: "selfcare",
-    value: "selfcare"
-  },{
-    label: "school",
-    value: "school"
-  },{
-    label: "housework",
-    value: "housework"
-  },{
-    label: "hobby",
-    value: "hobby"
-  },
-]
+
 
 
 export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) => {
@@ -315,7 +298,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
 
       <View style={[styles.divider, {padding: 0}]}/>
 
-      <MultiSelectDropdown options={allTags} placeholder="Tags" setFn={setTags} current={tags}
+      <TagsInput placeholder="Tags" setFn={setTags} current={tags}
         icon={<Text style={[styles.icon, {marginRight: textSIZES.xSmall, fontSize: size}]}>#</Text>} /> 
     </SafeAreaView>
   )
