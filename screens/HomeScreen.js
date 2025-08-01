@@ -6,17 +6,9 @@ import HomeNavigation from "./HomeNavigation";
 
 import { Ionicons } from "@expo/vector-icons";
 
-import { directoryList, doOnStart, getDirectoryFromStorage } from "../API";
-
-//import { directoryList } from "../API";
-import FilterModal from "../components/FilterModal";
-import { refresh } from "@react-native-community/netinfo";
-import NewItem from "./NewItem";
 import { CalendarView } from "./partialViews/CalendarView";
 
 export default function HomeScreen ({ navigation, route }) {
-    const [filter, setFilter] = useState({});
-    const [state, setState] = useState("day");
     const [refreshing, setRefreshing] = useState(false);
     const [intention, setIntention] = useState('Set an intention here.');
 
@@ -42,7 +34,7 @@ export default function HomeScreen ({ navigation, route }) {
                     /> 
                 </TouchableWithoutFeedback>
             </View>
-            <CalendarView navigation={navigation} filter={filter} setFilter={setFilter} isHome={true} refresh={refreshing} />
+            <CalendarView navigation={navigation} isHome={true} refresh={refreshing} />
             
             <HomeNavigation style={{flex: 0}} size={textSIZES.xxLarge} iconColor={COLORS({opacity:1}).primary}/> 
         </SafeAreaView>

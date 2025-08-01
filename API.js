@@ -70,7 +70,6 @@ export async function saveProfileId(profileId) {
     // save profile ID to storage
     try {
         await AsyncStorage.setItem('PROFILE_ID', profileId);
-        console.log('Profile ID saved to storage:', profileId);
     } catch (err) {
         console.log('Error saving profile ID to storage:', err);
     }

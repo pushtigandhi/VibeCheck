@@ -7,12 +7,13 @@ import { View, StyleSheet, Text, ScrollView, FlatList, TouchableOpacity, Touchab
 export const DailyCalendar = ({navigation, date, filter}) => {
   const [items, setItems] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  
   async function getItemsFromAPI(filter={}) {
     try {
       // Create a new filter object to avoid modifying the original
       const apiFilter = { ...filter };
 
-      // Ensure we have valid dates for the week
+      // Ensure we have valid dates for the day
       const dategt = new Date(date);
       dategt.setHours(0, 0, 0, 0); // Set to midnight
 
@@ -50,7 +51,7 @@ export const DailyCalendar = ({navigation, date, filter}) => {
       } catch (err) {
         console.error("Error fetching items:", err);
         if (isMounted) {
-          setItems({});
+          setItems([]);
         }
       }
     };
@@ -60,7 +61,7 @@ export const DailyCalendar = ({navigation, date, filter}) => {
     return () => {
       isMounted = false;
     };
-  }, [date, filter, refreshing]); // Added filter and month to dependencies
+  }, [date, filter]); // Added filter to dependencies
 
   return (
     <View style={{backgroundColor: COLORS({opacity:1}).white}}>

@@ -14,10 +14,11 @@ import NewItem from "../NewItem";
 import { Sidebar } from "../../components/Sidebar";
 import { Ionicons } from "@expo/vector-icons";
 
-export const CalendarView = ({navigation, filter={}, setFilter, isHome=false, refresh=false}) => {
+export const CalendarView = ({navigation, isHome=false, refresh=false}) => {
     const calendarHeight = Dimensions.get('window').height - 300;
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [filterVisible, setFilterVisible] = useState(false);
+    const [filter, setFilter] = useState({});
  
     const [state, setState] = useState("day");
     const [items, setItems] = useState([]);
@@ -47,6 +48,10 @@ export const CalendarView = ({navigation, filter={}, setFilter, isHome=false, re
         setFilterVisible(false);
     }
 
+    function handleFilterUpdate(updatedFilter) {
+        setFilter(updatedFilter);
+        setRefreshing(!refreshing);
+    }
 
     function doSearch({search}) {
         //console.log(search);
@@ -54,7 +59,6 @@ export const CalendarView = ({navigation, filter={}, setFilter, isHome=false, re
     }
     
     useEffect(() => {
-        //getScheduledItemsFromAPI();
     },[refreshing, selectedDate, state])
 
     return (
@@ -75,7 +79,12 @@ export const CalendarView = ({navigation, filter={}, setFilter, isHome=false, re
                     navigation={navigation}
                 />
                 <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
-                    <FilterModal closeFilter={closeFilter} doSearch={closeFilter} filter={filter} setFilter={setFilter} />
+                    <FilterModal 
+                        closeFilter={closeFilter} 
+                        doSearch={handleFilterUpdate} 
+                        filter={filter} 
+                        setFilter={setFilter} 
+                    />
                 </Modal>
                 <View style={styles.iconRoot}>
                     <TouchableOpacity
@@ -121,7 +130,7 @@ export const CalendarView = ({navigation, filter={}, setFilter, isHome=false, re
                         <DailyCalendar navigation={navigation} date={selectedDate} filter={filter} />
                     )}
                     {state === 'week' && (
-                        <WeeklyCalendar navigation={navigation} date={selectedDate} filter={filter} itemList={items} />
+                        <WeeklyCalendar navigation={navigation} date={selectedDate} filter={filter} />
                     )}
                     {state === 'month' && (
                         <MonthlyCalendar navigation={navigation} date={selectedDate} month={selectedDate.getMonth()} filter={filter} />

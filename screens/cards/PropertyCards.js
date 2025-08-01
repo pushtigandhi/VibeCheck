@@ -8,7 +8,7 @@ import SingleSelectDropdown from "../../components/SingleSelectDropdown";
 import TagsInput from "../../components/TagsInput";
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-import { getDirectoryFromStorage } from "../../API";
+import { GETdirectory } from "../../API";
 
 
 
@@ -50,7 +50,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
   }
 
   useEffect(() => {
-    getDirectoryFromStorage().then((directoryList_) => {
+    GETdirectory().then((directoryList_) => {
       setDirectoryList(directoryList_);
     }).catch((err) => {
         alert(err.message)

@@ -87,7 +87,7 @@ export const MonthlyCalendar = ({navigation, date, month, onRefresh, filter}) =>
     return () => {
       isMounted = false;
     };
-  }, [date, filter, month, refreshing]); // Added filter and month to dependencies
+  }, [date, filter, month]); // Added filter to dependencies
 
   return (
     <GestureHandlerRootView style={{alignItems: "center"}}>

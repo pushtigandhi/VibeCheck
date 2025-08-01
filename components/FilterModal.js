@@ -47,12 +47,14 @@ export default function FilterModal({ filter, setFilter, closeFilter, doSearch, 
 
     function onSearch() {
         setFilter(updatedFilter);
-        doSearch();
+        doSearch(updatedFilter);
     }
 
     function resetFilter() {
         setFilter({});
         setUpdatedFilter({});
+        setSortOption("time");
+        setTypeOption("Item");
     }
 
     function updateFilter(params) {
@@ -107,30 +109,26 @@ export default function FilterModal({ filter, setFilter, closeFilter, doSearch, 
             setShowScheduler(false);
         }
         if(params.originalSchedule) {
-            setUpdatedFilter({... updatedFilter, startDate: item.startDate, endDate: item.endDate, repeat: item.repeat});
+            // This would need to reference the original item's schedule
+            // For now, we'll keep the current schedule values
+            console.log("Original schedule requested");
         }
     }
 
     useEffect(() => {
-        // console.log(filter);
+        // Initialize updatedFilter with current filter values
+        const initialFilter = { ...filter };
+        setUpdatedFilter(initialFilter);
+        
         if(filter.itemType) {
             setTypeOption(filter.itemType);
         }
         if(filter.sortBy) {
             setSortOption(filter.sortBy);
         }
-        if(filter.startDate) {
-            setStartDate(filter.startDate);
-            setShowStartDate(true);
-        }
-        if(filter.endDate) {
-            setEndDate(filter.endDate);
-            setShowEndDate(true);
-        }
-        if(filter.repeat) {
-            setRepeat(filter.repeat);
-        }
-    }, []);
+        // Note: startDate, endDate, and repeat are handled by the Scheduler component
+        // and are not directly managed in this component's state
+    }, [filter]);
 
     return (
         <SafeAreaView style={styles.container}>
@@ -149,7 +147,7 @@ export default function FilterModal({ filter, setFilter, closeFilter, doSearch, 
                 <SingleSelectDropdown options={typeOptions} placeholder={"All"} setFn={changeTypeOption}
                     icon={<Ionicons name={"grid-outline"} size={textSIZES.small} style={[styles.icon, {margin: textSIZES.tiny}]} />} />
 
-                <PropertyCard item={filter} itemType={itemType} setFn={updateFilter} isSection={isSection} />
+                <PropertyCard item={updatedFilter} itemType={itemType} setFn={updateFilter} isSection={isSection} />
                
                 {/* <Scheduler item={filter} setFn={updateFilter} /> */}
 
