@@ -3,16 +3,15 @@ import { SafeAreaView, View, FlatList, StyleSheet, TextInput, Text, TouchableOpa
 import { COLORS, FONT, textSIZES, viewSIZES, SHADOWS } from "../constants";
 import HomeNavigation from "./HomeNavigation";
 import { GETitems } from "../API";
-import { ItemType } from "../constants";
 import { Ionicons } from "@expo/vector-icons";
 
-const BacklogCard = ({navigation, item, doRefresh}) => {
+const BacklogCard = ({navigation, item}) => {
   //console.log(item);
   return (
     <View style={styles.cardContainer}>
       <TouchableOpacity
         onPress={() => {
-            navigation.navigate("Item", {item, doRefresh});
+            navigation.navigate("Item", {item});
           }}
           style={styles.titleContainer}
       >
@@ -28,12 +27,6 @@ const BacklogCard = ({navigation, item, doRefresh}) => {
 export default function Backlog ({navigation, scrollEnabled = true}) {
   const [items, setItems] = useState([]);
   const [search, setSearch] = useState('');
-  const [refresh, setRefresh] = useState(false);
-
-  function doRefresh() {
-    setRefresh(!refresh);
-  }
-
   function doSearch() {
     getItemsFromAPI().then((items_) => {
       setItems(items_);
@@ -46,7 +39,7 @@ export default function Backlog ({navigation, scrollEnabled = true}) {
     let filter = { category: "Backlog" };
     
     try {
-      let items_ = await GETitems(ItemType.Item, filter);
+      let items_ = await GETitems(filter);
       return items_;
     } catch (error) {
       console.log(error);
@@ -60,11 +53,11 @@ export default function Backlog ({navigation, scrollEnabled = true}) {
     }).catch((err) => {
       alert(err.message)
     })
-  }, [refresh]) // only run once on load
+  }, []) // only run once on load
 
   const renderItem = ({ item }) => (
     <View key={item["_id"] + "root"}>
-      <BacklogCard navigation={navigation} item={item} doRefresh={doRefresh} />
+      <BacklogCard navigation={navigation} item={item} />
     </View>
   );
 

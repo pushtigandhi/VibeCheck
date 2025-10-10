@@ -74,6 +74,21 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
         setTags(item.tags);
         //console.log(item.tags);
       }
+      
+      // Initialize duration if it exists
+      if(!!item.duration){
+        const hours = Math.floor(item.duration / 60);
+        const minutes = item.duration % 60;
+        setHour(hours);
+        setMinute(minutes);
+        setShowDuration(true);
+      }
+      
+      // Initialize servings if it exists (for recipes)
+      if(!!item.servings){
+        setServing(item.servings);
+        setShowServing(true);
+      }
     }
   }, [item]); // Update category and section when item changes
 

@@ -7,7 +7,7 @@ import { PropertyCard } from "../screens/cards/PropertyCards";
 import { Scheduler } from "../components/Scheduler";
 
 
-export default function FilterModal({ filter, setFilter, closeFilter, doSearch, isSection=false }) {
+export default function FilterModal({ filter, closeFilter, doSearch, isSection=false }) {
     const sortOptions = [
         {label: "Time (Ascending)", value: "time"},
         {label: "Time (Descending)", value: "-time"},
@@ -46,12 +46,10 @@ export default function FilterModal({ filter, setFilter, closeFilter, doSearch, 
     }
 
     function onSearch() {
-        setFilter(updatedFilter);
         doSearch(updatedFilter);
     }
 
     function resetFilter() {
-        setFilter({});
         setUpdatedFilter({});
         setSortOption("time");
         setTypeOption("Item");

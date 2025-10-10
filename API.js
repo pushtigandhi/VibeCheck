@@ -338,13 +338,13 @@ export async function POSTaddContact(contact) {
     }
 }
 
-export async function PATCHcontact(newContact, contactID) {
+export async function PATCHcontact(contactID, newContact) {
     delete newContact._id;
     delete newContact.id;
 
     const response = await fetchWithAuthJSON(`${CONTACTS_BASE_URL}/${contactID}`, {
         method: "PATCH",
-        body: JSON.stringify(newItem),
+        body: JSON.stringify(newItem, itemID),
     });
 
     if (response.status === 200) {
@@ -637,7 +637,6 @@ export async function GETitemsByIDs(itemIDs) {
 
 
 export async function POSTitem(item) {
-
     const response = await fetchWithAuthJSON(`${ITEMS_BASE_URL}`, {
         method: 'POST',
         body: JSON.stringify(item),
@@ -657,7 +656,7 @@ export async function POSTitem(item) {
     }
 }
 
-export async function PATCHitem(newItem, itemID) {
+export async function PATCHitem(itemType, newItem, itemID) {
 
     delete newItem._id; // remove _id from newPost
     delete newItem.id;
@@ -681,7 +680,7 @@ export async function PATCHitem(newItem, itemID) {
     }
 }
 
-export async function DELETEitem(itemID) {
+export async function DELETEitem(itemType, itemID) {
     
     const response = await fetchWithAuth(`${ITEMS_BASE_URL}/${itemID}`, {
         method: "DELETE",

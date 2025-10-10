@@ -39,6 +39,8 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
     const [isNew, setIsNew] = useState(true);
 
     const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const navigation = useNavigation();
     
@@ -70,65 +72,86 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
     };
 
     function updateNewItem(params) {
-        if(params.category) {
-          setUpdatedItem({... updatedItem, category: params.category});
-        }
-        if(params.section) {
-            setUpdatedItem({... updatedItem, section: params.section});
-        }
-        if(params.duration) {
-          if(params.duration == 'x')
-
-          {
-            setUpdatedItem(({ duration, ...rest }) => rest);
-          }
-          else {
-            setUpdatedItem({... updatedItem, duration: params.duration});
-          }
-        }
-        if(params.priority) {
-          if(params.priority == 'x')
-          {
-            setUpdatedItem(({ priority, ...rest }) => rest);
-          }
-          else {
-            setUpdatedItem({... updatedItem, priority: params.priority});
-          }
-        }
-        if(params.subtasks) {
-          setUpdatedItem({... updatedItem, subtasks: params.subtasks});
-        }
-        if(params.ingredients) {
-          setUpdatedItem({... updatedItem, ingredients: params.ingredients});
-        }
-        if(params.instructions) {
-          setUpdatedItem({... updatedItem, instructions: params.instructions});
-        }
-        if(params.servings) {
-          if(params.servings == 'x')
-          {
-            setUpdatedItem(({ servings, ...rest }) => rest);
-          }
-          else {
-            setUpdatedItem({... updatedItem, servings: params.servings});
-          }
-        }
-        if (params.addSchedule) {
-            setUpdatedItem({... updatedItem, startDate: params.startDate, endDate: params.endDate, repeat: params.repeat});
-        }
-        if(params.cancelSchedule) {
-            setUpdatedItem(({ startDate, endDate, repeat, ...rest }) => rest);
-            setShowScheduler(false);
-        }
-        if(params.originalSchedule) {
-            setUpdatedItem({... updatedItem, startDate: item.startDate, endDate: item.endDate, repeat: item.repeat});
-        }
-        if(params.tags) {
-            setUpdatedItem({... updatedItem, tags: params.tags});
-        }
+        setUpdatedItem(prevItem => {
+            let newItem = { ...prevItem };
+            
+            // Handle category and section
+            if (params.category) {
+                newItem.category = params.category;
+            }
+            if (params.section) {
+                newItem.section = params.section;
+            }
+            
+            // Handle duration
+            if (params.duration !== undefined) {
+                if (params.duration === 'x') {
+                    delete newItem.duration;
+                } else {
+                    newItem.duration = params.duration;
+                }
+            }
+            
+            // Handle priority
+            if (params.priority !== undefined) {
+                if (params.priority === 'x') {
+                    delete newItem.priority;
+                } else {
+                    newItem.priority = params.priority;
+                }
+            }
+            
+            // Handle servings
+            if (params.servings !== undefined) {
+                if (params.servings === 'x') {
+                    delete newItem.servings;
+                } else {
+                    newItem.servings = params.servings;
+                }
+            }
+            
+            // Handle other properties
+            if (params.subtasks) {
+                newItem.subtasks = params.subtasks;
+            }
+            if (params.ingredients) {
+                newItem.ingredients = params.ingredients;
+            }
+            if (params.instructions) {
+                newItem.instructions = params.instructions;
+            }
+            
+            // Handle scheduling
+            if (params.addSchedule) {
+                newItem.startDate = params.startDate;
+                newItem.endDate = params.endDate;
+                newItem.repeat = params.repeat;
+            }
+            if (params.cancelSchedule) {
+                delete newItem.startDate;
+                delete newItem.endDate;
+                delete newItem.repeat;
+                setShowScheduler(false);
+            }
+            if (params.originalSchedule) {
+                newItem.startDate = item.startDate;
+                newItem.endDate = item.endDate;
+                newItem.repeat = item.repeat;
+            }
+            
+            // Handle tags
+            if (params.tags) {
+                newItem.tags = params.tags;
+            }
+            
+            return newItem;
+        });
     }
     
     function onSave() {
+        setIsLoading(true);
+        setError(null);
+        
         const obj = {
             ...updatedItem,
             title: title,
@@ -138,39 +161,41 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
             ...(notes && { notes: notes }),
             ...(icon && { icon: icon })
         }
-        if(isNew){
-            POSTitem(item.itemType ? item.itemType : ItemType.Item, {
-                ...obj
+        
+        const savePromise = isNew 
+            ? POSTitem({ ...obj })
+            : PATCHitem(item.itemType ? item.itemType : ItemType.Item, { ...obj }, item._id);
+            
+        savePromise
+            .then((item_) => {
+                Alert.alert("Success", "Item saved successfully!");
+                onClose(isNew ? 'create' : 'update', item_);
             })
-            .then((item_) => {
-                //alert("Success!");
-            }).catch((error) => {
-                console.log(error);
+            .catch((error) => {
+                console.error("Save error:", error);
+                setError(error.message || "Failed to save item");
+                Alert.alert("Error", error.message || "Failed to save item");
+            })
+            .finally(() => {
+                setIsLoading(false);
             });
-
-        } else {
-            PATCHitem(item.itemType ? item.itemType : ItemType.Item, {
-                ...obj
-            }, item._id)
-            .then((item_) => {
-                //alert("Success!");
-
-            }).catch((error) => {
-                console.log(error);
-            });
-        }
-
-        onClose();
     };
 
     function onDelete() {
+        setIsLoading(true);
+        setError(null);
+        
         DELETEitem(item.itemType ? item.itemType : ItemType.Item, item._id)
         .then((item_) => {
-            //alert("Success!");
+            Alert.alert("Success", "Item deleted successfully!");
+            onClose('delete');
         }).catch((error) => {
-            console.log(error);
+            console.error("Delete error:", error);
+            setError(error.message || "Failed to delete item");
+            Alert.alert("Error", error.message || "Failed to delete item");
+        }).finally(() => {
+            setIsLoading(false);
         });
-        onClose('delete');
     };
 
     const ConfirmCancelPrompt = () => {
@@ -249,8 +274,16 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
                         style={[styles.border, { width: 140, height: 140}]}
                     />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => (onSave())} style={[styles.button]} >
-                    <Ionicons name={"checkmark"} size={textSIZES.xxLarge} style={styles.icon}/> 
+                <TouchableOpacity 
+                    onPress={() => (onSave())} 
+                    style={[styles.button, isLoading && styles.buttonDisabled]} 
+                    disabled={isLoading}
+                >
+                    <Ionicons 
+                        name={isLoading ? "hourglass-outline" : "checkmark"} 
+                        size={textSIZES.xxLarge} 
+                        style={styles.icon}
+                    /> 
                 </TouchableOpacity>
             </View>
 
@@ -363,12 +396,16 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
                 <TextInput style={{flex:1}}
                     {...(description && { defaultValue: description })} 
                     onChangeText={(newDescription) => {
-                        setDescription(newDescription)
-                        if(newDescription.length == 0) {
-                            const updated = updatedItem;
-                            delete updated.description;
-                            setUpdatedItem(updated);
-                        }
+                        setDescription(newDescription);
+                        setUpdatedItem(prevItem => {
+                            const newItem = { ...prevItem };
+                            if (newDescription.length === 0) {
+                                delete newItem.description;
+                            } else {
+                                newItem.description = newDescription;
+                            }
+                            return newItem;
+                        });
                     }}
                     multiline
                 />
@@ -378,12 +415,16 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
                 <TextInput style={[styles.location, {flex: 1}]} 
                 {...(location && { defaultValue: location })} 
                 onChangeText={(newLocation) => {
-                    setLocation(newLocation)
-                    if(newLocation.length == 0) {
-                        const updated = updatedItem;
-                        delete updated.location;
-                        setUpdatedItem(updated);
-                    }
+                    setLocation(newLocation);
+                    setUpdatedItem(prevItem => {
+                        const newItem = { ...prevItem };
+                        if (newLocation.length === 0) {
+                            delete newItem.location;
+                        } else {
+                            newItem.location = newLocation;
+                        }
+                        return newItem;
+                    });
                 }}
                 />
             </View>
@@ -405,12 +446,16 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
                         <TextInput style={{flex:1}}
                             {...(notes && { defaultValue: notes })} 
                             onChangeText={(newNotes) => {
-                                setNotes(newNotes)
-                                if(newNotes.length == 0) {
-                                    const updated = updatedItem;
-                                    delete updated.notes;
-                                    setUpdatedItem(updated);
-                                }
+                                setNotes(newNotes);
+                                setUpdatedItem(prevItem => {
+                                    const newItem = { ...prevItem };
+                                    if (newNotes.length === 0) {
+                                        delete newItem.notes;
+                                    } else {
+                                        newItem.notes = newNotes;
+                                    }
+                                    return newItem;
+                                });
                             }}
                             multiline
                         />
@@ -419,9 +464,25 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
             </KeyboardAvoidingView>
 
             {!isNew && (
-                <TouchableOpacity onPress={() => ConfirmCancelPrompt()} style={[styles.removeButton, {borderWidth: 0.5, borderColor: COLORS({opacity:1}).primary, marginHorizontal: textSIZES.xLarge, marginTop: textSIZES.xSmall, marginBottom: textSIZES.xLarge}]}>
-                    <Text style={{fontSize: textSIZES.small, fontWeight: "bold"}}>Delete</Text>
+                <TouchableOpacity 
+                    onPress={() => ConfirmCancelPrompt()} 
+                    style={[
+                        styles.removeButton, 
+                        {borderWidth: 0.5, borderColor: COLORS({opacity:1}).primary, marginHorizontal: textSIZES.xLarge, marginTop: textSIZES.xSmall, marginBottom: textSIZES.xLarge},
+                        isLoading && styles.buttonDisabled
+                    ]}
+                    disabled={isLoading}
+                >
+                    <Text style={{fontSize: textSIZES.small, fontWeight: "bold"}}>
+                        {isLoading ? "Deleting..." : "Delete"}
+                    </Text>
                 </TouchableOpacity>
+            )}
+            
+            {error && (
+                <View style={styles.errorContainer}>
+                    <Text style={styles.errorText}>{error}</Text>
+                </View>
             )}
         </ScrollView>
     );
@@ -686,5 +747,21 @@ const styles = StyleSheet.create({
         fontSize: textSIZES.small,
         color: 'var(--primary)',
         fontWeight: '500',
+    },
+    buttonDisabled: {
+        opacity: 0.5,
+    },
+    errorContainer: {
+        backgroundColor: COLORS({opacity:0.1}).red || '#ffebee',
+        borderWidth: 1,
+        borderColor: COLORS({opacity:1}).red || '#f44336',
+        borderRadius: textSIZES.xSmall,
+        padding: textSIZES.small,
+        margin: textSIZES.small,
+    },
+    errorText: {
+        color: COLORS({opacity:1}).red || '#f44336',
+        fontSize: textSIZES.small,
+        textAlign: 'center',
     }
 });

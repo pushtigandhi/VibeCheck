@@ -187,53 +187,83 @@ export default function ItemCard({ navigation, route }) {
   }
 
   const [showCreateNew, setShowCreateNew] = useState(false);
-  function closeCreateNew(op = null) {
+  function closeCreateNew(op = null, updatedItemData = null) {
     setShowCreateNew(false);
     
     if (op === 'delete') {
       onGoBack();
+    } else if ((op === 'update' || op === 'create') && updatedItemData) {
+      // Update the local item state with the updated data
+      setItem(updatedItemData);
+      // Update all the individual state variables
+      updateItemState(updatedItemData);
+    }
+  }
+
+  function updateItemState(itemData) {
+    if(itemData.itemType) {
+      setItemType(itemData.itemType);
+    }
+    
+    setTitle(itemData.title);
+    setIcon(itemData.icon.toString());
+    if (itemData.description) {
+      setDescription(itemData.description);
+    } else {
+      setDescription(null);
+    }
+    if (itemData.favicon) {
+      setFavicon(itemData.favicon);
+    } else {
+      setFavicon(null);
+    }
+    if (itemData.notes) {
+      setNotes(itemData.notes);
+    } else {
+      setNotes(null);
+    }
+    if (itemData.location) {
+      setLocation(itemData.location);
+    } else {
+      setLocation('');
+    }
+    if (itemData.startDate) {
+      setIsScheduler(true);
+    } else {
+      setIsScheduler(false);
+    }
+    
+    // Update lists if they exist
+    if (itemData.lists) {
+      (async () => {
+        const lists = [];
+        for (const list of itemData.lists) {
+          const items = await GETitemsByIDs(itemType, list.ids);
+          lists.push({name: list.name, ids: items, type: list.type});
+        }
+        itemData.lists = lists;
+        setLists(lists);
+      })();
+    } else {
+      setLists(null);
+    }
+    
+    // Update tags
+    if (itemData.tags) {
+      setTags(itemData.tags.join(" "));
+    } else {
+      setTags(null);
     }
   }
 
   function onGoBack() {
-    route.params?.doRefresh();
     navigation.goBack();
   }
 
   useEffect(() => {
-
-      if(item.itemType) {
-        setItemType(item.itemType);
-      }
-    
-      setTitle(item.title);
-      setIcon(item.icon.toString());
-      if (item.description) {
-        setDescription(item.description);
-      } if (item.favicon) {
-        setFavicon(item.favicon);
-      } if (item.notes) {
-        setNotes(item.notes);
-      } if (item.location) {
-        setLocation(item.location); 
-      } if (item.startDate) {
-        setIsScheduler(true);
-      }
-      if (item.lists) {
-        (async () => {  // Create async IIFE
-          const lists = [];
-          for (const list of item.lists) {
-            const items = await GETitemsByIDs(itemType, list.ids);
-            //console.log(items);
-            lists.push({name: list.name, ids: items, type: list.type});
-          }
-          item.lists = lists;
-          setLists(lists);
-        })();
-      }
-      if (item.tags) {
-        setTags(item.tags.join(" "));
-      }
+    if (item) {
+      updateItemState(item);
+    }
   }, [route.params?.item]); // Update category and section when item changes
 
   return (

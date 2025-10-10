@@ -53,7 +53,9 @@ export const CalendarView = ({navigation, isHome=false, refresh=false}) => {
         setRefreshing(!refreshing);
     }
 
-    function doSearch({search}) {
+    function doFilteredSearch(filter) {
+        setFilter(filter);
+        setRefreshing(!refreshing);
         //console.log(search);
        // setSearchBar(false);
     }
@@ -74,7 +76,7 @@ export const CalendarView = ({navigation, isHome=false, refresh=false}) => {
                     showSidebar={showSidebar}
                     onRefresh={onRefresh}
                     setFilterVisible={setFilterVisible}
-                    doSearch={doSearch}
+                    doSearch={doFilteredSearch}
                     isHome={isHome}
                     navigation={navigation}
                 />
@@ -83,7 +85,6 @@ export const CalendarView = ({navigation, isHome=false, refresh=false}) => {
                         closeFilter={closeFilter} 
                         doSearch={handleFilterUpdate} 
                         filter={filter} 
-                        setFilter={setFilter} 
                     />
                 </Modal>
                 <View style={styles.iconRoot}>
