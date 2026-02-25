@@ -36,3 +36,12 @@ yarn-error.*
 SvgDemoApp/android/.gradle/8.3/dependencies-accessors/executionHistory.bin
 constants/theme.js
 .gitignore
+
+# Testing
+coverage/
+testing/generated/
+testing/reports/
+*.test.js
+*.test.jsx
+*.test.ts
+*.test.tsx

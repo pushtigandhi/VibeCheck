@@ -1,0 +1,92 @@
+{
+  "name": "react-testing-agent",
+  "version": "1.0.0",
+  "description": "ReAct-style agent for automated React Native unit testing",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:agent": "node TestingCLI.js",
+    "test:component": "node TestingCLI.js test",
+    "test:all": "node TestingCLI.js test-all",
+    "analyze": "node TestingCLI.js analyze",
+    "setup": "npm install && npm run setup:jest",
+    "setup:jest": "node setup-jest.js"
+  },
+  "keywords": [
+    "react-native",
+    "testing",
+    "jest",
+    "unit-tests",
+    "ai-agent",
+    "react-agent"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.24.0",
+    "@babel/preset-env": "^7.24.0",
+    "@babel/preset-react": "^7.24.0",
+    "@babel/preset-typescript": "^7.24.0",
+    "@babel/traverse": "^7.24.0",
+    "@babel/generator": "^7.24.0",
+    "@babel/parser": "^7.24.0",
+    "@testing-library/react-native": "^12.4.2",
+    "@testing-library/jest-native": "^5.4.3",
+    "jest": "^29.7.0",
+    "jest-environment-node": "^29.7.0",
+    "react-test-renderer": "^18.2.0",
+    "metro-react-native-babel-preset": "^0.77.0"
+  },
+  "jest": {
+    "preset": "react-native",
+    "setupFilesAfterEnv": [
+      "<rootDir>/testing/setup.js"
+    ],
+    "testMatch": [
+      "**/testing/**/*.test.js",
+      "**/testing/generated/**/*.test.js"
+    ],
+    "collectCoverageFrom": [
+      "screens/**/*.{js,jsx}",
+      "components/**/*.{js,jsx}",
+      "utils/**/*.{js,jsx}",
+      "!**/node_modules/**",
+      "!**/testing/**"
+    ],
+    "coverageDirectory": "coverage",
+    "coverageReporters": [
+      "text",
+      "lcov",
+      "html",
+      "json"
+    ],
+    "transform": {
+      "^.+\\.(js|jsx)$": "babel-jest"
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!(react-native|@react-native|@react-navigation|expo|@expo|react-native-calendars|react-native-dropdown-picker|react-native-element-dropdown|react-native-phone-input|react-native-switch-selector|react-native-tab-view|react-native-worklets)/)"
+    ],
+    "moduleNameMapping": {
+      "^@/(.*)$": "<rootDir>/$1",
+      "^@components/(.*)$": "<rootDir>/components/$1",
+      "^@screens/(.*)$": "<rootDir>/screens/$1",
+      "^@utils/(.*)$": "<rootDir>/utils/$1",
+      "^@constants/(.*)$": "<rootDir>/constants/$1"
+    },
+    "testEnvironment": "node",
+    "verbose": true,
+    "clearMocks": true,
+    "resetMocks": true,
+    "restoreMocks": true
+  },
+  "babel": {
+    "presets": [
+      "module:metro-react-native-babel-preset"
+    ],
+    "plugins": [
+      "@babel/plugin-proposal-class-properties"
+    ]
+  }
+}
