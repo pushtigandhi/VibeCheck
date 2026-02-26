@@ -155,11 +155,11 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
                 ...obj
             }, item._id)
             .then((item_) => {
-                //alert("Success!");
-
+                onClose('saved');
             }).catch((error) => {
                 console.log(error);
             });
+            return;
         }
 
         onClose();

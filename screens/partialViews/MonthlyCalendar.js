@@ -105,7 +105,7 @@ export const MonthlyCalendar = ({navigation, date, month, onRefresh, filter}) =>
             <Text style={{color: COLORS({opacity: 1}).primary, fontWeight: 'bold', fontSize: textSIZES.xSmall}}>{day}</Text>
             {!!items[day] && items[day].slice(0, 2).map((item, index) => (
               <TouchableHighlight underlayColor={COLORS({opacity:0.2}).lightGrey} key={index} numberOfLines={1} style={[styles.title]} 
-                onPress={() => (navigation.navigate("Item", {"item": item, "doRefresh": doRefresh}))}
+                onPress={() => (navigation.navigate("Item", {"item": item}))}
               >
                 <Text style={{fontSize: textSIZES.xSmall}}>{item.title}</Text>
               </TouchableHighlight>

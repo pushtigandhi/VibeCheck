@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { View, TouchableOpacity, Text, TextInput, Keyboard, Modal,
     FlatList, RefreshControl, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import { COLORS, FONT, textSIZES, SHADOWS, viewSIZES } from "../constants";
@@ -18,15 +19,18 @@ export default function HomeScreen ({ navigation, route }) {
     const [filter, setFilter] = useState({});
     const [state, setState] = useState("day");
     const [refreshing, setRefreshing] = useState(false);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
     const [intention, setIntention] = useState('Set an intention here.');
 
     const dismissKeyboard = () => {
         Keyboard.dismiss();
     };
 
-    useEffect(() => { 
-        
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            setRefreshTrigger((t) => t + 1);
+        }, [])
+    );
     
     return (
         <SafeAreaView style={styles.screen}>
@@ -42,7 +46,7 @@ export default function HomeScreen ({ navigation, route }) {
                     /> 
                 </TouchableWithoutFeedback>
             </View>
-            <CalendarView navigation={navigation} filter={filter} setFilter={setFilter} isHome={true} refresh={refreshing} />
+            <CalendarView navigation={navigation} filter={filter} setFilter={setFilter} isHome={true} refresh={refreshing} refreshTrigger={refreshTrigger} />
             
             <HomeNavigation style={{flex: 0}} size={textSIZES.xxLarge} iconColor={COLORS({opacity:1}).primary}/> 
         </SafeAreaView>

@@ -3,7 +3,7 @@ import { textSIZES, COLORS, viewSIZES, SHADOWS, FONT } from "../../constants";
 
 const defaultImage = require("../../assets/icon.png");
 
-export const GalleryView = ({items, navigation, doRefresh}) => (
+export const GalleryView = ({items, navigation}) => (
     <FlatList
       scrollEnabled={true}
       data={items}
@@ -11,7 +11,7 @@ export const GalleryView = ({items, navigation, doRefresh}) => (
       renderItem={({item}) => (
         <TouchableOpacity style={styles.cardsContainer} key={item["_id"] + "_root"}
           onPress={() => {
-              navigation.navigate("Item", {item, doRefresh});
+              navigation.navigate("Item", {item});
           }}
         >
           <View style={styles.imageBox}>

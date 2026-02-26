@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { View, FlatList, StyleSheet, TextInput, Text, TouchableOpacity, Animated } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useFocusEffect } from "@react-navigation/native";
 import { COLORS, FONT, textSIZES, viewSIZES, SHADOWS } from "../constants";
 import HomeNavigation from "./HomeNavigation";
 import { GETitems } from "../API";
 import { ItemType } from "../constants";
 import { Ionicons } from "@expo/vector-icons";
 
-const BacklogCard = ({navigation, item, doRefresh}) => {
+const BacklogCard = ({navigation, item}) => {
   //console.log(item);
   return (
     <View style={styles.cardContainer}>
       <TouchableOpacity
         onPress={() => {
-            navigation.navigate("Item", {item, doRefresh});
+            navigation.navigate("Item", {item});
           }}
           style={styles.titleContainer}
       >
@@ -29,11 +30,6 @@ const BacklogCard = ({navigation, item, doRefresh}) => {
 export default function Backlog ({navigation, scrollEnabled = true}) {
   const [items, setItems] = useState([]);
   const [search, setSearch] = useState('');
-  const [refresh, setRefresh] = useState(false);
-
-  function doRefresh() {
-    setRefresh(!refresh);
-  }
 
   function doSearch() {
     getItemsFromAPI().then((items_) => {
@@ -55,17 +51,19 @@ export default function Backlog ({navigation, scrollEnabled = true}) {
     }
   }
 
-  useEffect(() => {
-    getItemsFromAPI().then((items_) => {
-      setItems(items_);
-    }).catch((err) => {
-      alert(err.message)
-    })
-  }, [refresh]) // only run once on load
+  useFocusEffect(
+    useCallback(() => {
+      getItemsFromAPI().then((items_) => {
+        setItems(items_);
+      }).catch((err) => {
+        alert(err.message)
+      });
+    }, [])
+  );
 
   const renderItem = ({ item }) => (
     <View key={item["_id"] + "root"}>
-      <BacklogCard navigation={navigation} item={item} doRefresh={doRefresh} />
+      <BacklogCard navigation={navigation} item={item} />
     </View>
   );
 

@@ -14,7 +14,7 @@ import NewItem from "../NewItem";
 import { Sidebar } from "../../components/Sidebar";
 import { Ionicons } from "@expo/vector-icons";
 
-export const CalendarView = ({navigation, filter={}, setFilter, isHome=false, refresh=false}) => {
+export const CalendarView = ({navigation, filter={}, setFilter, isHome=false, refresh=false, refreshTrigger=0}) => {
     const calendarHeight = Dimensions.get('window').height - 300;
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [filterVisible, setFilterVisible] = useState(false);
@@ -70,7 +70,7 @@ export const CalendarView = ({navigation, filter={}, setFilter, isHome=false, re
     
     useEffect(() => {
         getScheduledItemsFromAPI();
-    },[refreshing])
+    },[refreshing, refreshTrigger])
 
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>

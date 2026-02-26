@@ -3,14 +3,14 @@ import { textSIZES, COLORS, viewSIZES, SHADOWS, FONT } from "../../constants";
 
 const defaultImage = require("../../assets/icon.png");
 
-export const ListView = ({items, navigation, doRefresh}) => (
+export const ListView = ({items, navigation}) => (
     <FlatList
     scrollEnabled={true}
     data={items}
     renderItem={({item}) => (
       <TouchableOpacity
         onPress={() => {
-            navigation.navigate("Item", {item, doRefresh});
+            navigation.navigate("Item", {item});
         }}
         key={item["_id"] + "root"} 
         style={styles.cardsContainer}

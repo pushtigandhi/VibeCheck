@@ -8,7 +8,7 @@ import { COLORS, SHADOWS, FONT, textSIZES, ItemType, viewSIZES } from "../consta
 import { Ionicons } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 import { ExpandableView } from "../utils";
-import { GETitemsByIDs } from "../API";
+import { GETitemsByIDs, GETitemsByID } from "../API";
 import CreateNewItem from "./CreateNewItem";
 import ItemList from "../components/ItemList";
 import React from "react";
@@ -188,16 +188,21 @@ export default function ItemCard({ navigation, route }) {
   }
 
   const [showCreateNew, setShowCreateNew] = useState(false);
-  function closeCreateNew(op = null) {
+  async function closeCreateNew(op = null) {
     setShowCreateNew(false);
     
     if (op === 'delete') {
       onGoBack();
+    } else if (op === 'saved' && route.params?.item?._id) {
+      const itemType = route.params.item.itemType || ItemType.Item;
+      const updatedItem = await GETitemsByID(itemType, route.params.item._id);
+      if (updatedItem) {
+        navigation.setParams({ item: updatedItem });
+      }
     }
   }
 
   function onGoBack() {
-    route.params?.doRefresh();
     navigation.goBack();
   }
 

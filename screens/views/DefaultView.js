@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { View, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Image, Modal, Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS, FONT, textSIZES, SHADOWS, ItemType, ViewType, viewSIZES } from "../../constants";
@@ -18,21 +19,26 @@ export default function DefaultView ({navigation, route, scrollEnabled = true}) 
   const [search, setSearch] = useState('');
   const [expandSearchBar, setSearchBar] = useState(false);
 
-  const [refreshing, setRefreshing] = useState(false);
-  function doRefresh() {
-    setRefreshing(!refreshing);
-  }
-
   const [items, setItems] = useState(route.params?.item);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (route.params?.category && route.params?.section) {
+        GETitems(ItemType.Item, { category: route.params.category, section: route.params.section })
+          .then((items_) => setItems(items_))
+          .catch((err) => alert(err.message));
+      }
+    }, [route.params?.category, route.params?.section])
+  );
   const [selectedTab, setSelectedTab] = useState('List');
   const renderTab = () => {
     switch (selectedTab) {
       case 'List':
-        return <ListView items={items} navigation={navigation} doRefresh={doRefresh} />;
+        return <ListView items={items} navigation={navigation} />;
       case 'Gallery':
-        return <GalleryView items={items} navigation={navigation} doRefresh={doRefresh} />;
+        return <GalleryView items={items} navigation={navigation} />;
       default:
-        return <ListView items={items} navigation={navigation} doRefresh={doRefresh} />;
+        return <ListView items={items} navigation={navigation} />;
     }
   };
 

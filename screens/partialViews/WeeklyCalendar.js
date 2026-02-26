@@ -81,7 +81,7 @@ export const WeeklyCalendar = ({navigation, date, filter, itemList}) => {
             renderItem={({ item }) => (
               <TouchableHighlight underlayColor={COLORS({opacity:0.2}).lightGrey} style={styles.cardsContainer} //key={item["_id"] + "_root"} 
                 onPress={() => {
-                  navigation.navigate("Item", {"item": item, "doRefresh": doRefresh});
+                  navigation.navigate("Item", {"item": item});
                 }}
               >
                 <>

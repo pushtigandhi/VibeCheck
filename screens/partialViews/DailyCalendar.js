@@ -6,7 +6,6 @@ import { View, StyleSheet, Text, ScrollView, FlatList, TouchableOpacity, Touchab
 
 export const DailyCalendar = ({navigation, date, filter}) => {
   const [items, setItems] = useState([]);
-  const [refreshing, setRefreshing] = useState(false);
   async function getItemsFromAPI(filter={}) {
     try {
       // Create a new filter object to avoid modifying the original
@@ -32,12 +31,6 @@ export const DailyCalendar = ({navigation, date, filter}) => {
     }
   }
 
-  function doRefresh() {
-    setRefreshing(true);
-    getItemsFromAPI(filter);
-    setRefreshing(false);
-  }
-
   useEffect(() => {
     let isMounted = true;
 
@@ -60,7 +53,7 @@ export const DailyCalendar = ({navigation, date, filter}) => {
     return () => {
       isMounted = false;
     };
-  }, [date, filter, refreshing]); // Added filter and month to dependencies
+  }, [date, filter]); // Added filter and month to dependencies
 
   return (
     <View style={{backgroundColor: COLORS({opacity:1}).white}}>
@@ -68,8 +61,8 @@ export const DailyCalendar = ({navigation, date, filter}) => {
           data={items}
           renderItem={({ item }) => (
           <TouchableHighlight underlayColor={COLORS({opacity:0.2}).lightGrey}
-            onPress={() => {
-              navigation.navigate("Item", {"item": item, "doRefresh": doRefresh});
+              onPress={() => {
+              navigation.navigate("Item", {"item": item});
             }}
             key={item["_id"] + "root"} 
             style={styles.cardsContainer}
