@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image, TouchableWithoutFeedback, Modal,
-        StyleSheet, SafeAreaView, KeyboardAvoidingView, FlatList } from 'react-native';
+        StyleSheet, KeyboardAvoidingView, FlatList } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { COLORS, SHADOWS, FONT, textSIZES, ItemType, viewSIZES } from "../constants";

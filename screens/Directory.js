@@ -1,4 +1,5 @@
-import { SafeAreaView, View, FlatList, StyleSheet, Text, TouchableOpacity, TextInput, Modal, Keyboard, TouchableWithoutFeedback } from "react-native";
+import { View, FlatList, StyleSheet, Text, TouchableOpacity, TextInput, Modal, Keyboard, TouchableWithoutFeedback } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS, FONT, textSIZES, SHADOWS, viewSIZES } from "../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { useState, useEffect } from "react";

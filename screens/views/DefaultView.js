@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Image, Modal,Dimensions } from "react-native";
+import { View, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Image, Modal, Dimensions } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS, FONT, textSIZES, SHADOWS, ItemType, ViewType, viewSIZES } from "../../constants";
 import { GETitems, GETitemsTEST } from "../../API";
 import { Ionicons } from "@expo/vector-icons";

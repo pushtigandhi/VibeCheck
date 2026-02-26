@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import { View, Text, TouchableOpacity, Modal, TextInput,
         StyleSheet, Animated, FlatList, ScrollView, Alert } from 'react-native';
+import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS, SHADOWS, FONT, textSIZES, ViewType, ItemType, viewSIZES } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { ExpandableView } from "../../utils";
 import { GETitems, GETitemsTEST } from "../../API";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { DELETEcategory, PATCHcategory } from "../../API"; 
 
 const expandedCard = ({navigation, category, sections, doRefresh}) => {

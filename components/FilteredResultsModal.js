@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Text, View, StyleSheet, TouchableOpacity, SafeAreaView, FlatList} from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, FlatList } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS, FONT, textSIZES, viewSIZES, SHADOWS, ItemType } from "../constants";
 import React, { useEffect, useState } from "react";
 import { GETitems } from "../API";

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image, Modal,
-        StyleSheet, Animated, FlatList, SafeAreaView } from 'react-native';
+        StyleSheet, Animated, FlatList } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS, SHADOWS, FONT, textSIZES, viewSIZES } from "../constants";
 import { Ionicons } from "@expo/vector-icons";
 import * as df  from "../constants/default";

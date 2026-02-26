@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, FlatList, Text, TouchableOpacity, TextInput, Image, ScrollView, Modal } from "react-native";
+import { View, FlatList, Text, TouchableOpacity, TextInput, Image, ScrollView, Modal } from "react-native";
 import { StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS, FONT, textSIZES, viewSIZES, SHADOWS } from "../constants";
 import HomeNavigation from "./HomeNavigation";
 import { GETcontactsTEST } from "../API";

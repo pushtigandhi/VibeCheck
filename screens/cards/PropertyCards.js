@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, Text, TextInput, Modal, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Modal, TouchableOpacity, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS, SHADOWS, FONT, textSIZES, ItemType, viewSIZES } from "../../constants";
 import { Spacer } from '../../utils';
 import { Ionicons } from "@expo/vector-icons";
@@ -8,7 +9,7 @@ import SingleSelectDropdown from "../../components/SingleSelectDropdown";
 import MultiSelectDropdown from "../../components/MultiSelectDropdown";
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-import { getDirectoryFromStorage } from "../../API";
+import { GETdirectory,PROFILE_ID } from "../../API";
 
 const allTags = [
   {
@@ -67,7 +68,7 @@ export const PropertyCard = ({ item = null, itemType, setFn, isFilter = false}) 
   }
 
   useEffect(() => {
-    getDirectoryFromStorage().then((directoryList_) => {
+    GETdirectory(PROFILE_ID).then((directoryList_) => {
       setDirectoryList(directoryList_);
     }).catch((err) => {
         alert(err.message)

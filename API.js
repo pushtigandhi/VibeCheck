@@ -105,9 +105,8 @@ export async function doLogin(email, password) {
         if (response.status === 200) {
             // success - save JWT
             await saveAuth(response);
-            PROFILE_ID = await GETme().then((profile) => {
-                return profile["_id"];
-            });
+            const profile = await GETme();
+            PROFILE_ID = profile["_id"];
             return { status: response.status, message: "Login successful" };
         }
         
@@ -349,9 +348,11 @@ export async function saveDirectoryToStorage(directory, userID) {
 }
 
 export async function getDirectoryFromStorage(userID) {
+    console.log(userID);
     try {
         const directory = await AsyncStorage.getItem(`directory_${userID}`);
-        directoryList = JSON.parse(directory);
+        var directoryList = JSON.parse(directory);
+        console.log(directoryList);
         return JSON.parse(directory);
     } catch (error) {
         console.log('Error retrieving directory from async storage:', error);

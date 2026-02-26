@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { ScrollView, Text, View, StyleSheet, TouchableOpacity, TextInput, SafeAreaView} from "react-native";
+import { ScrollView, Text, View, StyleSheet, TouchableOpacity, TextInput } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS, FONT, textSIZES, viewSIZES, SHADOWS, ItemType } from "../constants";
 import React, { useEffect, useState } from "react";
 import SingleSelectDropdown from "./SingleSelectDropdown";

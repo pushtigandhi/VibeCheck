@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, FlatList, StyleSheet, TextInput, Text, TouchableOpacity, Animated } from "react-native";
+import { View, FlatList, StyleSheet, TextInput, Text, TouchableOpacity, Animated } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS, FONT, textSIZES, viewSIZES, SHADOWS } from "../constants";
 import HomeNavigation from "./HomeNavigation";
 import { GETitems } from "../API";

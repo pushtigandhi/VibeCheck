@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { View, TouchableOpacity, Text, TextInput, Keyboard, Modal,
-    FlatList, RefreshControl, SafeAreaView, TouchableWithoutFeedback, StyleSheet } from 'react-native';
+    FlatList, RefreshControl, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import { COLORS, FONT, textSIZES, SHADOWS, viewSIZES } from "../constants";
 import HomeNavigation from "./HomeNavigation";
-
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
 import { directoryList, doOnStart, getDirectoryFromStorage } from "../API";

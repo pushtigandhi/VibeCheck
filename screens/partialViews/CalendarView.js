@@ -6,7 +6,7 @@ import { DailyCalendar } from "./DailyCalendar";
 import { WeeklyCalendar } from "./WeeklyCalendar";
 import { MonthlyCalendar } from "./MonthlyCalendar";
 import { View, StyleSheet, Text, ScrollView, FlatList, TouchableOpacity, Dimensions, RefreshControl,
-    Modal, SafeAreaView } from 'react-native';
+    Modal } from 'react-native';
 
 import { ToolBar } from "../../components/Toolbar";
 import FilterModal from "../../components/FilterModal";
