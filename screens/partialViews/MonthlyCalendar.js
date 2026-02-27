@@ -10,7 +10,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Dimensions } from 'react-native';
 import { TouchableOpacity, TouchableHighlight } from "react-native-gesture-handler";
 
-const slotWidth = (Dimensions.get('window').width - 20) / 7;
+// Use percentage to ensure 7 columns always fit in container (avoids Saturday column wrapping)
+const slotWidthPercent = 100 / 7;
 const slotHeight = (Dimensions.get('window').height - 308) / 6;
 
 export const MonthlyCalendar = ({navigation, date, month, onRefresh, filter}) => {
@@ -90,7 +91,7 @@ export const MonthlyCalendar = ({navigation, date, month, onRefresh, filter}) =>
   }, [date, filter, month, refreshing]); // Added filter and month to dependencies
 
   return (
-    <GestureHandlerRootView style={{alignItems: "center"}}>
+    <GestureHandlerRootView style={{alignItems: "center", width: '100%'}}>
       <View style={styles.row}>
         {daysOfWeek.map(day => (
           <View key={day} style={styles.label}>
@@ -98,7 +99,7 @@ export const MonthlyCalendar = ({navigation, date, month, onRefresh, filter}) =>
           </View>
         ))}
       </View>
-      <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+      <View style={{flexDirection: 'row', flexWrap: 'wrap', width: '100%'}}>
         {emptySlotsBefore}
         {daysOfMonth.map(day => (
           <View key={day} style={styles.slot}>
@@ -126,9 +127,10 @@ export const MonthlyCalendar = ({navigation, date, month, onRefresh, filter}) =>
 const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
+    width: '100%',
   },
   label: {
-    width: slotWidth,
+    width: `${slotWidthPercent}%`,
     height: textSIZES.xLarge,
     alignItems: "center",
     justifyContent: "center",
@@ -149,14 +151,14 @@ const styles = StyleSheet.create({
   },
   slot: {
     height: slotHeight,
-    width: slotWidth,
+    width: `${slotWidthPercent}%`,
     alignItems: 'center', 
     borderRightWidth: 0.5,
     borderColor: COLORS({opacity: 1}).lightGrey,
     borderBottomWidth: 0.5,
   },
   title: {
-    width: slotWidth-textSIZES.xxSmall, 
+    width: '100%', 
     height: (slotHeight-textSIZES.xxLarge)/2, 
     justifyContent: 'center',
     alignItems: 'center', 

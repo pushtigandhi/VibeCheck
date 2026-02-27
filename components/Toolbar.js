@@ -64,113 +64,114 @@ export const ToolBar = ({
     <TouchableWithoutFeedback onPress={() => setShowAddDropdown(false)}>
       <View>
         <View style={[styles.toolBar, styles.row]}>
-      <View style={[styles.row, styles.leftContent]}>
-        {isHome && (
-          <TouchableOpacity 
-            onPress={() => {
-              toggleSidebar();
-            }}
-          >
-            {showSidebar ? 
-              <Ionicons name={"close-circle-sharp"} size={30} style={styles.icon} />
-              :
-              <Ionicons name={"reorder-three-outline"} size={30} style={styles.icon} /> 
-            }
-          </TouchableOpacity>
-        )}
-        
-        {["day", "month", "week"].includes(state) && (
-          <View style={[styles.row, {
-            borderColor: COLORS({opacity:1}).primary,
-            borderRadius: textSIZES.xxSmall,
-          }]}>
-            <Text style={[styles.span, {
-              fontWeight:'500', 
-              color: COLORS({opacity:1}).primary,
-              borderRadius: textSIZES.xxSmall, padding: textSIZES.tiny
-            }]}>
-                {String(formattedDate)}
-            </Text>
-            <Text style={[styles.span, {
-              color: COLORS({opacity:1}).primary,
-              borderRadius: textSIZES.xxSmall, padding: textSIZES.tiny
-            }]}> {String(date.getFullYear())}</Text>
-          </View>
-        )}
-        <TouchableOpacity onPress={toggleDatePicker}>
-          <Ionicons name={"calendar-outline"} size={20} style={styles.icon} />
-        </TouchableOpacity>
-      </View>
-      
-      {isHome && (
-        <View style={[styles.row, styles.rightContent]}>
-          <TouchableOpacity
-              onPress={() => {
-              setFilterVisible(true);
-              }}
-              style={styles.filterButtonIcon}
-          >
-              <Ionicons name={"options-outline"} size={20} style={styles.iconInverted}/>
-          </TouchableOpacity>
-          <TouchableOpacity
-              onPress={() => {setShowAddDropdown(!showAddDropdown);}}
-              style={[styles.row, styles.addButtonIcon]}
-          >
-              <Ionicons name={"add-circle"} size={20} style={styles.iconInverted}/>
-          </TouchableOpacity>
-        </View>
-      )}
-    </View>
-
-    <Modal
-      visible={showAddDropdown}
-      transparent={true}
-      animationType="fade"
-      onRequestClose={() => setShowAddDropdown(false)}
-    >
-      <TouchableWithoutFeedback onPress={() => setShowAddDropdown(false)}>
-        <View style={styles.modalOverlay}>
-          <TouchableWithoutFeedback onPress={() => {}}>
-            <View style={styles.dropdownMenu}>
+          <View style={[styles.row, styles.leftContent]}>
+            {isHome && (
               <TouchableOpacity 
-                style={styles.dropdownItem}
                 onPress={() => {
-                  setShowAddDropdown(false);
-                  navigation.navigate("NewItem", { isScheduler: true });
+                  toggleSidebar();
                 }}
               >
-                <Text style={styles.dropdownText}>Create New</Text>
+                {showSidebar ? 
+                  <Ionicons name={"close-circle-sharp"} size={30} style={styles.icon} />
+                  :
+                  <Ionicons name={"reorder-three-outline"} size={30} style={styles.icon} /> 
+                }
               </TouchableOpacity>
-              <TouchableOpacity 
-                style={[styles.dropdownItem, styles.dropdownItemLast]}
-                onPress={() => {
-                  setShowAddDropdown(false);
-                  navigation.navigate("Directory");
-                }}
+            )}
+            
+            {["day", "month", "week"].includes(state) && (
+              <View style={[styles.row, {
+                borderColor: COLORS({opacity:1}).primary,
+                borderRadius: textSIZES.xxSmall,
+              }]}>
+                <Text style={[styles.span, {
+                  fontWeight:'500', 
+                  color: COLORS({opacity:1}).primary,
+                  borderRadius: textSIZES.xxSmall, padding: textSIZES.tiny
+                }]}>
+                    {String(formattedDate)}
+                </Text>
+                <Text style={[styles.span, {
+                  color: COLORS({opacity:1}).primary,
+                  borderRadius: textSIZES.xxSmall, padding: textSIZES.tiny
+                }]}> {String(date.getFullYear())}</Text>
+              </View>
+            )}
+            <TouchableOpacity onPress={toggleDatePicker}>
+              <Ionicons name={"calendar-outline"} size={20} style={styles.icon} />
+            </TouchableOpacity>
+          </View>
+      
+          {isHome && (
+            <View style={[styles.row, styles.rightContent]}>
+              <TouchableOpacity
+                  onPress={() => {
+                  setFilterVisible(true);
+                  }}
+                  style={styles.filterButtonIcon}
               >
-                <Text style={styles.dropdownText}>Select Existing</Text>
+                  <Ionicons name={"options-outline"} size={20} style={styles.iconInverted}/>
+              </TouchableOpacity>
+              <TouchableOpacity
+                  onPress={() => {setShowAddDropdown(!showAddDropdown);}}
+                  style={[styles.row, styles.addButtonIcon]}
+              >
+                  <Ionicons name={"add-circle"} size={20} style={styles.iconInverted}/>
               </TouchableOpacity>
             </View>
-          </TouchableWithoutFeedback>
+          )}
         </View>
-      </TouchableWithoutFeedback>
-    </Modal>
 
-    {showDatePicker && (
-      <Calendar
-        onDayPress={day => {
-            setSelected(day.dateString);
-            onRefresh(new Date(day.year, day.month-1, day.day), state);
-        }}
-        markedDates={{
-            [selected]: {selected: true, disableTouchEvent: true}
-        }}
-        firstDay={0}
-        theme={styles.calendar}
-      />
-    )}
-        </View>
-      </TouchableWithoutFeedback>
+        <Modal
+          visible={showAddDropdown}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setShowAddDropdown(false)}
+        >
+          <TouchableWithoutFeedback onPress={() => setShowAddDropdown(false)}>
+            <View style={styles.modalOverlay}>
+              <TouchableWithoutFeedback onPress={() => {}}>
+                <View style={styles.dropdownMenu}>
+                  <TouchableOpacity 
+                    style={styles.dropdownItem}
+                    onPress={() => {
+                      setShowAddDropdown(false);
+                      navigation.navigate("NewItem", { isScheduler: true });
+                    }}
+                  >
+                    <Text style={styles.dropdownText}>Create New</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity 
+                    style={[styles.dropdownItem, styles.dropdownItemLast]}
+                    onPress={() => {
+                      setShowAddDropdown(false);
+                      navigation.navigate("Directory");
+                    }}
+                  >
+                    <Text style={styles.dropdownText}>Select Existing</Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableWithoutFeedback>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
+
+        {showDatePicker && (
+          <Calendar
+            onDayPress={day => {
+                setSelected(day.dateString);
+                onRefresh(new Date(day.year, day.month-1, day.day), state);
+            }}
+            markedDates={{
+                [selected]: {selected: true, disableTouchEvent: true}
+            }}
+            firstDay={0}
+            monthFormat="MMMM"
+            theme={styles.calendar}
+          />
+        )}
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
