@@ -176,7 +176,6 @@ export default function FilterModal({ filter, setFilter, closeFilter, doSearch, 
 const styles = StyleSheet.create({
     container: {
         backgroundColor: COLORS({opacity:1}).white,
-        flex:1,
     },
     row: {
         flexDirection: "row",

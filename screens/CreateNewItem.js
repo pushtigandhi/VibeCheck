@@ -652,6 +652,16 @@ const styles = StyleSheet.create({
     dropdownTrigger: {
         position: 'relative',
         marginRight: textSIZES.xxSmall,
+        shadowColor: 'black',
+        padding: textSIZES.tiny,
+        borderRadius: textSIZES.xSmall,
+        borderWidth: 1,
+        borderColor: COLORS({opacity:1}).primary,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+        backgroundColor: COLORS({opacity:1}).lightWhite,
     },
     dropdownMenu: {
         position: 'absolute',
