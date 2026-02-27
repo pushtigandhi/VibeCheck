@@ -214,7 +214,6 @@ export async function GETme() {
         if (response.status == 200) {
             // good, return 
             const body = await response.json();
-            console.log(body);
             return body.profile;
         } else {
             return null;
@@ -338,27 +337,6 @@ export async function DELETEcontact(contactID) {
 //#endregion
 
 //#region DIRECTORY
-
-export async function saveDirectoryToStorage(directory, userID) {
-    try {
-        await AsyncStorage.setItem(`directory_${userID}`, JSON.stringify(directory));
-    } catch (error) {
-        console.log('Error saving directory to storage:', error);
-    }
-}
-
-export async function getDirectoryFromStorage(userID) {
-    console.log(userID);
-    try {
-        const directory = await AsyncStorage.getItem(`directory_${userID}`);
-        var directoryList = JSON.parse(directory);
-        console.log(directoryList);
-        return JSON.parse(directory);
-    } catch (error) {
-        console.log('Error retrieving directory from async storage:', error);
-        return [];
-    }
-}
 
 export async function GETdirectory() {
     const response = await fetchWithAuth(`${DIRECTORY_BASE_URL}/${PROFILE_ID}`, {
