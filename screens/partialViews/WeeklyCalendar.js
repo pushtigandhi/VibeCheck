@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { ToolBar } from "../../components/Toolbar";
-//import { CalendarDaySmall } from "../../components/CalendarDaySmall";
-import { Spacer } from "../../utils/index";
-import {Calendar, LocaleConfig} from 'react-native-calendars';
-import { textSIZES, viewSIZES, COLORS, FONT, SHADOWS } from "../../constants";
+import { textSIZES, COLORS } from "../../constants";
 import { GETitems, GETweek } from "../../API";
-import { ItemType } from "../../constants";
-
-import { View, StyleSheet, Text, ScrollView, FlatList, TouchableOpacity, TouchableHighlight } from 'react-native';
-
+import { View, StyleSheet, Text, FlatList, TouchableHighlight } from 'react-native';
 import { Dimensions } from 'react-native';
 
 const slotHeight = (Dimensions.get('window').height - 300) / 7;

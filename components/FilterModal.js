@@ -8,7 +8,10 @@ import { PropertyCard } from "../screens/cards/PropertyCards";
 import { Scheduler } from "../components/Scheduler";
 
 
-export default function FilterModal({ filter, setFilter, closeFilter, doSearch, isSection=false }) {
+const DEFAULT_SORT = "time";
+const DEFAULT_ITEM_TYPE = "Item";
+
+export default function FilterModal({ filter, setFilter, closeFilter, doSearch, isSection=false, visible=true }) {
     const sortOptions = [
         {label: "Time (Ascending)", value: "time"},
         {label: "Time (Descending)", value: "-time"},
@@ -24,10 +27,11 @@ export default function FilterModal({ filter, setFilter, closeFilter, doSearch, 
         {label: "Recipe", value: "Recipe"}
     ];
 
-    const [sortOption, setSortOption] = useState("time");
-    const [itemType, setTypeOption] = useState("Item");
+    const [sortOption, setSortOption] = useState(DEFAULT_SORT);
+    const [itemType, setTypeOption] = useState(DEFAULT_ITEM_TYPE);
     const [showScheduler, setShowScheduler] = useState(false);
     const [showSort, setShowSort] = useState(false);
+    const [resetKey, setResetKey] = useState(0);
 
     const [updatedFilter, setUpdatedFilter] = useState({});
 
@@ -54,6 +58,9 @@ export default function FilterModal({ filter, setFilter, closeFilter, doSearch, 
     function resetFilter() {
         setFilter({});
         setUpdatedFilter({});
+        setSortOption(DEFAULT_SORT);
+        setTypeOption(DEFAULT_ITEM_TYPE);
+        setResetKey((k) => k + 1);
     }
 
     function updateFilter(params) {
@@ -113,33 +120,20 @@ export default function FilterModal({ filter, setFilter, closeFilter, doSearch, 
     }
 
     useEffect(() => {
-        // console.log(filter);
-        if(filter.itemType) {
-            setTypeOption(filter.itemType);
-        }
-        if(filter.sortBy) {
-            setSortOption(filter.sortBy);
-        }
-        if(filter.startDate) {
-            setStartDate(filter.startDate);
-            setShowStartDate(true);
-        }
-        if(filter.endDate) {
-            setEndDate(filter.endDate);
-            setShowEndDate(true);
-        }
-        if(filter.repeat) {
-            setRepeat(filter.repeat);
-        }
-    }, []);
+        if (!visible) return;
+        const merged = { ...filter };
+        setUpdatedFilter(merged);
+        setTypeOption(merged.itemType || DEFAULT_ITEM_TYPE);
+        setSortOption(merged.sortBy || DEFAULT_SORT);
+    }, [visible, filter]);
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView testID="filter-modal-container" style={styles.container}>
             <View style={[styles.row, styles.header]}>
-                <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+                <TouchableOpacity testID="filter-modal-close" onPress={onClose} style={styles.closeButton}>
                     <Ionicons name="close" size={textSIZES.large} style={styles.closeIcon} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={resetFilter} style={[styles.button, {backgroundColor: COLORS({opacity:1}).tertiary, width: textSIZES.xLarge * 4}]} >
+                <TouchableOpacity testID="filter-modal-reset" onPress={resetFilter} style={[styles.button, {backgroundColor: COLORS({opacity:1}).tertiary, width: textSIZES.xLarge * 4}]} >
                     <Text style={styles.headerText}>Reset</Text>
                 </TouchableOpacity>
             </View>
@@ -147,10 +141,10 @@ export default function FilterModal({ filter, setFilter, closeFilter, doSearch, 
                 
                 
                 <Text style={styles.sortText}>Item type:</Text>
-                <SingleSelectDropdown options={typeOptions} placeholder={"All"} setFn={changeTypeOption}
+                <SingleSelectDropdown testID="filter-modal-item-type" options={typeOptions} placeholder={"All"} value={itemType} setFn={changeTypeOption}
                     icon={<Ionicons name={"grid-outline"} size={textSIZES.small} style={[styles.icon, {margin: textSIZES.tiny}]} />} />
 
-                <PropertyCard item={filter} itemType={itemType} setFn={updateFilter} isSection={isSection} />
+                <PropertyCard key={resetKey} testID="filter-modal-property-card" item={updatedFilter} itemType={itemType} setFn={updateFilter} isSection={isSection} />
                
                 {/* <Scheduler item={filter} setFn={updateFilter} /> */}
 
@@ -163,6 +157,7 @@ export default function FilterModal({ filter, setFilter, closeFilter, doSearch, 
                 )}
                 
                 <TouchableOpacity
+                    testID="filter-modal-search"
                     style={styles.searchButton}
                     onPress={(onSearch)}
                 >

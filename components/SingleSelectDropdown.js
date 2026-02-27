@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import { COLORS, textSIZES, viewSIZES } from '../constants';
 import { Ionicons } from '@expo/vector-icons';
 
-const SingleSelectDropdown = ({ options, placeholder = "Select", icon, setFn, isDisabled=false, hideSearch=false }) => {
-    const [value, setValue] = useState(null);
+const SingleSelectDropdown = ({ options, placeholder = "Select", icon, setFn, value: valueProp, isDisabled=false, hideSearch=false }) => {
+    const [value, setValue] = useState(valueProp ?? null);
+
+    useEffect(() => {
+        if (valueProp !== undefined && valueProp !== null) {
+            setValue(valueProp);
+        } else if (valueProp === null || valueProp === '') {
+            setValue(null);
+        }
+    }, [valueProp]);
 
     const renderItem = (item) => {
         return (

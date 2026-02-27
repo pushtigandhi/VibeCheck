@@ -79,7 +79,7 @@ export const CalendarView = ({navigation, filter={}, setFilter, isHome=false, re
                     navigation={navigation}
                 />
                 <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
-                    <FilterModal closeFilter={closeFilter} doSearch={closeFilter} filter={filter} setFilter={setFilter} />
+                    <FilterModal closeFilter={closeFilter} doSearch={closeFilter} filter={filter} setFilter={setFilter} visible={filterVisible} />
                 </Modal>
                 <View style={styles.iconRoot}>
                     <TouchableOpacity

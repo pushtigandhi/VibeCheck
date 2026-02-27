@@ -164,7 +164,7 @@ export default function Directory ({navigation, scrollEnabled = true}) {
           )}
         />
         <Modal visible={filterVisible} animationType="slide" onRequestClose={closeFilter}>
-                    <FilterModal closeFilter={closeFilter} doSearch={closeFilter} filter={filter} setFilter={setFilter} />
+                    <FilterModal closeFilter={closeFilter} doSearch={closeFilter} filter={filter} setFilter={setFilter} visible={filterVisible} />
         </Modal>
         <HomeNavigation size={30} iconColor={COLORS({opacity:1}).primary}/>
       </SafeAreaView>
