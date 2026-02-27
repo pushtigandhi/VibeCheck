@@ -538,14 +538,10 @@ const getURL= (itemType) => {
 
 export async function GETitems(itemType, filter={}) {
     const ext = getURL(itemType);
-
-    //console.log(filter);
-
     const response = await fetchWithAuth(`${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "&" : "") +  new URLSearchParams(filter), {
         method: 'GET',
     });
-    try {
-        //console.log(response.status);
+    try {    
         if (response.status == 201) {
             // good, return 
             const body = await response.json();
@@ -606,8 +602,6 @@ export async function GETitemsByIDs(itemType, itemIDs) {
         return [];
     }
 }
-
-
 
 export async function POSTitem(itemType, item) {
     const ext = getURL(itemType);
@@ -676,27 +670,6 @@ export async function DELETEitem(itemType, itemID) {
 
 //#region  TODELETE - TESTS
 
-
-
-//#endregion
-
-//#region USERS
-
-export async function GETuserByHandleTEST() {
-    const response = await fetchWithAuth(`${USERS_BASE_URL}/handle`, {
-        method: 'GET',
-    });
-
-    // console.log(response);
-    // console.log(response);
-
-    const body = {};
-    return body.user;
-}
-
-//#endregion
-
-//#region PROFILE
 export async function GETprofileImageTEST() {
     const profile = {
         "profile": {
@@ -758,184 +731,6 @@ export async function PATCHupdateProfileTEST(data) {
 }
 
 //#endregion
-
-//#region CONTACTS
-export async function GETcontactsTEST() {
-
-    const response =CONTACTS_BASE_URL;
-
-    // console.log(response);
-    // console.log(response);
-
-    const body = {"contacts": [{
-        "name": "Test User",
-        "handle": "testuser",
-        "company": "Self",
-        "notes": "In development.",
-        "_id": "123456786564321",
-    }]};
-    let contacts = body.contacts;
-    return contacts.map((contact) => {
-        return {
-            ...contact,
-        }
-    });
-}
-
-export async function GETcontactByTEST(contactID) {
-    const response = await fetchWithAuth(`${CONTACTS_BASE_URL}/${contactID}`, {
-        method: 'GET',
-    });
-
-    // console.log(response);
-    // console.log(response);
-
-    const body = {"contacts": {}};
-    return body.contacts;
-}
-
-export async function POSTaddContactTEST(contact) {
-    const response = await fetchWithAuthJSON(CONTACTS_BASE_URL, {
-        method: 'POST',
-        body: JSON.stringify(contact),
-    });
-
-    // console.log(response);
-    // console.log(response);
-
-    const body = {"contacts": {}};
-    return body.contacts;
-}
-
-export async function PATCHcontactTEST(newContact, contactID) {
-    delete newContact._id;
-    delete newContact.id;
-
-    const response = await fetchWithAuthJSON(`${CONTACTS_BASE_URL}/${contactID}`, {
-        method: "PATCH",
-        body: JSON.stringify(newItem),
-    });
-
-    // console.log(response);
-    // console.log(response);
-
-    const editResponse = {"contacts": {}};
-    return editResponse.contacts;
-}
-
-export async function DELETEcontactTEST(contactID) {
-    const response = await fetchWithAuth(`${CONTACTS_BASE_URL}/${contactID}`, {
-        method: "DELETE",
-    });
-
-    // console.log(response);
-    // console.log(response);
-}
-//#endregion
-
-//#region DIRECTORY
-
-
-export async function GETdirectoryTEST() {
-    // const response = await fetchWithAuthTEST(`${DIRECTORY_BASE_URL}/${profileID}`, {
-    //     method: 'GET',
-    // });
-
-    // // console.log(response);
-    // // console.log(response);
-
-    const body = {"directory": [
-        {
-            "_id": "65dffad64102392ebb57839c",
-            "title": "Backlog",
-            "sections": [
-                {"title": "All", "view": "Default"}
-            ]
-        },
-        {
-            "title": "Cooking",
-            "sections": [
-                {"title": "All", "view": "Default", "_id": "235235"},
-                {"title": "Recipes", "view": "Default", "_id": "74576"},
-                {"title": "Meal Plan", "view": "Schedule", "_id": "3578365"},
-                {"title": "Tips", "view": "Checklist", "_id": "4674764674"}
-            ],
-            "_id": "65e172b61635ad960dabdc32"
-        },
-        {
-            "title": "Explore",
-            "sections": [
-                {"title": "All", "view": "Default", "_id": "3456"},
-                {"title": "Movies", "view": "Default", "_id": "324567"},
-                {"title": "TV Shows", "view": "Default", "_id": "68675"},
-                {"title": "Books", "view": "Default", "_id": "5467"},
-                {"title": "Comics", "view": "Default", "_id": "6754"},
-            ],
-            "_id": "65e172btrfyhgjgfdad960dabdc32"
-        }
-    ]};
-    let directory = body.directory;
-    return directory.map((category) => {
-        return {
-            ...category,
-        }
-    });
-}
-
-export async function POSTaddCategoryTEST(profileID, category) {
-    const response = `${DIRECTORY_BASE_URL}/${profileID}...body:` + JSON.stringify(category);
-
-    // console.log(response);
-    // console.log(response);
-
-    const body = {"directory": []};
-    let directory = body.directory;
-    return directory.map((category) => {
-        return {
-            ...category,
-        }
-    });
-}
-
-export async function PATCHcategoryTEST(newCategory, categoryID) {
-    delete newCategory._id;
-    delete newCategory.id;
-
-    const response = await fetchWithAuthJSON(`${DIRECTORY_BASE_URL}/${categoryID}`, {
-        method: "PATCH",
-        body: JSON.stringify(newCategory),
-    });
-
-    // console.log(response);
-    // console.log(response);
-
-    const body = {"directory": []};
-    let directory = body.directory;
-    return directory.map((category) => {
-        return {
-            ...category,
-        }
-    });
-}
-
-export async function DELETEcategoryTEST(categoryID) {
-    const response = await fetchWithAuth(`${DIRECTORY_BASE_URL}/${categoryID}`, {
-        method: "DELETE",
-    });
-
-    // console.log(response);
-    // console.log(response);
-
-    const body = {"directory": []};
-    let directory = body.directory;
-    return directory.map((category) => {
-        return {
-            ...category,
-        }
-    });
-}
-//#endregion
-
 //#region TAGS
 export async function GETtagsTEST() {
     const response = await fetchWithAuth(TAGS_BASE_URL, {
@@ -996,44 +791,7 @@ export async function DELETEtagTEST(tagID) {
 //#endregion
 
 //#region CALENDAR
-export async function GETscheduledTEST(date, state, filter={}) {
-    //console.log("scheduled: " + date + " " + state);
 
-    if (state == "day") {
-        return GETtoday(date, filter);
-    }
-    else if (state == "week") {
-        return GETweek(date, filter);
-    }
-    else {
-        return GETmonth(date, filter);
-    }
-}
-
-export async function GETtoday(filter={}) {
-    const ext = getURL(!!filter.itemType ? filter.itemType : ItemType.Item);
-    const response = await fetchWithAuth(`${ITEMS_BASE_URL}/${ext}` + (!!Object.keys(filter).length ? "&" : "") +  new URLSearchParams(filter), {
-        method: 'GET',
-    });
-
-    try {
-        if (response.status == 201) {
-            // good, return 
-            const body = await response.json();
-            let items = body.items? body.items : [];
-            return items.map((item) => {
-                return {
-                    ...item,
-                }
-            });
-        } else {
-            return []
-        }
-    } catch (err) {
-        alert(err.message);
-        return []
-    }
-}
 
 export async function GETweek(filter={}) {
     const ext = getURL(!!filter.itemType ? filter.itemType : ItemType.Item);
@@ -1106,79 +864,6 @@ export async function GETmonth(filter={}) {
     }
 }
 
-
-//#endregion
-
-//#region ITEMS
-
-export async function GETsectionTEST(itemType, filter={}) {
-    const ext = getURL(itemType);
-
-    const response = `${ITEMS_BASE_URL}/${ext}` + new URLSearchParams(filter);
-
-    let body;
-    // console.log("items: " + response);
-    // console.log("items: " + response);
-
-    body = {
-        "items": [
-            {
-                "_id": "65dffbe641023aojfdi92ebb5783b0",
-                "title": "Tips",
-                "category": "Cooking",
-                "section": "Tips",
-                "icon": "📍",
-                "subtasks": [{task: "first", isChecked: false}, {task: "sec", isChecked: false}],
-                "tags": [
-                    "new"
-                ],
-                "notes": "",
-                "owner": "65dffad64102392ebb57839b",
-                "createdAt": "2024-02-29T03:37:10.111Z",
-                "updatedAt": "2024-02-29T03:37:10.111Z",
-                "__v": 0
-            },
-            
-        ]
-    };
-
-    let items = body.items;
-    return items.map((item) => {
-        return {
-            ...item,
-        }
-    });
-}
-
-
-export async function PATCHitemTEST(itemType, newItem, itemID) {
-    const ext = getURL(itemType);
-
-    delete newItem._id; // remove _id from newPost
-    delete newItem.id;
-
-    // console.log(newItem);
-    // console.log(newItem);
-    const response = `${ITEMS_BASE_URL}/${itemID}${ext}`;
-
-    // console.log(response);
-    // console.log(response);
-
-    const body = {"item": {}};
-    return body.item;
-}
-
-export async function DELETEitemTEST(itemType, itemID) {
-    const ext = getURL(itemType);
-    
-    const response = `${ITEMS_BASE_URL}/${itemID}${ext}`;
-
-    // console.log(response);
-    // console.log(response);
-
-    const body = {"item": {}};
-    return body.item;
-}
 
 //#endregion
 

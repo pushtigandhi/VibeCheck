@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { textSIZES, viewSIZES, COLORS, FONT, SHADOWS } from "../../constants";
-import { GETitems, GETitemsTEST, GETtodayTEST, GETscheduledTEST } from "../../API";
+import { GETitems } from "../../API";
 import { ItemType } from "../../constants";
 import { DailyCalendar } from "./DailyCalendar";
 import { WeeklyCalendar } from "./WeeklyCalendar";
@@ -26,16 +26,6 @@ export const CalendarView = ({navigation, filter={}, setFilter, isHome=false, re
     const [refreshing, setRefreshing] = useState(false);
     const [showSidebar, toggleShowSidebar] = useState(false);
 
-    async function getScheduledItemsFromAPI() {
-        try {
-          let items_ = await GETscheduledTEST(selectedDate, state, filter);
-          return items_;
-        } catch (error) {
-          console.log("error fetching items");
-          console.log(error);
-          return [];
-        }
-    }
 
     const onRefresh = React.useCallback((updatedDate, state) => {
         setSelectedDate(updatedDate);
@@ -69,7 +59,6 @@ export const CalendarView = ({navigation, filter={}, setFilter, isHome=false, re
     }
     
     useEffect(() => {
-        getScheduledItemsFromAPI();
     },[refreshing, refreshTrigger])
 
     return (

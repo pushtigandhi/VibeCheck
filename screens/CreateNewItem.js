@@ -251,7 +251,7 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
                         style={[styles.border, { width: 140, height: 140}]}
                     />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => (onSave())} style={[styles.button]} >
+                <TouchableOpacity testID="create-new-item-save" onPress={() => (onSave())} style={[styles.button]} >
                     <Ionicons name={"checkmark"} size={textSIZES.xxLarge} style={styles.icon}/> 
                 </TouchableOpacity>
             </View>
@@ -421,7 +421,7 @@ export default function CreateNewItem({ item = null, onClose, isScheduler=false 
             </KeyboardAvoidingView>
 
             {!isNew && (
-                <TouchableOpacity onPress={() => ConfirmCancelPrompt()} style={[styles.removeButton, {borderWidth: 0.5, borderColor: COLORS({opacity:1}).primary, marginHorizontal: textSIZES.xLarge, marginTop: textSIZES.xSmall, marginBottom: textSIZES.xLarge}]}>
+                <TouchableOpacity testID="create-new-item-delete" onPress={() => ConfirmCancelPrompt()} style={[styles.removeButton, {borderWidth: 0.5, borderColor: COLORS({opacity:1}).primary, marginHorizontal: textSIZES.xLarge, marginTop: textSIZES.xSmall, marginBottom: textSIZES.xLarge}]}>
                     <Text style={{fontSize: textSIZES.small, fontWeight: "bold"}}>Delete</Text>
                 </TouchableOpacity>
             )}

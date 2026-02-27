@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { textSIZES, viewSIZES, COLORS, FONT, SHADOWS } from "../../constants";
-import { GETitems, GETitemsTEST, GETtoday } from "../../API";
+import { GETitems } from "../../API";
 import { ItemType } from "../../constants";
 import { View, StyleSheet, Text, ScrollView, FlatList, TouchableOpacity, TouchableHighlight } from 'react-native';
 
@@ -22,7 +22,7 @@ export const DailyCalendar = ({navigation, date, filter}) => {
       apiFilter.startgt = dategt; 
       apiFilter.startlt = datelt;
 
-      let items_ = await GETtoday(apiFilter);
+      let items_ = await GETitems(ItemType.Item, apiFilter);
       return items_;
     } catch (error) {
       console.log("error fetching items");

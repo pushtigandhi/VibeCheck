@@ -131,6 +131,8 @@ jest.mock('../API', () => ({
   GETcontacts: jest.fn(),
   GETdirectory: jest.fn(),
   GETitems: jest.fn(),
+  GETitemsByID: jest.fn(),
+  GETitemsByIDs: jest.fn(),
   POSTitem: jest.fn(),
   PATCHitem: jest.fn(),
   DELETEitem: jest.fn(),
@@ -346,7 +348,7 @@ global.mockRoute = {
 };
 
 // Silence the warning: Animated: `useNativeDriver` is not supported
-jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
+// Note: Module path may vary by react-native version - skip if not found
 
 // Mock console methods to reduce noise in tests
 global.console = {
